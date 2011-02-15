@@ -1,0 +1,452 @@
+/*
+	Design by Free CSS Templates
+	http://www.freecsstemplates.org
+	Released for free under a Creative Commons Attribution 2.5 License
+*/
+/* Basic */
+*{
+	margin: 0em;
+	padding: 0em;
+}
+
+h1,h2
+{
+}
+body
+{
+	font-family: "trebuchet ms", sans-serif;
+	color: #555555;
+	font-size: 11pt;
+}
+a
+{
+	color: #669911;
+}
+/* Outer */
+#outer
+{
+}
+/* Header */
+#header
+{
+	height: 75px;
+	background-image: url('../images/a2.gif');
+	background-position: bottom left;
+	padding-left: 40px;
+	padding-top: 45px;
+}
+#header h1 a
+{
+	color: #fff;
+	text-decoration: none;
+	font-size: 2.5em;
+}
+#header h1
+{
+	position: relative;
+        top: -1.0em;
+	font-size: 2.5em;
+	max-height: 2.5em;
+	overflow: hidden;
+	color: #fff;
+}
+#header h2
+{
+    right: 10px;
+	color: #E8EFC2;
+	font-weight: normal;
+	font-size: 1em;
+	text-align: right;
+	position: absolute;
+	top: 70px;
+	overflow: hidden;
+}
+/* Announcement */
+#announcement blockquote
+{
+	padding: 1em;
+	margin-bottom: 1.5em;
+	color: #900;
+        background-color: #FFFCD8;
+	background-image: url('../images/a5.gif');
+	background-repeat: no-repeat;
+	background-position: top left;
+	border: dotted 1px #DFD999;
+        font-size: 100%;
+}
+
+
+/* Menu */
+#menu
+{
+	background-image: url('../images/a3.gif');
+	background-repeat: repeat-x;
+	background-position: bottom left;
+	padding: 1em 2.5em 1em 2.5em;
+}
+#menu ul
+{
+	list-style: none;
+}
+#menu li
+{
+	display: inline;
+}
+#menu li a
+{
+	font-size: 1.1em;
+	font-weight: bold;
+	color: #5D5F53;
+	text-decoration: none;
+	margin-right: 1em;
+}
+#menu li a:hover
+{
+	color: #6B7E09;
+	text-decoration: underline;
+}
+/* Content */
+#content
+{
+	padding: 1em 15px 1em 15px;
+	line-height: 1.6em;
+	background: url('../images/a4.gif') repeat-x top left;
+}
+#content p
+{
+	margin-bottom: 1.5em;
+}
+#content h2,h3,h4,h5,h6
+{
+	margin-bottom: 1em;
+}
+#content ul
+{
+	margin-bottom: 1.5em;
+	padding-left: 1em;
+}
+#content blockquote
+{
+	padding: 1em;
+	margin-bottom: 1.5em;
+	background-color: #FFFCD8;
+	background-image: url('../images/a5.gif');
+	background-repeat: no-repeat;
+	background-position: top left;
+	border: dotted 1px #DFD999;
+        font-size: 80%;
+}
+#content blockquote p
+{
+	margin-bottom: 0em;
+}
+#content table
+{
+	margin-bottom: 1.5em;
+        width: 98%;
+        table-layout: fixed;
+        text-overflow: ellipsis;
+}
+#content table th
+{
+	text-align: left;
+	font-weight: bold;
+	padding: 0.5em;
+}
+#content table td
+{
+	padding: 0.25em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+}
+#content table tr.rowA
+{
+	background-color: #EAEFE0;
+	color: inherit;
+}
+#content table tr.rowB
+{
+	background-color: #F9FFEF;
+	color: inherit;
+}
+
+#content table td.active
+{
+    background-color: #FFFCD8;   
+}
+
+#content table td.error
+{
+    background-color: #FFB6C1;   
+}
+
+#content table td.normal
+{
+    background-color: inherit;   
+}
+
+
+#content table td.active.own
+{
+    background-color: #FFFDB8;   
+}
+
+#content table td.normal.own
+{
+    background-color: inherit;   
+}
+
+/* Primary Content */
+#primaryContentContainer
+{
+	float: left;
+	margin-right: -240px;
+	width: 75%;
+}
+#primaryContent
+{
+	margin: 0em 0em 0em 0em;
+	padding: 0em 1.5em 1.5em 1.5em;
+}
+#primaryContent h2, #primaryContent h3
+{
+	color: #5D5F53;
+	border-bottom: dotted 1px #ECEEDF;
+	padding-bottom: 0.3em;
+}
+#secondaryContent h3, #tertiaryContent h3
+{
+	background: url('../images/a1.gif') no-repeat;
+	width: 185px;
+	height: 27px;
+	font-size: 1.0em;
+	font-weight: bold;
+	padding-left: 15px;
+	padding-top: 5px;
+	color: #5D5F53;
+}
+/* Secondary Content */
+#secondaryContent
+{
+	float: right;
+	padding-right: 1em;
+	width: 215px;
+}
+/* Tertiary Content */
+#tertiaryContent
+{
+	float: right;
+	width: 215px;
+	padding-right: 1em;
+}
+/* Footer */
+#footer
+{
+	background: url('../images/a4.gif') repeat-x top left;
+	border-top: solid 1px #D0D4BB;
+	padding: 2.0em 3.5em 3.0em 3.5em;
+	font-size: 0.8em;
+}
+.clear
+{
+	clear: both;
+}
+
+.errors {
+  color: #900;
+}
+
+/* Nevow Formal */
+
+.nevow-form {
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+.nevow-form div.field {
+  margin-bottom: 5px;
+  padding: 2px 0px 2px 10px;
+}
+
+.nevow-form div.field.error {
+  border-left: 2px solid #900;
+  padding-left: 8px;
+}
+
+.nevow-form label {
+  float: left;
+  width: 200px;
+  font-size: 90%;
+}
+
+.nevow-form .inputs {
+  margin-left: 200px;
+ }
+
+.nevow-form .required label {
+  font-style: italic;
+  font-weight: bold;
+  font-size: 90%;
+  color: #555;
+}
+
+.nevow-form .error label {
+  color: #900;
+}
+
+.nevow-form .errors {
+  color: #900;
+}
+
+.nevow-form .inputs input {
+  width: 300px;
+}
+
+.nevow-form .checkbox .inputs input, .nevow-form .checkboxmultichoice input {
+  width: auto;
+}
+
+.nevow-form .field.date .inputs input {
+  width: auto;
+}
+
+.nevow-form .field.decimal .inputs input {
+  width: 8em;
+}
+
+.nevow-form .inputs textarea {
+  width: 80%;
+  height:5em;
+}
+
+.nevow-form .message, .nevow-form .description {
+  display: block;
+  margin-left: 200px;
+  font-size: 90%;
+}
+
+.nevow-form .description {
+  font-style: italic;
+  color: #666;
+}
+
+.nevow-form .message {
+  color: #900;
+}
+
+.nevow-form .actions {
+  border-top: 1px dashed #ccc;
+  margin-top: 5px;
+  padding: 10px 0px 5px 110px;
+}
+
+.nevow-form .actions input {
+  margin: 0.5em;
+  min-height:2em;
+  width: 6.5em;
+}
+
+.nevow-form .checkboxmultichoice .inputs {
+  clear: both;
+  margin-left: 200px;
+}
+
+.nevow-form .checkboxmultichoice .inputs label {
+  margin-left:10px;
+  font-size:90%;
+  font-style:italic;
+  float: none;
+  display:inline;
+  color:#000;
+}
+
+.nevow-form .fileupload img {
+  height:30px;
+}
+
+.nevow-form .fileuploadwidget input.upload-checkbox-remove {
+  width:auto;
+}
+
+.nevow-form .disabled, .nevow-form .readonly {
+  background-color: #FFF;
+  color: #777;
+}
+
+.nevow-form .inputs .readonly-textarea-container {
+  border: 1px solid #ccc;
+  overflow: scroll;
+  height: 300px;
+}
+
+.nevow-form .radiochoice .inputs input {
+  width: auto;
+}
+
+.nevow-form .radiochoice .inputs label {
+  display: inline;
+  float: none;
+  
+}
+
+.nevow-form .preview-show {
+  display: block;
+}
+
+.nevow-form .preview-hidden {
+  display: none;
+}
+
+.nevow-form .resttextarea .preview-frame {
+  height: 500px;
+  width: 80%;
+}
+
+/*--- CLEARFIX  ----------------------------------------------------------*/
+.nevow-form div.field:after {
+  content:".";
+  display:block;
+  height:0;
+  clear:both;
+  visibility:hidden;
+}
+.nevow-form div.field {display:inline-block;}
+/* Hide from IE Mac \*/
+.nevow-form div.field {display:block;}
+/* End hide from IE Mac */
+
+.nevow-form .inputs select {
+  width: auto;
+  min-width: 4em;
+}
+
+.nevow-form .add {
+  display:block;
+}
+
+/*
+#controlJob-ctrl div.field {
+clear:none;
+float:left;
+}
+
+#controlJob-ctrl label, input {
+  float: left;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  display: block;
+}
+
+#controlJob-ctrl label{
+
+clear:right;
+float:left;
+width=auto;
+}
+
+#controlJob-ctrl input {
+clear:none;
+float:left;
+width:auto;
+}
+*/
