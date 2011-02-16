@@ -10,5 +10,6 @@
 </pydev_variables_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/testbed_server</path>
+<path>/testbed_server/testbed_server</path>
 </pydev_pathproperty>
 </pydev_project>
