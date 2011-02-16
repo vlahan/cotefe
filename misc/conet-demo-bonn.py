@@ -11,6 +11,7 @@ password = "password"
 # HOW TO GET ALL JOBS
 
 uri = "http://%s:%s/jobs/" % (host, port)
+#Êuri = "http://www.google.com/"
 method = "GET"
 body = ""
 headers = { "Accept" : "application/json;charset=UTF-8" }
