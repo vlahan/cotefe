@@ -3,7 +3,7 @@ import socket
 
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
-if socket.gethostname() == 'your.domain.com':
+if socket.gethostname() == 'www.twist.tu-berlin.de':
     DEBUG = False
 else:
     DEBUG = True
@@ -81,11 +81,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.databrowse',
-    
-    # Third Party Django Applications
-#    'django_extensions',
-#    'registration',
-#    'djangotoolbox',
     
     # Project Applications
     'api',

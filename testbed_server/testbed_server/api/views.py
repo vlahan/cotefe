@@ -4,10 +4,11 @@ from django.http import HttpResponse, HttpResponseNotAllowed
 from utils.odict import OrderedDict
 from api.models import *
 import xmlrpclib
+from datetime import datetime
 
 SERVER_NAME = '127.0.0.1:8000'
 MEDIA_TYPE = 'application/json'
-CONTENT_TYPE = 'application/json; charset=utf-8'
+CONTENT_TYPE = 'application/json;charset=utf-8'
 JSON_INDENT = 2
 
 host = '127.0.0.1'
@@ -68,16 +69,14 @@ def collection_list_to_json(collection_list):
 
 # Testbed
 
-def job_resource_handler(request, id):
-    if request.method == 'GET':
-        resource_model = Job.objects.select_related(depth=1).get(id=int(id))
-        resource_odict = resource_model_to_odict(resource_model)
-        resource_json = resource_odict_to_json(resource_odict)
-        return HttpResponse(resource_json, content_type=CONTENT_TYPE)
-    else:
-        return HttpResponseNotAllowed(['GET'])
-
-
+# def testbed_resource_handler(request, id):
+#     if request.method == 'GET':
+#         resource_model = Testbed.objects.select_related(depth=1).get(id=int(id))
+#         resource_odict = resource_model_to_odict(resource_model)
+#         resource_json = resource_odict_to_json(resource_odict)
+#         return HttpResponse(resource_json, content_type=CONTENT_TYPE)
+#     else:
+#         return HttpResponseNotAllowed(['GET'])
 
 # Job
 
@@ -88,21 +87,25 @@ def job_collection_handler(request):
         for item in collection_list:
             for key in item:
                 if isinstance(item[key], xmlrpclib.DateTime):
-                    item[key] = item[key].value
+                    # converts datetime to ISO8601 (http://en.wikipedia.org/wiki/ISO_8601)
+                    item[key] = datetime.strptime(item[key].value, "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00")
+        
+        print simplejson.dumps(collection_list, indent=4)
+        exit()
         
         collection_json = collection_list_to_json(collection_list)
         return HttpResponse(collection_json, content_type=CONTENT_TYPE)
     else:
-        return HttpResponseNotAllowed(['GET'])
+        return HttpResponseNotAllowed(['GET', 'POST'])
 
-def job_resource_handler(request, id):
-    if request.method == 'GET':
-        resource_model = Job.objects.select_related(depth=1).get(id=int(id))
-        resource_odict = resource_model_to_odict(resource_model)
-        resource_json = resource_odict_to_json(resource_odict)
-        return HttpResponse(resource_json, content_type=CONTENT_TYPE)
-    else:
-        return HttpResponseNotAllowed(['GET'])
+# def job_resource_handler(request, id):
+#     if request.method == 'GET':
+#         resource_model = Job.objects.select_related(depth=1).get(id=int(id))
+#         resource_odict = resource_model_to_odict(resource_model)
+#         resource_json = resource_odict_to_json(resource_odict)
+#         return HttpResponse(resource_json, content_type=CONTENT_TYPE)
+#     else:
+#         return HttpResponseNotAllowed(['GET'])
 
 
 
