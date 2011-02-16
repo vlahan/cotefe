@@ -97,7 +97,7 @@ def createAuthorized(doSSL = True, port=8000, xmlrpc_port=8001):
 
 def startAuthorized():
     
-    serve, xmlrpc_service = createAuthorized(False, port=8002, xmlrpc_port=8001)
+    serve, xmlrpc_service = createAuthorized(False, port=8000, xmlrpc_port=8002)
     serve.startService()
     
     # TWIST_XMLRPC_API
