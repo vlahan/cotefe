@@ -23,6 +23,8 @@ from google.appengine.api import urlfetch
 from google.appengine.api.labs import taskqueue
 from google.appengine.ext import db
 
+# TASK EXAMPLE
+
 class TasksHandler(webapp.RequestHandler):
   def post(self):
     taskqueue.add(
@@ -50,8 +52,19 @@ class Reflector(webapp.RequestHandler):
       url = self.request.get('url'),
     )
     
-class TestbedResource(db.Model):
+# TESTBED RESOURCE
+
+class Federation(db.Model):
+    uri = db.StringProperty()
+    media_type = db.StringProperty()
+    name = db.StringProperty()
+    testbeds = db.StringProperty()
     
+class Testbed(db.Model):
+    uri = db.StringProperty()
+    media_type = db.StringProperty()
+    name = db.StringProperty()
+    server_url = db.StringProperty()
     
 class JobCollectionHandler(webapp.RequestHandler):
   def get(self):
@@ -64,11 +77,15 @@ class JobCollectionHandler(webapp.RequestHandler):
             
 def main():
     application = webapp.WSGIApplication([
-        ('/tasks/', TasksHandler),
-        ('/tasks/456', TaskHandler),
-        ('/reflector', Reflector),
+        # ('/tasks/', TasksHandler),
+        # ('/tasks/456', TaskHandler),
+        # ('/reflector', Reflector),
         
-        ('/jobs/', JobCollectionHandler)
+        ('/',                 FederationResourceHandler)
+        ('/testbeds/',        TestbedCollectionHandler)
+        ('/testbeds/(.*)',    TestbedResourceHandler)
+        ('/jobs/',            JobCollectionHandler)
+        ('/jobs/(.*)',        JobResourceHandler)
     ], debug=True)
     util.run_wsgi_app(application)
 
