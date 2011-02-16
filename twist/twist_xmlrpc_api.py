@@ -45,15 +45,17 @@ from twisted.cred import error as credError
 class TWIST_XMLRPC_Factory(server.Site):
     def __init__(self, resource):
         server.Site.__init__(self, resource)
-        
+
 class TWIST_XMLRPC_API(xmlrpc.XMLRPC):
     def __init__(self, portal):
         xmlrpc.XMLRPC.__init__(self)
         self.portal = portal
-        
+    
+    # XMLRPC TEST
     def xmlrpc_now(self):
         return datetime.now()
     
+    # LIST OF EXPORTED FUNCTIONS (XMLRPC SKELETON)
     def xmlrpc_getAllJobs(self):
         def _cb(r):
             return map(dict, r)
