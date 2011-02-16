@@ -36,7 +36,7 @@ def model_to_string(resource):
     elif isinstance(resource, Job):
         return 'job'
 
-def resource_model_to_dict(resource_model):
+def resource_model_to_dict(resource_model, head_only=False):
     resource_dict = OrderedDict()
     
     slug = str(resource_model.id)
@@ -47,12 +47,18 @@ def resource_model_to_dict(resource_model):
     
     if isinstance(resource_model, User):
         resource_dict['name'] = resource_model.username
-        resource_dict['first_name'] = resource_model.first_name
-        resource_dict['last_name'] = resource_model.last_name
-        resource_dict['email'] = resource_model.email
         
     elif isinstance(resource_model, Platform):
-        resource_dict['name'] = resource_model.name    
+        resource_dict['name'] = resource_model.name
+        
+    if not head_only:
+        if isinstance(resource_model, User):
+            resource_dict['first_name'] = resource_model.first_name
+            resource_dict['last_name'] = resource_model.last_name
+            resource_dict['email'] = resource_model.email
+
+    return resource_dict  
+       
     
 #    if not only_head:
 #        if resource_model.__class__ == Node:
@@ -66,7 +72,7 @@ def resource_model_to_dict(resource_model):
 #        elif resource_model.__class__ == NodeGroup:
 #            resource_dict['nodes'] = collection_queryset_to_list(resource_model.nodes.all())
             
-    return resource_dict
+    
 
 #def resource_dict_to_model(resource_dict):
 #    resource_model = Image(name = resource_dict['name'])
@@ -111,14 +117,17 @@ def testbed_resource_handler(request):
         resource_dict['media_type'] = MEDIA_TYPE
         resource_dict['name'] = 'TWIST (TKN Wireless Indoor Sensor network Testbed)'
         resource_dict['organization'] = 'Technische Universitaet Berlin'
-        resource_dict['platforms'] = 'N/A'
-        resource_dict['jobs'] = 'N/A'
+        
+        # collection_queryset = Platform.objects.all()
+        # resource_dict['platforms'] = collection_queryset_to_list(collection_queryset)    
+        
+        resource_dict['platforms'] = 'http://' + SERVER_ADDR + ':' + SERVER_PORT + '/platforms/'
+        resource_dict['jobs'] = 'http://' + SERVER_ADDR + ':' + SERVER_PORT + '/jobs/'
+        
         resource_json = resource_dict_to_json(resource_dict)
         return HttpResponse(resource_json, content_type=CONTENT_TYPE)
     else:
         return HttpResponseNotAllowed(['GET'])
-
-
 
 # Platform
 
@@ -153,7 +162,8 @@ def job_collection_handler(request):
             job_dict['platforms'] = list()
             for platform_native_id in native_job_dict['resources']:
                 platform_model = Platform.objects.select_related(depth=1).get(native_id=platform_native_id)
-                job_dict['platforms'].append(platform_model.id)
+                platform_dict = resource_model_to_dict(platform_model)
+                job_dict['platforms'].append(platform_dict)
             
             collection_list.append(job_dict)
         
