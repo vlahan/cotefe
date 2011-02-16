@@ -21,6 +21,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.api import urlfetch
 from google.appengine.api.labs import taskqueue
+from google.appengine.ext import db
 
 class TasksHandler(webapp.RequestHandler):
   def post(self):
@@ -49,7 +50,10 @@ class Reflector(webapp.RequestHandler):
       url = self.request.get('url'),
     )
     
-class TestHandler(webapp.RequestHandler):
+class TestbedResource(db.Model):
+    
+    
+class JobCollectionHandler(webapp.RequestHandler):
   def get(self):
     result = urlfetch.fetch(
         method = 'GET',
@@ -64,7 +68,7 @@ def main():
         ('/tasks/456', TaskHandler),
         ('/reflector', Reflector),
         
-        ('/testbeds/123/jobs/', TestHandler)
+        ('/jobs/', JobCollectionHandler)
     ], debug=True)
     util.run_wsgi_app(application)
 
