@@ -3,8 +3,6 @@ import socket
 
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
-print socket.gethostname()
-
 DEBUG = True
     
 TEMPLATE_DEBUG = DEBUG
