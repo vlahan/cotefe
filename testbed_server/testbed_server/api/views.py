@@ -11,6 +11,7 @@ from odict import OrderedDict
 
 PROTOCOL = 'http'
 SERVER_ADDR = '127.0.0.1'
+SERVER_ADDR = 'www.twist.tu-berlin.de'
 SERVER_PORT = '8001'
 SERVER_PATH = PROTOCOL + '://' + SERVER_ADDR + ':' + SERVER_PORT
 MEDIA_TYPE = 'application/json'
