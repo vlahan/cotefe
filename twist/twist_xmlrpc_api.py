@@ -66,6 +66,17 @@ class TWIST_XMLRPC_API(xmlrpc.XMLRPC):
         d=self.user.getAllJobs()
         d.addCallbacks(_cb, _eb)
         return d
+    
+    def xmlrpc_getAllPlatforms(self):
+        def _cb(r):
+            return map(dict, r)
+        def _eb(f):
+            msg=f.getErrorMessage().strip()
+            log.err(msg)
+            return []
+        d=self.user.getAllPlatforms()
+        d.addCallbacks(_cb, _eb)
+        return d
 
     def render(self, request):
         username = request.getUser()

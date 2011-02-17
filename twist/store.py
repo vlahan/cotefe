@@ -399,3 +399,7 @@ class TwistStore(object):
     def _cb_cache(self, records, key):
         self.cache[key]=records
         return defer.succeed(records)
+    
+    def getAllPlatformRecords(self):
+        sql='''SELECT * FROM platforms'''
+        return self.dbpool.runQuery(sql).addErrback(self.log_failure)

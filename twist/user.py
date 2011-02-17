@@ -426,5 +426,13 @@ class TwistUser(object):
     def _cb_controlListSupernodes(self, supernodes, action):
         mac_list=[supernode['mac_addr'] for supernode in supernodes]
         return self.poe_store.control_supernode_power(mac_list, action)
+    
+    def getAllPlatforms(self):
+        if self.role=='admin': 
+            return self.store.getAllPlatformRecords()
+        elif self.role=='user':
+            return self.store.getAllPlatformRecords()
+        else:
+            return []
         
         
