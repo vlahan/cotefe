@@ -1,7 +1,7 @@
 import xmlrpclib
 from datetime import datetime
-import base64
-import hashlib
+# import base64
+# import hashlib
 from django.utils import simplejson
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseNotAllowed
