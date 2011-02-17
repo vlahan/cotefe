@@ -5,10 +5,10 @@ PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 print socket.gethostname()
 
-if socket.gethostname() == 'www.twist.tu-berlin.de':
-    DEBUG = False
-else:
+if socket.gethostname() == '127.0.0.1':
     DEBUG = True
+else:
+    DEBUG = False
     
 TEMPLATE_DEBUG = DEBUG
 
