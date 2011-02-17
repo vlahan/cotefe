@@ -3,6 +3,8 @@ import socket
 
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
+print socket.gethostname()
+
 if socket.gethostname() == 'www.twist.tu-berlin.de':
     DEBUG = False
 else:
