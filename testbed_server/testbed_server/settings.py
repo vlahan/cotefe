@@ -5,10 +5,7 @@ PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 print socket.gethostname()
 
-if socket.gethostname() == '127.0.0.1':
-    DEBUG = True
-else:
-    DEBUG = False
+DEBUG = True
     
 TEMPLATE_DEBUG = DEBUG
 
