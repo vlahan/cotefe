@@ -5,24 +5,27 @@ import hashlib
 from django.utils import simplejson
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseNotAllowed
-from api.models import *
+from api.models import Testbed, Platform, Job
 from django.contrib.auth.models import User
 from odict import OrderedDict
 
 SERVER_ADDR = '127.0.0.1'
-SERVER_PORT = '8000'
+SERVER_PORT = '8001'
+SERVER_PATH = 'http://' + SERVER_ADDR + ':' + SERVER_PORT
 MEDIA_TYPE = 'application/json'
+
 # CONTENT_TYPE = 'application/json;charset=utf-8'
 CONTENT_TYPE = 'text/plain'
+
 JSON_INDENT = 4
 JSON_ENSURE_ASCII = True
 JSON_SORT_KEYS = False
 
-host = '127.0.0.1'
-port = '8002'
-username = 'conetuser'
-password = 'password'
-s = xmlrpclib.ServerProxy('http://%s:%s@%s:%s/RPC2' % (username, password, host, port))
+XMLRPC_HOST = '127.0.0.1'
+XMLRPC_PORT = '8002'
+XMLRPC_USERNAME = 'conetuser'
+XMLRPC_PASSWORD = 'password'
+s = xmlrpclib.ServerProxy('http://%s:%s@%s:%s/RPC2' % (XMLRPC_USERNAME, XMLRPC_PASSWORD, XMLRPC_HOST, XMLRPC_PORT))
 
 # UTILITY FUNCTIONS
 
@@ -39,10 +42,7 @@ def model_to_string(resource):
 def resource_model_to_dict(resource_model, head_only=False):
     resource_dict = OrderedDict()
     
-    slug = str(resource_model.id)
-    # slug = base64.urlsafe_b64encode(str(resource_model.id))
-    # m = hashlib.md5(); m.update(str(resource_model.id)); slug = m.hexdigest()
-    resource_dict['uri'] = 'http://' + SERVER_ADDR + ':' + SERVER_PORT + '/' + model_to_string(resource_model) + 's/' + slug
+    resource_dict['uri'] = SERVER_PATH + resource_model.get_absolute_url()
     resource_dict['media_type'] = MEDIA_TYPE
     
     if isinstance(resource_model, User):
@@ -58,21 +58,6 @@ def resource_model_to_dict(resource_model, head_only=False):
             resource_dict['email'] = resource_model.email
 
     return resource_dict  
-       
-    
-#    if not only_head:
-#        if resource_model.__class__ == Node:
-#            resource_dict['platform'] = resource_model_to_dict(resource_model.platform, True)
-#            resource_dict['image'] = resource_model_to_dict(resource_model.image, True)
-#            resource_dict['power'] = resource_model.power
-#        elif resource_model.__class__ == Platform:
-#            pass
-#        elif resource_model.__class__ == Image:
-#            pass
-#        elif resource_model.__class__ == NodeGroup:
-#            resource_dict['nodes'] = collection_queryset_to_list(resource_model.nodes.all())
-            
-    
 
 #def resource_dict_to_model(resource_dict):
 #    resource_model = Image(name = resource_dict['name'])
@@ -96,19 +81,7 @@ def collection_list_to_json(collection_list):
 
 # REST API FUNCTIONS
 
-# User
-
-def user_collection_handler(request):
-    if request.method == 'GET':
-        collection_queryset = User.objects.all()
-        collection_list = collection_queryset_to_list(collection_queryset)
-        collection_json = collection_list_to_json(collection_list)
-        return HttpResponse(collection_json, content_type=CONTENT_TYPE)
-    else:
-        return HttpResponseNotAllowed(['GET'])
-
-
-# Testbed
+# TESTBED
 
 def testbed_resource_handler(request):
     if request.method == 'GET':
@@ -128,11 +101,44 @@ def testbed_resource_handler(request):
         return HttpResponse(resource_json, content_type=CONTENT_TYPE)
     else:
         return HttpResponseNotAllowed(['GET'])
+    
+# USER
 
-# Platform
+def user_collection_handler(request):
+    if request.method == 'GET':
+        collection_queryset = User.objects.all()
+        collection_list = collection_queryset_to_list(collection_queryset)
+        collection_json = collection_list_to_json(collection_list)
+        return HttpResponse(collection_json, content_type=CONTENT_TYPE)
+    else:
+        return HttpResponseNotAllowed(['GET'])
+
+# PLATFORM
 
 def platform_collection_handler(request):
     if request.method == 'GET':
+        # gets all entries from the TN API
+        native_platform_list = s.getAllPlatforms()
+        
+        # gets all entries from the TA API
+        collection_queryset = Platform.objects.all()
+        
+        # builds a list of TN API platform_ids
+        native_platform_id_list = list()
+        for native_platform_dict in native_platform_list:
+            native_platform_id_list.append(native_platform_dict['platform_id'])
+        
+        # deletes all entries that don't exist in the native database (cleaning)
+        for resource_model in collection_queryset:
+            if resource_model.id not in native_platform_id_list:
+                resource_model.delete()
+        
+        # fetched platforms in the native database and inserts/updates the local database entries (using the same id)
+        for native_platform_dict in native_platform_list:
+            platform_model = Platform(id = native_platform_dict['platform_id'], name = native_platform_dict['name_long'])
+            platform_model.save();
+
+        # gets all the platforms from this database
         collection_queryset = Platform.objects.all()
         collection_list = collection_queryset_to_list(collection_queryset)
         collection_json = collection_list_to_json(collection_list)
@@ -140,7 +146,7 @@ def platform_collection_handler(request):
     else:
         return HttpResponseNotAllowed(['GET'])
 
-# Job
+# PLATFORM
 
 def job_collection_handler(request):
     if request.method == "GET":
