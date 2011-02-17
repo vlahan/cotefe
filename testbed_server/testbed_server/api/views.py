@@ -26,6 +26,7 @@ XMLRPC_HOST = '127.0.0.1'
 XMLRPC_PORT = '8002'
 XMLRPC_USERNAME = 'conetuser'
 XMLRPC_PASSWORD = 'password'
+
 s = xmlrpclib.ServerProxy('http://%s:%s@%s:%s/RPC2' % (XMLRPC_USERNAME, XMLRPC_PASSWORD, XMLRPC_HOST, XMLRPC_PORT))
 
 # UTILITY FUNCTIONS
@@ -69,6 +70,8 @@ def resource_model_to_dict(resource_model, head_only=False):
             # resource_dict['owner'] = resource_model.owner
             resource_dict['datetime_from'] = resource_model.datetime_from
             resource_dict['datetime_to'] = resource_model.datetime_to
+            
+            resource_dict['resources'] = collection_queryset_to_list(resource_model.platforms.all())
 
     return resource_dict
     
@@ -185,14 +188,20 @@ def job_collection_handler(request):
             if resource_model.id not in native_resource_id_list:
                 resource_model.delete()
         
-        # fetched platforms in the native database and inserts/updates the local database entries (using the same id)
+        # fetched jobs in the native database and inserts/updates the local database entries (using the same id)
         for native_resource_dict in native_collection_list:
+            
+            platform_list = list()
+            for native_platform_id in native_resource_dict['resources']:
+                platform_list.append(Platform.objects.get(pk=native_platform_id))
+                
             resource_model = Job(
                 id = native_resource_dict['job_id'],
                 name = native_resource_dict['description'],
                 # converts datetime to ISO8601 (http://en.wikipedia.org/wiki/ISO_8601)
                 datetime_from = datetime.strptime(native_resource_dict['time_begin'].value, "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00"),
-                datetime_to   = datetime.strptime(native_resource_dict['time_end'].value,    "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00")
+                datetime_to   = datetime.strptime(native_resource_dict['time_end'].value,   "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00"),
+                platforms = platform_list
             )
             resource_model.save();
 
@@ -207,7 +216,7 @@ def job_collection_handler(request):
 def job_resource_handler(request, slug):
     if request.method == 'GET':
         # gets all entries from the TN API
-        resource_model = Job.objects.get(pk=slug)
+        resource_model = Job.objects.select_related(depth=1).get(pk=slug)
         resource_dict = resource_model_to_dict(resource_model)
         resource_json = resource_dict_to_json(resource_dict)
         return HttpResponse(resource_json, content_type=CONTENT_TYPE)

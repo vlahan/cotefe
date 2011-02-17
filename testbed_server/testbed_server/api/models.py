@@ -35,7 +35,7 @@ class Job(models.Model):
     # owner = models.ForeignKey(User, null=True)
     datetime_from = models.CharField(max_length=25)
     datetime_to = models.CharField(max_length=25)
-    platforms = models.CharField(max_length=255)
+    platforms = models.ManyToManyField(Platform)
     
     def __unicode__(self):
         return self.name
