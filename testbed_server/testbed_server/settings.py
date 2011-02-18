@@ -1,10 +1,18 @@
 import os
 import socket
 
-PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+if socket.gethostbyname(socket.gethostname()) == '10.211.55.2':
+    print 'DEVELOPMENT'
+    DEBUG = True
+    DEFAULT_CONTENT_TYPE = 'text/plain'
+    DEFAULT_CHARSET = 'utf-8'
+else:
+    print 'PRODUCTION'
+    DEBUG = False
+    DEFAULT_CONTENT_TYPE = 'application/json'
+    DEFAULT_CHARSET = 'utf-8'
 
-# DEBUG = False
-DEBUG = True
+PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
     
 TEMPLATE_DEBUG = DEBUG
 
@@ -83,6 +91,3 @@ INSTALLED_APPS = (
 INTERNAL_IPS = (
     '127.0.0.1',
 )
-
-DEFAULT_CONTENT_TYPE = 'application/json'
-DEFAULT_CHARSET = 'utf-8'
