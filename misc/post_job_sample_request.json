@@ -1,0 +1,19 @@
+{
+    "uri": "http://127.0.0.1:8001/jobs/1477", 
+    "media_type": "application/json", 
+    "name": "Add job description here...", 
+    "datetime_from": "2011-02-23T16:00:00+01:00", 
+    "datetime_to": "2011-02-23T20:00:00+01:00", 
+    "resources": [
+        {
+            "uri": "http://127.0.0.1:8001/platforms/3", 
+            "media_type": "application/json", 
+            "name": "Telos (Rev A 2004-04-27)"
+        }, 
+        {
+            "uri": "http://127.0.0.1:8001/platforms/4", 
+            "media_type": "application/json", 
+            "name": "Telos (Rev B 2004-xx-xx)"
+        }
+    ]
+}
