@@ -3,10 +3,11 @@ from api.views import *
 from django.contrib import databrowse
 from django.contrib import admin
 admin.autodiscover()
+import registration
 
 urlpatterns = patterns('',
     
-    (r'^admin/',             include(admin.site.urls)),
+    (r'^admin/',             include('admin.site.urls')),
     (r'^databrowse/(.*)',    databrowse.site.root),
     
     (r'^users/$',            user_collection_handler),
