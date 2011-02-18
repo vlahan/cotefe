@@ -3,7 +3,8 @@ import socket
 
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
-DEBUG = True
+DEBUG = False
+# DEBUG = True
     
 TEMPLATE_DEBUG = DEBUG
 
