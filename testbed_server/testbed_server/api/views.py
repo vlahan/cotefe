@@ -1,6 +1,6 @@
 import xmlrpclib
 from datetime import datetime
-# import base64
+# import base64
 # import hashlib
 from django.utils import simplejson
 from django.core.serializers.json import DjangoJSONEncoder
@@ -11,7 +11,7 @@ from odict import OrderedDict
 
 PROTOCOL = 'http'
 SERVER_ADDR = '127.0.0.1'
-SERVER_ADDR = 'www.twist.tu-berlin.de'
+# SERVER_ADDR = 'www.twist.tu-berlin.de'
 SERVER_PORT = '8001'
 SERVER_PATH = PROTOCOL + '://' + SERVER_ADDR + ':' + SERVER_PORT
 MEDIA_TYPE = 'application/json'
