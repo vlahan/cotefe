@@ -10,37 +10,25 @@ from django.contrib.auth.models import User
 from odict import OrderedDict
 
 PROTOCOL = 'http'
-SERVER_ADDR = '127.0.0.1'
-# SERVER_ADDR = 'www.twist.tu-berlin.de'
+# SERVER_ADDR = '127.0.0.1'
+SERVER_ADDR = 'www.twist.tu-berlin.de'
 SERVER_PORT = '8001'
 SERVER_PATH = PROTOCOL + '://' + SERVER_ADDR + ':' + SERVER_PORT
 MEDIA_TYPE = 'application/json'
-
-CONTENT_TYPE = 'application/json;charset=utf-8'
-# CONTENT_TYPE = 'text/plain'
 
 JSON_INDENT = 4
 JSON_ENSURE_ASCII = True
 JSON_SORT_KEYS = False
 
+XMLRPC_PROTOCOL = 'https'
 XMLRPC_HOST = '127.0.0.1'
 XMLRPC_PORT = '8002'
 XMLRPC_USERNAME = 'conetuser'
 XMLRPC_PASSWORD = 'password'
 
-s = xmlrpclib.ServerProxy('http://%s:%s@%s:%s/RPC2' % (XMLRPC_USERNAME, XMLRPC_PASSWORD, XMLRPC_HOST, XMLRPC_PORT))
+s = xmlrpclib.ServerProxy('%s://%s:%s@%s:%s/RPC2' % (XMLRPC_PROTOCOL, XMLRPC_USERNAME, XMLRPC_PASSWORD, XMLRPC_HOST, XMLRPC_PORT))
 
 # UTILITY FUNCTIONS
-
-def model_to_string(resource):
-    if isinstance(resource, User):
-        return 'user'
-    elif isinstance(resource, Testbed):
-        return 'testbed'
-    elif isinstance(resource, Platform):
-        return 'platform'
-    elif isinstance(resource, Job):
-        return 'job'
 
 def resource_model_to_dict(resource_model, head_only=False):
     resource_dict = OrderedDict()
@@ -111,7 +99,7 @@ def testbed_resource_handler(request):
         resource_dict['jobs'] = SERVER_PATH + '/jobs/'
         
         resource_json = resource_dict_to_json(resource_dict)
-        return HttpResponse(resource_json, content_type=CONTENT_TYPE)
+        return HttpResponse(resource_json)
     else:
         return HttpResponseNotAllowed(['GET'])
     
@@ -122,7 +110,7 @@ def user_collection_handler(request):
         collection_queryset = User.objects.all()
         collection_list = collection_queryset_to_list(collection_queryset)
         collection_json = collection_list_to_json(collection_list)
-        return HttpResponse(collection_json, content_type=CONTENT_TYPE)
+        return HttpResponse(collection_json)
     else:
         return HttpResponseNotAllowed(['GET'])
 
@@ -155,7 +143,7 @@ def platform_collection_handler(request):
         collection_queryset = Platform.objects.all()
         collection_list = collection_queryset_to_list(collection_queryset)
         collection_json = collection_list_to_json(collection_list)
-        return HttpResponse(collection_json, content_type=CONTENT_TYPE)
+        return HttpResponse(collection_json)
     else:
         return HttpResponseNotAllowed(['GET'])
     
@@ -165,7 +153,7 @@ def platform_resource_handler(request, slug):
         resource_model = Platform.objects.get(pk=slug)
         resource_dict = resource_model_to_dict(resource_model)
         resource_json = resource_dict_to_json(resource_dict)
-        return HttpResponse(resource_json, content_type=CONTENT_TYPE)
+        return HttpResponse(resource_json)
     else:
         return HttpResponseNotAllowed(['GET'])
 
@@ -212,7 +200,7 @@ def job_collection_handler(request):
         collection_queryset = Job.objects.all()
         collection_list = collection_queryset_to_list(collection_queryset)
         collection_json = collection_list_to_json(collection_list)
-        return HttpResponse(collection_json, content_type=CONTENT_TYPE)
+        return HttpResponse(collection_json)
     else:
         return HttpResponseNotAllowed(['GET', 'POST'])
     
@@ -222,6 +210,6 @@ def job_resource_handler(request, slug):
         resource_model = Job.objects.select_related(depth=1).get(pk=slug)
         resource_dict = resource_model_to_dict(resource_model)
         resource_json = resource_dict_to_json(resource_dict)
-        return HttpResponse(resource_json, content_type=CONTENT_TYPE)
+        return HttpResponse(resource_json)
     else:
         return HttpResponseNotAllowed(['GET'])
