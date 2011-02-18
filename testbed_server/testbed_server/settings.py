@@ -42,16 +42,20 @@ ADMIN_MEDIA_PREFIX = '%sadmin-media/' % MEDIA_URL
 
 SECRET_KEY = 'federatingrocks'
 
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.auth',
-    'django.core.context_processors.media',
-    'django.core.context_processors.request',
-)
+#TEMPLATE_LOADERS = (
+#    'django.template.loaders.filesystem.Loader',
+#    'django.template.loaders.app_directories.Loader',
+#)
+#
+#TEMPLATE_CONTEXT_PROCESSORS = (
+#    'django.core.context_processors.auth',
+#    'django.core.context_processors.media',
+#    'django.core.context_processors.request',
+#)
+#
+#TEMPLATE_DIRS = ()
+#for root, dirs, files in os.walk(PROJECT_PATH):
+#    if 'templates' in dirs: TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
 
 if DEBUG:
     TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.debug',)
@@ -69,9 +73,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'urls'
 
-TEMPLATE_DIRS = ()
-for root, dirs, files in os.walk(PROJECT_PATH):
-    if 'templates' in dirs: TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
+
 
 INSTALLED_APPS = (
     
