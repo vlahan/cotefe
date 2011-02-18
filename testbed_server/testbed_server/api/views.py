@@ -5,7 +5,7 @@ from datetime import datetime
 from django.utils import simplejson
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseNotAllowed
-from api.models import Testbed, Platform, Job
+from api.models import Platform, Job
 from django.contrib.auth.models import User
 from odict import OrderedDict
 
@@ -16,8 +16,8 @@ SERVER_PORT = '8001'
 SERVER_PATH = PROTOCOL + '://' + SERVER_ADDR + ':' + SERVER_PORT
 MEDIA_TYPE = 'application/json'
 
-# CONTENT_TYPE = 'application/json;charset=utf-8'
-CONTENT_TYPE = 'text/plain'
+CONTENT_TYPE = 'application/json;charset=utf-8'
+# CONTENT_TYPE = 'text/plain'
 
 JSON_INDENT = 4
 JSON_ENSURE_ASCII = True
@@ -202,8 +202,10 @@ def job_collection_handler(request):
                 # converts datetime to ISO8601 (http://en.wikipedia.org/wiki/ISO_8601)
                 datetime_from = datetime.strptime(native_resource_dict['time_begin'].value, "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00"),
                 datetime_to   = datetime.strptime(native_resource_dict['time_end'].value,   "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00"),
-                platforms = platform_list
+                # platforms = platform_list
             )
+            resource_model.save();
+            resource_model.platforms = platform_list
             resource_model.save();
 
         # gets all the platforms from this database

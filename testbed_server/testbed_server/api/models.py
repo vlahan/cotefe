@@ -9,13 +9,6 @@ from django.contrib.auth.models import User
 #    def __unicode__(self):
 #        return self.openid
 
-class Testbed(models.Model):
-    name = models.CharField(max_length=255)
-    organization = models.CharField(max_length=255)
-    
-    def __unicode__(self):
-        return self.name
-
 class Platform(models.Model):
     name = models.CharField(max_length=255)
     tinyos_name = models.CharField(max_length=255)
