@@ -1,7 +1,7 @@
 import os
 import socket
 
-if socket.gethostbyname(socket.gethostname()) == '10.211.55.2':
+if socket.gethostbyname(socket.gethostname()) != '10.211.55.2':
     print 'DEVELOPMENT'
     DEBUG = True
     DEFAULT_CONTENT_TYPE = 'text/plain'
