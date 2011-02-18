@@ -3,7 +3,7 @@ from xmlrpclib import DateTime
 from datetime import datetime
 import json
 
-XMLRPC_HOST = 'www.twist.tu-berlin.de'
+XMLRPC_HOST = '127.0.0.1'
 XMLRPC_PORT = '8002'
 
 USERNAME = 'conetuser'
