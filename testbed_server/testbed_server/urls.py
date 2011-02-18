@@ -3,7 +3,6 @@ from api.views import *
 from django.contrib import databrowse
 from django.contrib import admin
 admin.autodiscover()
-import registration
 
 urlpatterns = patterns('',
     
