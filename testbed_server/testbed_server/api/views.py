@@ -167,8 +167,11 @@ def platform_resource_handler(request, slug):
 def job_collection_handler(request):
     if request.method == 'GET':
         # gets all entries from the TN API
-        native_collection_list = tn_server.getAllJobs()
-        
+        try:
+            native_collection_list = tn_server.getAllJobs()
+        except xmlrpclib.Fault, err:
+            print "XMLRPC Error (%s):%s" % (err.faultCode, err.faultString) 
+            
         # gets all entries from the TA API
         collection_queryset = Job.objects.all()
         
