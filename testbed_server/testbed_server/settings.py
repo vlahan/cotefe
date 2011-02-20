@@ -1,9 +1,9 @@
 import os
 # import socket
+PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 DEVELOPMENT = False
 
-# if socket.gethostbyname(socket.gethostname()) == '10.211.55.2':
 if DEVELOPMENT:
 
 # if socket.gethostbyname(socket.gethostname()) == '10.211.55.2':
@@ -47,25 +47,25 @@ USE_L10N = False
 
 SECRET_KEY = 'federatingrocks'
 
-#TEMPLATE_LOADERS = (
-#    'django.template.loaders.filesystem.Loader',
-#    'django.template.loaders.app_directories.Loader',
-#)
-#
-#TEMPLATE_CONTEXT_PROCESSORS = (
-#    'django.core.context_processors.auth',
-#    'django.core.context_processors.media',
-#    'django.core.context_processors.request',
-#)
-#
-#TEMPLATE_DIRS = ()
-#for root, dirs, files in os.walk(PROJECT_PATH):
-#    if 'templates' in dirs: TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
-#
-#if DEBUG:
-#    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.debug',)
-#if USE_I18N:
-#    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.i18n',)
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.auth',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+)
+
+TEMPLATE_DIRS = ()
+for root, dirs, files in os.walk(PROJECT_PATH):
+    if 'templates' in dirs: TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
+
+if DEBUG:
+    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.debug',)
+if USE_I18N:
+    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.i18n',)
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -76,7 +76,7 @@ MIDDLEWARE_CLASSES = (
 #if DEBUG:
 #    MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'ctfta.urls'
 
 
 
@@ -92,7 +92,7 @@ INSTALLED_APPS = (
     'django.contrib.databrowse',
     
     # Project Applications
-    'api',
+    'ctfta.api',
 )
 
 #INTERNAL_IPS = (

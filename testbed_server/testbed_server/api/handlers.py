@@ -1,5 +1,5 @@
 from piston.handler import BaseHandler
-from api.models import Testbed, Job
+from ctfta.api.models import Testbed, Job
 
 class TestbedHandler(BaseHandler):
     allowed_methods = ('GET',)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib import databrowse
-from api.models import Platform, Job
+from ctfta.api.models import Platform, Job
 
 admin.site.register(Platform)
 admin.site.register(Job)

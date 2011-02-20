@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-from api.views import *
+from ctfta.api.views import *
 from django.contrib import databrowse
 from django.contrib import admin
 admin.autodiscover()

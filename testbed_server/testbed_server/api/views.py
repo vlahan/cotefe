@@ -5,11 +5,11 @@ from datetime import datetime
 from django.utils import simplejson
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseNotAllowed
-from api.models import Platform, Job
+from ctfta.api.models import Platform, Job
 from django.contrib.auth.models import User
-from odict import OrderedDict
+from ctfta.odict import OrderedDict
 
-PROTOCOL = 'http'
+PROTOCOL = 'https'
 # SERVER_ADDR = '127.0.0.1'
 SERVER_ADDR = 'www.twist.tu-berlin.de'
 SERVER_PORT = '8001'
@@ -22,11 +22,15 @@ JSON_SORT_KEYS = False
 
 XMLRPC_PROTOCOL = 'https'
 XMLRPC_HOST = '127.0.0.1'
-XMLRPC_PORT = '8002'
+XMLRPC_PORT = '8005'
 XMLRPC_USERNAME = 'conetuser'
 XMLRPC_PASSWORD = 'password'
 
-s = xmlrpclib.ServerProxy('%s://%s:%s@%s:%s/RPC2' % (XMLRPC_PROTOCOL, XMLRPC_USERNAME, XMLRPC_PASSWORD, XMLRPC_HOST, XMLRPC_PORT))
+tn_server = xmlrpclib.ServerProxy('%s://%s:%s@%s:%s' % (XMLRPC_PROTOCOL,
+                                                     XMLRPC_USERNAME,
+                                                     XMLRPC_PASSWORD,
+                                                     XMLRPC_HOST,
+                                                     XMLRPC_PORT))
 
 # UTILITY FUNCTIONS
 
@@ -65,7 +69,8 @@ def resource_model_to_dict(resource_model, head_only=False):
     return resource_dict
     
 def resource_dict_to_json(resource_dict):
-    return simplejson.dumps(resource_dict, ensure_ascii=JSON_ENSURE_ASCII, indent=JSON_INDENT, sort_keys=JSON_SORT_KEYS)
+    return simplejson.dumps(resource_dict, ensure_ascii=JSON_ENSURE_ASCII,
+                            indent=JSON_INDENT, sort_keys=JSON_SORT_KEYS)
 
 def resource_json_to_dict(resource_json):
     return simplejson.loads(resource_json)
@@ -78,7 +83,8 @@ def collection_queryset_to_list(collection_queryset):
     return collection_list
 
 def collection_list_to_json(collection_list):
-    return simplejson.dumps(collection_list, cls=DjangoJSONEncoder, ensure_ascii=JSON_ENSURE_ASCII, indent=JSON_INDENT, sort_keys=JSON_SORT_KEYS)
+    return simplejson.dumps(collection_list, cls=DjangoJSONEncoder,
+                            ensure_ascii=JSON_ENSURE_ASCII, indent=JSON_INDENT, sort_keys=JSON_SORT_KEYS)
 
 # REST API FUNCTIONS
 
@@ -119,7 +125,7 @@ def user_collection_handler(request):
 def platform_collection_handler(request):
     if request.method == 'GET':
         # gets all entries from the TN API
-        native_collection_list = s.getAllPlatforms()
+        native_collection_list = tn_server.getAllPlatforms()
         
         # gets all entries from the TA API
         collection_queryset = Platform.objects.all()
@@ -162,7 +168,7 @@ def platform_resource_handler(request, slug):
 def job_collection_handler(request):
     if request.method == 'GET':
         # gets all entries from the TN API
-        native_collection_list = s.getAllJobs()
+        native_collection_list = tn_server.getAllJobs()
         
         # gets all entries from the TA API
         collection_queryset = Job.objects.all()
@@ -188,8 +194,10 @@ def job_collection_handler(request):
                 id = native_resource_dict['job_id'],
                 name = native_resource_dict['description'],
                 # converts datetime to ISO8601 (http://en.wikipedia.org/wiki/ISO_8601)
-                datetime_from = datetime.strptime(native_resource_dict['time_begin'].value, "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00"),
-                datetime_to   = datetime.strptime(native_resource_dict['time_end'].value,   "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00"),
+                datetime_from = datetime.strptime(
+                native_resource_dict['time_begin'].value, "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00"),
+                datetime_to   = datetime.strptime(
+                native_resource_dict['time_end'].value,   "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00"),
                 # platforms = platform_list
             )
             resource_model.save();
