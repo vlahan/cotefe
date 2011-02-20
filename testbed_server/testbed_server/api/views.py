@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 from ctfta.odict import OrderedDict
 
 PROTOCOL = 'https'
-# SERVER_ADDR = '127.0.0.1'
 SERVER_ADDR = 'www.twist.tu-berlin.de'
 SERVER_PORT = '8001'
 SERVER_PATH = PROTOCOL + '://' + SERVER_ADDR + ':' + SERVER_PORT
@@ -22,7 +21,7 @@ JSON_SORT_KEYS = False
 
 XMLRPC_PROTOCOL = 'https'
 XMLRPC_HOST = '127.0.0.1'
-XMLRPC_PORT = '8005'
+XMLRPC_PORT = '8002'
 XMLRPC_USERNAME = 'conetuser'
 XMLRPC_PASSWORD = 'password'
 
@@ -194,10 +193,8 @@ def job_collection_handler(request):
                 id = native_resource_dict['job_id'],
                 name = native_resource_dict['description'],
                 # converts datetime to ISO8601 (http://en.wikipedia.org/wiki/ISO_8601)
-                datetime_from = datetime.strptime(
-                native_resource_dict['time_begin'].value, "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00"),
-                datetime_to   = datetime.strptime(
-                native_resource_dict['time_end'].value,   "%Y%m%dT%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%S+01:00"),
+                datetime_from = native_resource_dict['time_begin'],
+                datetime_to   = native_resource_dict['time_end'],
                 # platforms = platform_list
             )
             resource_model.save();
