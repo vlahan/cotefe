@@ -21,7 +21,7 @@ JSON_SORT_KEYS = False
 
 XMLRPC_PROTOCOL = 'https'
 XMLRPC_HOST = '127.0.0.1'
-XMLRPC_PORT = '8002'
+XMLRPC_PORT = '8005'
 XMLRPC_USERNAME = 'conetuser'
 XMLRPC_PASSWORD = 'password'
 
@@ -124,7 +124,10 @@ def user_collection_handler(request):
 def platform_collection_handler(request):
     if request.method == 'GET':
         # gets all entries from the TN API
-        native_collection_list = tn_server.getAllPlatforms()
+        try:
+            native_collection_list = tn_server.getAllPlatforms()
+        except xmlrpclib.Fault, err:
+            print "XMLRPC Error (%s):%s" % (err.faultCode, err.faultString) 
         
         # gets all entries from the TA API
         collection_queryset = Platform.objects.all()
