@@ -1,4 +1,4 @@
-application: federation-server
+application: conet-testbed-federation
 version: 1
 runtime: python
 api_version: 1
@@ -7,3 +7,6 @@ handlers:
 - url: .*
   script: main.py
   secure: always
+  
+builtins:
+- datastore_admin: on
