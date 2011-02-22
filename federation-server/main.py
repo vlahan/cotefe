@@ -36,6 +36,23 @@ class Job(db.Model):
     # testbed = db.ReferenceProperty(Testbed)
     datetime_from = db.DateTimeProperty()
     datetime_to   = db.DateTimeProperty()
+    
+# DATASTORE INITIALIZATION
+    
+class DatastoreInitialization(webapp.RequestHandler):
+    def get(self):
+        # initialize Testbed table
+        for t in Testbed.all():
+            t.delete()
+
+        t1 = Testbed()
+        t1.uri = 'https://federation-server.appspot.com/testbeds/1'
+        t1.media_type = 'application/json'
+        t1.name = 'TWIST'
+        t1.organiziation = 'TU Berlin'
+        t1.server_url = 'https://www.twist.tu-berlin.de:8001'
+        t1.put()
+        self.response.out.write('Datastore has been initialized!')
 
 
 # TASK EXAMPLE
@@ -72,11 +89,11 @@ class Reflector(webapp.RequestHandler):
 class FederationResourceHandler(webapp.RequestHandler):
     def get(self):
         federation_dict = OrderedDict()
-        federation_dict['uri'] = "https://conet-testbed-federation.appspot.com/"
+        federation_dict['uri'] = "https://federation-server.appspot.com/"
         federation_dict['media_type'] = "application/json"
-        federation_dict['name'] = "CONET Testbed Federation"
-        federation_dict['testbeds'] = "https://conet-testbed-federation.appspot.com/testbeds/"
-        federation_dict['jobs'] = "https://conet-testbed-federation.appspot.com/jobs/"
+        federation_dict['name'] = "CONET Federation Server"
+        federation_dict['testbeds'] = "https://federation-server.appspot.com/testbeds/"
+        federation_dict['jobs'] = "https://federation-server.appspot.com/jobs/"
         
         self.response.headers.add_header('Content-Type', 'application/json')
         self.response.out.write(json.dumps(federation_dict))
@@ -92,21 +109,35 @@ class JobCollectionHandler(webapp.RequestHandler):
         result = urlfetch.fetch(
             method = 'GET',
             url = 'http://127.0.0.1:8000/jobs/',
+            validate_certificate = None
+        )
+        self.response.set_status(200)
+        self.response.out.write(result.content)
+        
+class TestbedJobCollectionHandler(webapp.RequestHandler):
+    def get(self):
+        result = urlfetch.fetch(
+            method = 'GET',
+            url = 'https://www.twist.tu-berlin.de:8001/jobs/',
         )
         self.response.set_status(200)
         self.response.out.write(result.content)
             
 def main():
+    
     application = webapp.WSGIApplication([
         # ('/tasks/', TasksHandler),
         # ('/tasks/456', TaskHandler),
         # ('/reflector', Reflector),
 
-        ('/',                 FederationResourceHandler)
-        # ('/testbeds/',        TestbedCollectionHandler)
-        # ('/testbeds/(.*)',    TestbedResourceHandler)
-        # ('/jobs/',            JobCollectionHandler)
-        # ('/jobs/(.*)',        JobResourceHandler)
+        ('/',                   FederationResourceHandler),
+        # ('/testbeds/',        TestbedCollectionHandler),
+        # ('/testbeds/(.*)',    TestbedResourceHandler),
+        # ('/jobs/',            JobCollectionHandler),
+        # ('/jobs/(.*)',        JobResourceHandler),
+        
+        ('/testbeds/1/jobs/',   TestbedJobCollectionHandler),
+        ('/datastore-initialization/',   DatastoreInitialization),
     ], debug=True)
     util.run_wsgi_app(application)
 
