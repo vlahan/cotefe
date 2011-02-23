@@ -32,7 +32,7 @@ class Testbed(db.Model):
             testbed['organization'] = self.organization
             testbed['server_url'] = self.server_url + '/'
             # testbed['platforms'] = testbed['uri'] + '/platforms/'
-            # testbed['jobs'] = testbed['uri'] + '/jobs/'
+            testbed['jobs'] = testbed['uri'] + '/jobs/'
         return testbed
     
 # class Platform(db.Model):
@@ -118,7 +118,7 @@ class FederationResourceHandler(webapp.RequestHandler):
         federation_dict['media_type'] = "application/json"
         federation_dict['name'] = "CONET Federation Server"
         federation_dict['testbeds'] = "https://federation-server.appspot.com/testbeds/"
-        federation_dict['jobs'] = "https://federation-server.appspot.com/jobs/"
+        # federation_dict['jobs'] = "https://federation-server.appspot.com/jobs/"
         
         self.response.headers.add_header('Content-Type', 'application/json')
         self.response.out.write(json.dumps(federation_dict))
