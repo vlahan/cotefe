@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     
-    (r'^admin/',             include('admin.site.urls')),
+    (r'^admin/',             include(admin.site.urls)),
     (r'^databrowse/(.*)',    databrowse.site.root),
     
     (r'^users/$',            user_collection_handler),
@@ -17,5 +17,8 @@ urlpatterns = patterns('',
     (r'^jobs/$',             job_collection_handler),
     (r'^jobs/(.*)$',         job_resource_handler),
     
-    # (r'^api/', include('api.urls')),
+    (r'^api/', include('ctfta.api.urls')),
+    
+    (r'^accounts/', include('registration.backends.default.urls')),
+    (r'^profiles/', include('profiles.urls')),
 )

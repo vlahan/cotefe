@@ -3,11 +3,12 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-#class User(User):
-#    openid = models.CharField(max_length=255)
-#    
-#    def __unicode__(self):
-#        return self.openid
+class UserProfile(models.Model):
+   openid = models.CharField(max_length=255)
+   user = models.OneToOneField(User)
+   
+   def __unicode__(self):
+       return self.openid
 
 class Platform(models.Model):
     name = models.CharField(max_length=255)

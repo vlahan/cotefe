@@ -1,25 +1,16 @@
 import os
 # import socket
+
+# next line should automatically allow enabling/disabling of DEBUG
+# if socket.gethostbyname(socket.gethostname()) == '10.211.55.2':
+DEBUG = True
+
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
-DEVELOPMENT = False
-
-if DEVELOPMENT:
-
-# if socket.gethostbyname(socket.gethostname()) == '10.211.55.2':
-    print 'DEVELOPMENT'
-    DEBUG = True
-    DEFAULT_CONTENT_TYPE = 'text/plain'
-    DEFAULT_CHARSET = 'utf-8'
-else:
-    print 'PRODUCTION'
-    DEBUG = False
-    DEFAULT_CONTENT_TYPE = 'application/json'
-    DEFAULT_CHARSET = 'utf-8'
+DEFAULT_CONTENT_TYPE = 'application/json'
+DEFAULT_CHARSET = 'utf-8'
 
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
-    
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     ('Claudio Donzelli', 'solenoidd@gmail.com'),
@@ -41,11 +32,11 @@ USE_I18N = False
 USE_L10N = False
 
 
-#MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
-#MEDIA_URL = '/media/'
-#ADMIN_MEDIA_PREFIX = '%sadmin-media/' % MEDIA_URL
+MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
+MEDIA_URL = '/media/'
+ADMIN_MEDIA_PREFIX = '%sadmin-media/' % MEDIA_URL
 
-SECRET_KEY = 'federatingrocks'
+SECRET_KEY = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcd'
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -60,25 +51,23 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 TEMPLATE_DIRS = ()
 for root, dirs, files in os.walk(PROJECT_PATH):
-    if 'templates' in dirs: TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
+    if 'templates' in dirs:
+        TEMPLATE_DIRS += (
+            os.path.join(root, 'templates'),
+        )
 
 if DEBUG:
     TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.debug',)
 if USE_I18N:
     TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.i18n',)
 
+TEMPLATE_DEBUG = DEBUG
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
-
-#if DEBUG:
-#    MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
-
-ROOT_URLCONF = 'ctfta.urls'
-
-
 
 INSTALLED_APPS = (
     
@@ -93,8 +82,22 @@ INSTALLED_APPS = (
     
     # Project Applications
     'ctfta.api',
+    
+    # User Management Applications
+    'registration', # django-registration
+    'profiles', # django-profiles
 )
 
-#INTERNAL_IPS = (
-#    '127.0.0.1',
-#)
+if DEBUG:
+    MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+    INSTALLED_APPS += ('debug_toolbar',)
+
+ROOT_URLCONF = 'ctfta.urls'
+
+ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
+
+AUTH_PROFILE_MODULE = 'api.UserProfile'
+
+INTERNAL_IPS = (
+    '127.0.0.1',
+)

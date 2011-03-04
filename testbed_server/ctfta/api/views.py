@@ -9,27 +9,35 @@ from ctfta.api.models import Platform, Job
 from django.contrib.auth.models import User
 from ctfta.odict import OrderedDict
 
-PROTOCOL = 'https'
-SERVER_ADDR = 'www.twist.tu-berlin.de'
+# INFORMATION FOR BUILDING URLS
+PROTOCOL = 'http'
+# SERVER_ADDR = 'www.twist.tu-berlin.de'
+SERVER_ADDR = 'localhost'
 SERVER_PORT = '8001'
 SERVER_PATH = PROTOCOL + '://' + SERVER_ADDR + ':' + SERVER_PORT
 MEDIA_TYPE = 'application/json'
 
+# JSON FORMAT CONFIGURATION
 JSON_INDENT = 4
 JSON_ENSURE_ASCII = True
 JSON_SORT_KEYS = False
 
+# XML PROXY CONFIGURATION
 XMLRPC_PROTOCOL = 'https'
 XMLRPC_HOST = '127.0.0.1'
 XMLRPC_PORT = '8005'
 XMLRPC_USERNAME = 'conetuser'
 XMLRPC_PASSWORD = 'password'
 
-tn_server = xmlrpclib.ServerProxy('%s://%s:%s@%s:%s' % (XMLRPC_PROTOCOL,
-                                                     XMLRPC_USERNAME,
-                                                     XMLRPC_PASSWORD,
-                                                     XMLRPC_HOST,
-                                                     XMLRPC_PORT))
+tn_server = xmlrpclib.ServerProxy(
+    '%s://%s:%s@%s:%s' % (
+        XMLRPC_PROTOCOL,
+        XMLRPC_USERNAME,
+        XMLRPC_PASSWORD,
+        XMLRPC_HOST,
+        XMLRPC_PORT
+    )
+)
 
 # UTILITY FUNCTIONS
 
@@ -63,7 +71,7 @@ def resource_model_to_dict(resource_model, head_only=False):
             resource_dict['datetime_from'] = resource_model.datetime_from
             resource_dict['datetime_to'] = resource_model.datetime_to
             
-            resource_dict['resources'] = collection_queryset_to_list(resource_model.platforms.all())
+            resource_dict['platforms'] = collection_queryset_to_list(resource_model.platforms.all())
 
     return resource_dict
     
@@ -198,7 +206,6 @@ def job_collection_handler(request):
             resource_model = Job(
                 id = native_resource_dict['job_id'],
                 name = native_resource_dict['description'],
-                # converts datetime to ISO8601 (http://en.wikipedia.org/wiki/ISO_8601)
                 datetime_from = native_resource_dict['time_begin'],
                 datetime_to   = native_resource_dict['time_end'],
                 # platforms = platform_list
