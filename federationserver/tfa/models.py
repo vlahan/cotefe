@@ -7,10 +7,12 @@ from django.utils import simplejson as json
 from django.contrib.auth.models import User
 from federationserver.utils.odict import OrderedDict
 
-FS_PROTOCOL = 'http'
-FS_HOST = 'localhost'
-FS_PORT = '8080'
+TFA_PROTOCOL = 'http'
+TFA_HOST = 'localhost'
+TFA_PORT = '8080'
+
 MEDIA_TYPE = 'application/json'
+
 JSON_INDENT = 4
 JSON_ENSURE_ASCII = True
 JSON_SORT_KEYS = False
