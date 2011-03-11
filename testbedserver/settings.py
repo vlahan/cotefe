@@ -7,10 +7,10 @@ TEMPLATE_DEBUG = DEBUG
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
-DEFAULT_CONTENT_TYPE = 'text/plain'
-DEFAULT_CONTENT_TYPE = 'text/html'
-DEFAULT_CONTENT_TYPE = 'application/json'
-DEFAULT_CHARSET = 'utf-8'
+# DEFAULT_CONTENT_TYPE = 'text/plain'
+# DEFAULT_CONTENT_TYPE = 'text/html'
+# DEFAULT_CONTENT_TYPE = 'application/json'
+# DEFAULT_CHARSET = 'utf-8'
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -111,11 +111,9 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
+    # 'django.contrib.sites',
     # 'django.contrib.messages',
-    # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'django.contrib.databrowse',
     
@@ -132,11 +130,11 @@ if DEBUG:
     MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     INSTALLED_APPS += ('debug_toolbar',)
 
-# django registration
+# django-registration config
 # One-week activation window; you may, of course, use a different value.
 ACCOUNT_ACTIVATION_DAYS = 7
 
-AUTH_PROFILE_MODULE = 'testbedserver.taa.models.UserProfile'
+AUTH_PROFILE_MODULE = 'testbedserver.taa.models.User'
 
 INTERNAL_IPS = (
     '127.0.0.1',

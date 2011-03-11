@@ -1,23 +1,21 @@
 import xmlrpclib
+
 from datetime import datetime
 # import base64
 # import hashlib
-from django.utils import simplejson
+from django.utils import simplejson as json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseNotAllowed
-from testbedserver.taa.models import Platform, Job
+from testbedserver.taa.models import *
 from django.contrib.auth.models import User
 from testbedserver.utils.odict import OrderedDict
 
-# INFORMATION FOR BUILDING URLS
-PROTOCOL = 'http'
-# SERVER_ADDR = 'www.twist.tu-berlin.de'
-SERVER_ADDR = 'localhost'
-SERVER_PORT = '8001'
-SERVER_PATH = PROTOCOL + '://' + SERVER_ADDR + ':' + SERVER_PORT
+TAA_PROTOCOL = 'http'
+TAA_HOST = 'localhost'
+TAA_PORT = '8001'
+
 MEDIA_TYPE = 'application/json'
 
-# JSON FORMAT CONFIGURATION
 JSON_INDENT = 4
 JSON_ENSURE_ASCII = True
 JSON_SORT_KEYS = False
@@ -40,6 +38,10 @@ tn_server = xmlrpclib.ServerProxy(
 )
 
 # UTILITY FUNCTIONS
+
+def build_url(protocol = 'http', host = 'localhost', port = '80', path = '/'):
+    # path MUST include '/'
+    return protocol + '://' + host + ':' + port + path
 
 def resource_model_to_dict(resource_model, head_only=False):
     resource_dict = OrderedDict()
@@ -76,11 +78,11 @@ def resource_model_to_dict(resource_model, head_only=False):
     return resource_dict
     
 def resource_dict_to_json(resource_dict):
-    return simplejson.dumps(resource_dict, ensure_ascii=JSON_ENSURE_ASCII,
+    return json.dumps(resource_dict, ensure_ascii=JSON_ENSURE_ASCII,
                             indent=JSON_INDENT, sort_keys=JSON_SORT_KEYS)
 
 def resource_json_to_dict(resource_json):
-    return simplejson.loads(resource_json)
+    return json.loads(resource_json)
 
 def collection_queryset_to_list(collection_queryset):
     collection_list = list()
@@ -90,7 +92,7 @@ def collection_queryset_to_list(collection_queryset):
     return collection_list
 
 def collection_list_to_json(collection_list):
-    return simplejson.dumps(collection_list, cls=DjangoJSONEncoder,
+    return json.dumps(collection_list, cls=DjangoJSONEncoder,
                             ensure_ascii=JSON_ENSURE_ASCII, indent=JSON_INDENT, sort_keys=JSON_SORT_KEYS)
 
 # REST API FUNCTIONS
