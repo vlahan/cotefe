@@ -1,65 +1,59 @@
 from django.db import models
 from django.contrib.auth.models import User
+from testbedserver.utils.odict import OrderedDict
+from testbedserver.config import *
+from testbedserver.utils import *
 
-TAA_PROTOCOL = 'http'
-TAA_HOST = 'localhost'
-TAA_PORT = '8001'
-
-MEDIA_TYPE = 'application/json'
-
-JSON_INDENT = 4
-JSON_ENSURE_ASCII = True
-JSON_SORT_KEYS = False
-
-# UTILITY FUNCTIONS
-
-def build_url(protocol = 'http', host = 'localhost', port = '80', path = '/'):
-    # path MUST include '/'
-    return protocol + '://' + host + ':' + port + path
+class Resource(models.Model):
+    class Meta:
+        abstract = True
 
 # TESTBED
 
-class Testbed(models.Model):
+class Testbed(Resource):
     name = models.CharField(max_length=255)
-    organization = model.CharField(max_length=255)
+    organization = models.CharField(max_length=255)
     
     def __unicode__(self):
         return self.name
         
     def get_absolute_url(self):
-        slug = str(self.id)
-        return "/platforms/%s" % slug
+        return "/"
         
     def to_dict(self, head_only = False):
         resource = OrderedDict()
-        resource['uri'] = build_url(TAA_PROTOCOL, TAA_HOST, TAA_PORT)
+        resource['uri'] = build_url()
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
-            resource['platforms'] = resource['uri'] + '/platforms/'
-            resource['jobs'] = resource['uri'] + '/jobs/'
+            resource['organization'] = self.organization
+            resource['users'] = resource['uri'] + 'users/'
+            resource['platforms'] = resource['uri'] + 'platforms/'
+            resource['jobs'] = resource['uri'] + 'jobs/'
         return resource
     
 # USER
 
-class User(models.Model):
+class User(Resource):
     user = models.OneToOneField(User)
     organization = models.CharField(max_length=255)
-    openid = models.CharField(max_length=255)
+    openid = models.URLField()
     
     def __unicode__(self):
-        return self.openid
+        return self.user.username
         
     def get_absolute_url(self):
-        slug = str(self.id)
-        return "/platforms/%s" % slug
+        slug = str(self.user.username)
+        return "/users/%s" % slug
 
     def to_dict(self, head_only = False):
         resource = OrderedDict()
-        resource['uri'] = build_url(FS_PROTOCOL, FS_HOST, FS_PORT, '/platforms/' + str(self.key().id()))
+        resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.user.username
         if not head_only:
+            resource['first_name'] = self.user.first_name
+            resource['last_name'] = self.user.last_name
             resource['email'] = self.user.email
             resource['organization'] = self.organization
             resource['openid'] = self.openid
@@ -67,7 +61,7 @@ class User(models.Model):
 
 # PLATFORM
 
-class Platform(models.Model):
+class Platform(Resource):
     name = models.CharField(max_length=255)
     tinyos_name = models.CharField(max_length=255)
     
@@ -80,7 +74,7 @@ class Platform(models.Model):
    
     def to_dict(self, head_only = False):
         resource = OrderedDict()
-        resource['uri'] = build_url(FS_PROTOCOL, FS_HOST, FS_PORT, '/platforms/' + str(self.key().id()))
+        resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
@@ -89,14 +83,12 @@ class Platform(models.Model):
         
 # JOB
 
-class Job(models.Model):
+class Job(Resource):
     name = models.CharField(max_length=255)
     user = models.ForeignKey(User, null=True)
-    testbed = models.ForeignKey(Testbed, null=True)
     datetime_from = models.CharField(max_length=25)
     datetime_to = models.CharField(max_length=25)
-    platforms = models.ManyToManyField(Platform)
-    uid = models.CharField(max_length=25)
+    platforms = models.CharField(max_length=255)
     
     def __unicode__(self):
         return self.name
@@ -107,12 +99,67 @@ class Job(models.Model):
    
     def to_dict(self, head_only = False):
         resource = OrderedDict()
-        resource['uri'] = build_url(FS_PROTOCOL, FS_HOST, FS_PORT, '/jobs/' + str(self.key().id()))
+        resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
-            resource['testbed'] = build_url(FS_PROTOCOL, FS_HOST, FS_PORT, '/testbeds/' + str(self.testbed.key().id()))
             resource['datetime_from'] = self.datetime_from
             resource['datetime_to'] = self.datetime_to
-            resource['uid'] = self.uid
+        return resource
+        
+# IMAGE
+
+class Image(Resource):
+    name = models.CharField(max_length=255)
+    
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        slug = str(self.id)
+        return "/images/%s" % slug
+
+    def to_dict(self, head_only = False):
+        resource = OrderedDict()
+        resource['uri'] = build_url(path = '/images/' + str(self.key().id()))
+        resource['media_type'] = MEDIA_TYPE
+        resource['name'] = self.name
+        return resource
+        
+# NODE
+
+class Node(Resource):
+    name = models.CharField(max_length=255)
+    
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        slug = str(self.id)
+        return "/nodes/%s" % slug
+
+    def to_dict(self, head_only = False):
+        resource = OrderedDict()
+        resource['uri'] = build_url(path = '/nodes/' + str(self.key().id()))
+        resource['media_type'] = MEDIA_TYPE
+        resource['name'] = self.name
+        return resource
+        
+# NODEGROUP
+
+class NodeGroup(Resource):
+    name = models.CharField(max_length=255)
+    
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        slug = str(self.id)
+        return "/nodegroups/%s" % slug
+
+    def to_dict(self, head_only = False):
+        resource = OrderedDict()
+        resource['uri'] = build_url(path = '/nodegroups/' + str(self.key().id()))
+        resource['media_type'] = MEDIA_TYPE
+        resource['name'] = self.name
         return resource
