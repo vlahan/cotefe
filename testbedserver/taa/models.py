@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from testbedserver.utils.odict import OrderedDict
+from testbedserver.odict import OrderedDict
 from testbedserver.config import *
 from testbedserver.utils import *
 

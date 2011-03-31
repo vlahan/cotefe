@@ -4,7 +4,7 @@ from datetime import datetime
 # import hashlib
 from django.http import HttpResponse, HttpResponseNotAllowed
 from testbedserver.taa.models import *
-from testbedserver.utils.odict import OrderedDict
+from testbedserver.odict import OrderedDict
 from testbedserver.config import *
 from testbedserver.utils import *
 

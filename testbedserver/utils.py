@@ -10,15 +10,11 @@ def build_url(protocol = TAA_PROTOCOL, host = TAA_HOST, port = TAA_PORT, path = 
 def serialize(dict_or_list, format = 'json'):
     if format == 'json':
         return json.dumps(dict_or_list, ensure_ascii = JSON_ENSURE_ASCII, indent = JSON_INDENT)
-    elif format == 'xml':
-        pass
     else:
         pass
 
 def deserialize(string, format = 'json'):
     if format == 'json':
         return json.loads(string)
-    elif format == 'xml':
-        pass
     else:
         pass
