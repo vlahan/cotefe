@@ -1,8 +1,0 @@
-# if sqlite.db exists
-rm -rf sqlite.db
-
-python manage.py syncdb --noinput
-
-python manage.py runserver 8001
-
-then go to http://127.0.0.1:8001/

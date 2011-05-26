@@ -1,1 +1,0 @@
-[{"pk": 1, "model": "taa.testbed", "fields": {"organization": "TU Berlin", "name": "TWIST"}}, {"pk": 1, "model": "taa.user", "fields": {"organization": "TU Berlin", "user": 3, "openid": "http://claudiodonzelli.myopenid.com/"}}, {"pk": 2, "model": "taa.user", "fields": {"organization": "TU Berlin", "user": 2, "openid": "http://www.google.com/"}}]
