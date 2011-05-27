@@ -1,0 +1,10 @@
+MEDIA_TYPE = 'application/json'
+
+JSON_INDENT = 4
+JSON_ENSURE_ASCII = True
+
+# TESTBED FEDERATION API (TAA)
+
+TFA_PROTOCOL = 'http'
+TFA_HOST = 'localhost'
+TFA_PORT = '8080'
