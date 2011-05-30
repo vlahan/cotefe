@@ -1,14 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-	<title>index</title>
-	
+<meta/>
+<title>CoTeFe</title>
 </head>
-
 <body>
+<h1>CoTeFe</h1>
+<form action="/authorize" method="post">
+<p>Username: <input type="text" name="username" value="username"/></p>
+<p>Password: <input type="text" name="password" value="password"/></p>
+<input type="submit" name="submit" value="Submit"/>
+</form>
+
+<p>or <a class="rpxnow" onclick="return false;"
+href="https://conet-testbed-federation.rpxnow.com/openid/v2/signin?token_url=http%3A%2F%2Fconet-testbed-federation.appspot.com%2Ftoken"> Sign In </a></p>
+
+
+<script type="text/javascript">
+  var rpxJsHost = (("https:" == document.location.protocol) ? "https://" : "http://static.");
+  document.write(unescape("%3Cscript src='" + rpxJsHost +
+"rpxnow.com/js/lib/rpx.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+  RPXNOW.overlay = true;
+  RPXNOW.language_preference = 'en';
+</script>
 
 
 </body>

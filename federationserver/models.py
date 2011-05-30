@@ -1,20 +1,23 @@
 import logging
-from django.utils import simplejson as json
+import json
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.api import urlfetch
 from google.appengine.api.labs import taskqueue
 from google.appengine.ext import db
-from google.appengine.ext.db import polymodel
 
 from odict import OrderedDict
 from utils import build_url
 
-class Resource(polymodel.PolyModel):
-    pass
+class UserResource(db.Model):
+    user = db.UserProperty()
+    organization = db.StringProperty()
+    
+    def to_dict(self, head_only = False):
+        resource['uri'] = build_url(path = '/users/' + str(self.key().id()))
 
-class Federation(Resource):
+class FederationResource(db.Model):
     name = db.StringProperty()
     organization = db.StringProperty()
     
@@ -31,7 +34,7 @@ class Federation(Resource):
             resource['jobs'] = build_url(path = '/jobs/')
         return resource
         
-class Project(Resource):
+class ProjectResource(db.Model):
     name = db.StringProperty()
     description = db.StringProperty()
     users = db.ListProperty(db.Key)
@@ -51,16 +54,15 @@ class Project(Resource):
             resource['experiments'] = build_url(path = '/experiments/')
             resource['jobs'] = build_url(path = '/jobs/')
         return resource
-        
-class User(Resource):
-    user = db.UserProperty()
-    organization = db.StringProperty()
+
+class ExperimentResource(db.Model):
+    name = db.StringProperty()
+    description = db.StringProperty()
+    owner        
+
     
-    def to_dict(self, head_only = False):
-        resource['uri'] = 
     
-    
-class Testbed(Resource):
+class TestbedResource(db.Model):
     # STATIC INFORMATION (INSERTED BY ADMIN)
     protocol = db.StringProperty()
     host = db.StringProperty()
@@ -81,7 +83,7 @@ class Testbed(Resource):
             testbed['jobs'] = build_url(path = '/jobs/')
         return testbed
 
-class Platform(Resource):
+class PlatformResource(db.Model):
     name = db.StringProperty()
     
     def to_dict(self, head_only = False):
@@ -91,7 +93,7 @@ class Platform(Resource):
         platform['name'] = self.name            
         return platform
     
-class Job(Resource):
+class JobResource(db.Model):
     name = db.StringProperty()
     testbed = db.ReferenceProperty(Testbed)
     datetime_from = db.StringProperty()
@@ -100,11 +102,11 @@ class Job(Resource):
     
     def to_dict(self, head_only = False):
         job = OrderedDict()
-        job['uri'] = build_url(build_url(path = '/jobs/' + str(self.key().id()))
+        job['uri'] = build_url(path = '/jobs/' + str(self.key().id()))
         job['media_type'] = 'application/json'
         job['name'] = self.name
         if not head_only:
-            job['testbed'] = build_url(build_url(path = '/testbeds/' + str(self.testbed.key().id()))
+            job['testbed'] = build_url(path = '/testbeds/' + str(self.testbed.key().id()))
             job['datetime_from'] = self.datetime_from
             job['datetime_to'] = self.datetime_to
         return job

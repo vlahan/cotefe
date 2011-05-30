@@ -10,6 +10,7 @@ from google.appengine.ext import db
 
 from models import *
 from handlers import *
+from openid import *
 
 def main():
     
@@ -17,6 +18,8 @@ def main():
         # ('/tasks/', TasksHandler),
         # ('/tasks/456', TaskHandler),
         # ('/reflector', Reflector),
+        
+        (r'^/token', OpenIdTokenHandler)
         
         (r'^/$', FederationHandler),
         
