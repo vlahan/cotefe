@@ -30,14 +30,15 @@ DATABASES = {
 TIME_ZONE = 'Europe/Berlin'
 LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
-USE_I18N = False
-USE_L10N = False
+USE_I18N = True
+USE_L10N = True
 
 
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '%sadmin-media/' % MEDIA_URL
 SECRET_KEY = 'l4s)oei$_f^5m5nj1@mzcg%_wy#z)kae(gz$1x=3(%*k#s!6hk'
+
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
@@ -84,7 +85,7 @@ INSTALLED_APPS = (
     'testbedserver.taa',
     
     # Aux apps
-    # 'registration',
+    'registration',
     # 'profiles',
     
 )
@@ -99,9 +100,9 @@ DEBUG_TOOLBAR_CONFIG = {
 
 # django-registration config
 # One-week activation window; you may, of course, use a different value.
-# ACCOUNT_ACTIVATION_DAYS = 7
+ACCOUNT_ACTIVATION_DAYS = 7
 
-# AUTH_PROFILE_MODULE = 'testbedserver.taa.models.User'
+AUTH_PROFILE_MODULE = 'testbedserver.taa.models.User'
 
 INTERNAL_IPS = (
     '127.0.0.1',
