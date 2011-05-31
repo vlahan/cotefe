@@ -1,3 +1,7 @@
+from google.appengine.ext import webapp
+from google.appengine.api import urlfetch
+from google.appengine.api import taskqueue
+
 class TasksHandler(webapp.RequestHandler):
     def post(self):
         taskqueue.add(

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta/>
+<title>CONET Testbed Federation</title>
+</head>
+<body>
+<h1>CONET Testbed Federation</h1>
+<form action="/login" method="post">
+<p>Username: <input type="text" name="username" value=""/></p>
+<p>Password: <input type="password" name="password" value=""/></p>
+<input type="hidden" name="oauth_client_id" value="{{ oauth_session.oauth_client_id }}" />
+<input type="hidden" name="oauth_response_type" value="{{ oauth_session.oauth_response_type }}" />
+<input type="hidden" name="oauth_callback_uri" value="{{ oauth_session.oauth_callback_uri }}" />
+<input type="submit" name="submit" value="Submit"/>
+</form>
+
+</body>
+</html>

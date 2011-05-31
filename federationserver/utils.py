@@ -1,11 +1,10 @@
 from django.utils import simplejson as json
-from django.core.serializers.json import DjangoJSONEncoder
 from config import *
 
 # UTILITY FUNCTIONS
 
 def build_url(protocol = TFA_PROTOCOL, host = TFA_HOST, port = TFA_PORT, path = '/'):
-    return protocol + '://' + host + ':' + port + path
+    return protocol + '://' + host + ':' + port + '/api' + path
     
 def serialize(dict_or_list, format = 'json'):
     if format == 'json':

@@ -1,5 +1,5 @@
 import logging
-import json
+from django.utils import simplejson as json
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
@@ -10,11 +10,36 @@ from google.appengine.ext import db
 from odict import OrderedDict
 from utils import build_url
 
+class Application(db.Model):
+    name = db.StringProperty()
+    oauth_callback_url = db.StringProperty()
+    oauth_client_id = db.StringProperty()
+    oauth_client_secret = db.StringProperty()
+    
+class User(db.Model):
+    username = db.StringProperty()
+    password_hash = db.StringProperty()
+    first_name = db.StringProperty()
+    last_name = db.StringProperty()
+    email = db.StringProperty()
+    openid = db.StringProperty()
+    
+class OAuthSession(db.Model):
+    oauth_client_id = db.StringProperty()
+    oauth_response_type = db.StringProperty()
+    username = db.StringProperty()
+    oauth_code = db.StringProperty()
+    oauth_access_token = db.StringProperty()
+    oauth_refresh_token = db.StringProperty()
+    oauth_scope = db.StringProperty()
+    oauth_token_expire = db.StringProperty()
+    
 class UserResource(db.Model):
     user = db.UserProperty()
     organization = db.StringProperty()
     
     def to_dict(self, head_only = False):
+        resource = OrderedDict()
         resource['uri'] = build_url(path = '/users/' + str(self.key().id()))
 
 class FederationResource(db.Model):
@@ -58,8 +83,6 @@ class ProjectResource(db.Model):
 class ExperimentResource(db.Model):
     name = db.StringProperty()
     description = db.StringProperty()
-    owner        
-
     
     
 class TestbedResource(db.Model):
@@ -88,17 +111,17 @@ class PlatformResource(db.Model):
     
     def to_dict(self, head_only = False):
         platform = OrderedDict()
-        platform['uri'] = build_url(FS_PROTOCOL, FS_HOST, FS_PORT, '/platforms/' + str(self.key().id()))
+        platform['uri'] = build_url(path = '/platforms/' + str(self.key().id()))
         platform['media_type'] = 'application/json'
         platform['name'] = self.name            
         return platform
     
 class JobResource(db.Model):
     name = db.StringProperty()
-    testbed = db.ReferenceProperty(Testbed)
+    testbed = db.ReferenceProperty(TestbedResource)
     datetime_from = db.StringProperty()
     datetime_to = db.StringProperty()
-    owner = db.ReferenceProperty(User)
+    owner = db.ReferenceProperty(UserResource)
     
     def to_dict(self, head_only = False):
         job = OrderedDict()

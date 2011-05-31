@@ -1,3 +1,6 @@
+from google.appengine.dist import use_library
+use_library('django', '1.2')
+
 import logging
 from django.utils import simplejson as json
 from odict import OrderedDict
@@ -19,19 +22,26 @@ def main():
         # ('/tasks/456', TaskHandler),
         # ('/reflector', Reflector),
         
-        (r'^/token', OpenIdTokenHandler)
+        (r'^/init$', DatastoreInitialization),
         
-        (r'^/$', FederationHandler),
+        (r'^/apps$', ApplicationManager),
+        (r'^/users$', UserManager),
         
-        (r'^/testbeds/$',                       TestbedHandler),
-        (r'^/testbeds/(.*)/(.*)/$',             TestbedHandler),
-        (r'^/testbeds/(.*)$',                   TestbedHandler),
+        (r'^/auth$', AuthorizationEndpoint),
+        (r'^/login$', LoginEndpoint),
+        (r'^/token$', TokenEndpoint),
         
-        (r'^/jobs/$',                           JobHandler),
-        (r'^/jobs/(.*)$',                       JobHandler),
+        (r'^/api/$', FederationHandler),
         
-        (r'^/platforms/$',                      PlatformHandler),
-        (r'^/platforms/(.*)$',                  PlatformHandler),
+        (r'^/api/testbeds/$', TestbedHandler),
+        (r'^/api/testbeds/(.*)/(.*)/$', TestbedHandler),
+        (r'^/api/testbeds/(.*)$', TestbedHandler),
+        
+        (r'^/api/jobs/$', JobHandler),
+        (r'^/api/jobs/(.*)$', JobHandler),
+        
+        (r'^/api/platforms/$', PlatformHandler),
+        (r'^/api/platforms/(.*)$', PlatformHandler),
         
     ], debug=True)
     util.run_wsgi_app(application)
