@@ -6,10 +6,11 @@ import logging
 import webbrowser
 
 CLIENT_ID =              '389368352525.apps.googleusercontent.com'
-CLIENT_SECRET =          'KvYYC1_UERVMYqWmDc8FEj_o'
+CLIENT_SECRET =          'oXKNrB0gJn2V3FL9f8Zg21YU'
+
 AUTHORIZATION_ENDPOINT = 'https://accounts.google.com/o/oauth2/auth'
 RESPONSE_TYPE =          'code'
-REDIRECTION_URI =        'http://something.cotefe.net/oauth2callback'
+REDIRECTION_URI =        'http://www.example.org/oauth2callback'
 SCOPE =                  'http://something.cotefe.net/'
 HD =                     'cotefe.net'
 TOKEN_ENDPOINT =         'https://accounts.google.com/o/oauth2/token'
