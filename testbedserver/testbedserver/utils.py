@@ -1,5 +1,4 @@
 from django.utils import simplejson as json
-# from django.core.serializers.json import DjangoJSONEncoder
 from testbedserver.config import *
 
 # UTILITY FUNCTIONS

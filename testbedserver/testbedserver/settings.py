@@ -1,5 +1,3 @@
-# Django settings for testbedserver project.
-
 # DEFAULT_CONTENT_TYPE = 'application/json'
 # DEFAULT_CHARSET = 'utf-8'
 
@@ -11,7 +9,7 @@ TEMPLATE_DEBUG = DEBUG
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('Claudio Donzelli', 'claudio.donzelli@tu-berlin.de'),
 )
 
 MANAGERS = ADMINS
@@ -30,8 +28,8 @@ DATABASES = {
 TIME_ZONE = 'Europe/Berlin'
 LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
-USE_I18N = True
-USE_L10N = True
+USE_I18N = False
+USE_L10N = False
 
 
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
@@ -82,11 +80,11 @@ INSTALLED_APPS = (
     'django.contrib.databrowse',
     
     # Project apps
-    'testbedserver.taa',
+    'testbedserver.api',
     
     # Aux apps
     'registration',
-    # 'profiles',
+    'profiles',
     
 )
 
@@ -102,7 +100,8 @@ DEBUG_TOOLBAR_CONFIG = {
 # One-week activation window; you may, of course, use a different value.
 ACCOUNT_ACTIVATION_DAYS = 7
 
-AUTH_PROFILE_MODULE = 'testbedserver.taa.models.User'
+# AUTH_PROFILE_MODULE = 'testbedserver.api.models.UserResource'
+AUTH_PROFILE_MODULE = 'django.contrib.auth.models.User'
 
 INTERNAL_IPS = (
     '127.0.0.1',
