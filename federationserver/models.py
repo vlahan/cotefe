@@ -7,7 +7,6 @@ from google.appengine.api import urlfetch
 from google.appengine.api.labs import taskqueue
 from google.appengine.ext import db
 
-from odict import OrderedDict
 from utils import build_url
 
 class Application(db.Model):
@@ -39,7 +38,7 @@ class UserResource(db.Model):
     organization = db.StringProperty()
     
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = '/users/' + str(self.key().id()))
 
 class FederationResource(db.Model):
@@ -47,7 +46,7 @@ class FederationResource(db.Model):
     organization = db.StringProperty()
     
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url()
         resource['media_type'] = 'application/json'
         resource['name'] = self.name
@@ -68,7 +67,7 @@ class ProjectResource(db.Model):
     jobs = db.ListProperty(db.Key)
     
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = '/projects/' + str(self.key().id()))
         resource['media_type'] = 'application/json'
         resource['name'] = self.name
@@ -96,25 +95,25 @@ class TestbedResource(db.Model):
     organization = db.StringProperty()
     
     def to_dict(self, head_only = False):
-        testbed = OrderedDict()
-        testbed['uri'] = build_url(path = '/testbeds/' + str(self.key().id()))
-        testbed['media_type'] = 'application/json'
-        testbed['name'] = self.name
+        resource = dict()
+        resource['uri'] = build_url(path = '/testbeds/' + str(self.key().id()))
+        resource['media_type'] = 'application/json'
+        resource['name'] = self.name
         if not head_only:
-            testbed['organization'] = self.organization
-            testbed['platforms'] = build_url(path = '/platforms/')
-            testbed['jobs'] = build_url(path = '/jobs/')
-        return testbed
+            resource['organization'] = self.organization
+            resource['platforms'] = build_url(path = '/platforms/')
+            resource['jobs'] = build_url(path = '/jobs/')
+        return resource
 
 class PlatformResource(db.Model):
     name = db.StringProperty()
     
     def to_dict(self, head_only = False):
-        platform = OrderedDict()
-        platform['uri'] = build_url(path = '/platforms/' + str(self.key().id()))
-        platform['media_type'] = 'application/json'
-        platform['name'] = self.name            
-        return platform
+        resource = dict()
+        resource['uri'] = build_url(path = '/platforms/' + str(self.key().id()))
+        resource['media_type'] = 'application/json'
+        resource['name'] = self.name            
+        return resource
     
 class JobResource(db.Model):
     name = db.StringProperty()
@@ -124,12 +123,12 @@ class JobResource(db.Model):
     owner = db.ReferenceProperty(UserResource)
     
     def to_dict(self, head_only = False):
-        job = OrderedDict()
-        job['uri'] = build_url(path = '/jobs/' + str(self.key().id()))
-        job['media_type'] = 'application/json'
-        job['name'] = self.name
+        resource = dict()
+        resource['uri'] = build_url(path = '/jobs/' + str(self.key().id()))
+        resource['media_type'] = 'application/json'
+        resource['name'] = self.name
         if not head_only:
-            job['testbed'] = build_url(path = '/testbeds/' + str(self.testbed.key().id()))
-            job['datetime_from'] = self.datetime_from
-            job['datetime_to'] = self.datetime_to
-        return job
+            resource['testbed'] = build_url(path = '/testbeds/' + str(self.testbed.key().id()))
+            resource['datetime_from'] = self.datetime_from
+            resource['datetime_to'] = self.datetime_to
+        return resource

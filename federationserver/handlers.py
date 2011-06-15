@@ -42,7 +42,7 @@ class AuthorizationEndpoint(webapp.RequestHandler):
             # se response_type = 'code'
                 # setto oauth_response_type = 'code'
                 # renderizzo il login_form con parametri nascosti
-                template_values = { 'oauth_session' : oauth_session }
+                # template_values = { 'oauth_session' : oauth_session }
 
 class LoginEndpoint(webapp.RequestHandler):
     
@@ -53,9 +53,9 @@ class LoginEndpoint(webapp.RequestHandler):
         username = self.request.get('username')
         password = self.request.get('password')
         #  se il login va a buon fine
-            oauth_session.oauth_code = uuid.uuid4().hex
-            oauth_session.put()
-            self.redirect(callback_uri + 'code=' + oauth_session.oauth_code)
+            # oauth_session.oauth_code = uuid.uuid4().hex
+            # oauth_session.put()
+            # self.redirect(callback_uri + 'code=' + oauth_session.oauth_code)
         
 
 class TokenEndpoint(webapp.RequestHandler):
@@ -67,8 +67,8 @@ class TokenEndpoint(webapp.RequestHandler):
         grant_type = self.request('grant_type')
         
         # se usiste la session per questi dati
-            oauth_session.oauth_access_token = uuid.uuid4().hex
-            oauth_session.put()
+            # oauth_session.oauth_access_token = uuid.uuid4().hex
+            # oauth_session.put()
             # setto l'header a application/json
             # invio il dizionario contente l'access token
             
