@@ -5,7 +5,9 @@ goog.require('goog.net.XhrIo');
  *
  * @param {string} dataUrl The url to request.
  */
-function getData(url) {
+function getData() {
+  //url = 'https://federation-server.appspot.com/';
+  url = 'http://localhost:8080/';
   log('Sending simple request for ['+ url + ']');
   goog.net.XhrIo.send(url, function(e) {
 	  var xhr = e.target;

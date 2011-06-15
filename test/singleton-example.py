@@ -10,7 +10,5 @@ class Singleton(object):
 if __name__ == '__main__':
     s1=Singleton()
     s2=Singleton()
-    if(id(s1)==id(s2)):
-        print "Same"
-    else:
-        print "Different"
+    print id(s1)
+    print id(s2)
