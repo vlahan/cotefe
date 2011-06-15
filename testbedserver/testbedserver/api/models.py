@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from testbedserver.odict import OrderedDict
 from testbedserver.config import *
 from testbedserver.utils import *
 
@@ -19,7 +18,7 @@ class UserResource(models.Model):
         return "/users/%s" % slug
 
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.user.username
@@ -44,7 +43,7 @@ class TestbedResource(models.Model):
         return "/"
         
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url()
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
@@ -69,7 +68,7 @@ class PlatformResource(models.Model):
         return "/platforms/%s" % slug
    
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
@@ -90,7 +89,7 @@ class NodeResource(models.Model):
         return "/nodes/%s" % slug
 
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = '/nodes/' + str(self.key().id()))
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
@@ -109,7 +108,7 @@ class NodeGroupResource(models.Model):
         return "/nodegroups/%s" % slug
 
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = '/nodegroups/' + str(self.key().id()))
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
@@ -128,7 +127,7 @@ class ImageResource(models.Model):
         return "/images/%s" % slug
 
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = '/images/' + str(self.key().id()))
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
@@ -151,7 +150,7 @@ class JobResource(models.Model):
         return "/jobs/%s" % slug
    
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
