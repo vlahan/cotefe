@@ -11,7 +11,8 @@ def build_url(protocol = SERVER_PROTOCOL, host = SERVER_HOST, port = SERVER_PORT
     
 def serialize(dict_or_list, format = 'json'):
     if format == 'json':
-        return json.dumps(dict_or_list, ensure_ascii = JSON_ENSURE_ASCII, indent = JSON_INDENT)
+        return json.dumps(dict_or_list, ensure_ascii = JSON_ENSURE_ASCII, indent = JSON_INDENT) + '\n'
+        # return json.dumps(dict_or_list) + '\n'
     else:
         pass
     
