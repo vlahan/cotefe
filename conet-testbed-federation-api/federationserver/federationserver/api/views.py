@@ -151,6 +151,40 @@ def project_resource_handler(request, project_id):
         del response['Content-Type']
         return response
     
+def experiment_collection_in_project_handler(request, project_id):
+    
+    allowed_methods = ['GET']
+    
+    try:
+        project_model = Project.objects.get(uid = project_id)
+    
+    except ObjectDoesNotExist:
+        # response = HttpResponseNotFound()
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+        
+    if request.method == 'OPTIONS':
+        # generating response
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+    if request.method == 'GET':
+
+        # gets all the platforms from this database
+        collection_queryset = Experiment.objects.filter(project = project_model)
+        collection_list = list()
+        for resource_model in collection_queryset:
+            collection_list.append(resource_model.to_dict(head_only = True))
+        
+        # generating response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(collection_list))
+        return response
+    
 # EXPERIMENT
 def experiment_collection_handler(request):
     
