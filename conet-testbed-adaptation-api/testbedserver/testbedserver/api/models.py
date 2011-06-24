@@ -96,6 +96,7 @@ class Platform(Resource):
         
 # IMAGE
 class Image(Resource):
+    uid = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     file = models.FileField(upload_to='images')
 
@@ -174,16 +175,16 @@ class Node(Resource):
         
 # NODEGROUP
 class NodeGroup(Resource):
+    uid = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
-    nodes = models.TextField()
+    # nodes = models.TextField()
     
     def __unicode__(self):
         return self.name
 
     def get_absolute_url(self):
-        slug = str(self.id)
-        return "/nodegroups/%s" % slug
+        return "/nodegroups/%s" % self.uid
 
     def to_dict(self, head_only = False):
         resource = dict()

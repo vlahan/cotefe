@@ -240,6 +240,127 @@ def node_resource_handler(request, node_id):
         del response['Content-Type']
         return response
     
+# NODEGROUP
+def nodegroup_collection_handler(request):
+    
+    allowed_methods = ['GET', 'POST']
+    
+    if request.method == 'OPTIONS':
+        # generating response
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+    if request.method == 'GET':
+        
+        # gets all resources
+        collection_queryset = NodeGroup.objects.all()
+        collection_list = list()
+        for resource_model in collection_queryset:
+            collection_list.append(resource_model.to_dict(head_only = True))
+        
+        # generating 200 response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(collection_list))
+        return response
+    
+    if request.method == 'POST':
+        
+        resource_json = request.raw_post_data
+        
+        try:
+            resource_dict = json.loads(resource_json)
+
+            resource_model = NodeGroup(
+                uid = generate_uid(),
+                name = resource_dict['name'],
+                description = resource_dict['description'])
+            resource_model.save()
+            
+            # generate response
+            response = HttpResponse(status=201)
+            response['Location'] = build_url(path = resource_model.get_absolute_url())
+            response['Content-Location'] = build_url(path = resource_model.get_absolute_url())
+            response['Content-Type'] = 'application/json'
+            return response
+        except Exception:
+            # 400
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+def nodegroup_resource_handler(request, nodegroup_id):
+    
+    allowed_methods = ['GET', 'PUT', 'DELETE']
+    
+    try:
+        resource_model = NodeGroup.objects.get(uid = nodegroup_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+    
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+    if request.method == 'GET':
+        
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(resource_model.to_dict()))
+        return response
+    
+    if request.method == 'PUT':
+        
+        resource_json = request.raw_post_data
+        
+        try:
+            resource_dict = json.loads(resource_json)
+
+            resource_model.name = resource_dict['name']
+            resource_model.description = resource_dict['description']
+            
+            resource_model.save()
+            
+            # generate response
+            response = HttpResponse()
+            response['Content-Type'] = 'application/json'
+            response.write(serialize(resource_model.to_dict()))
+            return response
+            
+        except Exception:
+            # 400
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+    if request.method == 'DELETE':
+        
+        resource_model.delete()
+        
+        # generate response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        return response
+        
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
 #def node_collection_in_nodegroup_handler(request, nodegroup_id):
 #    if request.method == 'GET':
 #        return HttpResponse('nodegroup_id = ' + nodegroup_id + ', all nodes')
