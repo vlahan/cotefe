@@ -60,6 +60,7 @@ class Testbed(Resource):
             resource['description'] = self.description
             resource['platforms'] = build_url(path = '/platforms/')
             resource['nodes'] = build_url(path = '/nodes/')
+            resource['nodegroups'] = build_url(path = '/nodegroups/')
             resource['jobs'] = build_url(path = '/jobs/')
         return resource
         
@@ -152,7 +153,7 @@ class Node(Resource):
     uid = models.CharField(max_length=255, primary_key=True)
     native_id = models.IntegerField(unique=True)
     serial = models.CharField(max_length=255, unique=True)
-    # platform = models.ForeignKey(Platform)
+    platform = models.ForeignKey(Platform)
     
     def __unicode__(self):
         return self.uid
@@ -167,6 +168,7 @@ class Node(Resource):
         if not head_only:
             # resource['native_id'] = self.native_id
             resource['serial'] = self.serial
+            resource['platform'] = build_url(path = self.platform.get_absolute_url())
         return resource
     
     class Meta:
@@ -178,7 +180,6 @@ class NodeGroup(Resource):
     uid = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
-    # nodes = models.TextField()
     
     def __unicode__(self):
         return self.name
@@ -193,10 +194,22 @@ class NodeGroup(Resource):
         if not head_only:
             resource['name'] = self.name
             resource['description'] = self.description
+            resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
         return resource
         
     class Meta:
         verbose_name = "NodeGroup"
+        verbose_name_plural = verbose_name +'s'
+
+class NodeGroup2Node(models.Model):
+    nodegroup = models.ForeignKey(NodeGroup, verbose_name='NodeGroup')
+    node = models.ForeignKey(Node, verbose_name='Node')
+    
+    def __unicode__(self):
+        return u'%s %s' % (self.nodegroup, self.node)
+    
+    class Meta:
+        verbose_name = "NodeGroup2Node"
         verbose_name_plural = verbose_name +'s'
         
 # TASK
