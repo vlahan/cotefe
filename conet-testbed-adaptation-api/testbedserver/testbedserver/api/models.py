@@ -1,7 +1,9 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
 from testbedserver.config import *
 from testbedserver.utils import *
+from testbedserver.settings import PROJECT_PATH
 
 # RESOURCE ABSTRACT MODEL
 class Resource(models.Model):
@@ -62,6 +64,7 @@ class Testbed(Resource):
             resource['nodes'] = build_url(path = '/nodes/')
             resource['nodegroups'] = build_url(path = '/nodegroups/')
             resource['jobs'] = build_url(path = '/jobs/')
+            resource['images'] = build_url(path = '/images/')
         return resource
         
     class Meta:
@@ -94,27 +97,35 @@ class Platform(Resource):
     class Meta:
         verbose_name = "Platform"
         verbose_name_plural = verbose_name +'s'
+
+# returns random filename
+def update_filename(instance, filename):
+    filepath = 'images'
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (instance.uid, ext)
+    return os.path.join(filepath, filename)
         
 # IMAGE
 class Image(Resource):
     uid = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
-    file = models.FileField(upload_to='images')
+    description = models.TextField()
+    file = models.FileField(upload_to=update_filename, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
 
     def get_absolute_url(self):
-        slug = str(self.id)
-        return "/images/%s" % slug
+        return "/images/%s" % self.uid
 
     def to_dict(self, head_only = False):
         resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
         if not head_only:
-            resource['file'] = self.file
+            resource['name'] = self.name
+            resource['description'] = self.description
+            resource['file'] = build_url(path = '/static/' + self.file.name)
         return resource
 
     class Meta:
