@@ -5,7 +5,7 @@ import uuid, json
 u = list()
 
 for i in range(1000):
-	x = uuid.uuid4().hex
+	x = uuid.uuid4().hex[:8]
 	if len(u) == 0:
 		u.append(x)
 	else:	

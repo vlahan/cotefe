@@ -16,7 +16,8 @@ proxy = xmlrpclib.ServerProxy('https://%s:%s@%s:%s/RPC2' % (XMLRPC_USERNAME, XML
 
 try:
     print proxy.now()
-    print proxy.getAllJobs()
+    print proxy.getAllPlatforms()
+    print proxy.getAllNodes()
 
 except xmlrpclib.Fault, err:
     print "A fault occurred"
@@ -29,9 +30,4 @@ except xmlrpclib.ProtocolError, err:
     print "HTTP/HTTPS headers: %s" % err.headers
     print "Error code: %d" % err.errcode
     print "Error message: %s" % err.errmsg
-
-
-# print s.now()
-# print s.getAllPlatforms()
-# print s.getAllJobs()
 
