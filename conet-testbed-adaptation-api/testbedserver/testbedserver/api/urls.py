@@ -14,11 +14,16 @@ urlpatterns = patterns('',
     url(r'^nodes/$', node_collection_handler),
     url(r'^nodes/(?P<node_uid>\w+)$', node_resource_handler),
     
+    url(r'^nodes/(?P<node_uid>\w+)/image/(?P<image_uid>\w+)$', image_resource_in_node_handler),
+    
     url(r'^nodegroups/$', nodegroup_collection_handler),
     url(r'^nodegroups/(?P<nodegroup_uid>\w+)$', nodegroup_resource_handler),
     
     url(r'^nodegroups/(?P<nodegroup_uid>\w+)/nodes/$', node_collection_in_nodegroup_handler),
     url(r'^nodegroups/(?P<nodegroup_uid>\w+)/nodes/(?P<node_uid>\w+)$', node_resource_in_nodegroup_handler),
+    
+    url(r'^nodegroups/(?P<nodegroup_uid>\w+)/image/(?P<image_uid>\w+)$', image_resource_in_nodegroup_handler),
+    
     
     url(r'^jobs/$', job_collection_handler),
     url(r'^jobs/(?P<job_uid>\w+)$', job_resource_handler),

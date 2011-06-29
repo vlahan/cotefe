@@ -24,7 +24,7 @@ def deserialize(string, format = 'json'):
     
 def generate_uid():
     logging.debug('uid start')
-    uri_uuid = uuid.uuid4().hex[:8]
+    uri_uuid = uuid.uuid4().hex[:UID_LENGTH]
     logging.debug('uid done')
     return uri_uuid
     

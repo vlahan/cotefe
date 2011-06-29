@@ -3,6 +3,8 @@ MEDIA_TYPE = 'application/json'
 JSON_INDENT = 2
 JSON_ENSURE_ASCII = True
 
+UID_LENGTH = 8
+
 # TESTBED ADAPTATION API
 SERVER_PROTOCOL = 'http'
 SERVER_HOST = 'localhost'

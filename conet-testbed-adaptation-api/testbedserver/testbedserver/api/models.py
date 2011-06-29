@@ -135,11 +135,11 @@ class Image(Resource):
 # JOB
 class Job(Resource):
     uid = models.CharField(max_length=255, unique=True)
-    native_id = models.IntegerField(unique=True)
+    native_id = models.IntegerField(unique=True, null=True, blank=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
-    datetime_from = models.DateTimeField()
-    datetime_to = models.DateTimeField()
+    datetime_from = models.CharField(max_length=255)
+    datetime_to = models.CharField(max_length=255)
 
     def __unicode__(self):
         return self.uid
@@ -168,6 +168,7 @@ class Node(Resource):
     native_id = models.IntegerField(unique=True)
     serial = models.CharField(max_length=255, unique=True)
     platform = models.ForeignKey(Platform)
+    image = models.ForeignKey(Image, null=True, blank=True)
     
     def __unicode__(self):
         return self.uid
@@ -183,6 +184,7 @@ class Node(Resource):
             # resource['native_id'] = self.native_id
             resource['serial'] = self.serial
             resource['platform'] = build_url(path = self.platform.get_absolute_url())
+            resource['image'] = 'None' if (self.image is None) else build_url(path = self.image.get_absolute_url())
         return resource
     
     class Meta:
@@ -194,6 +196,7 @@ class NodeGroup(Resource):
     uid = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
+    image = models.ForeignKey(Image, null=True, blank=True)
     
     def __unicode__(self):
         return self.name
@@ -209,6 +212,7 @@ class NodeGroup(Resource):
             resource['name'] = self.name
             resource['description'] = self.description
             resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
+            resource['image'] = 'None' if (self.image is None) else build_url(path = self.image.get_absolute_url())
         return resource
         
     class Meta:
