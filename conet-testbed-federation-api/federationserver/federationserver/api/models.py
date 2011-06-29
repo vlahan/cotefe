@@ -52,6 +52,7 @@ class Project(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         if not head_only:
+            resource['uid'] = self.uid
             resource['name'] = self.name
             resource['description'] = self.description
             resource['experiments'] = [ exp.to_dict(head_only = True) for exp in self.experiments.all() ]
@@ -79,6 +80,7 @@ class Experiment(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         if not head_only:
+            resource['uid'] = self.uid
             resource['name'] = self.name
             resource['description'] = self.description
             resource['project'] = build_url(path = self.project.get_absolute_url())

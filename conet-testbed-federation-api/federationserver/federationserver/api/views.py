@@ -278,6 +278,7 @@ def experiment_resource_handler(request, experiment_id):
 
             resource_model.name = resource_dict['name']
             resource_model.description = resource_dict['description']
+            resource_model.project = Project.objects.get(uid = resource_dict['project'])
             
             resource_model.save()
             

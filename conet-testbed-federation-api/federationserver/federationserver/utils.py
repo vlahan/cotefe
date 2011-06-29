@@ -3,6 +3,7 @@ from federationserver.config import *
 from django.http import HttpResponse
 import uuid
 import logging
+from datetime import datetime, tzinfo
 
 # UTILITY FUNCTIONS
 
@@ -23,7 +24,6 @@ def deserialize(string, format = 'json'):
     
 def generate_uid():
     # logging.warning('uid start')
-    uri_uuid = uuid.uuid4().hex[:8]
+    uri_uuid = uuid.uuid4().hex[:UID_LENGTH]
     # logging.warning('uid done')
     return uri_uuid
-    
