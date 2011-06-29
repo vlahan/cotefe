@@ -133,31 +133,34 @@ class Image(Resource):
         verbose_name_plural = verbose_name +'s'
 
 # JOB
-#class Job(Resource):
-#    uid = models.CharField(max_length=255, unique=True)
-#    name = models.CharField(max_length=255)
-#    datetime_from = models.CharField(max_length=25)
-#    datetime_to = models.CharField(max_length=25)
-#
-#    def __unicode__(self):
-#        return self.uid
-#
-#    def get_absolute_url(self):
-#        return "/jobs/%s" % self.uid
-#
-#    def to_dict(self, head_only = False):
-#        resource = dict()
-#        resource['uri'] = build_url(path = self.get_absolute_url())
-#        resource['media_type'] = MEDIA_TYPE
-#        if not head_only:
-#            resource['name'] = self.name
-#            resource['datetime_from'] = self.datetime_from
-#            resource['datetime_to'] = self.datetime_to
-#        return resource
-#
-#    class Meta:
-#        verbose_name = "Job"
-#        verbose_name_plural = verbose_name +'s'
+class Job(Resource):
+    uid = models.CharField(max_length=255, unique=True)
+    native_id = models.IntegerField(unique=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    datetime_from = models.DateTimeField()
+    datetime_to = models.DateTimeField()
+
+    def __unicode__(self):
+        return self.uid
+
+    def get_absolute_url(self):
+        return "/jobs/%s" % self.uid
+
+    def to_dict(self, head_only = False):
+        resource = dict()
+        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['media_type'] = MEDIA_TYPE
+        if not head_only:
+            resource['name'] = self.name
+            resource['description'] = self.description
+            resource['datetime_from'] = self.datetime_from
+            resource['datetime_to'] = self.datetime_to
+        return resource
+
+    class Meta:
+        verbose_name = "Job"
+        verbose_name_plural = verbose_name +'s'
     
 # NODE
 class Node(Resource):

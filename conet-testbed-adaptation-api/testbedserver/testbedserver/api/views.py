@@ -95,12 +95,12 @@ def platform_collection_handler(request):
         del response['Content-Type']
         return response
     
-def platform_resource_handler(request, platform_id):
+def platform_resource_handler(request, platform_uid):
     
     allowed_methods = ['GET']
     
     try:
-        resource_model = Platform.objects.get(uid = platform_id)
+        resource_model = Platform.objects.get(uid = platform_uid)
     
     except ObjectDoesNotExist:
         response = HttpResponseNotFound()
@@ -213,12 +213,12 @@ def node_collection_handler(request):
         del response['Content-Type']
         return response
     
-def node_resource_handler(request, node_id):
+def node_resource_handler(request, node_uid):
     
     allowed_methods = ['GET']
     
     try:
-        resource_model = Node.objects.get(uid = node_id)
+        resource_model = Node.objects.get(uid = node_uid)
     
     except ObjectDoesNotExist:
         response = HttpResponseNotFound()
@@ -327,12 +327,12 @@ def nodegroup_collection_handler(request):
         del response['Content-Type']
         return response
     
-def nodegroup_resource_handler(request, nodegroup_id):
+def nodegroup_resource_handler(request, nodegroup_uid):
     
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
-        resource_model = NodeGroup.objects.get(uid = nodegroup_id)
+        resource_model = NodeGroup.objects.get(uid = nodegroup_uid)
     
     except ObjectDoesNotExist:
         # 404
@@ -392,12 +392,12 @@ def nodegroup_resource_handler(request, nodegroup_id):
         del response['Content-Type']
         return response
     
-def node_collection_in_nodegroup_handler(request, nodegroup_id):
+def node_collection_in_nodegroup_handler(request, nodegroup_uid):
     
     allowed_methods = ['GET']
     
     try:
-        nodegroup_model = NodeGroup.objects.get(uid = nodegroup_id)
+        nodegroup_model = NodeGroup.objects.get(uid = nodegroup_uid)
     
     except ObjectDoesNotExist:
         # 404
@@ -427,13 +427,13 @@ def node_collection_in_nodegroup_handler(request, nodegroup_id):
         del response['Content-Type']
         return response
     
-def node_resource_in_nodegroup_handler(request, nodegroup_id, node_id):
+def node_resource_in_nodegroup_handler(request, nodegroup_uid, node_uid):
     
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
-        nodegroup_model = NodeGroup.objects.get(uid = nodegroup_id)
-        node_model = Node.objects.get(uid = node_id)
+        nodegroup_model = NodeGroup.objects.get(uid = nodegroup_uid)
+        node_model = Node.objects.get(uid = node_uid)
     
     except ObjectDoesNotExist:
         # 404
@@ -497,145 +497,186 @@ def node_resource_in_nodegroup_handler(request, nodegroup_id, node_id):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
-    
-    
-# JOB
-
-#def job_collection_handler(request):
-#    if request.method == 'GET':
-#        # gets all entries from the TN API
-#        try:
-#            native_collection_list = proxy.getAllJobs()
-#        except xmlrpclib.Fault, err:
-#            print "XMLRPC Error (%s):%s" % (err.faultCode, err.faultString) 
-#            
-#        # gets all entries from the TA API
-#        collection_queryset = Job.objects.all()
-#        
-#        # builds a list of TN API job ids
-#        native_resource_id_list = list()
-#        for native_resource_dict in native_collection_list:
-#            native_resource_id_list.append(native_resource_dict['job_id'])
-#        
-#        # deletes all entries that don't exist in the native database (cleaning)
-#        for resource_model in collection_queryset:
-#            if resource_model.id not in native_resource_id_list:
-#                resource_model.delete()
-#        
-#        # fetched jobs in the native database and inserts/updates the local database entries (using the same id)
-#        for native_resource_dict in native_collection_list:
-#            resource_model = Job(
-#                id = native_resource_dict['job_id'],
-#                name = native_resource_dict['description'],
-#                datetime_from = native_resource_dict['time_begin'],
-#                datetime_to   = native_resource_dict['time_end'],
-#            )
-#            resource_model.save();
-#
-#        # gets all the platforms from this database
-#        collection_queryset = Job.objects.all()
-#        collection_list = list()
-#        for resource_model in collection_queryset:
-#            collection_list.append(resource_model.to_dict())
-#        return HttpResponse(serialize(collection_list))
-#        
-#    elif request.method == 'POST':
-#        pass
-#    else:
-#        return HttpResponseNotAllowed(['GET', 'POST'])
-#    
-#def job_resource_handler(request, slug):
-#    if request.method == 'GET':
-#        # gets all entries from the TN API
-#        try:
-#            native_resource_dict = proxy.getJobById(slug)
-#        except xmlrpclib.Fault, err:
-#            print "XMLRPC Error (%s):%s" % (err.faultCode, err.faultString)
-#            
-#        # gets the entry from the the TA API
-#        resource_model = Job.objects.get(pk = slug)
-#        
-#        # deletes the entry if it doeas not exist in the native database (cleaning)
-#        if resource_model.id != native_resource_dict['platform_id']:
-#            resource_model.delete()
-#        
-#        # fetches platforms in the native database and inserts/updates the local database entries (using the same id)
-#        resource_model = Job(
-#            id = native_resource_dict['job_id'],
-#            name = native_resource_dict['description'],
-#            datetime_from = native_resource_dict['time_begin'],
-#            datetime_to   = native_resource_dict['time_end']
-#        )
-#        resource_model.save()
-#            
-#        resource_model = Job.objects.get(pk = slug)
-#        return HttpResponse(serialize(resource_model.to_dict()))
-#    elif request.method == 'PUT':
-#        pass
-#    elif request.method == 'DELETE':
-#        pass
-#    else:
-#        return HttpResponseNotAllowed(['GET', 'PUT', 'DELETE'])
-
 
 # JOB
-#def job_collection_handler(request):
-#    
-#    allowed_methods = ['GET']
-#    
-#    if request.method == 'OPTIONS':
-#        # generating response
-#        response = HttpResponse(status=204)
-#        response['Allow'] = ', '.join(allowed_methods)
-#        del response['Content-Type']
-#        return response
-#    
-#    if request.method == 'GET':
-#        
-#        # gets all resources from the native database
-#        try:
-#            native_collection_list = proxy.getAllJobs()
-#        except xmlrpclib.Fault, err:
-#            print "XMLRPC Error (%s):%s" % (err.faultCode, err.faultString)
-#            
-#            # generating 500 response
-#            response = HttpResponseServerError()
-#            response['Content-Type'] = 'application/json'
-#            return response
-#        
-#        # updates or creates
-#        for native_resource_dict in native_collection_list:
-#            resource_model, created = Node.objects.get_or_create(native_id = native_resource_dict['node_id'],
-#                defaults = {
-#                    'uid' : generate_uid(),
-#                    'native_id' : native_resource_dict['node_id'],
-#                    'serial' : native_resource_dict['serial']
-#                }
-#            )
-#            if not created:
-#                resource_model.serial = native_resource_dict['serial']
-#                resource_model.save()
-#        
-#        # delete nodes that are not present in the native database
-#        native_resource_id_list = [ native_resource_dict['node_id'] for native_resource_dict in native_collection_list ]
-#        Node.objects.exclude(native_id__in = native_resource_id_list).delete()
-#
-#        collection_list = [ resource_model.to_dict(head_only = True) for resource_model in Job.objects.all() ]
-#        
-#        # generating 200 response
-#        response = HttpResponse()
-#        response['Content-Type'] = 'application/json'
-#        response.write(serialize(collection_list))
-#        return response
-#    
-#    else:
-#        response = HttpResponseNotAllowed(allowed_methods)
-#        del response['Content-Type']
-#        return response
-#
-#def job_resource_handler(request):
-#    pass
+def job_collection_handler(request):
+    
+    allowed_methods = ['GET', 'POST']
+    
+    if request.method == 'GET':
+        
+        try:
+            native_collection_list = proxy.getAllJobs()
+        except None:
+            # 500
+            response = HttpResponseServerError()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+        # updates or creates
+        for native_resource_dict in native_collection_list:
+            
+            resource_model, created = Job.objects.get_or_create(native_id = native_resource_dict['job_id'],
+                defaults = {
+                    'uid' : generate_uid(),
+                    'native_id' : native_resource_dict['job_id'],
+                    'name' : 'native job',
+                    'description' : native_resource_dict['description'],
+                    'datetime_from' : native_resource_dict['time_begin'],
+                    'datetime_to' : native_resource_dict['time_end'],
+                }
+            )
+            if not created:
+                resource_model.name = 'native job'
+                resource_model.description = native_resource_dict['description']
+                resource_model.time_begin = native_resource_dict['time_begin']
+                resource_model.time_end = native_resource_dict['time_end']
+                resource_model.save()
+        
+        # delete nodes that are not present in the native database
+        native_resource_id_list = [ native_resource_dict['job_id'] for native_resource_dict in native_collection_list ]
+        Job.objects.exclude(native_id__in = native_resource_id_list).delete()
 
+        collection_list = [ resource_model.to_dict(head_only = True) for resource_model in Job.objects.all() ]
+        
+        # generating 200 response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(collection_list))
+        return response
+    
+        if request.method == 'POST':
+            try:
+                resource_model = Job(
+                    uid = generate_uid(),
+                    name = request.POST['name'],
+                    description = request.POST['description'])
+                
+                # file is optional, can be updated later
+                try:
+                    resource_model.file = request.FILES['file']
+                except Exception:
+                    pass
+                resource_model.save()
+                
+                # 201
+                response = HttpResponse(status=201)
+                response['Location'] = build_url(path = resource_model.get_absolute_url())
+                response['Content-Location'] = build_url(path = resource_model.get_absolute_url())
+                response['Content-Type'] = 'application/json'
+                return response
+            except Exception:
+                # 400
+                response = HttpResponseBadRequest()
+                response['Content-Type'] = 'application/json'
+                return response
+    
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+
+def job_resource_handler(request, job_uid):
+    
+    allowed_methods = ['GET', 'PUT', 'DELETE']
+    
+    try:
+        resource_model = Job.objects.get(uid = job_uid)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+
+    if request.method == 'GET':
+        
+        try:
+            native_resource_dict = proxy.getJobById(resource_model.native_id)[0]
+        except None:
+            response = HttpResponseServerError()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+        resource_model.name = 'native job'
+        resource_model.description = native_resource_dict['description']
+        resource_model.datetime_from = native_resource_dict['time_begin']
+        resource_model.datetime_to = native_resource_dict['time_end']
+            
+        resource_model.save()
+        
+        # 200
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(resource_model.to_dict()))
+        return response
+    
+    if request.method == 'PUT':
+        
+        resource_json = request.raw_post_data
+        
+        try:
+            resource_dict = json.loads(resource_json)
+            
+            native_resource_dict = dict()
+            native_resource_dict['job_id'] = resource_model.native_id
+            native_resource_dict['description'] = resource_model.description
+            native_resource_dict['time_begin'] = resource_model.datetime_from
+            native_resource_dict['time_end'] = resource_model.datetime_to
+            
+            try:
+                proxy.updateJobById(native_resource_dict)
+            except None:
+                response = HttpResponseServerError()
+                response['Content-Type'] = 'application/json'
+                return response
+
+            resource_model.name = resource_dict['name']
+            resource_model.description = resource_dict['description']
+            resource_model.datetime_from = resource_dict['datetime_from']
+            resource_model.datetime_to = resource_dict['datetime_to']
+            
+            resource_model.save()
+            
+            # 200
+            response = HttpResponse()
+            response['Content-Type'] = 'application/json'
+            response.write(serialize(resource_model.to_dict()))
+            return response
+            
+        except Exception:
+            # 400
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+    if request.method == 'DELETE':
+        
+        resource_model.delete()
+        
+        # generate response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        return response
+    
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+        
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
 # IMAGE
 def image_collection_handler(request):
     
@@ -690,12 +731,12 @@ def image_collection_handler(request):
         del response['Content-Type']
         return response
     
-def image_resource_handler(request, image_id):
+def image_resource_handler(request, image_uid):
     
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
-        resource_model = Image.objects.get(uid = image_id)
+        resource_model = Image.objects.get(uid = image_uid)
     
     except ObjectDoesNotExist:
         # 404
@@ -735,6 +776,8 @@ def image_resource_handler(request, image_id):
             return response
         
     if request.method == 'DELETE':
+        
+        resource_model.file.delete()
         
         resource_model.delete()
         
