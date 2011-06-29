@@ -89,6 +89,7 @@ class Platform(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         if not head_only:
+            resource['uid'] = self.uid
             resource['name'] = self.name
             # resource['native_id'] = self.native_id
             resource['tinyos_name'] = self.tinyos_name
@@ -123,6 +124,7 @@ class Image(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         if not head_only:
+            resource['uid'] = self.uid
             resource['name'] = self.name
             resource['description'] = self.description
             resource['file'] = build_url(path = '/static/' + self.file.name)
@@ -152,6 +154,7 @@ class Job(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         if not head_only:
+            resource['uid'] = self.uid
             resource['name'] = self.name
             resource['description'] = self.description
             resource['datetime_from'] = self.datetime_from
@@ -181,10 +184,10 @@ class Node(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         if not head_only:
-            # resource['native_id'] = self.native_id
+            resource['uid'] = self.uid
             resource['serial'] = self.serial
             resource['platform'] = build_url(path = self.platform.get_absolute_url())
-            resource['image'] = 'None' if (self.image is None) else build_url(path = self.image.get_absolute_url())
+            resource['image'] = None if (self.image is None) else build_url(path = self.image.get_absolute_url())
         return resource
     
     class Meta:
@@ -209,10 +212,11 @@ class NodeGroup(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         if not head_only:
+            resource['uid'] = self.uid
             resource['name'] = self.name
             resource['description'] = self.description
             resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
-            resource['image'] = 'None' if (self.image is None) else build_url(path = self.image.get_absolute_url())
+            resource['image'] = None if (self.image is None) else build_url(path = self.image.get_absolute_url())
         return resource
         
     class Meta:
