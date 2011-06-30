@@ -32,7 +32,7 @@ class Federation(Resource):
         
     class Meta:
         verbose_name = "Federation"
-        verbose_name_plural = verbose_name +'s'
+        verbose_name_plural = verbose_name
 
 
 # PROJECT
@@ -55,7 +55,7 @@ class Project(Resource):
             resource['uid'] = self.uid
             resource['name'] = self.name
             resource['description'] = self.description
-            resource['experiments'] = [ exp.to_dict(head_only = True) for exp in self.experiments.all() ]
+            resource['experiments'] = [ experiment.to_dict(head_only = True) for experiment in self.experiments.all() ]
         return resource
 
     class Meta:
