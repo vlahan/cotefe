@@ -568,12 +568,15 @@ def job_collection_handler(request):
             native_resource_dict['resources'] = [1,2,3,4,5]
             
             try:
-                proxy.createJob(native_resource_dict)
+                job_native_id = proxy.createJob(native_resource_dict)[0]['job_id']
             except None:
                 # 500
                 response = HttpResponseServerError()
                 response['Content-Type'] = 'application/json'
                 return response
+            
+            resource_model.native_id = job_native_id
+            resource_model.save()
             
             # generate response
             response = HttpResponse(status=201)
