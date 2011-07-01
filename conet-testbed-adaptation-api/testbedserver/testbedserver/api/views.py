@@ -24,6 +24,13 @@ def testbed_resource_handler(request):
     
     allowed_methods = ['GET']
     
+    if request.method == 'GET':
+        resource_model = Testbed.objects.all()[0]
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(resource_model.to_dict()))
+        return response
+    
     if request.method == 'OPTIONS':
         # generating response
         response = HttpResponse(status=204)
@@ -31,12 +38,6 @@ def testbed_resource_handler(request):
         del response['Content-Type']
         return response
     
-    if request.method == 'GET':
-        resource_model = Testbed.objects.all()[0]
-        response = HttpResponse()
-        response['Content-Type'] = 'application/json'
-        response.write(serialize(resource_model.to_dict()))
-        return response
     else:
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
@@ -851,7 +852,8 @@ def image_resource_in_node_handler(request, node_uid, image_uid):
         image_path = image_model.file.file.name
         
         try:
-            proxy.burnImageToNodeList(image_path, node_native_id_list)
+            result = proxy.burnImageToNodeList(image_path, node_native_id_list)
+            logging.warning(result)
             
         except None:
             # 500
@@ -928,14 +930,15 @@ def image_resource_in_nodegroup_handler(request, nodegroup_uid, image_uid):
         node_native_id_list = [ nodegroup2node.node.native_id for nodegroup2node in NodeGroup2Node.objects.filter(nodegroup = nodegroup_model) ]
         image_path = image_model.file.file.name
         
-#        try:
-#            proxy.burnImageToNodeList(image_path, node_native_id_list)
-#            
-#        except None:
-#            # 500
-#            response = HttpResponseServerError()
-#            response['Content-Type'] = 'application/json'
-#            return response
+        try:
+            result = proxy.burnImageToNodeList(image_path, node_native_id_list)
+            logging.warning(result)
+            
+        except None:
+            # 500
+            response = HttpResponseServerError()
+            response['Content-Type'] = 'application/json'
+            return response
          
         # generate response
         response = HttpResponse()
