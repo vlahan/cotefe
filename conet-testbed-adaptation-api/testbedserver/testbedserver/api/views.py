@@ -32,7 +32,7 @@ def testbed_resource_handler(request):
         return response
     
     if request.method == 'OPTIONS':
-        # generating response
+        # 204
         response = HttpResponse(status=204)
         response['Allow'] = ', '.join(allowed_methods)
         del response['Content-Type']
@@ -144,10 +144,9 @@ def node_collection_handler(request):
     
     if request.method == 'GET':
         
-        # gets all resources from the native database
         try:
             native_node_list = proxy.getAllNodes()
-        except Exception:
+        except None:
             # 500
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
@@ -180,21 +179,24 @@ def node_collection_handler(request):
             resource_model, created = Node.objects.get_or_create(native_id = native_node_dict['node_id'],
                 defaults = {
                     'uid' : generate_uid(),
+                    'name' : native_node_dict['serial'],
                     'native_id' : native_node_dict['node_id'],
-                    'serial' : native_node_dict['serial'],
                     'platform' : platform_model,
                 }
             )
             if not created:
-                resource_model.serial = native_node_dict['serial']
+                resource_model.name = native_node_dict['serial']
                 resource_model.platform = platform_model
                 resource_model.save()
         
         # delete nodes that are not present in the native database
         native_node_id_list = [ native_resource_dict['node_id'] for native_resource_dict in native_node_list ]
         Node.objects.exclude(native_id__in = native_node_id_list).delete()
-
-        node_list = [ node_model.to_dict(head_only = True) for node_model in Node.objects.all() ]
+        
+        if 'platform' in request.GET and not (request.GET is None):
+            node_list = [ node_model.to_dict(head_only = True) for node_model in Node.objects.filter(platform = Platform.objects.get(uid = request.GET['platform'])) ]
+        else:
+            node_list = [ node_model.to_dict(head_only = True) for node_model in Node.objects.all() ]
         
         # generating 200 response
         response = HttpResponse()
@@ -256,7 +258,7 @@ def node_resource_handler(request, node_uid):
                 platform_model.tinyos_name = native_platform_dict['name_tinyos']
                 platform_model.save()
     
-        resource_model.serial = native_resource_dict['serial']
+        resource_model.name = native_resource_dict['serial']
         resource_model.platform = platform_model
         resource_model.save()
         
@@ -509,7 +511,7 @@ def job_collection_handler(request):
         
         try:
             native_collection_list = proxy.getAllJobs()
-        except None:
+        except Exception:
             # 500
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
@@ -522,14 +524,13 @@ def job_collection_handler(request):
                 defaults = {
                     'uid' : generate_uid(),
                     'native_id' : native_resource_dict['job_id'],
-                    'name' : 'native job',
+                    'name' : '(native job)',
                     'description' : native_resource_dict['description'],
                     'datetime_from' : native_resource_dict['time_begin'],
                     'datetime_to' : native_resource_dict['time_end'],
                 }
             )
             if not created:
-                resource_model.name = '(native job)'
                 resource_model.description = native_resource_dict['description']
                 resource_model.time_begin = native_resource_dict['time_begin']
                 resource_model.time_end = native_resource_dict['time_end']
@@ -569,7 +570,11 @@ def job_collection_handler(request):
             native_resource_dict['resources'] = [1,2,3,4,5]
             
             try:
-                job_native_id = proxy.createJob(native_resource_dict)[0]['job_id']
+                created_job_id_list = proxy.createJob(native_resource_dict)
+                if len(created_job_id_list) == 0:
+                    pass
+                else:
+                    job_native_id = created_job_id_list[0]['job_id']
             except None:
                 # 500
                 response = HttpResponseServerError()
@@ -619,13 +624,19 @@ def job_resource_handler(request, job_uid):
     if request.method == 'GET':
         
         try:
-            native_resource_dict = proxy.getJob(resource_model.native_id)[0]
-        except None:
+            native_resource_list = proxy.getJob(resource_model.native_id)
+            if len(native_resource_list) == 0:
+                # 404
+                response = HttpResponseNotFound()
+                response['Content-Type'] = 'application/json'
+                return response
+                
+        except Exception:
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
             return response
         
-        resource_model.name = 'native job'
+        native_resource_dict = native_resource_list[0]    
         resource_model.description = native_resource_dict['description']
         resource_model.datetime_from = native_resource_dict['time_begin']
         resource_model.datetime_to = native_resource_dict['time_end']
