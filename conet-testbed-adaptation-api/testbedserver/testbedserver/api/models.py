@@ -92,6 +92,7 @@ class Platform(Resource):
         if not head_only:
             resource['uid'] = self.uid
             resource['tinyos_name'] = self.tinyos_name
+            resource['native_id'] = self.native_id
         return resource
 
     class Meta:
@@ -110,7 +111,7 @@ class Image(Resource):
     uid = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
-    file = models.FileField(upload_to=update_filename, null=True, blank=True)
+    file = models.FileField(upload_to=update_filename)
 
     def __unicode__(self):
         return self.name
@@ -136,7 +137,7 @@ class Image(Resource):
 # JOB
 class Job(Resource):
     uid = models.CharField(max_length=255, primary_key=True)
-    native_id = models.IntegerField(unique=True, null=True, blank=True)
+    native_id = models.IntegerField(unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
     datetime_from = models.CharField(max_length=255)
@@ -158,6 +159,7 @@ class Job(Resource):
             resource['description'] = self.description
             resource['datetime_from'] = self.datetime_from
             resource['datetime_to'] = self.datetime_to
+            resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
         return resource
 
     class Meta:

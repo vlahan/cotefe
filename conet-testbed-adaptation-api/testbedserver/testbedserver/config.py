@@ -15,3 +15,5 @@ XMLRPC_USERNAME = 'conetuser'
 XMLRPC_PASSWORD = 'password'
 XMLRPC_HOST = 'localhost'
 XMLRPC_PORT = '8005'
+
+IMAGE_FILEPATH = '/var/twist/twist_v1/images/'

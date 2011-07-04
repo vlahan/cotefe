@@ -27,6 +27,8 @@ urlpatterns = patterns('',
     
     url(r'^jobs/$', job_collection_handler),
     url(r'^jobs/(?P<job_uid>\w+)$', job_resource_handler),
+    url(r'^jobs/(?P<job_uid>\w+)/nodes/$', node_collection_in_job_handler),
+    url(r'^jobs/(?P<job_uid>\w+)/nodes/(?P<node_uid>\w+)$', node_resource_in_job_handler),
   
     url(r'^images/$', image_collection_handler),
     url(r'^images/(?P<image_uid>\w+)$', image_resource_handler),
