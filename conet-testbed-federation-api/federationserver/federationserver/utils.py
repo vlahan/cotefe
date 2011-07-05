@@ -8,7 +8,10 @@ from datetime import datetime, tzinfo
 # UTILITY FUNCTIONS
 
 def build_url(protocol = SERVER_PROTOCOL, host = SERVER_HOST, port = SERVER_PORT, path = '/'):
-    return protocol + '://' + host + ':' + port + path
+    if port == '80':
+        return protocol + '://' + host + path
+    else:
+        return protocol + '://' + host + ':' + port + path
     
 def serialize(dict_or_list, format = 'json'):
     if format == 'json':
