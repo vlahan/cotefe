@@ -92,7 +92,7 @@ class Platform(Resource):
         if not head_only:
             resource['uid'] = self.uid
             resource['tinyos_name'] = self.tinyos_name
-            resource['native_id'] = self.native_id
+            # resource['native_id'] = self.native_id
         return resource
 
     class Meta:
