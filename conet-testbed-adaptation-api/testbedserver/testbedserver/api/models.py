@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from testbedserver.config import *
 from testbedserver.utils import *
 from testbedserver.settings import PROJECT_PATH
-from odict import OrderedDict
 
 # RESOURCE ABSTRACT MODEL
 class Resource(models.Model):
@@ -54,7 +53,7 @@ class Testbed(Resource):
         return "/"
         
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url()
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
@@ -86,7 +85,7 @@ class Platform(Resource):
         return "/platforms/%s" % self.uid
 
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
@@ -121,7 +120,7 @@ class Image(Resource):
         return "/images/%s" % self.uid
 
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
@@ -151,7 +150,7 @@ class Job(Resource):
         return "/jobs/%s" % self.uid
 
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
@@ -182,7 +181,7 @@ class Node(Resource):
         return "/nodes/%s" % self.uid
 
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
@@ -213,7 +212,7 @@ class NodeGroup(Resource):
         return "/nodegroups/%s" % self.uid
 
     def to_dict(self, head_only = False):
-        resource = OrderedDict()
+        resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
