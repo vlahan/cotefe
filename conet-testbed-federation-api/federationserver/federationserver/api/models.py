@@ -23,8 +23,8 @@ class Federation(Resource):
         resource = dict()
         resource['uri'] = build_url()
         resource['media_type'] = MEDIA_TYPE
+        resource['name'] = self.name
         if not head_only:
-            resource['name'] = self.name
             resource['description'] = self.description
             resource['projects'] = build_url(path = '/projects/')
             resource['experiments'] = build_url(path = '/experiments/')
@@ -51,9 +51,9 @@ class Project(Resource):
         resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
+        resource['name'] = self.name
         if not head_only:
             resource['uid'] = self.uid
-            resource['name'] = self.name
             resource['description'] = self.description
             resource['experiments'] = [ experiment.to_dict(head_only = True) for experiment in self.experiments.all() ]
         return resource

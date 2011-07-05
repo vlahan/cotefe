@@ -1,5 +1,5 @@
 from django.contrib import databrowse
-from federationserver.api.models import *
+from api.models import *
 
 databrowse.site.register(Federation)
 databrowse.site.register(Project)
