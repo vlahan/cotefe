@@ -2,9 +2,9 @@ import logging
 from datetime import datetime
 from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
-from federationserver.api.models import *
-from federationserver.config import *
-from federationserver.utils import *
+from api.models import *
+from config import *
+from utils import *
 
 # FEDERATION
 def federation_resource_handler(request):

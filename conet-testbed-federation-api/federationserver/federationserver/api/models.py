@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from federationserver.config import *
-from federationserver.utils import *
+from config import *
+from utils import *
 
 # RESOURCE ABSTRACT MODEL
 class Resource(models.Model):

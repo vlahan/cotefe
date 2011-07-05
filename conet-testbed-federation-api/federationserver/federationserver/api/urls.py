@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-from federationserver.api.views import *
+from api.views import *
 
 urlpatterns = patterns('',
                        

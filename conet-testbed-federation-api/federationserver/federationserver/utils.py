@@ -1,5 +1,5 @@
 from django.utils import simplejson as json
-from federationserver.config import *
+from config import *
 from django.http import HttpResponse
 import uuid
 import logging

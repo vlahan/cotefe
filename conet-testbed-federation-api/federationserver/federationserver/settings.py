@@ -77,7 +77,7 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.doc.XViewMiddleware',
 )
 
-ROOT_URLCONF = 'federationserver.urls'
+ROOT_URLCONF = 'urls'
 
 #TEMPLATE_DIRS = ()
 #for root, dirs, files in os.walk(PROJECT_PATH):
@@ -94,7 +94,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # 'django.contrib.admindocs',
     'django.contrib.databrowse',
-    'federationserver.api',
+    'api',
     # 'registration',
     # 'profiles',
 )
@@ -134,7 +134,7 @@ INSTALLED_APPS = (
 # DEFAULT_CHARSET = 'utf-8'
 
 # ACCOUNT_ACTIVATION_DAYS = 7
-# AUTH_PROFILE_MODULE = 'federationserver.api.models.UserResource'
+# AUTH_PROFILE_MODULE = 'api.models.UserResource'
 
 # INTERNAL_IPS = (
 #     '127.0.0.1',
