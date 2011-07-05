@@ -1,8 +1,11 @@
 from django.utils import simplejson as json
 from testbedserver.config import *
+
 from django.http import HttpResponse
 import uuid
 import logging
+from datetime import datetime, tzinfo
+import pytz
 
 # UTILITY FUNCTIONS
 
@@ -27,4 +30,29 @@ def generate_uid():
     uri_uuid = uuid.uuid4().hex[:UID_LENGTH]
     logging.debug('uid done')
     return uri_uuid
+
+
+# UTC time zone
+utc = pytz.utc
+
+# Europe/Berlin time zone
+berlin = pytz.timezone('Europe/Berlin')
+
+# datetime string formats
+FMT_DT_TO_STR = '%Y-%m-%dT%H:%M:%S%z'
+FMT_STR_TO_DT = '%Y-%m-%dT%H:%M:%S+0000'
+
+def utc_datetime_to_utc_string(dt):
+    return utc.localize(dt).strftime(FMT_DT_TO_STR)
+
+def naive_string_to_utc_datetime(dt_str):
+    return utc.localize(datetime.strptime(dt_str, FMT_STR_TO_DT))
+
+def utc_string_to_utc_datetime(dt_str):
+    return datetime.strptime(dt_str, FMT_STR_TO_DT)
+
+def get_dt_now_utc():
+    dt_now_berlin = berlin.localize(datetime.now())
+    dt_now_utc = dt_now_berlin.astimezone(utc)
+    return dt_now_utc
     

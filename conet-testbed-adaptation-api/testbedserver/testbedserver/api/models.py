@@ -140,8 +140,8 @@ class Job(Resource):
     native_id = models.IntegerField(unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
-    datetime_from = models.CharField(max_length=255)
-    datetime_to = models.CharField(max_length=255)
+    datetime_from = models.DateTimeField()
+    datetime_to = models.DateTimeField()
 
     def __unicode__(self):
         return self.uid
@@ -157,8 +157,8 @@ class Job(Resource):
         if not head_only:
             resource['uid'] = self.uid
             resource['description'] = self.description
-            resource['datetime_from'] = self.datetime_from
-            resource['datetime_to'] = self.datetime_to
+            resource['datetime_from'] = utc_datetime_to_utc_string(self.datetime_from)
+            resource['datetime_to'] = utc_datetime_to_utc_string(self.datetime_to)
             resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
         return resource
 

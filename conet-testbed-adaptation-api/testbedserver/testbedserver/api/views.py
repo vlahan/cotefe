@@ -203,7 +203,7 @@ def node_collection_handler(request):
             
         nodes = [ node.to_dict(head_only = True) for node in nodes ]
         
-        logging.warning(len(nodes))
+        logging.warning('NUMBER OF NODES RETURNED: %d' % len(nodes))
         
         # generating 200 response
         response = HttpResponse()
@@ -531,14 +531,14 @@ def job_collection_handler(request):
                     'native_id' : native_job_dict['job_id'],
                     'name' : '(native job)',
                     'description' : native_job_dict['description'],
-                    'datetime_from' : native_job_dict['time_begin'],
-                    'datetime_to' : native_job_dict['time_end'],
+                    'datetime_from' : utc_string_to_utc_datetime(native_job_dict['time_begin']),
+                    'datetime_to' : utc_string_to_utc_datetime(native_job_dict['time_end']),
                 }
             )
             if not created:
                 resource_model.description = native_job_dict['description']
-                resource_model.time_begin = native_job_dict['time_begin']
-                resource_model.time_end = native_job_dict['time_end']
+                resource_model.time_begin = utc_string_to_utc_datetime(native_job_dict['time_begin'])
+                resource_model.time_end = utc_string_to_utc_datetime(native_job_dict['time_end'])
                 resource_model.save()
         
         # delete nodes that are not present in the native database
@@ -586,8 +586,8 @@ def job_collection_handler(request):
                 uid = generate_uid(),
                 name = job_dict['name'],
                 description = job_dict['description'],
-                datetime_from = job_dict['datetime_from'],
-                datetime_to = job_dict['datetime_to'],
+                datetime_from = utc_string_to_utc_datetime(job_dict['datetime_from']),
+                datetime_to = utc_string_to_utc_datetime(job_dict['datetime_to']),
                 native_id = created_job_id_list[0]['job_id'])
             job.save()
             
@@ -601,7 +601,7 @@ def job_collection_handler(request):
             response['Content-Type'] = 'application/json'
             return response
         
-        except None:
+        except Exception:
             # 400
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
@@ -623,6 +623,24 @@ def job_resource_handler(request, job_uid):
     
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
+    if job_uid == 'current':
+        try:
+            
+            dt_now_utc = get_dt_now_utc()
+            
+            job = Job.objects.filter(datetime_from__lt = dt_now_utc).filter(datetime_to__gt = dt_now_utc)[0]
+            
+            response = HttpResponse()
+            response['Content-Type'] = 'application/json'
+            response.write(serialize(job.to_dict()))
+            return response
+        
+        except Exception:
+            # 404
+            response =  HttpResponseNotFound()
+            response['Content-Type'] = 'application/json'
+            return response
+        
     try:
         job = Job.objects.get(uid = job_uid)
     
@@ -649,8 +667,8 @@ def job_resource_handler(request, job_uid):
         
         native_resource_dict = native_resource_list[0]    
         job.description = native_resource_dict['description']
-        job.datetime_from = native_resource_dict['time_begin']
-        job.datetime_to = native_resource_dict['time_end']
+        job.datetime_from = utc_string_to_utc_datetime(native_resource_dict['time_begin'])
+        job.datetime_to = utc_string_to_utc_datetime(native_resource_dict['time_end'])
             
         job.save()
         
@@ -689,8 +707,8 @@ def job_resource_handler(request, job_uid):
             
             job.name = job_dict['name']
             job.description = job_dict['description']
-            job.datetime_from = job_dict['datetime_from']
-            job.datetime_to = job_dict['datetime_to']
+            job.datetime_from = utc_string_to_utc_datetime(job_dict['datetime_from'])
+            job.datetime_to = utc_string_to_utc_datetime(job_dict['datetime_to'])
             job.save()
             
             for node_uid in node_uid_list:
@@ -952,7 +970,16 @@ def image_resource_in_node_handler(request, node_uid, image_uid):
         image_path = image.file.file.name
         
         try:
-            result = proxy.burnImageToNodeList(image_path, node_native_id_list)
+            dt_now_utc = get_dt_now_utc()
+            job_native_id = Job.objects.filter(datetime_from__lt = dt_now_utc).filter(datetime_to__gt = dt_now_utc)[0].native_id
+        except Exception:
+            # 403
+            response =  HttpResponseForbidden()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+        try:
+            result = proxy.burnImageToNodeList(job_native_id, node_native_id_list, image_path)
             logging.warning(result)
             
         except Exception:
@@ -1031,7 +1058,17 @@ def image_resource_in_nodegroup_handler(request, nodegroup_uid, image_uid):
         image_path = image.file.file.name
         
         try:
-            result = proxy.burnImageToNodeList(image_path, node_native_id_list)
+            dt_now_utc = get_dt_now_utc()
+            job_native_id = Job.objects.filter(datetime_from__lt = dt_now_utc).filter(datetime_to__gt = dt_now_utc)[0].native_id
+            
+        except Exception:
+            # 403
+            response =  HttpResponseForbidden()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+        try:
+            result = proxy.burnImageToNodeList(job_native_id, node_native_id_list, image_path)
             logging.warning(result)
             
         except Exception:
@@ -1084,3 +1121,5 @@ def image_resource_in_nodegroup_handler(request, nodegroup_uid, image_uid):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
+
+    
