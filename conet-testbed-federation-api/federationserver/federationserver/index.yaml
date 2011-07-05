@@ -1,0 +1,11 @@
+indexes:
+
+- kind: api_project
+  properties:
+  - name: __key__
+    direction: desc
+
+- kind: api_experiment
+  properties:
+  - name: __key__
+    direction: desc

@@ -10,4 +10,7 @@ SERVER_PROTOCOL = 'http'
 SERVER_HOST = 'localhost'
 SERVER_PORT = '8080'
 
-# from gae_config import *
+try:
+    from gae_config import *
+except ImportError:
+    pass

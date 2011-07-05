@@ -29,44 +29,44 @@ SITE_ID = 1
 USE_I18N = False
 USE_L10N = False
 
-#MEDIA_ROOT = os.path.join(PROJECT_PATH, 'uploads')
-#MEDIA_URL = '/uploads/'
+MEDIA_ROOT = os.path.join(PROJECT_PATH, 'uploads')
+MEDIA_URL = '/uploads/'
 
-#STATIC_ROOT = os.path.join(PROJECT_PATH, 'static')
-#STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(PROJECT_PATH, 'static')
+STATIC_URL = '/static/'
 
-# ADMIN_MEDIA_PREFIX = '%sadmin-media/' % MEDIA_URL
+ADMIN_MEDIA_PREFIX = '%sadmin-media/' % MEDIA_URL
 
-# STATICFILES_DIRS = (
-#     # Put strings here, like "/home/html/static" or "C:/www/django/static".
-#     # Always use forward slashes, even on Windows.
-#     # Don't forget to use absolute paths, not relative paths.
-#     )
+STATICFILES_DIRS = (
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    )
 
-# STATICFILES_FINDERS = (
-#     'django.contrib.staticfiles.finders.FileSystemFinder',
-#     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-# #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-# )
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '(*i9nbgmbw-g582s0(53l+%#_7j)yn#5p(iw3t4z5a=n879xtn'
 
-#TEMPLATE_LOADERS = (
-#    'django.template.loaders.filesystem.Loader',
-#    'django.template.loaders.app_directories.Loader',
-#)
+TEMPLATE_LOADERS = (
+   'django.template.loaders.filesystem.Loader',
+   'django.template.loaders.app_directories.Loader',
+)
 
-#TEMPLATE_CONTEXT_PROCESSORS = (
-#    'django.core.context_processors.auth',
-#    'django.core.context_processors.media',
-#    'django.core.context_processors.request',
-#)
+TEMPLATE_CONTEXT_PROCESSORS = (
+   'django.core.context_processors.auth',
+   'django.core.context_processors.media',
+   'django.core.context_processors.request',
+)
 
-# if DEBUG:
-#     TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.debug',)
-# if USE_I18N:
-#     TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.i18n',)
+if DEBUG:
+    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.debug',)
+if USE_I18N:
+    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.i18n',)
     
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -79,10 +79,10 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'urls'
 
-#TEMPLATE_DIRS = ()
-#for root, dirs, files in os.walk(PROJECT_PATH):
-#    if 'templates' in dirs:
-#        TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
+TEMPLATE_DIRS = ()
+for root, dirs, files in os.walk(PROJECT_PATH):
+   if 'templates' in dirs:
+       TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -140,3 +140,7 @@ INSTALLED_APPS = (
 #     '127.0.0.1',
 # )
 
+try:
+    from gae_settings import *
+except ImportError:
+    pass
