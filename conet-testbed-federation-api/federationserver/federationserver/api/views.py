@@ -67,7 +67,7 @@ def project_collection_handler(request):
             response['Content-Type'] = 'application/json'
             return response
         
-        except Exception:
+        except None:
             # 400
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
@@ -125,7 +125,7 @@ def project_resource_handler(request, project_uid):
             response.write(serialize(project_model.to_dict()))
             return response
             
-        except Exception:
+        except None:
             
             # 400
             response = HttpResponseBadRequest()
@@ -227,7 +227,7 @@ def experiment_collection_handler(request):
             response['Content-Type'] = 'application/json'
             return response
         
-        except Exception:
+        except None:
             # 400
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
@@ -284,7 +284,7 @@ def experiment_resource_handler(request, experiment_uid):
             response.write(serialize(experiment_model.to_dict()))
             return response
             
-        except Exception:
+        except None:
             
             # 400
             response = HttpResponseBadRequest()

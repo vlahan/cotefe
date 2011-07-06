@@ -79,9 +79,9 @@ class Experiment(Resource):
         resource = dict()
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
+        resource['name'] = self.name
         if not head_only:
             resource['uid'] = self.uid
-            resource['name'] = self.name
             resource['description'] = self.description
             resource['project'] = build_url(path = self.project.get_absolute_url())
         return resource
