@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from config import *
+from settings import *
 from utils import *
 
 # RESOURCE ABSTRACT MODEL

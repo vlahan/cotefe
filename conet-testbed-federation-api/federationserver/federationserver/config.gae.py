@@ -1,4 +1,0 @@
-# TESTBED FEDERATION API
-SERVER_PROTOCOL = 'http'
-SERVER_HOST = 'api.cotefe.net'
-SERVER_PORT = '80'

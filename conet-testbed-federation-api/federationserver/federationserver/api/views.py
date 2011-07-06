@@ -3,7 +3,7 @@ from datetime import datetime
 from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
 from api.models import *
-from config import *
+from settings import *
 from utils import *
 
 # FEDERATION

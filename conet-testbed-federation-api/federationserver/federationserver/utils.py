@@ -1,5 +1,5 @@
 from django.utils import simplejson as json
-from config import *
+from settings import *
 from django.http import HttpResponse
 import uuid
 import logging

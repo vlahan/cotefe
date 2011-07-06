@@ -47,3 +47,17 @@ ROOT_URLCONF = 'urls'
 
 # from djangoappengine.settings_base import *
 # DATABASES['default']['HIGH_REPLICATION'] = True
+
+############################ NON DJANGO SETTINGS
+
+MEDIA_TYPE = 'application/json'
+
+JSON_INDENT = 4
+JSON_ENSURE_ASCII = True
+
+UID_LENGTH = 8
+
+# TESTBED FEDERATION API
+SERVER_PROTOCOL = 'http'
+SERVER_HOST = 'api.cotefe.net'
+SERVER_PORT = '80'
