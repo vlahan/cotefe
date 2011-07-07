@@ -1,5 +1,5 @@
 from django.utils import simplejson as json
-from testbedserver.config import *
+from testbedserver.settings import *
 
 from django.http import HttpResponse
 import uuid

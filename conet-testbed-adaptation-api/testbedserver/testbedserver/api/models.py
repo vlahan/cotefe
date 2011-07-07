@@ -1,7 +1,7 @@
 import os
 from django.db import models
 from django.contrib.auth.models import User
-from testbedserver.config import *
+from testbedserver.settings import *
 from testbedserver.utils import *
 from testbedserver.settings import PROJECT_PATH
 

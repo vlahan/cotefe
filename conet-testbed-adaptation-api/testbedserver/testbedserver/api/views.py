@@ -4,7 +4,7 @@ from datetime import datetime
 from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
 from testbedserver.api.models import *
-from testbedserver.config import *
+from testbedserver.settings import *
 from testbedserver.utils import *
 from testbedserver.proxy import TestbedProxy
 from django.contrib.auth.models import UserManager
