@@ -112,7 +112,7 @@ def platform_resource_handler(request, platform_uid):
                 
         try:
             native_platform_dict = proxy.getPlatform(platform.native_id)[0]
-        except Exception:
+        except None:
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
             return response
@@ -146,7 +146,7 @@ def node_collection_handler(request):
         
         try:
             native_node_list = proxy.getAllNodes()
-        except Exception:
+        except None:
             # 500
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
@@ -160,7 +160,7 @@ def node_collection_handler(request):
             except ObjectDoesNotExist:
                 try:
                     native_platform_dict = proxy.getPlatform(native_node_dict['platform_id'])[0]
-                except Exception:
+                except None:
                     response = HttpResponseServerError()
                     response['Content-Type'] = 'application/json'
                     return response
@@ -239,7 +239,7 @@ def node_resource_handler(request, node_uid):
                 
         try:
             native_node_dict = proxy.getNode(node.native_id)[0]
-        except Exception:
+        except None:
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
             return response
@@ -249,7 +249,7 @@ def node_resource_handler(request, node_uid):
         except ObjectDoesNotExist:
             try:
                 native_platform_dict = proxy.getPlatform(native_node_dict['platform_id'])[0]
-            except Exception:
+            except None:
                 response = HttpResponseServerError()
                 response['Content-Type'] = 'application/json'
                 return response
@@ -318,7 +318,7 @@ def nodegroup_collection_handler(request):
             response['Content-Location'] = build_url(path = nodegroup.get_absolute_url())
             response['Content-Type'] = 'application/json'
             return response
-        except Exception:
+        except None:
             # 400
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
@@ -381,7 +381,7 @@ def nodegroup_resource_handler(request, nodegroup_uid):
             response.write(serialize(nodegroup.to_dict()))
             return response
             
-        except Exception:
+        except None:
             # 400
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
@@ -516,7 +516,7 @@ def job_collection_handler(request):
         
         try:
             native_job_list = proxy.getAllJobs()
-        except Exception:
+        except None:
             # 500
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
@@ -575,8 +575,8 @@ def job_collection_handler(request):
             try:
                 created_job_id_list = proxy.createJob(native_job_dict)
                 if len(created_job_id_list) == 0:
-                    raise Exception
-            except Exception:
+                    raise None
+            except None:
                 # 500
                 response = HttpResponseServerError()
                 response['Content-Type'] = 'application/json'
@@ -601,7 +601,7 @@ def job_collection_handler(request):
             response['Content-Type'] = 'application/json'
             return response
         
-        except Exception:
+        except None:
             # 400
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
@@ -635,7 +635,7 @@ def job_resource_handler(request, job_uid):
             response.write(serialize(job.to_dict()))
             return response
         
-        except Exception:
+        except None:
             # 404
             response =  HttpResponseNotFound()
             response['Content-Type'] = 'application/json'
@@ -660,7 +660,7 @@ def job_resource_handler(request, job_uid):
                 response['Content-Type'] = 'application/json'
                 return response
                 
-        except Exception:
+        except None:
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
             return response
@@ -700,7 +700,7 @@ def job_resource_handler(request, job_uid):
                 
             try:
                 proxy.updateJob(native_job_dict)
-            except Exception:
+            except None:
                 response = HttpResponseServerError()
                 response['Content-Type'] = 'application/json'
                 return response
@@ -720,7 +720,7 @@ def job_resource_handler(request, job_uid):
             response.write(serialize(job.to_dict()))
             return response
             
-        except Exception:
+        except None:
             # 400
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
@@ -733,7 +733,7 @@ def job_resource_handler(request, job_uid):
         try:
             proxy.deleteJob(job.native_id)
             
-        except Exception:
+        except None:
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
             return response
@@ -862,7 +862,7 @@ def image_collection_handler(request):
             response['Content-Location'] = build_url(path = resource_model.get_absolute_url())
             response['Content-Type'] = 'application/json'
             return response
-        except Exception:
+        except None:
             # 400
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
@@ -916,7 +916,7 @@ def image_resource_handler(request, image_uid):
             response.write(serialize(image.to_dict()))
             return response
             
-        except Exception:
+        except None:
             # 400
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
@@ -972,7 +972,7 @@ def image_resource_in_node_handler(request, node_uid, image_uid):
         try:
             dt_now_utc = get_dt_now_utc()
             job_native_id = Job.objects.filter(datetime_from__lt = dt_now_utc).filter(datetime_to__gt = dt_now_utc)[0].native_id
-        except Exception:
+        except None:
             # 403
             response =  HttpResponseForbidden()
             response['Content-Type'] = 'application/json'
@@ -982,7 +982,7 @@ def image_resource_in_node_handler(request, node_uid, image_uid):
             result = proxy.burnImageToNodeList(job_native_id, node_native_id_list, image_path)
             logging.warning(result)
             
-        except Exception:
+        except None:
             # 500
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
@@ -1006,7 +1006,7 @@ def image_resource_in_node_handler(request, node_uid, image_uid):
         try:
             proxy.burnImageToNodeList(None, node_native_id_list)
             
-        except Exception:
+        except None:
             # 500
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
@@ -1061,7 +1061,7 @@ def image_resource_in_nodegroup_handler(request, nodegroup_uid, image_uid):
             dt_now_utc = get_dt_now_utc()
             job_native_id = Job.objects.filter(datetime_from__lt = dt_now_utc).filter(datetime_to__gt = dt_now_utc)[0].native_id
             
-        except Exception:
+        except None:
             # 403
             response =  HttpResponseForbidden()
             response['Content-Type'] = 'application/json'
@@ -1071,7 +1071,7 @@ def image_resource_in_nodegroup_handler(request, nodegroup_uid, image_uid):
             result = proxy.burnImageToNodeList(job_native_id, node_native_id_list, image_path)
             logging.warning(result)
             
-        except Exception:
+        except None:
             # 500
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
@@ -1099,7 +1099,7 @@ def image_resource_in_nodegroup_handler(request, nodegroup_uid, image_uid):
 #        try:
 #            proxy.burnImageToNodeList(None, node_native_id_list)
 #            
-#        except Exception:
+#        except None:
 #            # 500
 #            response = HttpResponseServerError()
 #            response['Content-Type'] = 'application/json'
