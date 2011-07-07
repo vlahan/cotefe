@@ -25,7 +25,7 @@ class Resource(models.Model):
 #
 #    def to_dict(self, head_only = False):
 #        resource = OrderedDict()
-#        resource['uri'] = build_url(path = self.get_absolute_url())
+#        resource['URI'] = build_url(path = self.get_absolute_url())
 #        resource['media_type'] = MEDIA_TYPE
 #        if not head_only:
 #            resource['name'] = self.user.username
@@ -54,7 +54,7 @@ class Testbed(Resource):
         
     def to_dict(self, head_only = False):
         resource = dict()
-        resource['uri'] = build_url()
+        resource['URI'] = build_url()
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
@@ -86,7 +86,7 @@ class Platform(Resource):
 
     def to_dict(self, head_only = False):
         resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['URI'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
@@ -121,7 +121,7 @@ class Image(Resource):
 
     def to_dict(self, head_only = False):
         resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['URI'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
@@ -151,7 +151,7 @@ class Job(Resource):
 
     def to_dict(self, head_only = False):
         resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['URI'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
@@ -182,7 +182,7 @@ class Node(Resource):
 
     def to_dict(self, head_only = False):
         resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['URI'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
@@ -213,7 +213,7 @@ class NodeGroup(Resource):
 
     def to_dict(self, head_only = False):
         resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['URI'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
