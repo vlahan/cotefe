@@ -73,16 +73,16 @@ class Testbed(Resource):
 
 # JOB
 class Platform(Resource):
-    uid = models.CharField(max_length=255, primary_key=True)
+    id = models.CharField(max_length=255, primary_key=True)
     native_id = models.IntegerField(unique=True)
     name = models.CharField(max_length=255)
     tinyos_name = models.CharField(max_length=255)
 
     def __unicode__(self):
-        return self.uid
+        return self.id
 
     def get_absolute_url(self):
-        return "/platforms/%s" % self.uid
+        return "/platforms/%s" % self.id
 
     def to_dict(self, head_only = False):
         resource = dict()
@@ -90,7 +90,7 @@ class Platform(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
-            resource['uid'] = self.uid
+            resource['id'] = self.id
             resource['tinyos_name'] = self.tinyos_name
             # resource['native_id'] = self.native_id
         return resource
@@ -103,12 +103,12 @@ class Platform(Resource):
 def update_filename(instance, filename):
     filepath = 'images'
     ext = filename.split('.')[-1]
-    filename = "%s.%s" % (instance.uid, ext)
+    filename = "%s.%s" % (instance.id, ext)
     return os.path.join(filepath, filename)
         
 # IMAGE
 class Image(Resource):
-    uid = models.CharField(max_length=255, primary_key=True)
+    id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
     file = models.FileField(upload_to=update_filename)
@@ -117,7 +117,7 @@ class Image(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return "/images/%s" % self.uid
+        return "/images/%s" % self.id
 
     def to_dict(self, head_only = False):
         resource = dict()
@@ -125,7 +125,7 @@ class Image(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
-            resource['uid'] = self.uid
+            resource['id'] = self.id
             resource['description'] = self.description
             resource['file'] = build_url(path = '/static/' + self.file.name)
         return resource
@@ -136,7 +136,7 @@ class Image(Resource):
 
 # JOB
 class Job(Resource):
-    uid = models.CharField(max_length=255, primary_key=True)
+    id = models.CharField(max_length=255, primary_key=True)
     native_id = models.IntegerField(unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -144,10 +144,10 @@ class Job(Resource):
     datetime_to = models.DateTimeField()
 
     def __unicode__(self):
-        return self.uid
+        return self.id
 
     def get_absolute_url(self):
-        return "/jobs/%s" % self.uid
+        return "/jobs/%s" % self.id
 
     def to_dict(self, head_only = False):
         resource = dict()
@@ -155,7 +155,7 @@ class Job(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
-            resource['uid'] = self.uid
+            resource['id'] = self.id
             resource['description'] = self.description
             resource['datetime_from'] = utc_datetime_to_utc_string(self.datetime_from)
             resource['datetime_to'] = utc_datetime_to_utc_string(self.datetime_to)
@@ -168,17 +168,17 @@ class Job(Resource):
     
 # NODE
 class Node(Resource):
-    uid = models.CharField(max_length=255, primary_key=True)
+    id = models.CharField(max_length=255, primary_key=True)
     native_id = models.IntegerField(unique=True)
     name = models.CharField(max_length=255, unique=True)
     platform = models.ForeignKey(Platform)
     image = models.ForeignKey(Image, null=True, blank=True)
     
     def __unicode__(self):
-        return self.uid
+        return self.id
 
     def get_absolute_url(self):
-        return "/nodes/%s" % self.uid
+        return "/nodes/%s" % self.id
 
     def to_dict(self, head_only = False):
         resource = dict()
@@ -186,7 +186,7 @@ class Node(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
-            resource['uid'] = self.uid
+            resource['id'] = self.id
             resource['platform'] = build_url(path = self.platform.get_absolute_url())
             if self.image:
                 resource['image'] = build_url(path = self.image.get_absolute_url())
@@ -200,7 +200,7 @@ class Node(Resource):
         
 # NODEGROUP
 class NodeGroup(Resource):
-    uid = models.CharField(max_length=255, primary_key=True)
+    id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
     image = models.ForeignKey(Image, null=True, blank=True)
@@ -209,7 +209,7 @@ class NodeGroup(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return "/nodegroups/%s" % self.uid
+        return "/nodegroups/%s" % self.id
 
     def to_dict(self, head_only = False):
         resource = dict()
@@ -217,7 +217,7 @@ class NodeGroup(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
-            resource['uid'] = self.uid
+            resource['id'] = self.id
             resource['description'] = self.description
             resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
             if self.image:

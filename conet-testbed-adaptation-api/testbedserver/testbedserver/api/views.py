@@ -61,7 +61,7 @@ def platform_collection_handler(request):
         for native_resource_dict in native_platform_list:
             platform, created = Platform.objects.get_or_create(native_id = native_resource_dict['platform_id'],
                 defaults = {
-                    'uid' : generate_uid(),
+                    'id' : generate_id(),
                     'native_id' : native_resource_dict['platform_id'],
                     'name' : native_resource_dict['name_long'],
                     'tinyos_name' : native_resource_dict['name_tinyos'],
@@ -96,12 +96,12 @@ def platform_collection_handler(request):
         del response['Content-Type']
         return response
     
-def platform_resource_handler(request, platform_uid):
+def platform_resource_handler(request, platform_id):
     
     allowed_methods = ['GET']
     
     try:
-        platform = Platform.objects.get(uid = platform_uid)
+        platform = Platform.objects.get(id = platform_id)
     
     except ObjectDoesNotExist:
         response = HttpResponseNotFound()
@@ -167,7 +167,7 @@ def node_collection_handler(request):
                 
                 platform, created = Platform.objects.get_or_create(native_id = native_platform_dict['platform_id'],
                     defaults = {
-                        'uid' : generate_uid(),
+                        'id' : generate_id(),
                         'native_id' : native_platform_dict['platform_id'],
                         'name' : native_platform_dict['name_long'],
                         'tinyos_name' : native_platform_dict['name_tinyos']})
@@ -178,7 +178,7 @@ def node_collection_handler(request):
             
             node, created = Node.objects.get_or_create(native_id = native_node_dict['node_id'],
                 defaults = {
-                    'uid' : generate_uid(),
+                    'id' : generate_id(),
                     'name' : native_node_dict['serial'],
                     'native_id' : native_node_dict['node_id'],
                     'platform' : platform,
@@ -196,7 +196,7 @@ def node_collection_handler(request):
         nodes = Node.objects.all()
         
         if 'platform' in request.GET and not (request.GET['platform'] is None):
-            nodes = nodes.filter(platform = Platform.objects.get(uid = request.GET['platform']))
+            nodes = nodes.filter(platform = Platform.objects.get(id = request.GET['platform']))
             
         if 'n' in request.GET and not (request.GET['n'] is None):
             nodes = nodes[:request.GET['n']]
@@ -223,12 +223,12 @@ def node_collection_handler(request):
         del response['Content-Type']
         return response
     
-def node_resource_handler(request, node_uid):
+def node_resource_handler(request, node_id):
     
     allowed_methods = ['GET']
     
     try:
-        node = Node.objects.get(uid = node_uid)
+        node = Node.objects.get(id = node_id)
     
     except ObjectDoesNotExist:
         response = HttpResponseNotFound()
@@ -256,7 +256,7 @@ def node_resource_handler(request, node_uid):
             
             platform, created = Platform.objects.get_or_create(native_id = native_platform_dict['platform_id'],
                 defaults = {
-                    'uid' : generate_uid(),
+                    'id' : generate_id(),
                     'native_id' : native_platform_dict['platform_id'],
                     'name' : native_platform_dict['name_long'],
                     'tinyos_name' : native_platform_dict['name_tinyos']})
@@ -306,7 +306,7 @@ def nodegroup_collection_handler(request):
             nodegroup_dict = json.loads(request.raw_post_data)
 
             nodegroup = NodeGroup(
-                uid = generate_uid(),
+                id = generate_id(),
                 name = nodegroup_dict['name'],
                 description = nodegroup_dict['description'],
             )
@@ -336,12 +336,12 @@ def nodegroup_collection_handler(request):
         del response['Content-Type']
         return response
     
-def nodegroup_resource_handler(request, nodegroup_uid):
+def nodegroup_resource_handler(request, nodegroup_id):
     
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
-        nodegroup = NodeGroup.objects.get(uid = nodegroup_uid)
+        nodegroup = NodeGroup.objects.get(id = nodegroup_id)
     
     except ObjectDoesNotExist:
         # 404
@@ -401,12 +401,12 @@ def nodegroup_resource_handler(request, nodegroup_uid):
         del response['Content-Type']
         return response
     
-def node_collection_in_nodegroup_handler(request, nodegroup_uid):
+def node_collection_in_nodegroup_handler(request, nodegroup_id):
     
     allowed_methods = ['GET']
     
     try:
-        nodegroup = NodeGroup.objects.get(uid = nodegroup_uid)
+        nodegroup = NodeGroup.objects.get(id = nodegroup_id)
     
     except ObjectDoesNotExist:
         # 404
@@ -436,13 +436,13 @@ def node_collection_in_nodegroup_handler(request, nodegroup_uid):
         del response['Content-Type']
         return response
     
-def node_resource_in_nodegroup_handler(request, nodegroup_uid, node_uid):
+def node_resource_in_nodegroup_handler(request, nodegroup_id, node_id):
     
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
-        nodegroup = NodeGroup.objects.get(uid = nodegroup_uid)
-        node = Node.objects.get(uid = node_uid)
+        nodegroup = NodeGroup.objects.get(id = nodegroup_id)
+        node = Node.objects.get(id = node_id)
     
     except ObjectDoesNotExist:
         # 404
@@ -527,7 +527,7 @@ def job_collection_handler(request):
             
             resource_model, created = Job.objects.get_or_create(native_id = native_job_dict['job_id'],
                 defaults = {
-                    'uid' : generate_uid(),
+                    'id' : generate_id(),
                     'native_id' : native_job_dict['job_id'],
                     'name' : '(native job)',
                     'description' : native_job_dict['description'],
@@ -559,11 +559,11 @@ def job_collection_handler(request):
             job_dict = json.loads(request.raw_post_data)
             
             if ('nodes' in job_dict) and not (job_dict['nodes'] is None):
-                node_uid_list = job_dict['nodes']
+                node_id_list = job_dict['nodes']
                 
             platform_native_id_set = set()
-            for node_uid in node_uid_list:
-                node = Node.objects.get(uid = node_uid)
+            for node_id in node_id_list:
+                node = Node.objects.get(id = node_id)
                 platform_native_id_set.add(node.platform.native_id)
             
             native_job_dict = dict()
@@ -583,7 +583,7 @@ def job_collection_handler(request):
                 return response
             
             job = Job(
-                uid = generate_uid(),
+                id = generate_id(),
                 name = job_dict['name'],
                 description = job_dict['description'],
                 datetime_from = utc_string_to_utc_datetime(job_dict['datetime_from']),
@@ -591,8 +591,8 @@ def job_collection_handler(request):
                 native_id = created_job_id_list[0]['job_id'])
             job.save()
             
-            for node_uid in node_uid_list:
-                Job2Node(job = job, node = Node.objects.get(uid = node_uid)).save()
+            for node_id in node_id_list:
+                Job2Node(job = job, node = Node.objects.get(id = node_id)).save()
                 
             # generate response
             response = HttpResponse(status=201)
@@ -619,11 +619,11 @@ def job_collection_handler(request):
         del response['Content-Type']
         return response
 
-def job_resource_handler(request, job_uid):
+def job_resource_handler(request, job_id):
     
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
-    if job_uid == 'current':
+    if job_id == 'current':
         try:
             
             dt_now_utc = get_dt_now_utc()
@@ -642,7 +642,7 @@ def job_resource_handler(request, job_uid):
             return response
         
     try:
-        job = Job.objects.get(uid = job_uid)
+        job = Job.objects.get(id = job_id)
     
     except ObjectDoesNotExist:
         # 404
@@ -684,11 +684,11 @@ def job_resource_handler(request, job_uid):
             job_dict = json.loads(request.raw_post_data)
             
             if ('nodes' in job_dict) and not (job_dict['nodes'] is None):
-                node_uid_list = job_dict['nodes']
+                node_id_list = job_dict['nodes']
                 
             platform_native_id_set = set()
-            for node_uid in node_uid_list:
-                node = Node.objects.get(uid = node_uid)
+            for node_id in node_id_list:
+                node = Node.objects.get(id = node_id)
                 platform_native_id_set.add(node.platform.native_id)
                 
             native_job_dict = dict()
@@ -711,8 +711,8 @@ def job_resource_handler(request, job_uid):
             job.datetime_to = utc_string_to_utc_datetime(job_dict['datetime_to'])
             job.save()
             
-            for node_uid in node_uid_list:
-                Job2Node(job = job, node = Node.objects.get(uid = node_uid)).save()
+            for node_id in node_id_list:
+                Job2Node(job = job, node = Node.objects.get(id = node_id)).save()
 
             # 200
             response = HttpResponse()
@@ -755,12 +755,12 @@ def job_resource_handler(request, job_uid):
         del response['Content-Type']
         return response
 
-def node_collection_in_job_handler(request, job_uid):
+def node_collection_in_job_handler(request, job_id):
     
     allowed_methods = ['GET']
     
     try:
-        job = Job.objects.get(uid = job_uid)
+        job = Job.objects.get(id = job_id)
     
     except ObjectDoesNotExist:
         # 404
@@ -790,13 +790,13 @@ def node_collection_in_job_handler(request, job_uid):
         del response['Content-Type']
         return response
     
-def node_resource_in_job_handler(request, job_uid, node_uid):
+def node_resource_in_job_handler(request, job_id, node_id):
     
     allowed_methods = ['GET']
     
     try:
-        job = Job.objects.get(uid = job_uid)
-        node = Node.objects.get(uid = node_uid)
+        job = Job.objects.get(id = job_id)
+        node = Node.objects.get(id = node_id)
     
     except ObjectDoesNotExist:
         # 404
@@ -849,7 +849,7 @@ def image_collection_handler(request):
                 
         try:
             resource_model = Image(
-                uid = generate_uid(),
+                id = generate_id(),
                 name = request.POST['name'],
                 description = request.POST['description'],
                 file = request.FILES['file'])
@@ -880,12 +880,12 @@ def image_collection_handler(request):
         del response['Content-Type']
         return response
     
-def image_resource_handler(request, image_uid):
+def image_resource_handler(request, image_id):
     
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
-        image = Image.objects.get(uid = image_uid)
+        image = Image.objects.get(id = image_id)
     
     except ObjectDoesNotExist:
         # 404
@@ -945,13 +945,13 @@ def image_resource_handler(request, image_uid):
         del response['Content-Type']
         return response
     
-def image_resource_in_node_handler(request, node_uid, image_uid):
+def image_resource_in_node_handler(request, node_id, image_id):
     
     allowed_methods = ['PUT', 'DELETE']
     
     try:
-        node  = Node.objects.get(uid = node_uid)
-        image = Image.objects.get(uid = image_uid)
+        node  = Node.objects.get(id = node_id)
+        image = Image.objects.get(id = image_id)
     
     except ObjectDoesNotExist:
         # 404
@@ -1029,13 +1029,13 @@ def image_resource_in_node_handler(request, node_uid, image_uid):
         del response['Content-Type']
         return response
     
-def image_resource_in_nodegroup_handler(request, nodegroup_uid, image_uid):
+def image_resource_in_nodegroup_handler(request, nodegroup_id, image_id):
     
     allowed_methods = ['PUT', 'DELETE']
     
     try:
-        nodegroup  = NodeGroup.objects.get(uid = nodegroup_uid)
-        image = Image.objects.get(uid = image_uid)
+        nodegroup  = NodeGroup.objects.get(id = nodegroup_id)
+        image = Image.objects.get(id = image_id)
     
     except ObjectDoesNotExist:
         # 404
