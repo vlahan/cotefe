@@ -2,9 +2,9 @@ import logging
 from datetime import datetime
 from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
-from api.models import *
-from settings import *
-from utils import *
+from federationserver.api.models import *
+from federationserver.settings import *
+from federationserver.utils import *
 
 # FEDERATION
 def federation_resource_handler(request):
@@ -313,3 +313,10 @@ def experiment_resource_handler(request, experiment_uid):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
+    
+# PROPERTY SET
+def property_set_collection_handler(request):
+    pass
+
+def property_set_resource_handler(request, property_set_uid):
+    pass

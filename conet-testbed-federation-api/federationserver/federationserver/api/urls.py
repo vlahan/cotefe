@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-from api.views import *
+from federationserver.api.views import *
 
 urlpatterns = patterns('',
                        
@@ -11,4 +11,7 @@ urlpatterns = patterns('',
     
     url(r'^experiments/$', experiment_collection_handler),
     url(r'^experiments/(?P<experiment_uid>\w+)$', experiment_resource_handler),
+    
+    url(r'^property-sets/$', property_set_collection_handler),
+    url(r'^property-sets/(?P<property_set_uid>\w+)$', property_set_resource_handler),
 )
