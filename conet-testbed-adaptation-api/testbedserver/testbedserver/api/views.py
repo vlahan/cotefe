@@ -63,13 +63,13 @@ def platform_collection_handler(request):
                 defaults = {
                     'id' : generate_id(),
                     'native_id' : native_resource_dict['platform_id'],
-                    'name' : native_resource_dict['name_long'],
-                    'tinyos_name' : native_resource_dict['name_tinyos'],
+                    'name' : native_resource_dict['name_tinyos'],
+                    'description' : native_resource_dict['name_long'],
                 }
             )
             if not created:
-                platform.name = native_resource_dict['name_long']
-                platform.tinyos_name = native_resource_dict['name_tinyos']
+                platform.name = native_resource_dict['name_tinyos']
+                platform.description = native_resource_dict['name_long']
                 platform.save()
         
         native_resource_id_list = [ native_resource_dict['platform_id'] for native_resource_dict in native_platform_list ]
@@ -117,8 +117,8 @@ def platform_resource_handler(request, platform_id):
             response['Content-Type'] = 'application/json'
             return response
         
-        platform.name = native_platform_dict['name_long']
-        platform.tinyos_name = native_platform_dict['name_tinyos']
+        platform.name = native_platform_dict['name_tinyos']
+        platform.description = native_platform_dict['name_long']
         platform.save()
         
         response = HttpResponse()
@@ -169,11 +169,11 @@ def node_collection_handler(request):
                     defaults = {
                         'id' : generate_id(),
                         'native_id' : native_platform_dict['platform_id'],
-                        'name' : native_platform_dict['name_long'],
-                        'tinyos_name' : native_platform_dict['name_tinyos']})
+                        'name' : native_platform_dict['name_tinyos'],
+                        'description' : native_platform_dict['name_long']})
                 if not created:
-                    platform.name = native_platform_dict['name_long']
-                    platform.tinyos_name = native_platform_dict['name_tinyos']
+                    platform.name = native_platform_dict['name_tinyos']
+                    platform.description = native_platform_dict['name_long']
                     platform.save()
             
             node, created = Node.objects.get_or_create(native_id = native_node_dict['node_id'],
@@ -258,11 +258,11 @@ def node_resource_handler(request, node_id):
                 defaults = {
                     'id' : generate_id(),
                     'native_id' : native_platform_dict['platform_id'],
-                    'name' : native_platform_dict['name_long'],
-                    'tinyos_name' : native_platform_dict['name_tinyos']})
+                    'name' : native_platform_dict['name_tinyos'],
+                    'description' : native_platform_dict['name_long']})
             if not created:
-                platform.name = native_platform_dict['name_long']
-                platform.tinyos_name = native_platform_dict['name_tinyos']
+                platform.name = native_platform_dict['name_tinyos']
+                platform.description = native_platform_dict['name_long']
                 platform.save()
     
         node.name = native_node_dict['serial']
