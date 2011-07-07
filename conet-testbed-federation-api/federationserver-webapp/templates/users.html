@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CONET Testbed Federation</title>
+</head>
+<body>
+<h1>CONET Testbed Federation</h1>
+
+<h3>User Manager</h3>
+
+<form action="users" method="post">
+<p>First Name: <input type="text" name="first_name" value="" /></p>
+<p>Last Name: <input type="text" name="last_name" value="" /></p>
+<p>Username: <input type="text" name="username" value="" /></p>
+<p>Password: <input type="password" name="password" value="" /></p>
+<p>Email: <input type="text" name="email" value="" /></p>
+<p>OpenID: <input type="text" name="openid" value="" /></p>
+<input type="submit" name="submit" value="Submit" />
+</form>
+
+{% for user in users %}
+<p>
+<strong>{{ user.first_name }} {{ user.last_name }}</strong><br />
+Username: {{ user.username }}<br />
+Password: {{ user.password_hash }}<br />
+Email: {{ user.email }}<br />
+OpenID: {{ user.openid }}<br />
+<a href="#">Edit</a> | <a href="#">Delete</a>
+</p>
+{% endfor %}
+
+</body>
+</html>

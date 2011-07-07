@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CONET Testbed Federation</title>
+</head>
+<body>
+<h1>CONET Testbed Federation</h1>
+
+<h3>OAuth Application Manager</h3>
+
+<form action="/apps" method="post">
+<p>Application Name: <input type="text" name="name" value="" /></p>
+<p>OAuth Callback URL: <input type="text" name="oauth_callback_url" value="" /></p>
+<input type="submit" name="submit" value="Submit" />
+</form>
+
+{% for app in apps %}
+<p>
+<strong>{{ app.name }}</strong><br />
+Redirect URI: {{ app.oauth_callback_url }}<br />
+Client ID: {{ app.oauth_client_id }}<br />
+Client Secret: {{ app.oauth_client_secret }}<br />
+<a href="#">Edit</a> | <a href="#">Delete</a>
+</p>
+{% endfor %}
+
+</body>
+</html>
