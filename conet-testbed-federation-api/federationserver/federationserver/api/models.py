@@ -26,6 +26,7 @@ class Federation(Resource):
         resource['name'] = self.name
         if not head_only:
             resource['description'] = self.description
+            resource['platforms'] = build_url(path = '/platforms/')
             resource['projects'] = build_url(path = '/projects/')
             resource['experiments'] = build_url(path = '/experiments/')
             resource['testbeds'] = build_url(path = '/testbeds/')
@@ -38,7 +39,7 @@ class Federation(Resource):
 
 # PROJECT
 class Project(Resource):
-    uid = models.CharField(max_length=32, primary_key=True, verbose_name='URI')
+    id = models.CharField(max_length=32, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
 
@@ -46,7 +47,7 @@ class Project(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return "/projects/%s" % self.uid
+        return "/projects/%s" % self.id
 
     def to_dict(self, head_only = False):
         resource = dict()
@@ -54,7 +55,7 @@ class Project(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
-            resource['uid'] = self.uid
+            resource['id'] = self.id
             resource['description'] = self.description
             resource['experiments'] = [ experiment.to_dict(head_only = True) for experiment in self.experiments.all() ]
         return resource
@@ -65,7 +66,7 @@ class Project(Resource):
     
 # NODE
 class Experiment(Resource):
-    uid = models.CharField(max_length=32, primary_key=True, verbose_name='URI')
+    id = models.CharField(max_length=32, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
     project = models.ForeignKey(Project, verbose_name='Project', related_name='experiments')
@@ -74,7 +75,7 @@ class Experiment(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return "/experiments/%s" % self.uid
+        return "/experiments/%s" % self.id
 
     def to_dict(self, head_only = False):
         resource = dict()
@@ -82,7 +83,7 @@ class Experiment(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
-            resource['uid'] = self.uid
+            resource['id'] = self.id
             resource['description'] = self.description
             resource['project'] = build_url(path = self.project.get_absolute_url())
         return resource
@@ -93,47 +94,48 @@ class Experiment(Resource):
         
 # TESTBED
 class Testbed(Resource):
-    name = models.CharField(max_length=255)
-    organization = models.CharField(max_length=255)
-    description = models.TextField()
+    id = models.CharField(max_length=32, primary_key=True, verbose_name='ID')
+    name = models.CharField(max_length=255, verbose_name='Name')
+    organization = models.CharField(max_length=255, blank=True, null=True, verbose_name='Organization')
+    description = models.TextField(verbose_name='Description', blank=True, null=True)
+    url = models.URLField(verbose_name='URL')
+    node_count = models.IntegerField(default=0)
     
     def __unicode__(self):
-        return self.uid
+        return self.name
 
     def get_absolute_url(self):
-        return "/testbeds/%s" % self.uid
+        return "/testbeds/%s" % self.id
         
     def to_dict(self, head_only = False):
         resource = dict()
-        resource['uri'] = build_url()
+        resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
             resource['organization'] = self.organization
             resource['description'] = self.description
-            resource['platforms'] = build_url(path = '/platforms/')
-            resource['nodes'] = build_url(path = '/nodes/')
-            resource['nodegroups'] = build_url(path = '/nodegroups/')
-            resource['jobs'] = build_url(path = '/jobs/')
-            resource['images'] = build_url(path = '/images/')
+            resource['url'] = self.url
+            resource['node_count'] = self.node_count
+            resource['node_count_per_platform'] = [ { "platform" : t2p.platform.to_dict(head_only=True), "node_count" : t2p.node_count } for t2p in self.platforms.all()]
+
         return resource
         
     class Meta:
         verbose_name = "Testbed"
         verbose_name_plural = verbose_name
 
-# JOB
+# PLATFORM
 class Platform(Resource):
-    uid = models.CharField(max_length=255, primary_key=True)
-    native_id = models.IntegerField(unique=True)
-    name = models.CharField(max_length=255)
-    tinyos_name = models.CharField(max_length=255)
+    id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
+    name = models.CharField(max_length=255, verbose_name='Name')
+    description = models.TextField(verbose_name='Description')
 
     def __unicode__(self):
-        return self.uid
+        return self.name
 
     def get_absolute_url(self):
-        return "/platforms/%s" % self.uid
+        return "/platforms/%s" % self.id
 
     def to_dict(self, head_only = False):
         resource = dict()
@@ -141,165 +143,24 @@ class Platform(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
-            resource['uid'] = self.uid
-            resource['tinyos_name'] = self.tinyos_name
-            # resource['native_id'] = self.native_id
+            resource['id'] = self.id
+            resource['description'] = self.description
         return resource
 
     class Meta:
         verbose_name = "Platform"
         verbose_name_plural = verbose_name +'s'
-
-# returns random filename
-def update_filename(instance, filename):
-    filepath = 'images'
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (instance.uid, ext)
-    return os.path.join(filepath, filename)
         
-# IMAGE
-class Image(Resource):
-    uid = models.CharField(max_length=255, primary_key=True)
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    file = models.FileField(upload_to=update_filename)
+# AUXILIARY TABLES
 
-    def __unicode__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return "/images/%s" % self.uid
-
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        if not head_only:
-            resource['uid'] = self.uid
-            resource['description'] = self.description
-            resource['file'] = build_url(path = '/static/' + self.file.name)
-        return resource
-
-    class Meta:
-        verbose_name = "Image"
-        verbose_name_plural = verbose_name +'s'
-
-# JOB
-class Job(Resource):
-    uid = models.CharField(max_length=255, primary_key=True)
-    native_id = models.IntegerField(unique=True)
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    datetime_from = models.DateTimeField()
-    datetime_to = models.DateTimeField()
-
-    def __unicode__(self):
-        return self.uid
-
-    def get_absolute_url(self):
-        return "/jobs/%s" % self.uid
-
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        if not head_only:
-            resource['uid'] = self.uid
-            resource['description'] = self.description
-            resource['datetime_from'] = utc_datetime_to_utc_string(self.datetime_from)
-            resource['datetime_to'] = utc_datetime_to_utc_string(self.datetime_to)
-            resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
-        return resource
-
-    class Meta:
-        verbose_name = "Job"
-        verbose_name_plural = verbose_name +'s'
-    
-# NODE
-class Node(Resource):
-    uid = models.CharField(max_length=255, primary_key=True)
-    native_id = models.IntegerField(unique=True)
-    name = models.CharField(max_length=255, unique=True)
-    platform = models.ForeignKey(Platform)
-    image = models.ForeignKey(Image, null=True, blank=True)
+class Testbed2Platform(models.Model):
+    testbed = models.ForeignKey(Testbed, related_name='platforms', verbose_name='Testbed')
+    platform = models.ForeignKey(Platform, related_name='testbeds',verbose_name='Platform')
+    node_count = models.IntegerField()
     
     def __unicode__(self):
-        return self.uid
-
-    def get_absolute_url(self):
-        return "/nodes/%s" % self.uid
-
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        if not head_only:
-            resource['uid'] = self.uid
-            resource['platform'] = build_url(path = self.platform.get_absolute_url())
-            if self.image:
-                resource['image'] = build_url(path = self.image.get_absolute_url())
-            else:
-                resource['image'] = None
-        return resource
+        return '%s %s' % (self.testbed, self.platform)
     
     class Meta:
-        verbose_name = "Node"
+        verbose_name = "Testbed2Platform"
         verbose_name_plural = verbose_name +'s'
-        
-# NODEGROUP
-class NodeGroup(Resource):
-    uid = models.CharField(max_length=255, primary_key=True)
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    image = models.ForeignKey(Image, null=True, blank=True)
-    
-    def __unicode__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return "/nodegroups/%s" % self.uid
-
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        if not head_only:
-            resource['uid'] = self.uid
-            resource['description'] = self.description
-            resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
-            if self.image:
-                resource['image'] = build_url(path = self.image.get_absolute_url())
-            else:
-                resource['image'] = None
-        return resource
-        
-    class Meta:
-        verbose_name = "NodeGroup"
-        verbose_name_plural = verbose_name +'s'
-
-class NodeGroup2Node(models.Model):
-    nodegroup = models.ForeignKey(NodeGroup, verbose_name='NodeGroup', related_name='nodes')
-    node = models.ForeignKey(Node, verbose_name='Node', related_name='nodegroups')
-    
-    def __unicode__(self):
-        return u'%s %s' % (self.nodegroup, self.node)
-    
-    class Meta:
-        verbose_name = "NodeGroup2Node"
-        verbose_name_plural = verbose_name +'s'
-
-class Job2Node(models.Model):
-    job = models.ForeignKey(Job, verbose_name='Job', related_name='nodes')
-    node = models.ForeignKey(Node, verbose_name='Node', related_name='jobs')
-    
-    def __unicode__(self):
-        return u'%s %s' % (self.job, self.node)
-    
-    class Meta:
-        verbose_name = "Job2Node"
-        verbose_name_plural = verbose_name +'s'
-        

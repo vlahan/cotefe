@@ -1,3 +1,9 @@
+INTRODUCTION
+
+how to dump the database to a JSON file
+
+python manage.py dumpdata api auth > initial_data.json
+
 GUIDELINES FOR USING THE API
 
 PROJECT
