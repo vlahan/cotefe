@@ -3,6 +3,10 @@ import json
 import logging
 import sys
 
+NODE_COUNT_VNG_1 = 10
+NODE_COUNT_VNG_2 = 1
+NODE_COUNT_TOT = NODE_COUNT_VNG_1 + NODE_COUNT_VNG_2
+
 DESCRIPTION = 'CONET 3Y REVIEW DEMO - PLEASE DO NOT DELETE'
 
 def main():
@@ -11,19 +15,16 @@ def main():
         level=logging.INFO,
         # filename='%s.log' % __file__, filemode='w',
         format='%(asctime)s %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S %z',
+        datefmt='[%Y-%m-%d %H:%M:%S %z]',
     )
     
     try:
-        SERVER_URL = sys.argv[1]
-        PLATFORM = sys.argv[2]
+        SERVER_URL = str(sys.argv[1])
+        PLATFORM = str(sys.argv[2])
         assert PLATFORM in [ 'tmotesky' , 'eyesIFXv21' ]
-        NODE_COUNT_VNG_1 = int(sys.argv[3])
-        NODE_COUNT_VNG_2 = int(sys.argv[4])
-        NODE_COUNT_TOT = NODE_COUNT_VNG_1 + NODE_COUNT_VNG_2
     except Exception:
-        print 'Usage: python %s SERVER_URL tmotesky|eyesIFXv21 N_NODES_VNG_1 N_NODES_VNG_2' % __file__
-        print 'Example: python %s https://conet-testbed-federation.appspot.com/ tmotesky 100 1' % __file__
+        print 'Usage: python %s SERVER_URL tmotesky|eyesIFXv21' % __file__
+        print 'Example: python %s https://conet-testbed-federation.appspot.com/ tmotesky' % __file__
         sys.exit()
 
     h = httplib2.Http()
@@ -220,12 +221,12 @@ def main():
     logging.debug(image_dict_2)
     
     logging.info('installing image 1 on virtual nodegroup 1...')
-    response, content = h.request(uri='%s%s/image/%s' % (federation_dict['virtual_nodegroups'], virtual_nodegroup_dict_1['id'], image_dict_1['id']), method='PUT', body='')
+    response, content = h.request(uri='%s%s/image/%s' % (federation_dict['virtual_nodegroups'], virtual_nodegroup_dict_1['id'], image_dict_1['id']), method='PUT', body='', headers = {'Content-Length': '0'})
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     
     logging.info('installing image 2 on virtual nodegroup 2...')
-    response, content = h.request(uri='%s%s/image/%s' % (federation_dict['virtual_nodegroups'], virtual_nodegroup_dict_2['id'], image_dict_2['id']), method='PUT', body='')
+    response, content = h.request(uri='%s%s/image/%s' % (federation_dict['virtual_nodegroups'], virtual_nodegroup_dict_2['id'], image_dict_2['id']), method='PUT', body='', headers = {'Content-Length': '0'})
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     
