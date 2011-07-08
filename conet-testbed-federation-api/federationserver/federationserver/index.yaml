@@ -9,3 +9,8 @@ indexes:
   properties:
   - name: __key__
     direction: desc
+
+- kind: api_platform
+  properties:
+  - name: __key__
+    direction: desc

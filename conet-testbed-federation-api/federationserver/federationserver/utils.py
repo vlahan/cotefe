@@ -9,8 +9,8 @@ import pytz
 
 # UTILITY FUNCTIONS
 
-def build_url(protocol = SERVER_PROTOCOL, host = SERVER_HOST, port = SERVER_PORT, path = '/'):
-    return protocol + '://' + host + ':' + port + path
+def build_url(path = '/'):
+    return '%s%s' % (SERVER_URL, path)
     
 def serialize(dict_or_list, format = 'json'):
     if format == 'json':

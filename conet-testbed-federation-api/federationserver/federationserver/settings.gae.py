@@ -55,9 +55,7 @@ MEDIA_TYPE = 'application/json'
 JSON_INDENT = 4
 JSON_ENSURE_ASCII = True
 
-UID_LENGTH = 8
+UUID_LENGTH = 8
 
 # TESTBED FEDERATION API
-SERVER_PROTOCOL = 'http'
-SERVER_HOST = 'api.cotefe.net'
-SERVER_PORT = '80'
+SERVER_URL = 'https://conet-testbed-federation.appspot.com'
