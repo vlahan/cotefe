@@ -13,7 +13,6 @@ urlpatterns = patterns('',
                        
     url(r'^projects/$', project_collection_handler),
     url(r'^projects/(?P<project_id>\w+)$', project_resource_handler),
-    url(r'^projects/(?P<project_id>\w+)/experiments/$', experiment_collection_in_project_handler),
     
     url(r'^experiments/$', experiment_collection_handler),
     url(r'^experiments/(?P<experiment_id>\w+)$', experiment_resource_handler),
@@ -23,9 +22,6 @@ urlpatterns = patterns('',
     
     url(r'^virtual-nodes/$', virtual_node_collection_handler),
     url(r'^virtual-nodes/(?P<virtual_node_id>\w+)$', virtual_node_resource_handler),
-    
-    url(r'^virtual-nodegroups/(?P<virtual_nodegroup_id>\w+)/virtual-nodes/$', virtual_node_collection_in_virtual_nodegroup_handler),
-    url(r'^virtual-node-groups/(?P<virtual_nodegroup_id>\w+)/virtual-nodes/(?P<virtual_node_id>\w+)$', virtual_node_resource_in_virtual_nodegroup_handler),
     
     url(r'^virtual-nodegroups/$', virtual_nodegroup_collection_handler),
     url(r'^virtual-nodegroups/(?P<virtual_nodegroup_id>\w+)$', virtual_nodegroup_resource_handler),

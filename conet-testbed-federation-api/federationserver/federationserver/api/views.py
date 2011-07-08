@@ -210,7 +210,12 @@ def project_collection_handler(request):
     
     if request.method == 'GET':
         
-        project_list = [ project_model.to_dict(head_only = True) for project_model in Project.objects.all() ]
+        projects = Project.objects.all()
+        
+        if 'name' in request.GET and not (request.GET['name'] is None):
+            projects = projects.filter(name = request.GET['name'])
+        
+        project_list = [ p.to_dict(head_only = True) for p in projects ]
         
         # 200
         response = HttpResponse()
@@ -324,45 +329,6 @@ def project_resource_handler(request, project_id):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
-    
-def experiment_collection_in_project_handler(request, project_id):
-    
-    allowed_methods = ['GET']
-    
-    try:
-        project_model = Project.objects.get(id = project_id)
-    
-    except ObjectDoesNotExist:
-        
-        # 404
-        response = HttpResponseNotFound()
-        response['Content-Type'] = 'application/json'
-        return response
-    
-    if request.method == 'GET':
-        
-        experiment_list = [ experiment_model.to_dict(head_only = True) for experiment_model in Experiment.objects.filter(project = project_model) ]
-        
-        # 200
-        response = HttpResponse()
-        response['Content-Type'] = 'application/json'
-        response.write(serialize(experiment_list))
-        return response
-    
-    if request.method == 'OPTIONS':
-        
-        # 204
-        response = HttpResponse(status=204)
-        response['Allow'] = ', '.join(allowed_methods)
-        del response['Content-Type']
-        return response
-    
-    else:
-        # 405
-        response = HttpResponseNotAllowed(allowed_methods)
-        del response['Content-Type']
-        return response
-    
 
 def experiment_collection_handler(request):
     
@@ -370,7 +336,15 @@ def experiment_collection_handler(request):
     
     if request.method == 'GET':
         
-        experiment_list = [ experiment_model.to_dict(head_only = True) for experiment_model in Experiment.objects.all() ]
+        experiments = Experiment.objects.all()
+        
+        if 'project' in request.GET and not (request.GET['project'] is None):
+            experiments = experiments.filter(project = Project.objects.get(id = request.GET['project']))
+        
+        if 'name' in request.GET and not (request.GET['name'] is None):
+            experiments = experiments.filter(name = request.GET['name'])
+        
+        experiment_list = [ e.to_dict(head_only = True) for e in experiments ]
         
         # 200
         response = HttpResponse()
@@ -491,12 +465,20 @@ def property_set_collection_handler(request):
     
     if request.method == 'GET':
         
-        property_sets = [ property_set.to_dict(head_only = True) for property_set in PropertySet.objects.all() ]
+        property_sets = PropertySet.objects.all()
+        
+        if 'name' in request.GET and not (request.GET['name'] is None):
+            property_sets = property_sets.filter(name = request.GET['name'])
+            
+        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
+            property_sets = property_sets.filter(experiment = Experiment.objects.get(id = request.GET['experiment']))
+        
+        property_set_list = [ ps.to_dict(head_only = True) for ps in property_sets ]
         
         # 200
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(serialize(property_sets))
+        response.write(serialize(property_set_list))
         return response
     
     if request.method == 'POST':
@@ -809,42 +791,3 @@ def virtual_nodegroup_resource_handler(request, virtual_nodegroup_id):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
-    
-def virtual_node_collection_in_virtual_nodegroup_handler(request, virtual_nodegroup_id):
-    
-    allowed_methods = ['GET']
-    
-    try:
-        virtual_nodegroup = VirtualNodeGroup.objects.get(id = virtual_nodegroup_id)
-    
-    except ObjectDoesNotExist:
-        # 404
-        response = HttpResponseNotFound()
-        response['Content-Type'] = 'application/json'
-        return response
-    
-    if request.method == 'GET':
-        
-        virtual_nodes = [ vng2vn.virtual_node.to_dict(head_only = True) for vng2vn in virtual_nodegroup.virtual_nodes.all() ]
-        
-        # 200
-        response = HttpResponse()
-        response['Content-Type'] = 'application/json'
-        response.write(serialize(virtual_nodes))
-        return response
-        
-    if request.method == 'OPTIONS':
-        # 204
-        response = HttpResponse(status=204)
-        response['Allow'] = ', '.join(allowed_methods)
-        del response['Content-Type']
-        return response        
-        
-    else:
-        response = HttpResponseNotAllowed(allowed_methods)
-        del response['Content-Type']
-        return response
-    
-def virtual_node_resource_in_virtual_nodegroup_handler(request, virtual_nodegroup_id, virtual_node_id):
-    
-    allowed_methods = ['PUT', 'DELETE'] 

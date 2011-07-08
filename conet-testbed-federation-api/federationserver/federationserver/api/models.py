@@ -214,6 +214,7 @@ class PropertySet(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         if not head_only:
+            resource['id'] = self.id
             resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
             resource['platform'] = build_url(path = self.platform.get_absolute_url())
             resource['node_count'] = self.node_count
