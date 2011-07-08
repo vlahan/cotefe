@@ -7,6 +7,13 @@ DESCRIPTION = 'CONET 3Y REVIEW DEMO - PLEASE DO NOT DELETE'
 
 def main():
     
+    logging.basicConfig(
+        level=logging.INFO,
+        # filename='%s.log' % __file__, filemode='w',
+        format='%(asctime)s %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S %z',
+    )
+    
     try:
         SERVER_URL = sys.argv[1]
         PLATFORM = sys.argv[2]
@@ -230,10 +237,4 @@ def main():
     #logging.info('%d %s' % (response.status, response.reason))
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.INFO,
-        # filename='%s.log' % __file__, filemode='w',
-        format='%(asctime)s %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S %z',
-    )
     main()
