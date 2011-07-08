@@ -34,6 +34,7 @@ class Federation(Resource):
             resource['virtual_nodes'] = build_url(path = '/virtual-nodes/')
             resource['virtual_nodegroups'] = build_url(path = '/virtual-nodegroups/')
             resource['virtual_tasks'] = build_url(path = '/virtual-tasks/')
+            resource['images'] = build_url(path = '/images/')
         return resource
         
     class Meta:
@@ -89,9 +90,10 @@ class Experiment(Resource):
             resource['id'] = self.id
             resource['description'] = self.description
             resource['project'] = build_url(path = self.project.get_absolute_url())
-            resource['property_sets'] = [ property_set.to_dict(head_only = True) for property_set in self.property_sets.all() ]
-            resource['virtual_nodes'] = [ virtual_node.to_dict(head_only = True) for virtual_node in self.virtual_nodes.all() ]
-            resource['virtual_nodegroups'] = [ virtual_nodegroup.to_dict(head_only = True) for virtual_nodegroup in self.virtual_nodegroups.all() ]
+            resource['property_sets'] = [ ps.to_dict(head_only = True) for ps in self.property_sets.all() ]
+            resource['virtual_nodes'] = [ vn.to_dict(head_only = True) for vn in self.virtual_nodes.all() ]
+            resource['virtual_nodegroups'] = [ vng.to_dict(head_only = True) for vng in self.virtual_nodegroups.all() ]
+            resource['images'] = [ i.to_dict(head_only = True) for i in self.images.all() ]
             # resource['virtual_tasks'] = [ virtual_task.to_dict(head_only = True) for virtual_task in self.virtual_tasks.all() ]
         return resource
     
@@ -158,20 +160,12 @@ class Platform(Resource):
         verbose_name = "Platform"
         verbose_name_plural = verbose_name +'s'
 
-
-def update_filename(instance, filename):
-    filepath = 'images'
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (instance.id, ext)
-    return os.path.join(filepath, filename)
-
-
 class Image(Resource):
-    id = models.CharField(max_length=255, primary_key=True)
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    file = models.FileField(upload_to=update_filename)
-
+    id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
+    name = models.CharField(max_length=255, verbose_name='Name')
+    description = models.TextField(verbose_name='Description')
+    experiment = models.ForeignKey(Experiment, related_name='images', verbose_name='Experiment')
+    
     def __unicode__(self):
         return self.name
 
@@ -186,14 +180,12 @@ class Image(Resource):
         if not head_only:
             resource['id'] = self.id
             resource['description'] = self.description
-            resource['file'] = build_url(path = '/static/' + self.file.name)
         return resource
 
     class Meta:
         verbose_name = "Image"
         verbose_name_plural = verbose_name +'s'
 
-  
 class PropertySet(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
@@ -296,6 +288,8 @@ class VirtualNodeGroup(Resource):
         verbose_name = "Virtual NodeGroup"
         verbose_name_plural = verbose_name +'s'
         
+# AUXILIARY TABLES
+        
 
 class VirtualNodeGroup2VirtualNode(models.Model):
     virtual_nodegroup = models.ForeignKey(VirtualNodeGroup, verbose_name='VirtualNodeGroup', related_name='virtual_nodes')
@@ -308,9 +302,6 @@ class VirtualNodeGroup2VirtualNode(models.Model):
         verbose_name = "VirtualNodeGroup2VirtualNode"
         verbose_name_plural = verbose_name +'s'
 
-
-# AUXILIARY TABLES
-
 class Testbed2Platform(models.Model):
     testbed = models.ForeignKey(Testbed, related_name='platforms', verbose_name='Testbed')
     platform = models.ForeignKey(Platform, related_name='testbeds',verbose_name='Platform')
@@ -322,3 +313,4 @@ class Testbed2Platform(models.Model):
     class Meta:
         verbose_name = "Testbed2Platform"
         verbose_name_plural = verbose_name +'s'
+

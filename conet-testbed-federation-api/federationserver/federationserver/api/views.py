@@ -796,3 +796,228 @@ def virtual_nodegroup_resource_handler(request, virtual_nodegroup_id):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
+
+def image_collection_handler(request):
+    
+    allowed_methods = ['GET', 'POST']
+    
+    if request.method == 'GET':
+        
+        images = Image.objects.all()
+        
+        if 'name' in request.GET and not (request.GET['name'] is None):
+            images = images.filter(name = request.GET['name'])
+            
+        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
+            images = images.filter(experiment = Experiment.objects.get(id = request.GET['experiment']))
+            
+        image_list = [ i.to_dict(head_only = True) for i in images ]
+        
+        # 200
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(image_list))
+        return response
+    
+    if request.method == 'POST':
+                
+        try:
+            image_dict = json.loads(request.raw_post_data)
+            
+            image = Image(
+                id = generate_id(),
+                name = image_dict['name'],
+                description = image_dict['description'],
+                experiment = Experiment.objects.get(id = image_dict['experiment'])
+            )
+            image.save()
+            
+            # 201
+            response = HttpResponse(status=201)
+            response['Location'] = build_url(path = image.get_absolute_url())
+            response['Content-Location'] = build_url(path = image.get_absolute_url())
+            response['Content-Type'] = 'application/json'
+            return response
+        
+        except None:
+            # 400
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+def image_resource_handler(request, image_id):
+    
+    allowed_methods = ['GET', 'PUT', 'DELETE']
+    
+    try:
+        image = Image.objects.get(id = image_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+
+    if request.method == 'GET':
+        # 200
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(image.to_dict()))
+        return response
+    
+    if request.method == 'PUT':
+        
+        try:
+            image_dict = json.loads(request.raw_post_data)
+
+            image.name = image_dict['name']
+            image.description = image_dict['description']
+            
+            image.save()
+            
+            # 200
+            response = HttpResponse()
+            response['Content-Type'] = 'application/json'
+            response.write(serialize(image.to_dict()))
+            return response
+            
+        except None:
+            # 400
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+    if request.method == 'DELETE':
+        
+        image.file.delete()
+        
+        image.delete()
+        
+        # generate response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        return response
+    
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+        
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+def image_resource_in_virtual_node_handler(request, virtual_node_id, image_id):
+    
+    allowed_methods = ['PUT', 'DELETE']
+    
+    try:
+        node  = VirtualNode.objects.get(id = virtual_node_id)
+        image = Image.objects.get(id = image_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+        
+    if request.method == 'PUT':
+            
+        node.image = image
+        node.save()
+         
+        # generate response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        return response
+        
+    if request.method == 'DELETE':
+        
+        node.image = None
+        node.save()
+            
+        # generate response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        return response
+    
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+        
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+def image_resource_in_virtual_nodegroup_handler(request, virtual_nodegroup_id, image_id):
+    
+    allowed_methods = ['PUT', 'DELETE']
+    
+    try:
+        virtual_nodegroup  = VirtualNodeGroup.objects.get(id = virtual_nodegroup_id)
+        image = Image.objects.get(id = image_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response    
+        
+    if request.method == 'PUT':
+            
+        virtual_nodegroup.image = image
+        virtual_nodegroup.save()
+        
+        for vng2vn in VirtualNodeGroup2VirtualNode.objects.filter(virtual_nodegroup = virtual_nodegroup):
+            vng2vn.virtual_node.image = image
+            vng2vn.virtual_node.save()
+         
+        # generate response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        return response
+        
+    if request.method == 'DELETE':
+        
+        virtual_nodegroup.image = None
+        virtual_nodegroup.save()
+        
+        for vng2vn in VirtualNodeGroup2VirtualNode.objects.filter(virtual_nodegroup = virtual_nodegroup):
+            vng2vn.node.image = None
+            vng2vn.node.save()
+        
+        # generate response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        return response
+    
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+        
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response

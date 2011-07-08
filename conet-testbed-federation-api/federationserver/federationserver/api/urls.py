@@ -26,4 +26,12 @@ urlpatterns = patterns('',
     url(r'^virtual-nodegroups/$', virtual_nodegroup_collection_handler),
     url(r'^virtual-nodegroups/(?P<virtual_nodegroup_id>\w+)$', virtual_nodegroup_resource_handler),
     
+    url(r'^images/$', image_collection_handler),
+    url(r'^images/(?P<image_id>\w+)$', image_resource_handler),
+    
+    url(r'^virtual-nodes/(?P<virtual_node_id>\w+)/image/(?P<image_id>\w+)$', image_resource_in_virtual_node_handler),
+    url(r'^virtual-nodegroups/(?P<virtual_nodegroup_id>\w+)/image/(?P<image_id>\w+)$', image_resource_in_virtual_nodegroup_handler),
+
+    
+    
 )
