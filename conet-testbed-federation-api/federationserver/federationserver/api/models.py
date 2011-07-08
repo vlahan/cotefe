@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from federationserver.settings import *
-from federationserver.utils import *
+from settings import *
+from utils import *
 
 
 class Resource(models.Model):
@@ -72,7 +72,7 @@ class Experiment(Resource):
     id = models.CharField(max_length=32, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
-    project = models.ForeignKey(Project, verbose_name='Project', related_name='experiments')
+    project = models.ForeignKey(Project, verbose_name='Project', related_name='experiments', on_delete=models.CASCADE)
     
     def __unicode__(self):
         return self.name

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from federationserver.api.models import *
+from api.models import *
 
 admin.site.register(Federation)
 admin.site.register(Project)
