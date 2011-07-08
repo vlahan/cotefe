@@ -25,11 +25,11 @@ def deserialize(string, format = 'json'):
     else:
         pass
     
-def generate_uid():
+def generate_id():
     # logging.debug('uid start')
-    uri_uuid = uuid.uuid4().hex[:UID_LENGTH]
+    id = uuid.uuid4().hex[:UUID_LENGTH]
     # logging.debug('uid done')
-    return uri_uuid
+    return id
 
 
 # UTC time zone

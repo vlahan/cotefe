@@ -20,4 +20,14 @@ urlpatterns = patterns('',
     
     url(r'^property-sets/$', property_set_collection_handler),
     url(r'^property-sets/(?P<property_set_id>\w+)$', property_set_resource_handler),
+    
+    url(r'^virtual-nodes/$', virtual_node_collection_handler),
+    url(r'^virtual-nodes/(?P<virtual_node_id>\w+)$', virtual_node_resource_handler),
+    
+    url(r'^virtual-nodegroups/(?P<virtual_nodegroup_id>\w+)/virtual-nodes/$', virtual_node_collection_in_virtual_nodegroup_handler),
+    url(r'^virtual-node-groups/(?P<virtual_nodegroup_id>\w+)/virtual-nodes/(?P<virtual_node_id>\w+)$', virtual_node_resource_in_virtual_nodegroup_handler),
+    
+    url(r'^virtual-nodegroups/$', virtual_nodegroup_collection_handler),
+    url(r'^virtual-nodegroups/(?P<virtual_nodegroup_id>\w+)$', virtual_nodegroup_resource_handler),
+    
 )

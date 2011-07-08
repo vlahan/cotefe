@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 from federationserver.settings import *
 from federationserver.utils import *
 
-# RESOURCE ABSTRACT MODEL
+
 class Resource(models.Model):
     class Meta:
         abstract = True
-        
-# FEDERATION
+
+
 class Federation(Resource):
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
@@ -26,10 +26,14 @@ class Federation(Resource):
         resource['name'] = self.name
         if not head_only:
             resource['description'] = self.description
+            resource['testbeds'] = build_url(path = '/testbeds/')
             resource['platforms'] = build_url(path = '/platforms/')
             resource['projects'] = build_url(path = '/projects/')
             resource['experiments'] = build_url(path = '/experiments/')
-            resource['testbeds'] = build_url(path = '/testbeds/')
+            resource['property_sets'] = build_url(path = '/property-sets/')
+            resource['virtual_nodes'] = build_url(path = '/virtual-nodes/')
+            resource['virtual_nodegroups'] = build_url(path = '/virtual-nodegroups/')
+            resource['virtual_tasks'] = build_url(path = '/virtual-tasks/')
         return resource
         
     class Meta:
@@ -37,7 +41,6 @@ class Federation(Resource):
         verbose_name_plural = verbose_name
 
 
-# PROJECT
 class Project(Resource):
     id = models.CharField(max_length=32, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
@@ -63,8 +66,8 @@ class Project(Resource):
     class Meta:
         verbose_name = "Project"
         verbose_name_plural = verbose_name +'s'
-    
-# NODE
+
+
 class Experiment(Resource):
     id = models.CharField(max_length=32, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
@@ -86,20 +89,24 @@ class Experiment(Resource):
             resource['id'] = self.id
             resource['description'] = self.description
             resource['project'] = build_url(path = self.project.get_absolute_url())
+            resource['property_sets'] = [ property_set.to_dict(head_only = True) for property_set in self.property_sets.all() ]
+            resource['virtual_nodes'] = [ virtual_node.to_dict(head_only = True) for virtual_node in self.virtual_nodes.all() ]
+            resource['virtual_nodegroups'] = [ virtual_nodegroup.to_dict(head_only = True) for virtual_nodegroup in self.virtual_nodegroups.all() ]
+            # resource['virtual_tasks'] = [ virtual_task.to_dict(head_only = True) for virtual_task in self.virtual_tasks.all() ]
         return resource
     
     class Meta:
         verbose_name = "Experiment"
         verbose_name_plural = verbose_name +'s'
         
-# TESTBED
+
 class Testbed(Resource):
     id = models.CharField(max_length=32, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
-    organization = models.CharField(max_length=255, blank=True, null=True, verbose_name='Organization')
-    description = models.TextField(verbose_name='Description', blank=True, null=True)
+    organization = models.CharField(max_length=255, verbose_name='Organization')
+    description = models.TextField(verbose_name='Description')
     url = models.URLField(verbose_name='URL')
-    node_count = models.IntegerField(default=0)
+    node_count = models.IntegerField(default=0, verbose_name='Number of Nodes')
     
     def __unicode__(self):
         return self.name
@@ -123,9 +130,9 @@ class Testbed(Resource):
         
     class Meta:
         verbose_name = "Testbed"
-        verbose_name_plural = verbose_name
+        verbose_name_plural = verbose_name +'s'
 
-# PLATFORM
+
 class Platform(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
@@ -150,13 +157,162 @@ class Platform(Resource):
     class Meta:
         verbose_name = "Platform"
         verbose_name_plural = verbose_name +'s'
+
+
+def update_filename(instance, filename):
+    filepath = 'images'
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (instance.id, ext)
+    return os.path.join(filepath, filename)
+
+
+class Image(Resource):
+    id = models.CharField(max_length=255, primary_key=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    file = models.FileField(upload_to=update_filename)
+
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return "/images/%s" % self.id
+
+    def to_dict(self, head_only = False):
+        resource = dict()
+        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['media_type'] = MEDIA_TYPE
+        resource['name'] = self.name
+        if not head_only:
+            resource['id'] = self.id
+            resource['description'] = self.description
+            resource['file'] = build_url(path = '/static/' + self.file.name)
+        return resource
+
+    class Meta:
+        verbose_name = "Image"
+        verbose_name_plural = verbose_name +'s'
+
+  
+class PropertySet(Resource):
+    id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
+    name = models.CharField(max_length=255, verbose_name='Name')
+    description = models.TextField(verbose_name='Description')
+    experiment = models.ForeignKey(Experiment, related_name='property_sets', verbose_name='Experiment')
+    platform = models.ForeignKey(Platform, verbose_name='Platform')
+    node_count = models.IntegerField(default=0, verbose_name='Number of Nodes')
+    
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return "/property-sets/%s" % self.id
+
+    def to_dict(self, head_only = False):
+        resource = dict()
+        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['media_type'] = MEDIA_TYPE
+        resource['name'] = self.name
+        if not head_only:
+            resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
+            resource['platform'] = build_url(path = self.platform.get_absolute_url())
+            resource['node_count'] = self.node_count
+            resource['virtual_nodes'] = [ virtual_node.to_dict(head_only = True) for virtual_node in self.virtual_nodes.all() ]
+        return resource
+
+    class Meta:
+        verbose_name = "Property Set"
+        verbose_name_plural = verbose_name +'s'
         
+
+class VirtualNode(Resource):
+    id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
+    name = models.CharField(max_length=255, verbose_name='Name')
+    platform = models.ForeignKey(Platform, related_name='virtual_nodes', verbose_name='Platform')
+    experiment = models.ForeignKey(Experiment, related_name='virtual_nodes', verbose_name='Experiment')
+    property_set = models.ForeignKey(PropertySet, related_name='virtual_nodes', verbose_name='PropertySet')
+    image = models.ForeignKey(Image, null=True, blank=True, verbose_name='Image')
+    
+    def __unicode__(self):
+        return self.id
+
+    def get_absolute_url(self):
+        return "/virtual-nodes/%s" % self.id
+
+    def to_dict(self, head_only = False):
+        resource = dict()
+        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['media_type'] = MEDIA_TYPE
+        resource['name'] = self.name
+        if not head_only:
+            resource['id'] = self.id
+            resource['platform'] = build_url(path = self.platform.get_absolute_url())
+            resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
+            resource['property_set'] = build_url(path = self.property_set.get_absolute_url())
+            if self.image:
+                resource['image'] = build_url(path = self.image.get_absolute_url())
+            else:
+                resource['image'] = None
+        return resource
+    
+    class Meta:
+        verbose_name = "Virtual Node"
+        verbose_name_plural = verbose_name +'s'
+
+
+class VirtualNodeGroup(Resource):
+    id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
+    name = models.CharField(max_length=255, verbose_name='Name')
+    description = models.TextField(verbose_name='Description')
+    experiment = models.ForeignKey(Experiment, related_name='virtual_nodegroups', verbose_name='Experiment')
+    image = models.ForeignKey(Image, null=True, blank=True, verbose_name='Image')
+    
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return "/virtual-nodegroups/%s" % self.id
+
+    def to_dict(self, head_only = False):
+        resource = dict()
+        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['media_type'] = MEDIA_TYPE
+        resource['name'] = self.name
+        if not head_only:
+            resource['id'] = self.id
+            resource['description'] = self.description
+            resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
+            resource['virtual_nodes'] = [ vng2vn.virtual_node.to_dict(head_only=True) for vng2vn in self.virtual_nodes.all()]
+            resource['node_count'] = len(resource['virtual_nodes'])
+            if self.image:
+                resource['image'] = build_url(path = self.image.get_absolute_url())
+            else:
+                resource['image'] = None
+        return resource
+        
+    class Meta:
+        verbose_name = "Virtual NodeGroup"
+        verbose_name_plural = verbose_name +'s'
+        
+
+class VirtualNodeGroup2VirtualNode(models.Model):
+    virtual_nodegroup = models.ForeignKey(VirtualNodeGroup, verbose_name='VirtualNodeGroup', related_name='virtual_nodes')
+    virtual_node = models.ForeignKey(VirtualNode, verbose_name='VirtualNode', related_name='virtual_nodegroups')
+    
+    def __unicode__(self):
+        return u'%s %s' % (self.virtual_nodegroup, self.virtual_node)
+    
+    class Meta:
+        verbose_name = "VirtualNodeGroup2VirtualNode"
+        verbose_name_plural = verbose_name +'s'
+
+
 # AUXILIARY TABLES
 
 class Testbed2Platform(models.Model):
     testbed = models.ForeignKey(Testbed, related_name='platforms', verbose_name='Testbed')
     platform = models.ForeignKey(Platform, related_name='testbeds',verbose_name='Platform')
-    node_count = models.IntegerField()
+    node_count = models.IntegerField(default=0, verbose_name='Number of Nodes')
     
     def __unicode__(self):
         return '%s %s' % (self.testbed, self.platform)
