@@ -46,6 +46,8 @@ class Project(Resource):
     id = models.CharField(max_length=32, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
+    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
+    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
 
     def __unicode__(self):
         return self.name
@@ -62,6 +64,8 @@ class Project(Resource):
             resource['id'] = self.id
             resource['description'] = self.description
             resource['experiments'] = [ experiment.to_dict(head_only = True) for experiment in self.experiments.all() ]
+            resource['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            resource['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return resource
 
     class Meta:
@@ -74,6 +78,8 @@ class Experiment(Resource):
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
     project = models.ForeignKey(Project, verbose_name='Project', related_name='experiments', on_delete=models.CASCADE)
+    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
+    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
     def __unicode__(self):
         return self.name
@@ -94,7 +100,8 @@ class Experiment(Resource):
             resource['virtual_nodes'] = [ vn.to_dict(head_only = True) for vn in self.virtual_nodes.all() ]
             resource['virtual_nodegroups'] = [ vng.to_dict(head_only = True) for vng in self.virtual_nodegroups.all() ]
             resource['images'] = [ i.to_dict(head_only = True) for i in self.images.all() ]
-            # resource['virtual_tasks'] = [ virtual_task.to_dict(head_only = True) for virtual_task in self.virtual_tasks.all() ]
+            resource['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            resource['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return resource
     
     class Meta:
@@ -139,6 +146,8 @@ class Platform(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
+    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
+    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Created')
 
     def __unicode__(self):
         return self.name
@@ -165,6 +174,8 @@ class Image(Resource):
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
     experiment = models.ForeignKey(Experiment, related_name='images', verbose_name='Experiment')
+    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
+    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
     def __unicode__(self):
         return self.name
@@ -180,6 +191,8 @@ class Image(Resource):
         if not head_only:
             resource['id'] = self.id
             resource['description'] = self.description
+            resource['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            resource['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return resource
 
     class Meta:
@@ -193,6 +206,8 @@ class PropertySet(Resource):
     experiment = models.ForeignKey(Experiment, related_name='property_sets', verbose_name='Experiment')
     platform = models.ForeignKey(Platform, verbose_name='Platform')
     node_count = models.IntegerField(default=0, verbose_name='Number of Nodes')
+    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
+    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
     def __unicode__(self):
         return self.name
@@ -212,6 +227,8 @@ class PropertySet(Resource):
             resource['platform'] = build_url(path = self.platform.get_absolute_url())
             resource['node_count'] = self.node_count
             resource['virtual_nodes'] = [ virtual_node.to_dict(head_only = True) for virtual_node in self.virtual_nodes.all() ]
+            resource['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            resource['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return resource
 
     class Meta:
@@ -226,6 +243,8 @@ class VirtualNode(Resource):
     experiment = models.ForeignKey(Experiment, related_name='virtual_nodes', verbose_name='Experiment')
     property_set = models.ForeignKey(PropertySet, related_name='virtual_nodes', verbose_name='PropertySet')
     image = models.ForeignKey(Image, null=True, blank=True, verbose_name='Image')
+    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
+    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
     def __unicode__(self):
         return self.id
@@ -247,6 +266,8 @@ class VirtualNode(Resource):
                 resource['image'] = build_url(path = self.image.get_absolute_url())
             else:
                 resource['image'] = None
+            resource['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            resource['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return resource
     
     class Meta:
@@ -260,6 +281,8 @@ class VirtualNodeGroup(Resource):
     description = models.TextField(verbose_name='Description')
     experiment = models.ForeignKey(Experiment, related_name='virtual_nodegroups', verbose_name='Experiment')
     image = models.ForeignKey(Image, null=True, blank=True, verbose_name='Image')
+    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
+    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
     def __unicode__(self):
         return self.name
@@ -282,6 +305,8 @@ class VirtualNodeGroup(Resource):
                 resource['image'] = build_url(path = self.image.get_absolute_url())
             else:
                 resource['image'] = None
+            resource['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            resource['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return resource
         
     class Meta:

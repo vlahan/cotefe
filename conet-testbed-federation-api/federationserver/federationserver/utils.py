@@ -43,10 +43,10 @@ FMT_DT_TO_STR = '%Y-%m-%dT%H:%M:%S%z'
 FMT_STR_TO_DT = '%Y-%m-%dT%H:%M:%S+0000'
 
 def utc_datetime_to_utc_string(dt):
-    return utc.localize(dt).strftime(FMT_DT_TO_STR)
+    return berlin.localize(dt).strftime(FMT_DT_TO_STR)
 
 def naive_string_to_utc_datetime(dt_str):
-    return utc.localize(datetime.strptime(dt_str, FMT_STR_TO_DT))
+    return berlin.localize(datetime.strptime(dt_str, FMT_STR_TO_DT))
 
 def utc_string_to_utc_datetime(dt_str):
     return datetime.strptime(dt_str, FMT_STR_TO_DT)
