@@ -145,7 +145,12 @@ def platform_collection_handler(request):
     
     if request.method == 'GET':
         
-        platform_list = [ platform_model.to_dict(head_only = True) for platform_model in Platform.objects.all() ]
+        platforms = Platform.objects.all()
+        
+        if 'name' in request.GET and not (request.GET['name'] is None):
+            platforms = platforms.filter(name = request.GET['name'])
+        
+        platform_list = [ p.to_dict(head_only = True) for p in platforms ]
         
         # 200
         response = HttpResponse()

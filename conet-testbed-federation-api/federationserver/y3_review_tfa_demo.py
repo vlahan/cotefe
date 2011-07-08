@@ -4,7 +4,7 @@ import logging
 
 SERVER_URL = 'http://localhost:8080/'
 # SERVER_URL = 'https://conet-testbed-federation.appspot.com/'
-PLATFORM_ID = '4f93017c'
+PLATFORM_NAME = 'tmotesky'
 NODE_COUNT_TOT = 11
 NODE_COUNT_VNG_1 = 10
 NODE_COUNT_VNG_2 = 1
@@ -19,6 +19,8 @@ def main():
     logging.info('%d %s' % (response.status, response.reason))
     federation_dict = json.loads(content)
     logging.info(federation_dict)
+    
+    
     
     project_dict = {
         'name' : 'sample project',
@@ -59,11 +61,25 @@ def main():
     experiment_dict = json.loads(content)
     logging.info(experiment_dict)
     
+    logging.info('getting the a list a list of platforms filtering by name \"%s\"...' % PLATFORM_NAME)
+    response, content = h.request(uri='%s?name=%s' % (federation_dict['platforms'], PLATFORM_NAME), method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    platform_list = json.loads(content)
+    logging.info(platform_list)
+    
+    logging.info('getting the platform with name \"%s\"...' % PLATFORM_NAME)
+    response, content = h.request(uri=platform_list[0]['uri'], method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    platform_dict = json.loads(content)
+    logging.info(platform_dict)
+    
     property_set_dict = {
         'name' : 'sample property set',
         'description' : 'PLEASE DO NOT DELETE',
         'experiment' : experiment_dict['id'],
-        'platform' : PLATFORM_ID,
+        'platform' : platform_dict['id'],
         'node_count' : NODE_COUNT_TOT
     }
     
@@ -137,5 +153,10 @@ def main():
     logging.info(virtual_nodegroup_uri_2)
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='%s.log' % __file__, level=logging.DEBUG, filemode='w', format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S %z')
+    logging.basicConfig(
+#        filename='%s.log' % __file__,
+        level=logging.DEBUG, filemode='w',
+        format='%(asctime)s %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S %z',
+    )
     main()
