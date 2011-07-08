@@ -1,6 +1,7 @@
 import httplib2
 import json
 import logging
+import sys
 
 DESCRIPTION = 'CONET 3Y REVIEW DEMO - PLEASE DO NOT DELETE'
 
@@ -10,12 +11,12 @@ def main():
         SERVER_URL = sys.argv[1]
         PLATFORM = sys.argv[2]
         assert PLATFORM in [ 'tmotesky' , 'eyesIFXv21' ]
-        NODE_COUNT_VNG_1 = sys.argv[2]
-        NODE_COUNT_VNG_2 = sys.argv[3]
+        NODE_COUNT_VNG_1 = int(sys.argv[3])
+        NODE_COUNT_VNG_2 = int(sys.argv[4])
         NODE_COUNT_TOT = NODE_COUNT_VNG_1 + NODE_COUNT_VNG_2
     except Exception:
         print 'Usage: python %s SERVER_URL tmotesky|eyesIFXv21 N_NODES_VNG_1 N_NODES_VNG_2' % __file__
-        print 'Example: python %s https://conet-testbed-federation.appspot.com/ tmotesky|eyesIFXv21 100 1' % __file__
+        print 'Example: python %s https://conet-testbed-federation.appspot.com/ tmotesky 100 1' % __file__
         sys.exit()
 
     h = httplib2.Http()
@@ -26,8 +27,6 @@ def main():
     logging.info('%d %s' % (response.status, response.reason))
     federation_dict = json.loads(content)
     logging.debug(federation_dict)
-    
-    
     
     project_dict = {
         'name' : 'sample project',
