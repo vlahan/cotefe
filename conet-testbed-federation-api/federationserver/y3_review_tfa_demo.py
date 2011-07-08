@@ -128,6 +128,13 @@ def main():
     virtual_nodegroup_uri_1 = response['content-location']
     logging.info(virtual_nodegroup_uri_1)
     
+    logging.info('getting the virtual nodegroup 1...')
+    response, content = h.request(uri=virtual_nodegroup_uri_1, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    virtual_nodegroup_dict_1 = json.loads(content)
+    logging.info(virtual_nodegroup_dict_1)
+    
     logging.info('getting the remaining virtual node...')
     response, content = h.request(uri='%s?experiment=%s&name=%s' % (federation_dict['virtual_nodes'], experiment_dict['id'], 'virtual_node_11'), method='GET', body='')
     assert response.status == 200
@@ -151,11 +158,18 @@ def main():
     logging.info('%d %s' % (response.status, response.reason))
     virtual_nodegroup_uri_2 = response['content-location']
     logging.info(virtual_nodegroup_uri_2)
+    
+    logging.info('getting the virtual nodegroup 2...')
+    response, content = h.request(uri=virtual_nodegroup_uri_2, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    virtual_nodegroup_dict_2= json.loads(content)
+    logging.info(virtual_nodegroup_dict_2)
 
 if __name__ == "__main__":
     logging.basicConfig(
-#        filename='%s.log' % __file__,
-        level=logging.DEBUG, filemode='w',
+        level=logging.DEBUG,
+        # filename='%s.log' % __file__, filemode='w',
         format='%(asctime)s %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S %z',
     )
