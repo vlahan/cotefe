@@ -216,6 +216,7 @@ class PropertySet(Resource):
         if not head_only:
             resource['id'] = self.id
             resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
+            resource['description'] = self.description
             resource['platform'] = build_url(path = self.platform.get_absolute_url())
             resource['node_count'] = self.node_count
             resource['virtual_nodes'] = [ virtual_node.to_dict(head_only = True) for virtual_node in self.virtual_nodes.all() ]
