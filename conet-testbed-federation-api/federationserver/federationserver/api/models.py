@@ -60,8 +60,8 @@ class Project(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
             resource['description'] = self.description
             resource['experiments'] = [ experiment.to_dict(head_only = True) for experiment in self.experiments.all() ]
             resource['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
@@ -92,8 +92,8 @@ class Experiment(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
             resource['description'] = self.description
             resource['project'] = build_url(path = self.project.get_absolute_url())
             resource['property_sets'] = [ ps.to_dict(head_only = True) for ps in self.property_sets.all() ]
@@ -128,6 +128,7 @@ class Testbed(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
             resource['organization'] = self.organization
             resource['description'] = self.description
@@ -160,8 +161,8 @@ class Platform(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
             resource['description'] = self.description
         return resource
 
@@ -188,8 +189,8 @@ class Image(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
             resource['description'] = self.description
             resource['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
             resource['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
@@ -220,8 +221,8 @@ class PropertySet(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
             resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
             resource['description'] = self.description
             resource['platform'] = build_url(path = self.platform.get_absolute_url())
@@ -257,8 +258,8 @@ class VirtualNode(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
             resource['platform'] = build_url(path = self.platform.get_absolute_url())
             resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
             resource['property_set'] = build_url(path = self.property_set.get_absolute_url())
@@ -295,8 +296,8 @@ class VirtualNodeGroup(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
             resource['description'] = self.description
             resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
             resource['virtual_nodes'] = [ vng2vn.virtual_node.to_dict(head_only=True) for vng2vn in self.virtual_nodes.all()]
@@ -314,8 +315,6 @@ class VirtualNodeGroup(Resource):
         verbose_name_plural = verbose_name +'s'
         
 # AUXILIARY TABLES
-        
-
 class VirtualNodeGroup2VirtualNode(models.Model):
     virtual_nodegroup = models.ForeignKey(VirtualNodeGroup, verbose_name='VirtualNodeGroup', related_name='virtual_nodes')
     virtual_node = models.ForeignKey(VirtualNode, verbose_name='VirtualNode', related_name='virtual_nodegroups')
