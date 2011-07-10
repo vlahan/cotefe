@@ -22,10 +22,10 @@ def main():
         SERVER_URL = str(sys.argv[1])
         PLATFORM = str(sys.argv[2])
         # assert SERVER_URL in [ 'http://localhost:8080' , 'http://conet-testbed-federation.appspot.com' ]
-        assert PLATFORM in [ 'tmotesky' , 'eyesIFXv21' ]
+        assert PLATFORM in [ 'TmoteSky' , 'eyesIFXv21' ]
     except Exception:
-        print 'Usage: python %s SERVER_URL tmotesky|eyesIFXv21' % __file__
-        print 'Example: python %s https://conet-testbed-federation.appspot.com/ tmotesky' % __file__
+        print 'Usage: python %s SERVER_URL TmoteSky|eyesIFXv21' % __file__
+        print 'Example: python %s https://conet-testbed-federation.appspot.com/ TmoteSky' % __file__
         sys.exit()
 
     h = httplib2.Http()
@@ -76,15 +76,8 @@ def main():
     experiment_dict = json.loads(content)
     logging.debug(experiment_dict)
     
-    logging.info('getting the a list a list of platforms filtering by name \"%s\"...' % PLATFORM)
-    response, content = h.request(uri='%s?name=%s' % (federation_dict['platforms'], PLATFORM), method='GET', body='')
-    assert response.status == 200
-    logging.info('%d %s' % (response.status, response.reason))
-    platform_list = json.loads(content)
-    logging.debug(platform_list)
-    
     logging.info('getting the platform with name \"%s\"...' % PLATFORM)
-    response, content = h.request(uri=platform_list[0]['uri'], method='GET', body='')
+    response, content = h.request(uri='%s%s' % (federation_dict['platforms'], PLATFORM), method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     platform_dict = json.loads(content)

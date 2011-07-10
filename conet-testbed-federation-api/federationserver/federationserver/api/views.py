@@ -46,7 +46,34 @@ def testbed_collection_handler(request):
     
     if request.method == 'GET':
         
-        testbed_list = [ testbed_model.to_dict(head_only = True) for testbed_model in Testbed.objects.all() ]
+        testbeds = Testbed.objects.all()
+        
+        discovery_matrix = dict()
+        discovery_array = dict()
+        
+        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
+            property_sets = PropertySet.objects.filter(experiment = Experiment.objects.get(id = request.GET['experiment']))
+        
+        elif 'property_set' in request.GET and not (request.GET['property_set'] is None):
+            property_sets = [ PropertySet.objects.get(id = request.GET['property_set'])]
+            
+        else:
+            property_sets = []
+            
+        for testbed in testbeds:
+            discovery_matrix[testbed.id] = dict()
+            discovery_array[testbed.id] = True
+            for property_set in property_sets:
+                discovery_matrix[testbed.id][property_set.id] = Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count > property_set.node_count
+                # print testbed.id, property_set.id, Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count > property_set.node_count
+            for ps in discovery_matrix[testbed.id]:
+                discovery_array[testbed.id] = discovery_array[testbed.id] and discovery_matrix[testbed.id][ps]
+        
+        for t in testbeds:
+            if not discovery_array[t.id]:
+                testbeds = testbeds.exclude(id = t.id)
+                
+        testbed_list = [ t.to_dict(head_only = True) for t in testbeds ]
         
         # 200
         response = HttpResponse()
