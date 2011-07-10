@@ -1,16 +1,19 @@
-from django.utils import simplejson as json
-from settings import *
-
-from django.http import HttpResponse
 import uuid
 import logging
 from datetime import datetime, tzinfo
 import pytz
+from anyjson import json
+from django.http import HttpResponse
+
+try:
+    from federationserver.settings import *
+except ImportError:
+    from settings import *
 
 # UTILITY FUNCTIONS
 
-def build_url(path = '/'):
-    return '%s%s' % (SERVER_URL, path)
+def build_url(server_url = SERVER_URL, path = '/'):
+    return '%s%s' % (server_url, path)
     
 def serialize(dict_or_list, format = 'json'):
     if format == 'json':

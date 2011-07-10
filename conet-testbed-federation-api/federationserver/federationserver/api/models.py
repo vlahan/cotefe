@@ -1,7 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
-from settings import *
-from utils import *
+
+try:
+    from federationserver.settings import *
+    from federationserver.utils import *
+except ImportError:
+    from settings import *
+    from utils import *
 
 
 class Resource(models.Model):

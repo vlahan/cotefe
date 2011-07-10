@@ -3,10 +3,15 @@ import logging
 from datetime import datetime
 from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
-from api.models import *
-from settings import *
-from utils import *
 
+try:
+    from federationserver.api.models import *
+    from federationserver.settings import *
+    from federationserver.utils import *
+except ImportError:
+    from api.models import *
+    from settings import *
+    from utils import *
 
 def federation_resource_handler(request):
     
@@ -68,7 +73,7 @@ def testbed_resource_handler(request, testbed_id):
     allowed_methods = ['GET']
     
     try:
-        testbed_model = Testbed.objects.get(id = testbed_id)
+        testbed = Testbed.objects.get(id = testbed_id)
     
     except ObjectDoesNotExist:
         
@@ -81,47 +86,37 @@ def testbed_resource_handler(request, testbed_id):
         
         testbed_proxy = httplib2.Http()
         # testbed_proxy.add_credentials('name', 'password')
-        response, content = testbed_proxy.request(testbed_model.url)
-        
+        response, content = testbed_proxy.request(uri=testbed.url, method='GET', body='')
+        assert response.status == 200
         testbed_dict = json.loads(content)
         
-        testbed_model.name = testbed_dict['name']
-        testbed_model.description = testbed_dict['description']
-        testbed_model.organization = testbed_dict['organization']
+        testbed.name = testbed_dict['name']
+        testbed.description = testbed_dict['description']
+        testbed.organization = testbed_dict['organization']
         response, content = testbed_proxy.request(testbed_dict['nodes'])
         node_list = json.loads(content)
-        testbed_model.node_count = len(node_list)
-        testbed_model.save()
+        testbed.node_count = len(node_list)
+        testbed.save()
         
-        response, content = testbed_proxy.request(testbed_dict['platforms'])
-        
-        platform_list = json.loads(content)
-        
-        for platform in platform_list:
-            response, content = testbed_proxy.request(platform['uri'])
-            platform_dict = json.loads(content)
-            response, content = testbed_proxy.request(testbed_dict['nodes'] + '?platform=' + platform_dict['id'])
+        for platform in Platform.objects.all():
+            response, content = testbed_proxy.request(uri='%s?platform=%s' % (testbed_dict['nodes'], platform.id), method='GET', body='')
+            assert response.status == 200
             node_list = json.loads(content)
-            
-            try:
-                t2p_list = Testbed2Platform.objects.filter(
-                    testbed = testbed_model,
-                    platform = Platform.objects.filter(name = platform_dict['name'])[0])
-                
-                if len(t2p_list) == 0:
-                    t2p = Testbed2Platform(testbed = testbed_model, platform = Platform.objects.filter(name = platform_dict['name'])[0], node_count = len(node_list))
-                else:
-                    t2p = t2p_list[0]
-                    t2p.node_count = len(node_list)
+            t2p, created = Testbed2Platform.objects.get_or_create(
+                testbed = testbed,
+                platform = platform,
+                defaults = {
+                    'node_count': len(node_list)
+                }
+            )
+            if not created:
+                t2p.node_count = len(node_list)
                 t2p.save()
-                    
-            except Exception:
-                pass
              
         # 200
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(serialize(testbed_model.to_dict()))
+        response.write(serialize(testbed.to_dict()))
         return response
     
     if request.method == 'OPTIONS':

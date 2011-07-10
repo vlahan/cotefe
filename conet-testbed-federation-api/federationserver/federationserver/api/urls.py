@@ -1,5 +1,10 @@
 from django.conf.urls.defaults import *
-from api.views import *
+
+try:
+    from federationserver.api.views import *
+except ImportError:
+    from api.views import *
+
 
 urlpatterns = patterns('',
                        

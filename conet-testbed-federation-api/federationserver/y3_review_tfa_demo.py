@@ -7,7 +7,7 @@ NODE_COUNT_VNG_1 = 10
 NODE_COUNT_VNG_2 = 1
 NODE_COUNT_TOT = NODE_COUNT_VNG_1 + NODE_COUNT_VNG_2
 
-DESCRIPTION = 'CONET 3Y REVIEW DEMO - PLEASE DO NOT DELETE'
+DESCRIPTION = 'CONET 3Y REVIEW TFA DEMO - PLEASE DO NOT DELETE'
 
 def main():
     
@@ -21,6 +21,7 @@ def main():
     try:
         SERVER_URL = str(sys.argv[1])
         PLATFORM = str(sys.argv[2])
+        # assert SERVER_URL in [ 'http://localhost:8080' , 'http://conet-testbed-federation.appspot.com' ]
         assert PLATFORM in [ 'tmotesky' , 'eyesIFXv21' ]
     except Exception:
         print 'Usage: python %s SERVER_URL tmotesky|eyesIFXv21' % __file__
