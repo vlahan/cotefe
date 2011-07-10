@@ -19,7 +19,6 @@ proxy = TestbedProxy(
     )
 )
 
-# TESTBED
 def testbed_resource_handler(request):
     
     allowed_methods = ['GET']
@@ -43,44 +42,18 @@ def testbed_resource_handler(request):
         del response['Content-Type']
         return response
     
-# PLATFORM
 def platform_collection_handler(request):
     
     allowed_methods = ['GET']
     
     if request.method == 'GET':
-        try:
-            native_platform_list = proxy.getAllPlatforms()
-        except xmlrpclib.Fault, err:
-            print "XMLRPC Error (%s):%s" % (err.faultCode, err.faultString)
-            # 500
-            response = HttpResponseServerError()
-            response['Content-Type'] = 'application/json'
-            return response
         
-        for native_resource_dict in native_platform_list:
-            platform, created = Platform.objects.get_or_create(native_id = native_resource_dict['platform_id'],
-                defaults = {
-                    'id' : generate_id(),
-                    'native_id' : native_resource_dict['platform_id'],
-                    'name' : native_resource_dict['name_tinyos'],
-                    'description' : native_resource_dict['name_long'],
-                }
-            )
-            if not created:
-                platform.name = native_resource_dict['name_tinyos']
-                platform.description = native_resource_dict['name_long']
-                platform.save()
-        
-        native_resource_id_list = [ native_resource_dict['platform_id'] for native_resource_dict in native_platform_list ]
-        Platform.objects.exclude(native_id__in = native_resource_id_list).delete()
-
-        platforms = [ platform.to_dict(head_only = True) for platform in Platform.objects.all() ]
+        platform_list = [ p.to_dict(head_only = True) for p in Platform.objects.all() ]
         
         # 200
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(serialize(platforms))
+        response.write(serialize(platform_list))
         return response
     
     if request.method == 'OPTIONS':
@@ -95,49 +68,7 @@ def platform_collection_handler(request):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
-    
-def platform_resource_handler(request, platform_id):
-    
-    allowed_methods = ['GET']
-    
-    try:
-        platform = Platform.objects.get(id = platform_id)
-    
-    except ObjectDoesNotExist:
-        response = HttpResponseNotFound()
-        response['Content-Type'] = 'application/json'
-        return response
-    
-    if request.method == 'GET':
-                
-        try:
-            native_platform_dict = proxy.getPlatform(platform.native_id)[0]
-        except None:
-            response = HttpResponseServerError()
-            response['Content-Type'] = 'application/json'
-            return response
-        
-        platform.name = native_platform_dict['name_tinyos']
-        platform.description = native_platform_dict['name_long']
-        platform.save()
-        
-        response = HttpResponse()
-        response['Content-Type'] = 'application/json'
-        response.write(serialize(platform.to_dict()))
-        return response
-    
-    if request.method == 'OPTIONS':
-        response = HttpResponse(status=204)
-        response['Allow'] = ', '.join(allowed_methods)
-        del response['Content-Type']
-        return response
-        
-    else:
-        response = HttpResponseNotAllowed(allowed_methods)
-        del response['Content-Type']
-        return response
-    
-# NODE
+
 def node_collection_handler(request):
     
     allowed_methods = ['GET']
@@ -154,40 +85,15 @@ def node_collection_handler(request):
         
         # updates or creates
         for native_node_dict in native_node_list:
-            
-            try:
-                platform = Platform.objects.get(native_id = native_node_dict['platform_id'])
-            except ObjectDoesNotExist:
-                try:
-                    native_platform_dict = proxy.getPlatform(native_node_dict['platform_id'])[0]
-                except None:
-                    response = HttpResponseServerError()
-                    response['Content-Type'] = 'application/json'
-                    return response
-                
-                platform, created = Platform.objects.get_or_create(native_id = native_platform_dict['platform_id'],
-                    defaults = {
-                        'id' : generate_id(),
-                        'native_id' : native_platform_dict['platform_id'],
-                        'name' : native_platform_dict['name_tinyos'],
-                        'description' : native_platform_dict['name_long']})
-                if not created:
-                    platform.name = native_platform_dict['name_tinyos']
-                    platform.description = native_platform_dict['name_long']
-                    platform.save()
-            
+            platform = Platform.objects.filter(native_id = native_node_dict['platform_id'])[0]              
             node, created = Node.objects.get_or_create(native_id = native_node_dict['node_id'],
                 defaults = {
-                    'id' : generate_id(),
-                    'name' : native_node_dict['serial'],
+                    'id' : native_node_dict['serial'],
+                    'name' : 'WSN node',
                     'native_id' : native_node_dict['node_id'],
                     'platform' : platform,
                 }
             )
-            if not created:
-                node.name = native_node_dict['serial']
-                node.platform = platform
-                node.save()
         
         # delete nodes that are not present in the native database
         native_node_id_list = [ native_resource_dict['node_id'] for native_resource_dict in native_node_list ]
@@ -243,30 +149,9 @@ def node_resource_handler(request, node_id):
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
             return response
-        
-        try:
-            platform = Platform.objects.get(native_id = native_node_dict['platform_id'])
-        except ObjectDoesNotExist:
-            try:
-                native_platform_dict = proxy.getPlatform(native_node_dict['platform_id'])[0]
-            except None:
-                response = HttpResponseServerError()
-                response['Content-Type'] = 'application/json'
-                return response
-            
-            platform, created = Platform.objects.get_or_create(native_id = native_platform_dict['platform_id'],
-                defaults = {
-                    'id' : generate_id(),
-                    'native_id' : native_platform_dict['platform_id'],
-                    'name' : native_platform_dict['name_tinyos'],
-                    'description' : native_platform_dict['name_long']})
-            if not created:
-                platform.name = native_platform_dict['name_tinyos']
-                platform.description = native_platform_dict['name_long']
-                platform.save()
     
         node.name = native_node_dict['serial']
-        node.platform = platform
+        node.platform = Platform.objects.filter(native_id = native_node_dict['platform_id'])[0]
         node.save()
         
         response = HttpResponse()
@@ -284,8 +169,7 @@ def node_resource_handler(request, node_id):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
-    
-# NODEGROUP
+
 def nodegroup_collection_handler(request):
     
     allowed_methods = ['GET', 'POST']
@@ -416,7 +300,7 @@ def node_collection_in_nodegroup_handler(request, nodegroup_id):
     
     if request.method == 'GET':
         
-        nodes = [ nodegroup2node.node.to_dict(head_only = True) for nodegroup2node in NodeGroup2Node.objects.filter(nodegroup = nodegroup) ]
+        nodes = [ nodegroup2node.node.to_dict(head_only = True) for nodegroup2node in NodeGroup2Node.nodes.all() ]
         
         # 200
         response = HttpResponse()
@@ -466,20 +350,13 @@ def node_resource_in_nodegroup_handler(request, nodegroup_id, node_id):
         
     
     if request.method == 'PUT':
+        NodeGroup2Node.objects.get_or_create(nodegroup = nodegroup, node = node)
         
-        try:
-            NodeGroup2Node.objects.get_or_create(nodegroup = nodegroup, node = node)
-                
-            # generate response
-            response = HttpResponse()
-            response['Content-Type'] = 'application/json'
-            return response
-        except ObjectDoesNotExist:
-            # 404
-            response = HttpResponseNotFound()
-            response['Content-Type'] = 'application/json'
-            return response
-        
+        # 200
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        return response
+    
     if request.method == 'DELETE':
         
         try:

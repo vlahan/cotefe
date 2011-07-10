@@ -4,13 +4,9 @@ from testbedserver.api.views import *
 urlpatterns = patterns('',
                        
     url(r'^$', testbed_resource_handler),
-                       
-#    url(r'^users/$', None),
-#    url(r'^users/(?P<id>\w+)$', None),
     
     url(r'^platforms/$', platform_collection_handler),
-    url(r'^platforms/(?P<platform_id>\w+)$', platform_resource_handler),
-    
+        
     url(r'^nodes/$', node_collection_handler),
     url(r'^nodes/(?P<node_id>\w+)$', node_resource_handler),
     

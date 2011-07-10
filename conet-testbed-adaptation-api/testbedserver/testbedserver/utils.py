@@ -1,16 +1,19 @@
-from django.utils import simplejson as json
-from testbedserver.settings import *
-
-from django.http import HttpResponse
 import uuid
 import logging
 from datetime import datetime, tzinfo
 import pytz
+from anyjson import json
+from django.http import HttpResponse
+
+try:
+    from testbedserver.settings import *
+except ImportError:
+    from settings import *
 
 # UTILITY FUNCTIONS
 
-def build_url(protocol = SERVER_PROTOCOL, host = SERVER_HOST, port = SERVER_PORT, path = '/'):
-    return protocol + '://' + host + ':' + port + path
+def build_url(server_url = SERVER_URL, path = '/'):
+    return '%s%s' % (server_url, path)
     
 def serialize(dict_or_list, format = 'json'):
     if format == 'json':
@@ -27,7 +30,7 @@ def deserialize(string, format = 'json'):
     
 def generate_id():
     # logging.debug('uid start')
-    id = uuid.uuid4().hex[:UID_LENGTH]
+    id = uuid.uuid4().hex[:UUID_LENGTH]
     # logging.debug('uid done')
     return id
 
@@ -43,10 +46,10 @@ FMT_DT_TO_STR = '%Y-%m-%dT%H:%M:%S%z'
 FMT_STR_TO_DT = '%Y-%m-%dT%H:%M:%S+0000'
 
 def utc_datetime_to_utc_string(dt):
-    return utc.localize(dt).strftime(FMT_DT_TO_STR)
+    return berlin.localize(dt).strftime(FMT_DT_TO_STR)
 
 def naive_string_to_utc_datetime(dt_str):
-    return utc.localize(datetime.strptime(dt_str, FMT_STR_TO_DT))
+    return berlin.localize(datetime.strptime(dt_str, FMT_STR_TO_DT))
 
 def utc_string_to_utc_datetime(dt_str):
     return datetime.strptime(dt_str, FMT_STR_TO_DT)
@@ -55,4 +58,5 @@ def get_dt_now_utc():
     dt_now_berlin = berlin.localize(datetime.now())
     dt_now_utc = dt_now_berlin.astimezone(utc)
     return dt_now_utc
+    
     

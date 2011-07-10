@@ -9,38 +9,7 @@ from testbedserver.settings import PROJECT_PATH
 class Resource(models.Model):
     class Meta:
         abstract = True
-        
-# USER
-#class User(Resource):
-#    user = models.OneToOneField(User)
-#    organization = models.CharField(max_length=255)
-#    openid = models.URLField()
-#
-#    def __unicode__(self):
-#        return self.user.username
-#
-#    def get_absolute_url(self):
-#        slug = str(self.user.username)
-#        return "/users/%s" % slug
-#
-#    def to_dict(self, head_only = False):
-#        resource = OrderedDict()
-#        resource['uri'] = build_url(path = self.get_absolute_url())
-#        resource['media_type'] = MEDIA_TYPE
-#        if not head_only:
-#            resource['name'] = self.user.username
-#            resource['first_name'] = self.user.first_name
-#            resource['last_name'] = self.user.last_name
-#            resource['email'] = self.user.email
-#            resource['organization'] = self.organization
-#            resource['openid'] = self.openid
-#        return resource
-#
-#    class Meta:
-#        verbose_name = "User"
-#        verbose_name_plural = verbose_name +'s'
-        
-# TESTBED
+
 class Testbed(Resource):
     name = models.CharField(max_length=255)
     organization = models.CharField(max_length=255)
@@ -69,14 +38,12 @@ class Testbed(Resource):
         
     class Meta:
         verbose_name = "Testbed"
-        verbose_name_plural = verbose_name
+        verbose_name_plural = verbose_name + 's'
 
-# JOB
 class Platform(Resource):
     id = models.CharField(max_length=255, primary_key=True)
-    native_id = models.IntegerField(unique=True)
+    native_id = models.IntegerField()
     name = models.CharField(max_length=255)
-    description = models.TextField()
 
     def __unicode__(self):
         return self.id
@@ -86,12 +53,10 @@ class Platform(Resource):
 
     def to_dict(self, head_only = False):
         resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
+        resource['uri'] = build_url(server_url = FEDERATION_URL, path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
-        if not head_only:
-            resource['id'] = self.id
-            resource['description'] = self.description
+        resource['id'] = self.id
         return resource
 
     class Meta:
@@ -123,8 +88,8 @@ class Image(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
             resource['description'] = self.description
             resource['file'] = build_url(path = '/static/' + self.file.name)
         return resource
@@ -153,8 +118,8 @@ class Job(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
             resource['description'] = self.description
             resource['datetime_from'] = utc_datetime_to_utc_string(self.datetime_from)
             resource['datetime_to'] = utc_datetime_to_utc_string(self.datetime_to)
@@ -168,9 +133,9 @@ class Job(Resource):
 # NODE
 class Node(Resource):
     id = models.CharField(max_length=255, primary_key=True)
-    native_id = models.IntegerField(unique=True)
-    name = models.CharField(max_length=255, unique=True)
-    platform = models.ForeignKey(Platform)
+    native_id = models.IntegerField()
+    name = models.CharField(max_length=255)
+    platform = models.ForeignKey(Platform, verbose_name='Platform')
     image = models.ForeignKey(Image, null=True, blank=True)
     
     def __unicode__(self):
@@ -184,9 +149,9 @@ class Node(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
-            resource['platform'] = build_url(path = self.platform.get_absolute_url())
+            resource['platform'] = build_url(server_url = FEDERATION_URL, path = self.platform.get_absolute_url())
             if self.image:
                 resource['image'] = build_url(path = self.image.get_absolute_url())
             else:
@@ -199,10 +164,10 @@ class Node(Resource):
         
 # NODEGROUP
 class NodeGroup(Resource):
-    id = models.CharField(max_length=255, primary_key=True)
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    image = models.ForeignKey(Image, null=True, blank=True)
+    id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
+    name = models.CharField(max_length=255, verbose_name='Name')
+    description = models.TextField(verbose_name='Description')
+    image = models.ForeignKey(Image, null=True, blank=True, verbose_name='Image')
     
     def __unicode__(self):
         return self.name
@@ -215,8 +180,8 @@ class NodeGroup(Resource):
         resource['uri'] = build_url(path = self.get_absolute_url())
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
+        resource['id'] = self.id
         if not head_only:
-            resource['id'] = self.id
             resource['description'] = self.description
             resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
             if self.image:

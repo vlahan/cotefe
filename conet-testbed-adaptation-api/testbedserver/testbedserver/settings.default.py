@@ -148,9 +148,9 @@ JSON_ENSURE_ASCII = True
 UID_LENGTH = 8
 
 # TESTBED ADAPTATION API
-SERVER_PROTOCOL = 'http'
-SERVER_HOST = 'localhost'
-SERVER_PORT = '8001'
+SERVER_URL = 'http://localhost:8001'
+
+FEDERATION_URL = 'http://localhost:8080'
 
 XMLRPC_PROTOCOL = 'https'
 XMLRPC_USERNAME = 'conetuser'
