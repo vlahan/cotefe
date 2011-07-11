@@ -94,7 +94,7 @@ class Image(Resource):
                 resource['file'] = build_url(path = '/static/' + self.file.name)
             else:
                 resource['file'] = None
-            resource['imagefile_upload'] = build_url(path = '%s/upload' % self.get_absolute_url())
+            resource['upload_to'] = build_url(path = '%s/upload' % self.get_absolute_url())
         return resource
 
     class Meta:

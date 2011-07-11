@@ -134,7 +134,8 @@ def main():
 #    
 #    exit()
     
-    JOB_URI = 'http://localhost:8001/jobs/67efc898'
+    # JOB_URI = 'http://localhost:8001/jobs/67efc898'
+    JOB_URI = 'https://www.twist.tu-berlin.de:8001/jobs/af2ebeba'
     
     logging.info('getting the information about the created job...')
     response, content = h.request(uri=JOB_URI, method='GET', body='')
@@ -186,7 +187,7 @@ def main():
     logging.info('uploading the actual image file...')
     register_openers()
     datagen, headers = multipart_encode({'imagefile': open(IMAGEFILE_PATH, 'rb')})
-    request = urllib2.Request(image_dict['imagefile_upload'], datagen, headers)
+    request = urllib2.Request(image_dict['upload_to'], datagen, headers)
     logging.info('200 OK')
     logging.debug(urllib2.urlopen(request).read())
     
