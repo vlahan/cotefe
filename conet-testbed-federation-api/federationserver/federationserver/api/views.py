@@ -602,7 +602,8 @@ def virtual_node_collection_handler(request):
     
     if request.method == 'GET':
         
-        virtual_nodes = VirtualNode.objects.all().order_by('property_set', 'name')
+        virtual_nodes = VirtualNode.objects.all()
+        # virtual_nodes = VirtualNode.objects.all().order_by('property_set', 'name')
         
         if 'name' in request.GET and not (request.GET['name'] is None):
             virtual_nodes = virtual_nodes.filter(name = request.GET['name'])
