@@ -103,6 +103,7 @@ class Experiment(Resource):
             resource['project'] = build_url(path = self.project.get_absolute_url())
             resource['property_sets'] = [ ps.to_dict(head_only = True) for ps in self.property_sets.all() ]
             resource['virtual_nodes'] = [ vn.to_dict(head_only = True) for vn in self.virtual_nodes.all() ]
+            resource['node_count'] = len(resource['virtual_nodes'])
             resource['virtual_nodegroups'] = [ vng.to_dict(head_only = True) for vng in self.virtual_nodegroups.all() ]
             resource['images'] = [ i.to_dict(head_only = True) for i in self.images.all() ]
             resource['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
