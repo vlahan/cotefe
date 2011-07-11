@@ -1027,3 +1027,64 @@ def image_resource_in_virtual_nodegroup_handler(request, virtual_nodegroup_id, i
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
+    
+def job_collection_handler(request):
+    
+    allowed_methods = ['GET']
+    
+    if request.method == 'GET':
+        
+        if 'testbed' in request.GET and not (request.GET['testbed'] is None):
+            testbed = Testbed.objects.get(id = request.GET['testbed'])
+            
+        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
+            experiment = Experiment.objects.get(id = request.GET['experiment'])
+            
+        if 'date_from' in request.GET and not (request.GET['date_from'] is None):
+            date_from = request.GET['date_from']
+            
+        if 'date_to' in request.GET and not (request.GET['date_to'] is None):
+            date_to = request.GET['date_to']
+            
+        assert testbed
+        
+        testbed_proxy = httplib2.Http()
+        # testbed_proxy.add_credentials('name', 'password')
+        response, content = testbed_proxy.request(uri=testbed.url, method='GET', body='')
+        assert response.status == 200
+        testbed_dict = json.loads(content)
+        
+        testbed.name = testbed_dict['name']
+        testbed.description = testbed_dict['description']
+        testbed.organization = testbed_dict['organization']
+        response, content = testbed_proxy.request(testbed_dict['nodes'])
+        node_list = json.loads(content)
+        testbed.node_count = len(node_list)
+        testbed.save()
+        
+        virtual_nodes = VirtualNode.objects.all()
+        # virtual_nodes = VirtualNode.objects.all().order_by('property_set', 'name')
+        
+        
+            
+        virtual_node_list = [ vn.to_dict(head_only = True) for vn in virtual_nodes ]
+        
+        logging.warning('NUMBER OF NODES RETURNED: %d' % len(virtual_node_list))
+        
+        # 200
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(virtual_node_list))
+        return response
+        
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response

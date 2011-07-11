@@ -2,6 +2,8 @@ import httplib2
 import json
 import logging
 import sys
+from datetime import date, datetime, timedelta
+from utils import *
 
 NODE_COUNT_VNG_1 = 10
 NODE_COUNT_VNG_2 = 1
@@ -12,7 +14,7 @@ DESCRIPTION = 'CONET 3Y REVIEW TFA DEMO - PLEASE DO NOT DELETE'
 def main():
     
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         # filename='%s.log' % __file__, filemode='w',
         format='%(asctime)s %(message)s',
         datefmt='[%Y-%m-%d %H:%M:%S %z]',
@@ -214,22 +216,59 @@ def main():
     image_dict_2 = json.loads(content)
     logging.debug(image_dict_2)
     
-    logging.info('installing image 1 on virtual nodegroup 1...')
-    response, content = h.request(uri='%s%s/image/%s' % (federation_dict['virtual_nodegroups'], virtual_nodegroup_dict_1['id'], image_dict_1['id']), method='PUT', body='', headers = {'Content-Length': '0'})
+    logging.info('getting the updated experiment...')
+    response, content = h.request(uri=experiment_uri, method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
+    experiment_dict = json.loads(content)
+    logging.debug(experiment_dict)
     
-    logging.info('installing image 2 on virtual nodegroup 2...')
-    response, content = h.request(uri='%s%s/image/%s' % (federation_dict['virtual_nodegroups'], virtual_nodegroup_dict_2['id'], image_dict_2['id']), method='PUT', body='', headers = {'Content-Length': '0'})
+    logging.info('getting the list of testbeds supporting this experiment (according to property_sets)...')
+    response, content = h.request(uri='%s?experiment=%s' % (federation_dict['testbeds'], experiment_dict['id']), method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
+    testbed_list = json.loads(content)
+    logging.debug(testbed_list)
+    
+    testbed_dict = testbed_list[0]
+    
+#    dt_now = datetime.now()
+#    dt_next_month = dt_now + timedelta(days=30)
+#    str_now = berlin_datetime_to_utc_string(dt_now)
+#    str_next_month = berlin_datetime_to_utc_string(dt_next_month)
+#    logging.debug(str_now)
+#    logging.debug(str_next_month)
+    
+    d_from = date.today()
+    d_to = d_from + timedelta(days=9)
+    
+    logging.debug(d_from)
+    logging.debug(d_to)
+    
+    logging.info('getting the reserved jobs for the available testbed between date %s and date %s (an attempt to create a non-overlapping job should be successful)' % (d_from, d_to))
+    response, content = h.request(uri='%s?experiment=%s&testbed=%s&date_from=%s&date_to=%s' % (federation_dict['jobs'], experiment_dict['id'], testbed_dict['id'], d_from, d_to), method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    job_list = json.loads(content)
+    logging.debug(job_list)
+
+    
+#    logging.info('installing image 1 on virtual nodegroup 1...')
+#    response, content = h.request(uri='%s%s/image/%s' % (federation_dict['virtual_nodegroups'], virtual_nodegroup_dict_1['id'], image_dict_1['id']), method='PUT', body='', headers = {'Content-Length': '0'})
+#    assert response.status == 200
+#    logging.info('%d %s' % (response.status, response.reason))
+#    
+#    logging.info('installing image 2 on virtual nodegroup 2...')
+#    response, content = h.request(uri='%s%s/image/%s' % (federation_dict['virtual_nodegroups'], virtual_nodegroup_dict_2['id'], image_dict_2['id']), method='PUT', body='', headers = {'Content-Length': '0'})
+#    assert response.status == 200
+#    logging.info('%d %s' % (response.status, response.reason))
     
     # CLEANING UP THINGS
     # CASCADE DELETE DOES NOT WORK ON GAE!!!!!!!!!
-    #logging.info('deleting the project and all its children... CASCADE DELETE DOES NOT WORK ON GAE!!!!!!!!!')
-    #response, content = h.request(uri=project_uri, method='DELETE', body='')
-    #assert response.status == 200
-    #logging.info('%d %s' % (response.status, response.reason))
+#    logging.info('deleting the project and all its children... CASCADE DELETE DOES NOT WORK ON GAE!!!!!!!!!')
+#    response, content = h.request(uri=project_uri, method='DELETE', body='')
+#    assert response.status == 200
+#    logging.info('%d %s' % (response.status, response.reason))
 
 if __name__ == "__main__":
     main()
