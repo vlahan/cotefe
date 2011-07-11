@@ -14,3 +14,8 @@ indexes:
   properties:
   - name: __key__
     direction: desc
+
+- kind: api_virtualnode
+  properties:
+    - name: property_set
+    - name: name
