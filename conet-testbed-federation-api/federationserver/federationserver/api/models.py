@@ -265,7 +265,7 @@ class VirtualNode(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         resource['id'] = self.id
-        resource['property_set_id'] = build_url(path = self.property_set.id)
+        resource['property_set_id'] = self.property_set.id
         if not head_only:
             resource['platform'] = build_url(path = self.platform.get_absolute_url())
             resource['experiment'] = build_url(path = self.experiment.get_absolute_url())

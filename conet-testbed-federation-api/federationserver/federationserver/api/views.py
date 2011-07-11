@@ -556,7 +556,7 @@ def property_set_collection_handler(request):
     
 def property_set_resource_handler(request, property_set_id):
     
-    allowed_methods = ['GET', 'PUT', 'DELETE']
+    allowed_methods = ['GET', 'DELETE']
     
     try:
         property_set = PropertySet.objects.get(id = property_set_id)
@@ -580,30 +580,6 @@ def property_set_resource_handler(request, property_set_id):
         response['Content-Type'] = 'application/json'
         response.write(serialize(property_set.to_dict()))
         return response
-    
-    if request.method == 'PUT':
-        
-        try:
-            property_set_dict = json.loads(request.raw_post_data)
-
-            property_set.name = property_set_dict['name']
-            property_set.experiment = Experiment.objects.get(id = property_set_dict['experiment'])
-            property_set.platform = Platform.objects.get(id = property_set_dict['platform'])
-            property_set.node_count = property_set_dict['node_count']
-            
-            property_set.save()
-            
-            # generate response
-            response = HttpResponse()
-            response['Content-Type'] = 'application/json'
-            response.write(serialize(property_set.to_dict()))
-            return response
-            
-        except None:
-            # 400
-            response = HttpResponseBadRequest()
-            response['Content-Type'] = 'application/json'
-            return response
         
     if request.method == 'DELETE':
         
