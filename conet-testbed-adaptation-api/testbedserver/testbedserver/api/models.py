@@ -101,7 +101,7 @@ class Image(Resource):
 # JOB
 class Job(Resource):
     id = models.CharField(max_length=255, primary_key=True)
-    native_id = models.IntegerField()
+    native_id = models.IntegerField(default=0)
     native_platform_id_list = models.CommaSeparatedIntegerField(max_length=255)
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -127,7 +127,7 @@ class Job(Resource):
             if self.name == '(native job)':
                 resource['nodes'] = [ n.to_dict(head_only=True) for n in Node.objects.filter(platform__in = Platform.objects.filter(native_id__in = map(int, self.native_platform_id_list.split(',')))) ]
             else:
-                resource['nodes'] = [ n.node.to_dict(head_only=True) for n in self.nodes.node.all() ]
+                resource['nodes'] = [ j2n.node.to_dict(head_only=True) for j2n in self.nodes.all() ]
             resource['node_count'] = len(resource['nodes'])
         return resource
 
