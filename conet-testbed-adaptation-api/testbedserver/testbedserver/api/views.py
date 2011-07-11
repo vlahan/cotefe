@@ -805,24 +805,13 @@ def image_resource_in_nodegroup_handler(request, nodegroup_id, image_id):
         nodegroup.image = image
         nodegroup.save()
         
-        for nodegroup2node in NodeGroup2Node.objects.filter(nodegroup = nodegroup):
-            nodegroup2node.node.image = image
-            nodegroup2node.node.save()
-        
-        # call the xmlrpc function with node_id_list and image_path
-        
-        node_native_id_list = [ nodegroup2node.node.native_id for nodegroup2node in NodeGroup2Node.objects.filter(nodegroup = nodegroup) ]
+        for ng2n in nodegroup.nodes.all():
+            ng2n.node.image = image
+            ng2n.node.save()
+
+        job_native_id = Job.objects.get(id = nodegroup.job).native_id
+        node_native_id_list = [ ng2n.node.native_id for ng2n in nodegroup.nodes.all() ]
         image_path = image.file.file.name
-        
-        try:
-            dt_now_utc = get_dt_now_utc()
-            job_native_id = Job.objects.filter(datetime_from__lt = dt_now_utc).filter(datetime_to__gt = dt_now_utc)[0].native_id
-            
-        except None:
-            # 403
-            response =  HttpResponseForbidden()
-            response['Content-Type'] = 'application/json'
-            return response
         
         try:
             result = proxy.burnImageToNodeList(job_native_id, node_native_id_list, image_path)
