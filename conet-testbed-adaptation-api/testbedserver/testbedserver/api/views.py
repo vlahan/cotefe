@@ -406,6 +406,7 @@ def job_collection_handler(request):
                 defaults = {
                     'id' : generate_id(),
                     'native_id' : native_job_dict['job_id'],
+                    'native_platform_id_list' : ','.join(map(str,native_job_dict['resources'])),
                     'name' : '(native job)',
                     'description' : native_job_dict['description'],
                     'datetime_from' : utc_string_to_utc_datetime(native_job_dict['time_begin']),
@@ -421,13 +422,23 @@ def job_collection_handler(request):
         # delete nodes that are not present in the native database
         native_resource_id_list = [ native_resource_dict['job_id'] for native_resource_dict in native_job_list ]
         Job.objects.exclude(native_id__in = native_resource_id_list).delete()
+        
+        jobs = Job.objects.all()
+        
+        if 'date_from' in request.GET and not (request.GET['date_from'] is None):
+            datetime_from = request.GET['date_from'] + 'T00:00:00+0000'
+            jobs = jobs.filter(datetime_from__gte = utc_string_to_utc_datetime(datetime_from))
+            
+        if 'date_to' in request.GET and not (request.GET['date_to'] is None):
+            datetime_to = request.GET['date_to'] + 'T23:59:59+0000'
+            jobs = jobs.filter(datetime_to__lte = utc_string_to_utc_datetime(datetime_to))
 
-        jobs = [ resource_model.to_dict(head_only = True) for resource_model in Job.objects.all() ]
+        job_list = [ resource_model.to_dict(head_only = True) for resource_model in jobs ]
         
         # generating 200 response
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(serialize(jobs))
+        response.write(serialize(job_list))
         return response
     
     if request.method == 'POST':

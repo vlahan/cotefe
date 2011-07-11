@@ -45,8 +45,18 @@ berlin = pytz.timezone('Europe/Berlin')
 FMT_DT_TO_STR = '%Y-%m-%dT%H:%M:%S%z'
 FMT_STR_TO_DT = '%Y-%m-%dT%H:%M:%S+0000'
 
+def berlin_datetime_to_berlin_string(dt):
+    dt_berlin = berlin.localize(dt)
+    return dt_berlin.strftime(FMT_DT_TO_STR)
+
 def utc_datetime_to_utc_string(dt):
-    return berlin.localize(dt).strftime(FMT_DT_TO_STR)
+    dt_utc = utc.localize(dt)
+    return dt_utc.strftime(FMT_DT_TO_STR)
+
+def berlin_datetime_to_utc_string(dt):
+    dt_berlin = berlin.localize(dt)
+    dt_utc = dt_berlin.astimezone(utc)
+    return dt_utc.strftime(FMT_DT_TO_STR)
 
 def naive_string_to_utc_datetime(dt_str):
     return berlin.localize(datetime.strptime(dt_str, FMT_STR_TO_DT))

@@ -101,7 +101,8 @@ class Image(Resource):
 # JOB
 class Job(Resource):
     id = models.CharField(max_length=255, primary_key=True)
-    native_id = models.IntegerField(unique=True)
+    native_id = models.IntegerField()
+    native_platform_id_list = models.CommaSeparatedIntegerField(max_length=255)
     name = models.CharField(max_length=255)
     description = models.TextField()
     datetime_from = models.DateTimeField()
@@ -121,9 +122,13 @@ class Job(Resource):
         resource['id'] = self.id
         if not head_only:
             resource['description'] = self.description
-            resource['datetime_from'] = utc_datetime_to_utc_string(self.datetime_from)
-            resource['datetime_to'] = utc_datetime_to_utc_string(self.datetime_to)
-            resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
+            resource['datetime_from'] = berlin_datetime_to_utc_string(self.datetime_from)
+            resource['datetime_to'] = berlin_datetime_to_utc_string(self.datetime_to)
+            if self.name == '(native job)':
+                resource['nodes'] = [ n.to_dict(head_only=True) for n in Node.objects.filter(platform__in = Platform.objects.filter(native_id__in = map(int, self.native_platform_id_list.split(',')))) ]
+            else:
+                resource['nodes'] = [ n.node.to_dict(head_only=True) for n in self.nodes.node.all() ]
+            resource['node_count'] = len(resource['nodes'])
         return resource
 
     class Meta:
@@ -214,6 +219,17 @@ class Job2Node(models.Model):
     
     class Meta:
         verbose_name = "Job2Node"
+        verbose_name_plural = verbose_name +'s'
+        
+class Job2Platform(models.Model):
+    job = models.ForeignKey(Job, verbose_name='Job', related_name='platforms')
+    platform = models.ForeignKey(Platform, verbose_name='Node', related_name='jobs')
+    
+    def __unicode__(self):
+        return u'%s %s' % (self.job, self.platform)
+    
+    class Meta:
+        verbose_name = "Job2Platform"
         verbose_name_plural = verbose_name +'s'
         
 
