@@ -15,7 +15,7 @@ IMAGEFILE_PATH = '/Users/claudiodonzelli/Desktop/images/blink_test_image_telosb'
 def main():
     
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         # filename='%s.log' % __file__, filemode='w',
         format='%(asctime)s %(message)s',
         datefmt='[%Y-%m-%d %H:%M:%S %z]',

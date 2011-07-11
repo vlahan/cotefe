@@ -14,7 +14,7 @@ DESCRIPTION = 'CONET 3Y REVIEW TFA DEMO - PLEASE DO NOT DELETE'
 def main():
     
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         # filename='%s.log' % __file__, filemode='w',
         format='%(asctime)s %(message)s',
         datefmt='[%Y-%m-%d %H:%M:%S %z]',
