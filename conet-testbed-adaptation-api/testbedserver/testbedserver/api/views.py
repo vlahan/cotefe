@@ -193,8 +193,12 @@ def nodegroup_collection_handler(request):
                 id = generate_id(),
                 name = nodegroup_dict['name'],
                 description = nodegroup_dict['description'],
+                job = Job.objects.get(id = nodegroup_dict['job'])
             )
             nodegroup.save()
+            
+            for node_id in nodegroup_dict['nodes']:
+                NodeGroup2Node.objects.get_or_create(nodegroup = nodegroup, node = Node.objects.get(id = node_id))
             
             # generate response
             response = HttpResponse(status=201)
@@ -284,107 +288,7 @@ def nodegroup_resource_handler(request, nodegroup_id):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
-    
-def node_collection_in_nodegroup_handler(request, nodegroup_id):
-    
-    allowed_methods = ['GET']
-    
-    try:
-        nodegroup = NodeGroup.objects.get(id = nodegroup_id)
-    
-    except ObjectDoesNotExist:
-        # 404
-        response = HttpResponseNotFound()
-        response['Content-Type'] = 'application/json'
-        return response
-    
-    if request.method == 'GET':
-        
-        nodes = [ nodegroup2node.node.to_dict(head_only = True) for nodegroup2node in NodeGroup2Node.nodes.all() ]
-        
-        # 200
-        response = HttpResponse()
-        response['Content-Type'] = 'application/json'
-        response.write(serialize(nodes))
-        return response
-        
-    if request.method == 'OPTIONS':
-        # 204
-        response = HttpResponse(status=204)
-        response['Allow'] = ', '.join(allowed_methods)
-        del response['Content-Type']
-        return response        
-        
-    else:
-        response = HttpResponseNotAllowed(allowed_methods)
-        del response['Content-Type']
-        return response
-    
-def node_resource_in_nodegroup_handler(request, nodegroup_id, node_id):
-    
-    allowed_methods = ['GET', 'PUT', 'DELETE']
-    
-    try:
-        nodegroup = NodeGroup.objects.get(id = nodegroup_id)
-        node = Node.objects.get(id = node_id)
-    
-    except ObjectDoesNotExist:
-        # 404
-        response = HttpResponseNotFound()
-        response['Content-Type'] = 'application/json'
-        return response
-    
-    if request.method == 'GET':
-        try:
-            NodeGroup2Node.objects.get(nodegroup = nodegroup, node = node)
-            
-            # generate response
-            response = HttpResponse()
-            response['Content-Type'] = 'application/json'
-            return response
-        except ObjectDoesNotExist:
-            # 404
-            response = HttpResponseNotFound()
-            response['Content-Type'] = 'application/json'
-            return response
-        
-    
-    if request.method == 'PUT':
-        NodeGroup2Node.objects.get_or_create(nodegroup = nodegroup, node = node)
-        
-        # 200
-        response = HttpResponse()
-        response['Content-Type'] = 'application/json'
-        return response
-    
-    if request.method == 'DELETE':
-        
-        try:
-            NodeGroup2Node.objects.get(nodegroup = nodegroup, node = node).delete()
-            
-            # generate response
-            response = HttpResponse()
-            response['Content-Type'] = 'application/json'
-            return response
-        except ObjectDoesNotExist:
-            # 404
-            response = HttpResponseNotFound()
-            response['Content-Type'] = 'application/json'
-            return response
-    
-    if request.method == 'OPTIONS':
-        # 204
-        response = HttpResponse(status=204)
-        response['Allow'] = ', '.join(allowed_methods)
-        del response['Content-Type']
-        return response
-        
-    else:
-        response = HttpResponseNotAllowed(allowed_methods)
-        del response['Content-Type']
-        return response
 
-# JOB
 def job_collection_handler(request):
     
     allowed_methods = ['GET', 'POST']
@@ -643,82 +547,6 @@ def job_resource_handler(request, job_id):
         del response['Content-Type']
         return response
 
-def node_collection_in_job_handler(request, job_id):
-    
-    allowed_methods = ['GET']
-    
-    try:
-        job = Job.objects.get(id = job_id)
-    
-    except ObjectDoesNotExist:
-        # 404
-        response = HttpResponseNotFound()
-        response['Content-Type'] = 'application/json'
-        return response
-    
-    if request.method == 'GET':
-        
-        nodes = [ job2node.node.to_dict(head_only = True) for job2node in Job2Node.objects.filter(job = job) ]
-        
-        # 200
-        response = HttpResponse()
-        response['Content-Type'] = 'application/json'
-        response.write(serialize(nodes))
-        return response
-        
-    if request.method == 'OPTIONS':
-        # 204
-        response = HttpResponse(status=204)
-        response['Allow'] = ', '.join(allowed_methods)
-        del response['Content-Type']
-        return response        
-        
-    else:
-        response = HttpResponseNotAllowed(allowed_methods)
-        del response['Content-Type']
-        return response
-    
-def node_resource_in_job_handler(request, job_id, node_id):
-    
-    allowed_methods = ['GET']
-    
-    try:
-        job = Job.objects.get(id = job_id)
-        node = Node.objects.get(id = node_id)
-    
-    except ObjectDoesNotExist:
-        # 404
-        response = HttpResponseNotFound()
-        response['Content-Type'] = 'application/json'
-        return response
-    
-    if request.method == 'GET':
-        try:
-            Job2Node.objects.get(job = job, node = node)
-            
-            # generate response
-            response = HttpResponse()
-            response['Content-Type'] = 'application/json'
-            return response
-        except ObjectDoesNotExist:
-            # 404
-            response = HttpResponseNotFound()
-            response['Content-Type'] = 'application/json'
-            return response
-    
-    if request.method == 'OPTIONS':
-        # 204
-        response = HttpResponse(status=204)
-        response['Allow'] = ', '.join(allowed_methods)
-        del response['Content-Type']
-        return response
-        
-    else:
-        response = HttpResponseNotAllowed(allowed_methods)
-        del response['Content-Type']
-        return response
-    
-# IMAGE
 def image_collection_handler(request):
     
     allowed_methods = ['GET', 'POST']
@@ -736,18 +564,20 @@ def image_collection_handler(request):
     if request.method == 'POST':
                 
         try:
-            resource_model = Image(
-                id = generate_id(),
-                name = request.POST['name'],
-                description = request.POST['description'],
-                file = request.FILES['file'])
+            image_dict = json.loads(request.raw_post_data)
             
-            resource_model.save()
+            image = Image(
+                id = generate_id(),
+                name = image_dict['name'],
+                description = image_dict['description']
+            )
+            
+            image.save()
             
             # 201
             response = HttpResponse(status=201)
-            response['Location'] = build_url(path = resource_model.get_absolute_url())
-            response['Content-Location'] = build_url(path = resource_model.get_absolute_url())
+            response['Location'] = build_url(path = image.get_absolute_url())
+            response['Content-Location'] = build_url(path = image.get_absolute_url())
             response['Content-Type'] = 'application/json'
             return response
         except None:
@@ -828,6 +658,45 @@ def image_resource_handler(request, image_id):
         del response['Content-Type']
         return response
         
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+
+def imagefile_upload_handler(request, image_id):
+    
+    allowed_methods = ['POST']
+      
+    if request.method == 'POST':
+                
+        try:
+            imagefile = request.FILES['imagefile']
+            
+            image = Image.objects.get(id = image_id)
+            
+            image.file = imagefile            
+            image.save()
+            
+            # 200
+            response = HttpResponse()
+            response['Content-Type'] = 'application/json'
+            response.write(serialize(image.to_dict()))
+            return response
+        
+        except None:
+            # 400
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+
     else:
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']

@@ -75,7 +75,7 @@ class Image(Resource):
     id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
-    file = models.FileField(upload_to=update_filename)
+    file = models.FileField(upload_to=update_filename, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -91,12 +91,17 @@ class Image(Resource):
         resource['id'] = self.id
         if not head_only:
             resource['description'] = self.description
-            resource['file'] = build_url(path = '/static/' + self.file.name)
+            if self.file:
+                resource['file'] = build_url(path = '/static/' + self.file.name)
+            else:
+                resource['file'] = None
+            resource['imagefile_upload'] = build_url(path = '%s/upload' % self.get_absolute_url())
         return resource
 
     class Meta:
         verbose_name = "Image"
         verbose_name_plural = verbose_name +'s'
+
 
 # JOB
 class Job(Resource):
@@ -122,12 +127,14 @@ class Job(Resource):
         resource['id'] = self.id
         if not head_only:
             resource['description'] = self.description
-            resource['datetime_from'] = berlin_datetime_to_utc_string(self.datetime_from)
-            resource['datetime_to'] = berlin_datetime_to_utc_string(self.datetime_to)
+            resource['datetime_from'] = utc_datetime_to_utc_string(self.datetime_from)
+            resource['datetime_to'] = utc_datetime_to_utc_string(self.datetime_to)
             if self.name == '(native job)':
                 resource['nodes'] = [ n.to_dict(head_only=True) for n in Node.objects.filter(platform__in = Platform.objects.filter(native_id__in = map(int, self.native_platform_id_list.split(',')))) ]
+                resource['nodegroups'] = None
             else:
                 resource['nodes'] = [ j2n.node.to_dict(head_only=True) for j2n in self.nodes.all() ]
+                resource['nodegroups'] = [ ng.to_dict(head_only=True) for ng in self.nodegroups.all() ]
             resource['node_count'] = len(resource['nodes'])
         return resource
 
@@ -172,6 +179,7 @@ class NodeGroup(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
+    job = models.ForeignKey(Job, related_name='nodegroups', verbose_name='Job')
     image = models.ForeignKey(Image, null=True, blank=True, verbose_name='Image')
     
     def __unicode__(self):
@@ -188,7 +196,7 @@ class NodeGroup(Resource):
         resource['id'] = self.id
         if not head_only:
             resource['description'] = self.description
-            resource['nodes'] = build_url(path = self.get_absolute_url() + '/nodes/')
+            resource['nodes'] = [ ng2n.node.to_dict(head_only=True) for ng2n in self.nodes.all()]
             if self.image:
                 resource['image'] = build_url(path = self.image.get_absolute_url())
             else:
@@ -221,15 +229,5 @@ class Job2Node(models.Model):
         verbose_name = "Job2Node"
         verbose_name_plural = verbose_name +'s'
         
-class Job2Platform(models.Model):
-    job = models.ForeignKey(Job, verbose_name='Job', related_name='platforms')
-    platform = models.ForeignKey(Platform, verbose_name='Node', related_name='jobs')
-    
-    def __unicode__(self):
-        return u'%s %s' % (self.job, self.platform)
-    
-    class Meta:
-        verbose_name = "Job2Platform"
-        verbose_name_plural = verbose_name +'s'
         
 
