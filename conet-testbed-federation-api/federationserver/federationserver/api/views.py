@@ -602,7 +602,7 @@ def virtual_node_collection_handler(request):
     
     if request.method == 'GET':
         
-        virtual_nodes = VirtualNode.objects.all()
+        virtual_nodes = VirtualNode.objects.all().order_by('property_set', 'name')
         
         if 'name' in request.GET and not (request.GET['name'] is None):
             virtual_nodes = virtual_nodes.filter(name = request.GET['name'])
@@ -757,10 +757,15 @@ def virtual_nodegroup_resource_handler(request, virtual_nodegroup_id):
             virtual_nodegroup_dict = json.loads(request.raw_post_data)
 
             virtual_nodegroup.name = virtual_nodegroup_dict['name']
+            virtual_nodegroup.name = virtual_nodegroup_dict['description']
             virtual_nodegroup.experiment = Experiment.objects.get(id = virtual_nodegroup_dict['experiment'])
-            virtual_nodegroup.platform = Platform.objects.get(id = virtual_nodegroup_dict['platform'])
-            
             virtual_nodegroup.save()
+            
+            for vng2vn in VirtualNodeGroup2VirtualNode.objects.filter(virtual_nodegroup = virtual_nodegroup):
+                vng2vn.delete()
+            
+            for virtual_node_id in virtual_nodegroup_dict['virtual_nodes']:
+                VirtualNodeGroup2VirtualNode.objects.get_or_create(virtual_nodegroup = virtual_nodegroup, virtual_node = VirtualNode.objects.get(id = virtual_node_id))
             
             # generate response
             response = HttpResponse()
@@ -777,6 +782,8 @@ def virtual_nodegroup_resource_handler(request, virtual_nodegroup_id):
     if request.method == 'DELETE':
         
         virtual_nodegroup.delete()
+        for vng2vn in VirtualNodeGroup2VirtualNode.objects.filter(virtual_nodegroup = virtual_nodegroup):
+                vng2vn.delete()
         
         # 200
         response = HttpResponse()

@@ -82,7 +82,7 @@ class Experiment(Resource):
     id = models.CharField(max_length=32, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
-    project = models.ForeignKey(Project, verbose_name='Project', related_name='experiments', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, verbose_name='Project', related_name='experiments', on_delete=models.SET_NULL)
     datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
     datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
@@ -180,7 +180,7 @@ class Image(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
-    experiment = models.ForeignKey(Experiment, related_name='images', verbose_name='Experiment')
+    experiment = models.ForeignKey(Experiment, related_name='images', verbose_name='Experiment', on_delete=models.SET_NULL)
     datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
     datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
@@ -210,8 +210,8 @@ class PropertySet(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
-    experiment = models.ForeignKey(Experiment, related_name='property_sets', verbose_name='Experiment')
-    platform = models.ForeignKey(Platform, verbose_name='Platform')
+    experiment = models.ForeignKey(Experiment, related_name='property_sets', verbose_name='Experiment', on_delete=models.SET_NULL)
+    platform = models.ForeignKey(Platform, verbose_name='Platform', on_delete=models.SET_NULL)
     node_count = models.IntegerField(default=0, verbose_name='Number of Nodes')
     datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
     datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
@@ -246,10 +246,10 @@ class PropertySet(Resource):
 class VirtualNode(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
-    platform = models.ForeignKey(Platform, related_name='virtual_nodes', verbose_name='Platform')
-    experiment = models.ForeignKey(Experiment, related_name='virtual_nodes', verbose_name='Experiment')
-    property_set = models.ForeignKey(PropertySet, related_name='virtual_nodes', verbose_name='PropertySet')
-    image = models.ForeignKey(Image, null=True, blank=True, verbose_name='Image')
+    platform = models.ForeignKey(Platform, related_name='virtual_nodes', verbose_name='Platform', on_delete=models.SET_NULL)
+    experiment = models.ForeignKey(Experiment, related_name='virtual_nodes', verbose_name='Experiment', on_delete=models.SET_NULL)
+    property_set = models.ForeignKey(PropertySet, related_name='virtual_nodes', verbose_name='PropertySet', on_delete=models.SET_NULL)
+    image = models.ForeignKey(Image, null=True, blank=True, verbose_name='Image', on_delete=models.SET_NULL)
     datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
     datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
@@ -287,8 +287,8 @@ class VirtualNodeGroup(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
-    experiment = models.ForeignKey(Experiment, related_name='virtual_nodegroups', verbose_name='Experiment')
-    image = models.ForeignKey(Image, null=True, blank=True, verbose_name='Image')
+    experiment = models.ForeignKey(Experiment, related_name='virtual_nodegroups', verbose_name='Experiment', on_delete=models.SET_NULL)
+    image = models.ForeignKey(Image, null=True, blank=True, verbose_name='Image', on_delete=models.SET_NULL)
     datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
     datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
@@ -323,8 +323,8 @@ class VirtualNodeGroup(Resource):
         
 # AUXILIARY TABLES
 class VirtualNodeGroup2VirtualNode(models.Model):
-    virtual_nodegroup = models.ForeignKey(VirtualNodeGroup, verbose_name='VirtualNodeGroup', related_name='virtual_nodes')
-    virtual_node = models.ForeignKey(VirtualNode, verbose_name='VirtualNode', related_name='virtual_nodegroups')
+    virtual_nodegroup = models.ForeignKey(VirtualNodeGroup, verbose_name='VirtualNodeGroup', related_name='virtual_nodes', on_delete=models.SET_NULL)
+    virtual_node = models.ForeignKey(VirtualNode, verbose_name='VirtualNode', related_name='virtual_nodegroups', on_delete=models.SET_NULL)
     
     def __unicode__(self):
         return u'%s %s' % (self.virtual_nodegroup, self.virtual_node)
@@ -334,8 +334,8 @@ class VirtualNodeGroup2VirtualNode(models.Model):
         verbose_name_plural = verbose_name +'s'
 
 class Testbed2Platform(models.Model):
-    testbed = models.ForeignKey(Testbed, related_name='platforms', verbose_name='Testbed')
-    platform = models.ForeignKey(Platform, related_name='testbeds',verbose_name='Platform')
+    testbed = models.ForeignKey(Testbed, related_name='platforms', verbose_name='Testbed', on_delete=models.SET_NULL)
+    platform = models.ForeignKey(Platform, related_name='testbeds',verbose_name='Platform', on_delete=models.SET_NULL)
     node_count = models.IntegerField(default=0, verbose_name='Number of Nodes')
     
     def __unicode__(self):
