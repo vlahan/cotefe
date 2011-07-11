@@ -37,8 +37,6 @@ def main():
     logging.info('%d %s' % (response.status, response.reason))
     testbed_dict = json.loads(content)
     logging.debug(testbed_dict)
-
-    JOB_URI = 'https://www.twist.tu-berlin.de:8001/jobs/af2ebeba'
     
     logging.info('getting the information about the created job...')
     response, content = h.request(uri=JOB_URI, method='GET', body='')
