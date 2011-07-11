@@ -66,8 +66,7 @@ class Platform(Resource):
 # returns random filename
 def update_filename(instance, filename):
     filepath = 'images'
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (instance.id, ext)
+    filename = instance.id
     return os.path.join(filepath, filename)
         
 # IMAGE
