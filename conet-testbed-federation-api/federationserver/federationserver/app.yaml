@@ -1,4 +1,4 @@
-application: ctfapi
+application: conet-tfa
 version: 1
 runtime: python
 api_version: 1
@@ -22,4 +22,4 @@ handlers:
 
 - url: /.*
   script: djangoappengine/main/main.py
-  secure: always
+  secure: never

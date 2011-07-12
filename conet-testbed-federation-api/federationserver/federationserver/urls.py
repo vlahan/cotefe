@@ -12,7 +12,7 @@ except ImportError:
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^admin/', include(admin.site.urls)),
+    # url(r'^admin/', include(admin.site.urls)),
     # url(r'^databrowse/(.*)', databrowse.site.root),
     url(r'', include('api.urls')),
 )

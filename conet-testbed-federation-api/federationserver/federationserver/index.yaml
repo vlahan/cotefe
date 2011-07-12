@@ -1,16 +1,61 @@
 indexes:
 
-- kind: api_project
+- kind: api_federation
   properties:
   - name: __key__
     direction: desc
 
+- kind: api_project
+  properties:
+  - name: __key__
+    direction: desc
+    
 - kind: api_experiment
   properties:
   - name: __key__
     direction: desc
 
+- kind: api_testbed
+  properties:
+  - name: __key__
+    direction: desc
+
 - kind: api_platform
+  properties:
+  - name: __key__
+    direction: desc
+
+- kind: api_image
+  properties:
+  - name: __key__
+    direction: desc
+
+- kind: api_propertyset
+  properties:
+  - name: __key__
+    direction: desc
+
+- kind: api_virtualnode
+  properties:
+  - name: __key__
+    direction: desc
+
+- kind: api_virtualnodegroup
+  properties:
+  - name: __key__
+    direction: desc
+
+- kind: api_virtualnodegroup2virtualnode
+  properties:
+  - name: __key__
+    direction: desc
+
+- kind: api_testbed2platform
+  properties:
+  - name: __key__
+    direction: desc
+
+- kind: api_job
   properties:
   - name: __key__
     direction: desc
