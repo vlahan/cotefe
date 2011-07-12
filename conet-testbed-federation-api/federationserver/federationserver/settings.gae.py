@@ -1,6 +1,4 @@
 from djangoappengine.settings_base import *
-DATABASES['default']['HIGH_REPLICATION'] = True
-
 from djangoappengine.utils import on_production_server, have_appserver
 
 DATABASES['default']['DOMAIN'] = 'cotefe.net'
@@ -18,27 +16,27 @@ MANAGERS = ADMINS
 
 INSTALLED_APPS = (
     'djangotoolbox',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.admin',
-    'django.contrib.databrowse',
+    # 'django.contrib.auth',
+    # 'django.contrib.contenttypes',
+    # 'django.contrib.sessions',
+    # 'django.contrib.admin',
+    # 'django.contrib.databrowse',
     'api',
 
     'djangoappengine',
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.request',
+    # 'django.contrib.auth.context_processors.auth',
+    # 'django.core.context_processors.request',
 )
 
-ADMIN_MEDIA_PREFIX = '/media/admin/'
+# ADMIN_MEDIA_PREFIX = '/media/admin/'
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'media')
 TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
 
@@ -60,4 +58,4 @@ JSON_ENSURE_ASCII = True
 UUID_LENGTH = 8
 
 # TESTBED FEDERATION API
-SERVER_URL = 'https://conet-tfa.appspot.com'
+SERVER_URL = 'http://api.cotefe.net'
