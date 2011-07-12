@@ -378,7 +378,7 @@ class Job(Resource):
                 resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
             else:
                 resource['experiment'] = None
-            resource['nodes'] = 
+            # resource['nodes'] = 
             resource['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
             resource['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
         return resource
@@ -387,13 +387,13 @@ class Job(Resource):
         verbose_name = "Job"
         verbose_name_plural = verbose_name +'s'
         
-class Job2Node(models.Model):
-    job = models.ForeignKey(Job, verbose_name='Job', related_name='nodes')
-    node = models.ForeignKey(Node, verbose_name='Node', related_name='jobs')
-    
-    def __unicode__(self):
-        return u'%s %s' % (self.job, self.node)
-    
-    class Meta:
-        verbose_name = "Job2Node"
-        verbose_name_plural = verbose_name +'s'
+#class Job2Node(models.Model):
+#    job = models.ForeignKey(Job, verbose_name='Job', related_name='nodes')
+#    node = models.ForeignKey(Node, verbose_name='Node', related_name='jobs')
+#    
+#    def __unicode__(self):
+#        return u'%s %s' % (self.job, self.node)
+#    
+#    class Meta:
+#        verbose_name = "Job2Node"
+#        verbose_name_plural = verbose_name +'s'
