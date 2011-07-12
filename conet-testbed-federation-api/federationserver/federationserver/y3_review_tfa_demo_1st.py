@@ -23,11 +23,12 @@ def main():
     try:
         SERVER_URL = str(sys.argv[1])
         PLATFORM = str(sys.argv[2])
+        N = int(sys.argv[3])
         # assert SERVER_URL in [ 'http://localhost:8080' , 'http://conet-testbed-federation.appspot.com' ]
         assert PLATFORM in [ 'TmoteSky' , 'eyesIFXv21' ]
     except Exception:
-        print 'Usage: python %s SERVER_URL TmoteSky|eyesIFXv21' % __file__
-        print 'Example: python %s https://conet-testbed-federation.appspot.com/ TmoteSky' % __file__
+        print 'Usage: python %s SERVER_URL TmoteSky|eyesIFXv21 N' % __file__
+        print 'Example: python %s https://conet-testbed-federation.appspot.com/ TmoteSky 10' % __file__
         sys.exit()
 
     h = httplib2.Http()
@@ -224,7 +225,7 @@ def main():
     logging.debug(experiment_dict)
     
     logging.info('getting the list of testbeds supporting this experiment (according to property_sets)...')
-    response, content = h.request(uri='%s?experiment=%s' % (federation_dict['testbeds'], experiment_dict['id']), method='GET', body='')
+    response, content = h.request(uri='%s?supports_experiment=%s' % (federation_dict['testbeds'], experiment_dict['id']), method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     testbed_list = json.loads(content)
@@ -245,8 +246,8 @@ def main():
     logging.debug(d_from)
     logging.debug(d_to)
     
-    logging.info('getting the reserved jobs for the available testbed between date %s and date %s (an attempt to create a non-overlapping job should be successful)' % (d_from, d_to))
-    response, content = h.request(uri='%s?experiment=%s&testbed=%s&date_from=%s&date_to=%s' % (federation_dict['jobs'], experiment_dict['id'], testbed_dict['id'], d_from, d_to), method='GET', body='')
+    logging.info('getting the reserved jobs for the available testbed between date %s and date %s (an attempt to create a non-overlapping job should be then successful)' % (d_from, d_to))
+    response, content = h.request(uri='%s?supports_experiment=%s&testbed=%s&date_from=%s&date_to=%s' % (federation_dict['jobs'], experiment_dict['id'], testbed_dict['id'], d_from, d_to), method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     job_list = json.loads(content)

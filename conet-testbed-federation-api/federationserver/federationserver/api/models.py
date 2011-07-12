@@ -40,6 +40,7 @@ class Federation(Resource):
             resource['virtual_nodegroups'] = build_url(path = '/virtual-nodegroups/')
             resource['virtual_tasks'] = build_url(path = '/virtual-tasks/')
             resource['images'] = build_url(path = '/images/')
+            resource['jobs'] = build_url(path = '/jobs/')
         return resource
         
     class Meta:
@@ -351,7 +352,7 @@ class Job(Resource):
     datetime_from = models.DateTimeField()
     datetime_to = models.DateTimeField()
     testbed = models.ForeignKey(Testbed, related_name='jobs', verbose_name='Testbed', on_delete=models.PROTECT)
-    experiment = models.ForeignKey(Testbed, related_name='jobs', verbose_name='Experiment', on_delete=models.PROTECT)
+    experiment = models.ForeignKey(Experiment, blank=True, null=True, related_name='jobs', verbose_name='Experiment', on_delete=models.PROTECT)
     datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
     datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
@@ -372,12 +373,27 @@ class Job(Resource):
             resource['description'] = self.description
             resource['datetime_from'] = utc_datetime_to_utc_string(self.datetime_from)
             resource['datetime_to'] = utc_datetime_to_utc_string(self.datetime_to)
-#            resource['nodes'] = 
-#            resource['testbed'] = 
+            resource['testbed'] = build_url(path = self.testbed.get_absolute_url())
+            if self.experiment:
+                resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
+            else:
+                resource['experiment'] = None
+            resource['nodes'] = 
             resource['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
             resource['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
         return resource
 
     class Meta:
         verbose_name = "Job"
+        verbose_name_plural = verbose_name +'s'
+        
+class Job2Node(models.Model):
+    job = models.ForeignKey(Job, verbose_name='Job', related_name='nodes')
+    node = models.ForeignKey(Node, verbose_name='Node', related_name='jobs')
+    
+    def __unicode__(self):
+        return u'%s %s' % (self.job, self.node)
+    
+    class Meta:
+        verbose_name = "Job2Node"
         verbose_name_plural = verbose_name +'s'

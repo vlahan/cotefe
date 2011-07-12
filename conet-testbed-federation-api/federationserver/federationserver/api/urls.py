@@ -36,7 +36,9 @@ urlpatterns = patterns('',
     
     url(r'^virtual-nodes/(?P<virtual_node_id>\w+)/image/(?P<image_id>\w+)$', image_resource_in_virtual_node_handler),
     url(r'^virtual-nodegroups/(?P<virtual_nodegroup_id>\w+)/image/(?P<image_id>\w+)$', image_resource_in_virtual_nodegroup_handler),
-
+    
+    url(r'^jobs/$', job_collection_handler),
+#    url(r'^jobs/(?P<image_id>\w+)$', job_resource_handler),
     
     
 )

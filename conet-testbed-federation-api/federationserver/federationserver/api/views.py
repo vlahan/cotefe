@@ -51,11 +51,11 @@ def testbed_collection_handler(request):
         discovery_matrix = dict()
         discovery_array = dict()
         
-        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
-            property_sets = PropertySet.objects.filter(experiment = Experiment.objects.get(id = request.GET['experiment']))
+        if 'supports_experiment' in request.GET and not (request.GET['supports_experiment'] is None):
+            property_sets = PropertySet.objects.filter(experiment = Experiment.objects.get(id = request.GET['supports_experiment']))
         
-        elif 'property_set' in request.GET and not (request.GET['property_set'] is None):
-            property_sets = [ PropertySet.objects.get(id = request.GET['property_set'])]
+        elif 'supports_property_set' in request.GET and not (request.GET['supports_property_set'] is None):
+            property_sets = [ PropertySet.objects.get(id = request.GET['supports_property_set'])]
             
         else:
             property_sets = []
@@ -1037,44 +1037,41 @@ def job_collection_handler(request):
         if 'testbed' in request.GET and not (request.GET['testbed'] is None):
             testbed = Testbed.objects.get(id = request.GET['testbed'])
             
-        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
-            experiment = Experiment.objects.get(id = request.GET['experiment'])
+        if 'supports_experiment' in request.GET and not (request.GET['supports_experiment'] is None):
+            experiment = Experiment.objects.get(id = request.GET['supports_experiment'])
             
         if 'date_from' in request.GET and not (request.GET['date_from'] is None):
             date_from = request.GET['date_from']
             
         if 'date_to' in request.GET and not (request.GET['date_to'] is None):
             date_to = request.GET['date_to']
-            
-        assert testbed
         
         testbed_proxy = httplib2.Http()
         # testbed_proxy.add_credentials('name', 'password')
-        response, content = testbed_proxy.request(uri=testbed.url, method='GET', body='')
+        response, content = testbed_proxy.request(uri='%s?date_from=%s&date_to=%s' % (testbed['jobs'], date_from, date_to), method='GET', body='')
         assert response.status == 200
-        testbed_dict = json.loads(content)
+        job_list = json.loads(content)
         
-        testbed.name = testbed_dict['name']
-        testbed.description = testbed_dict['description']
-        testbed.organization = testbed_dict['organization']
-        response, content = testbed_proxy.request(testbed_dict['nodes'])
-        node_list = json.loads(content)
-        testbed.node_count = len(node_list)
-        testbed.save()
+        for job_dict in job_list:
+            job, created = Job.objects.get_or_create(
+                id = job_dict['id'],
+                defaults = {
+                    'name' : job_dict['name'],
+                    'description' : job_dict['description'],
+                    'testbed' : testbed
+                }
+            )
+            if not created:
+                job.name = job_dict['name']
+                job.description = job_dict['description']
         
-        virtual_nodes = VirtualNode.objects.all()
-        # virtual_nodes = VirtualNode.objects.all().order_by('property_set', 'name')
-        
-        
-            
-        virtual_node_list = [ vn.to_dict(head_only = True) for vn in virtual_nodes ]
-        
-        logging.warning('NUMBER OF NODES RETURNED: %d' % len(virtual_node_list))
+        jobs = Job.objects.all()
+        job_list = [ j.to_dict(head_only = True) for j in jobs ]
         
         # 200
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(serialize(virtual_node_list))
+        response.write(serialize(job_list))
         return response
         
     if request.method == 'OPTIONS':

@@ -1,4 +1,8 @@
 from djangoappengine.settings_base import *
+from djangoappengine.utils import on_production_server, have_appserver
+
+DATABASES['default']['HIGH_REPLICATION'] = True
+DATABASES['default']['DOMAIN'] = 'cotefe.net'
 
 import os
 
@@ -45,9 +49,6 @@ USE_L10N = False
 
 ROOT_URLCONF = 'urls'
 
-# from djangoappengine.settings_base import *
-# DATABASES['default']['HIGH_REPLICATION'] = True
-
 ############################ NON DJANGO SETTINGS
 
 MEDIA_TYPE = 'application/json'
@@ -58,4 +59,4 @@ JSON_ENSURE_ASCII = True
 UUID_LENGTH = 8
 
 # TESTBED FEDERATION API
-SERVER_URL = 'https://conet-testbed-federation.appspot.com'
+SERVER_URL = 'https://ctfapi.appspot.com'
