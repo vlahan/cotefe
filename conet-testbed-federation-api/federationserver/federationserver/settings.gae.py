@@ -1,7 +1,7 @@
 from djangoappengine.settings_base import *
-from djangoappengine.utils import on_production_server, have_appserver
-
 DATABASES['default']['HIGH_REPLICATION'] = True
+
+from djangoappengine.utils import on_production_server, have_appserver
 DATABASES['default']['DOMAIN'] = 'cotefe.net'
 
 import os
