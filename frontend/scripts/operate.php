@@ -1,6 +1,6 @@
 <?php
 
-include_once 'functions.php';
+//include_once 'functions.php';
 header('content-type: text/plain');
 echo "i am here ";
 /*if(isset($_POST) &&  !empty($_POST) )
