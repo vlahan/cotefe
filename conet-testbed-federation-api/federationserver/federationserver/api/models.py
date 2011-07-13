@@ -139,9 +139,10 @@ class Testbed(Resource):
         if not head_only:
             resource['organization'] = self.organization
             resource['description'] = self.description
-            resource['url'] = self.url
+            resource['server_url'] = self.url
             resource['node_count'] = self.node_count
-            resource['node_count_per_platform'] = [ { "platform" : t2p.platform.to_dict(head_only=True), "node_count" : t2p.node_count } for t2p in self.platforms.all()]
+            # resource['node_count_per_platform'] = [ { "platform" : t2p.platform.to_dict(head_only=True), "node_count" : t2p.node_count } for t2p in self.platforms.all()]
+            resource['platforms'] = [ t2p.platform.to_dict(head_only=True) for t2p in self.platforms.all() ]
             resource['jobs'] = [ j.to_dict(head_only=True) for j in self.jobs.all() ]
         return resource
         
@@ -335,7 +336,10 @@ class VirtualTask(Resource):
     id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
-    experiment = models.ForeignKey(Experiment, blank=True, null=True, related_name='jobs', verbose_name='Experiment', on_delete=models.PROTECT)
+    method = models.CharField(max_length=10)
+    target = models.URLField()
+    body = models.TextField()
+    experiment = models.ForeignKey(Experiment, blank=True, null=True, related_name='virtual_tasks', verbose_name='Experiment', on_delete=models.PROTECT)
     datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
     datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     

@@ -64,6 +64,8 @@ try:
     INSTALLED_APPS += ('dbindexer',)
 except ImportError:
     pass
+    
+APPEND_SLASH = True
 
 ############################ NON DJANGO SETTINGS
 

@@ -5,33 +5,28 @@ import sys
 from datetime import date, datetime, timedelta
 from utils import *
 
-NODE_COUNT_VNG_1 = 10
-NODE_COUNT_VNG_2 = 1
-NODE_COUNT_TOT = NODE_COUNT_VNG_1 + NODE_COUNT_VNG_2
+SERVER_URL = 'http://api.cotefe.net'
+PLATFORM = 'TmoteSky'
 
 DESCRIPTION = 'CONET 3Y REVIEW TFA DEMO - PLEASE DO NOT DELETE'
+SUBSCRIBER = 1
+PUBLISHERS = 99
+INTERFERERS = 2
+
+N = SUBSCRIBER + PUBLISHERS + INTERFERERS
 
 def main():
     
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         # filename='%s.log' % __file__, filemode='w',
         format='%(asctime)s %(message)s',
         datefmt='[%Y-%m-%d %H:%M:%S %z]',
     )
-    
-    try:
-        SERVER_URL = str(sys.argv[1])
-        PLATFORM = str(sys.argv[2])
-        N = int(sys.argv[3])
-        # assert SERVER_URL in [ 'http://localhost:8080' , 'http://conet-testbed-federation.appspot.com' ]
-        assert PLATFORM in [ 'TmoteSky' , 'eyesIFXv21' ]
-    except Exception:
-        print 'Usage: python %s SERVER_URL TmoteSky|eyesIFXv21 N' % __file__
-        print 'Example: python %s https://conet-testbed-federation.appspot.com/ TmoteSky 10' % __file__
-        sys.exit()
 
     h = httplib2.Http()
+    
+    # GET THE FEDERATION
     
     logging.info('getting the federation resource...')
     response, content = h.request(uri=SERVER_URL, method='GET', body='')
@@ -39,6 +34,8 @@ def main():
     logging.info('%d %s' % (response.status, response.reason))
     federation_dict = json.loads(content)
     logging.debug(federation_dict)
+    
+    # CREATE A PROJECT
     
     project_dict = {
         'name' : 'sample project',
@@ -58,6 +55,8 @@ def main():
     logging.info('%d %s' % (response.status, response.reason))
     project_dict = json.loads(content)
     logging.debug(project_dict)
+    
+    # CREATE AN EXPERIMENT
     
     experiment_dict = {
         'name' : 'sample experiment',
@@ -79,6 +78,8 @@ def main():
     experiment_dict = json.loads(content)
     logging.debug(experiment_dict)
     
+    # GET THE PLATFORM
+    
     logging.info('getting the platform with name \"%s\"...' % PLATFORM)
     response, content = h.request(uri='%s%s' % (federation_dict['platforms'], PLATFORM), method='GET', body='')
     assert response.status == 200
@@ -86,15 +87,17 @@ def main():
     platform_dict = json.loads(content)
     logging.debug(platform_dict)
     
+    # CREATE A PROPERTY SET
+    
     property_set_dict = {
         'name' : 'sample property set',
         'description' : DESCRIPTION,
         'experiment' : experiment_dict['id'],
         'platform' : platform_dict['id'],
-        'node_count' : NODE_COUNT_TOT
+        'node_count' : N
     }
     
-    logging.info('creating a new property set...')
+    logging.info('creating a new property set made of %d nodes of platform %s...' % (N, PLATFORM))
     response, content = h.request(uri=federation_dict['property_sets'], method='POST', body=json.dumps(property_set_dict))
     assert response.status == 201
     logging.info('%d %s' % (response.status, response.reason))
@@ -108,6 +111,8 @@ def main():
     property_set_dict = json.loads(content)
     logging.debug(property_set_dict)
     
+    # GETTING THE EXPERIMENT AGAIN
+    
     logging.info('getting the updated experiment (including virtual nodes)...')
     response, content = h.request(uri=experiment_uri, method='GET', body='')
     assert response.status == 200
@@ -115,107 +120,187 @@ def main():
     experiment_dict = json.loads(content)
     logging.debug(experiment_dict)
     
-    logging.info('getting the first %d virtual nodes...' % (NODE_COUNT_VNG_1))
-    response, content = h.request(uri='%s?experiment=%s&n=%d' % (federation_dict['virtual_nodes'], experiment_dict['id'], NODE_COUNT_VNG_1), method='GET', body='')
+    # GETTING THE VIRTUAL NODES
+    
+    logging.info('getting the virtual nodes for experiment...')
+    response, content = h.request(uri='%s?experiment=%s' % (federation_dict['virtual_nodes'], experiment_dict['id']), method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
-    virtual_node_list_1 = json.loads(content)
-    logging.debug(virtual_node_list_1)
+    virtual_node_list = json.loads(content)
+    logging.debug(virtual_node_list)
     
-    virtual_node_id_list_1 = [ json.loads(h.request(uri=virtual_node_dict['uri'], method='GET', body='')[1])['id'] for virtual_node_dict in virtual_node_list_1 ]
-    assert len(virtual_node_id_list_1) == NODE_COUNT_VNG_1
+    # CHECK THAT YOU GET EXACTLY THE RIGHT NUMBER OF VIRTUAL NODES
     
-    virtual_nodegroup_dict_1 = {
+    assert len(virtual_node_list) == 102
+    
+    # SLICE THE VIRTUAL NODES IN 3 VIRTUAL GROUPS
+    
+    virtual_node_list_subscriber = virtual_node_list[0:1]
+    virtual_node_list_publishers = virtual_node_list[1:100]
+    virtual_node_list_interferers = virtual_node_list[100:]
+    
+    # CHECK AGAIN THE NUMBER OF NODES
+    
+    assert len(virtual_node_list_subscriber) == SUBSCRIBER
+    assert len(virtual_node_list_publishers) == PUBLISHERS
+    assert len(virtual_node_list_interferers) == INTERFERERS
+    
+    # CREATE 3 LISTS OF NODE IDS ACCORDING TO THE GROUPS 
+    
+    virtual_node_id_list_subscriber = [ json.loads(h.request(uri=virtual_node_dict['uri'], method='GET', body='')[1])['id'] for virtual_node_dict in virtual_node_list_subscriber ]
+    virtual_node_id_list_publishers = [ json.loads(h.request(uri=virtual_node_dict['uri'], method='GET', body='')[1])['id'] for virtual_node_dict in virtual_node_list_publishers ]
+    virtual_node_id_list_interferers = [ json.loads(h.request(uri=virtual_node_dict['uri'], method='GET', body='')[1])['id'] for virtual_node_dict in virtual_node_list_interferers ]
+
+    # CHECK AGAIN
+    
+    assert len(virtual_node_id_list_subscriber) == SUBSCRIBER
+    assert len(virtual_node_id_list_publishers) == PUBLISHERS
+    assert len(virtual_node_id_list_interferers) == INTERFERERS
+    
+    # CREATING THE FIRST VIRTUAL NDEGROUP
+    
+    virtual_nodegroup_dict_subscriber = {
+        'name' : 'subscribers',
+        'description' : DESCRIPTION,
+        'experiment' : experiment_dict['id'],
+        'virtual_nodes' : virtual_node_id_list_subscriber
+    }
+    
+    logging.info('creating a virtual nodegroup out of %d virtual nodes...' % (SUBSCRIBER))
+    response, content = h.request(uri=federation_dict['virtual_nodegroups'], method='POST', body=json.dumps(virtual_nodegroup_dict_subscriber))
+    assert response.status == 201
+    logging.info('%d %s' % (response.status, response.reason))
+    virtual_nodegroup_uri_subscribers = response['content-location']
+    logging.debug(virtual_nodegroup_uri_subscribers)
+    
+    logging.info('getting the virtual nodegroup subscribers...')
+    response, content = h.request(uri=virtual_nodegroup_uri_subscribers, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    virtual_nodegroup_dict_subscribers = json.loads(content)
+    logging.debug(virtual_nodegroup_dict_subscribers)
+    
+    assert len(virtual_nodegroup_dict_subscriber['virtual_nodes']) == SUBSCRIBER
+    
+    # CREATING THE SECOND VIRTUAL NODEGROUP
+    
+    virtual_nodegroup_dict_publishers = {
         'name' : 'publishers',
         'description' : DESCRIPTION,
         'experiment' : experiment_dict['id'],
-        'virtual_nodes' : virtual_node_id_list_1
+        'virtual_nodes' : virtual_node_id_list_publishers
     }
     
-    logging.info('creating a virtual nodegroup out of %d virtual nodes...' % (NODE_COUNT_VNG_1))
-    response, content = h.request(uri=federation_dict['virtual_nodegroups'], method='POST', body=json.dumps(virtual_nodegroup_dict_1))
+    logging.info('creating a virtual nodegroup out of %d virtual nodes...' % (PUBLISHERS))
+    response, content = h.request(uri=federation_dict['virtual_nodegroups'], method='POST', body=json.dumps(virtual_nodegroup_dict_publishers))
     assert response.status == 201
     logging.info('%d %s' % (response.status, response.reason))
-    virtual_nodegroup_uri_1 = response['content-location']
-    logging.debug(virtual_nodegroup_uri_1)
+    virtual_nodegroup_uri_publishers = response['content-location']
+    logging.debug(virtual_nodegroup_uri_publishers)
     
-    logging.info('getting the virtual nodegroup 1...')
-    response, content = h.request(uri=virtual_nodegroup_uri_1, method='GET', body='')
+    logging.info('getting the virtual nodegroup publishers...')
+    response, content = h.request(uri=virtual_nodegroup_uri_publishers, method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
-    virtual_nodegroup_dict_1 = json.loads(content)
-    logging.debug(virtual_nodegroup_dict_1)
+    virtual_nodegroup_dict_publishers = json.loads(content)
+    logging.debug(virtual_nodegroup_dict_publishers)
     
-    logging.info('getting the remaining virtual node...')
-    response, content = h.request(uri='%s?experiment=%s&name=%s' % (federation_dict['virtual_nodes'], experiment_dict['id'], 'virtual_node_11'), method='GET', body='')
-    assert response.status == 200
-    logging.info('%d %s' % (response.status, response.reason))
-    virtual_node_list_2 = json.loads(content)
-    logging.debug(virtual_node_list_2)
+    assert len(virtual_nodegroup_dict_publishers['virtual_nodes']) == PUBLISHERS
     
-    virtual_node_id_list_2 = [ json.loads(h.request(uri=virtual_node_dict['uri'], method='GET', body='')[1])['id'] for virtual_node_dict in virtual_node_list_2 ]
-    assert len(virtual_node_id_list_2) == NODE_COUNT_VNG_2
+    # CREATING THE THIRD VIRTUAL NODEGROUP
     
-    virtual_nodegroup_dict_2 = {
-        'name' : 'subscriber',
+    virtual_nodegroup_dict_interferers = {
+        'name' : 'interferers',
         'description' : DESCRIPTION,
         'experiment' : experiment_dict['id'],
-        'virtual_nodes' : virtual_node_id_list_2
+        'virtual_nodes' : virtual_node_id_list_interferers
     }
     
-    logging.info('creating a virtual nodegroup out with one virtual node...')
-    response, content = h.request(uri=federation_dict['virtual_nodegroups'], method='POST', body=json.dumps(virtual_nodegroup_dict_2))
+    logging.info('creating a virtual nodegroup out of %d virtual nodes...' % (INTERFERERS))
+    response, content = h.request(uri=federation_dict['virtual_nodegroups'], method='POST', body=json.dumps(virtual_nodegroup_dict_interferers))
     assert response.status == 201
     logging.info('%d %s' % (response.status, response.reason))
-    virtual_nodegroup_uri_2 = response['content-location']
-    logging.debug(virtual_nodegroup_uri_2)
+    virtual_nodegroup_uri_interferers = response['content-location']
+    logging.debug(virtual_nodegroup_uri_interferers)
     
-    logging.info('getting the virtual nodegroup 2...')
-    response, content = h.request(uri=virtual_nodegroup_uri_2, method='GET', body='')
+    logging.info('getting the virtual nodegroup interferers...')
+    response, content = h.request(uri=virtual_nodegroup_uri_interferers, method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
-    virtual_nodegroup_dict_2= json.loads(content)
-    logging.debug(virtual_nodegroup_dict_2)
+    virtual_nodegroup_dict_interferers = json.loads(content)
+    logging.debug(virtual_nodegroup_dict_interferers)
     
-    image_1 = {
+    assert len(virtual_nodegroup_dict_interferers['virtual_nodes']) == INTERFERERS
+    
+    # CREATE IMAGE FOR SUBCRIBER
+    
+    image_dict_subscriber = {
+        'name' : 'image for subscriber',
+        'description' : DESCRIPTION,
+        'experiment' : experiment_dict['id']
+    }
+    
+    logging.info('uploading image for subscriber...')
+    response, content = h.request(uri=federation_dict['images'], method='POST', body=json.dumps(image_dict_subscriber))
+    assert response.status == 201
+    logging.info('%d %s' % (response.status, response.reason))
+    image_uri_subscriber = response['content-location']
+    logging.debug(image_uri_subscriber)
+    
+    logging.info('getting image for subscriber...')
+    response, content = h.request(uri=image_uri_subscriber, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    image_dict_subscriber = json.loads(content)
+    logging.debug(image_dict_subscriber)
+    
+    # CREATE IMAGE FOR PUBLISHERS
+    
+    image_dict_publishers = {
         'name' : 'image for publishers',
         'description' : DESCRIPTION,
         'experiment' : experiment_dict['id']
     }
     
-    logging.info('uploading image 1...')
-    response, content = h.request(uri=federation_dict['images'], method='POST', body=json.dumps(image_1))
+    logging.info('uploading image for publishers...')
+    response, content = h.request(uri=federation_dict['images'], method='POST', body=json.dumps(image_dict_publishers))
     assert response.status == 201
     logging.info('%d %s' % (response.status, response.reason))
-    image_uri_1 = response['content-location']
-    logging.debug(image_uri_1)
+    image_uri_publishers = response['content-location']
+    logging.debug(image_uri_publishers)
     
-    logging.info('getting image 1...')
-    response, content = h.request(uri=image_uri_1, method='GET', body='')
+    logging.info('getting image for publishers...')
+    response, content = h.request(uri=image_uri_publishers, method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
-    image_dict_1 = json.loads(content)
-    logging.debug(image_dict_1)
+    image_dict_publishers = json.loads(content)
+    logging.debug(image_dict_publishers)
     
-    image_2 = {
-        'name' : 'image for subscribers',
+    # CREATING IMAGE FOR INTERFERERS
+    
+    image_dict_interferers = {
+        'name' : 'image for interferers',
         'description' : DESCRIPTION,
         'experiment' : experiment_dict['id']
     }
     
-    logging.info('uploading image 2...')
-    response, content = h.request(uri=federation_dict['images'], method='POST', body=json.dumps(image_2))
+    logging.info('uploading image for interferers...')
+    response, content = h.request(uri=federation_dict['images'], method='POST', body=json.dumps(image_dict_interferers))
     assert response.status == 201
     logging.info('%d %s' % (response.status, response.reason))
-    image_uri_2 = response['content-location']
-    logging.debug(image_uri_2)
+    image_uri_interferers = response['content-location']
+    logging.debug(image_uri_interferers)
     
-    logging.info('getting image 2...')
-    response, content = h.request(uri=image_uri_2, method='GET', body='')
+    logging.info('getting image for interferers...')
+    response, content = h.request(uri=image_uri_subscriber, method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
-    image_dict_2 = json.loads(content)
-    logging.debug(image_dict_2)
+    image_dict_interferers = json.loads(content)
+    logging.debug(image_dict_interferers)
+    
+    # UPLOADING THE 3 IMAGE FILES
+    
+    # GETTING THE UPDATED EXPERIMENT
     
     logging.info('getting the updated experiment...')
     response, content = h.request(uri=experiment_uri, method='GET', body='')
@@ -224,6 +309,8 @@ def main():
     experiment_dict = json.loads(content)
     logging.debug(experiment_dict)
     
+    # LIST OF TESTBEDS SUPPORTING THIS EXPERIMENT
+    
     logging.info('getting the list of testbeds supporting this experiment (according to property_sets)...')
     response, content = h.request(uri='%s?supports_experiment=%s' % (federation_dict['testbeds'], experiment_dict['id']), method='GET', body='')
     assert response.status == 200
@@ -231,7 +318,10 @@ def main():
     testbed_list = json.loads(content)
     logging.debug(testbed_list)
     
+    logging.info('choosing the first testbed on the list (TWIST)...')
     testbed_dict = testbed_list[0]
+    
+    # GETTING THE LIST OF COLLIDING JOBS
     
 #    dt_now = datetime.now()
 #    dt_next_month = dt_now + timedelta(days=30)
@@ -252,6 +342,12 @@ def main():
     logging.info('%d %s' % (response.status, response.reason))
     job_list = json.loads(content)
     logging.debug(job_list)
+    
+    # DEFINING VIRTUAL TASK 1 INSTALL IMAGE 1 ON VIRTUAL NODEGROUP 1
+    
+    # DEFINING VIRTUAL TASK 1 INSTALL IMAGE 2 ON VIRTUAL NODEGROUP 2
+    
+    # DEFINING VIRTUAL TASK 1 INSTALL IMAGE 3 ON VIRTUAL NODEGROUP 3
 
     
 #    logging.info('installing image 1 on virtual nodegroup 1...')
@@ -261,13 +357,6 @@ def main():
 #    
 #    logging.info('installing image 2 on virtual nodegroup 2...')
 #    response, content = h.request(uri='%s%s/image/%s' % (federation_dict['virtual_nodegroups'], virtual_nodegroup_dict_2['id'], image_dict_2['id']), method='PUT', body='', headers = {'Content-Length': '0'})
-#    assert response.status == 200
-#    logging.info('%d %s' % (response.status, response.reason))
-    
-    # CLEANING UP THINGS
-    # CASCADE DELETE DOES NOT WORK ON GAE!!!!!!!!!
-#    logging.info('deleting the project and all its children... CASCADE DELETE DOES NOT WORK ON GAE!!!!!!!!!')
-#    response, content = h.request(uri=project_uri, method='DELETE', body='')
 #    assert response.status == 200
 #    logging.info('%d %s' % (response.status, response.reason))
 
