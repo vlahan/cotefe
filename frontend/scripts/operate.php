@@ -50,10 +50,12 @@ if(isset($_POST) &&  !empty($_POST) )
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
 								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']='';
 								$obj=new Createtable($title,$header,$records);
+								header('content-type: text/html');
 								echo $obj->render();
 							}
 							else
 							{
+								header('content-type: text/html');
 								echo "You have no projects . Lets create One. ".'<a class="add-links" href="'.ROOTURL.'/projects" " id="create_new_project" >Add New Project</a>';
 							}
 						    break;
@@ -103,10 +105,12 @@ if(isset($_POST) &&  !empty($_POST) )
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
 								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']='';
 								$obj=new Createtable($title,$header,$records);
+								header('content-type: text/html');
 								echo $obj->render();
 							}
 							else
 							{
+								header('content-type: text/html');
 								echo "You have no Experiments . Lets create one. ".'<a class="add-links" href="'.ROOTURL.'/experiments" " id="create_new_exp" >Add New Experiments</a>';
 							}
 						    break;
@@ -162,10 +166,12 @@ if(isset($_POST) &&  !empty($_POST) )
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
 								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']=$records[$i][5]['text']='';
 								$obj=new Createtable($title,$header,$records);
+								header('content-type: text/html');
 								echo $obj->render();
 							}
 							else
 							{
+								header('content-type: text/html');
 								echo "You have no Property Sets . Lets create one. ".'<a class="add-links" href="'.ROOTURL.'/property-sets" " id="create_new_property_set" >Add New Property Set</a>';
 							}
 						    break;
@@ -216,17 +222,19 @@ if(isset($_POST) &&  !empty($_POST) )
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
 								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']=$records[$i][5]['text']='';
 								$obj=new Createtable($title,$header,$records);
+								header('content-type: text/html');
 								echo $obj->render();
 							}
 							else
 							{
+								header('content-type: text/html');
 								echo "You have no Virtual Node Group . Lets create one. ".'<a class="add-links" href="'.ROOTURL.'/virtual-nodegroups" " id="create_new_virtual_node_group" >Add New Property Set</a>';
 							}
 						    break;
 			
 			
 			
-							$html='<h4>Virtual Node Groups</h4><table cellspacing="0"><tr><th width="20%">Name</th><th width="20%">Experiment</th><th width="10%">VN</th><th>Description</th><th width="5%">Edit</th><th width="7%">Delete</th></tr>';
+							/*$html='<h4>Virtual Node Groups</h4><table cellspacing="0"><tr><th width="20%">Name</th><th width="20%">Experiment</th><th width="10%">VN</th><th>Description</th><th width="5%">Edit</th><th width="7%">Delete</th></tr>';
 							$VirtualNodesGroups=FollowVirtualNodeGroup();
 							if(!empty($VirtualNodesGroups))
 							{
@@ -240,7 +248,7 @@ if(isset($_POST) &&  !empty($_POST) )
 								$html.='<tr><td class="last_row" colspan="6" style="height: 16px;"></td></tr></table> ';
 							}
 							echo $html;
-							break;
+							break;*/
 			case "testbeds"	:
 							$html='<h4>TestBeds</h4><table cellspacing="0" id="expandable-table"><tr><th width="55%">Name</th><th width="20%">Organization</th><th width="15%">Node Count</th><th width="5%">Link</th><th></th></tr>';
 							$TestBeds=FollowTestBeds();
@@ -255,6 +263,7 @@ if(isset($_POST) &&  !empty($_POST) )
 								}
 								$html.='<tr><td class="last_row" colspan="6" style="height: 16px;"></td></tr></table> ';
 							}
+							header('content-type: text/html');
 							echo $html;
 							break;							
 								
