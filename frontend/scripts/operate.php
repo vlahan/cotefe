@@ -110,6 +110,66 @@ if(isset($_POST) &&  !empty($_POST) )
 						    break;
 			
 			case "property-sets":
+							$title='Your current property-sets:';
+							$header[0]['text']='Name';
+							$header[0]['attribute']='width="40%" style="text-align:left;padding-left:10px;"';
+							$header[1]['text']='Experiment';
+							$header[1]['attribute']='style="text-align:center;"';							
+							$header[2]['text']='Platform';
+							$header[2]['attribute']='style="text-align:center;"';
+							$header[3]['text']='VN';
+							$header[3]['attribute']='style="text-align:center;"';
+							$header[4]['text']='View';
+							$header[4]['attribute']='width="5%"';
+							$header[5]['text']='Delete';
+							$header[5]['attribute']='width="7%"';
+			
+							$records=array();
+							$PropertySets=FollowPropertySets();
+							if(!empty($PropertySets))
+							{
+								$i=0;
+								foreach ($PropertySets as $PropertySet)
+								{
+									$PropertySet_info=json_decode(getUrl($PropertySet['uri']),TRUE);
+									
+									$records[$i][0]['text']=$PropertySet_info['name'];
+									$records[$i][0]['attribute']='style="padding-left:10px;"';
+									
+									$experiment_info=json_decode(getUrl($PropertySet_info['experiment']),TRUE);
+									$records[$i][1]['text']=$experiment_info['name'];
+									
+									$records[$i][1]['attribute']='style="text-align:center;"';
+									$platform_info=json_decode(getUrl($PropertySet_info['platform']),TRUE);
+									
+									$records[$i][2]['text']=$platform_info['name'];
+									$records[$i][2]['attribute']='style="text-align:center;"';
+											
+									$records[$i][3]['text']=$PropertySet_info['node_count'];
+									$records[$i][3]['attribute']='style="text-align:center;"';
+									
+									$records[$i][4]['text']='<a class="edit" href="'.$PropertySet_info['uri'].'" ><img src="images/view.png" /></a>';
+									$records[$i][4]['attribute']='style="padding-left:10px;"';
+									$records[$i][5]['text']='<a class="deleteProject" href="'.$PropertySet_info['uri'].'"><img src="images/close.png" /></a>';
+									$records[$i][5]['attribute']='style="padding-left:15px;"';
+									
+									
+									$i++;
+								}
+								$records[$i][0]['text']='<a class="add-links" href="'.ROOTURL.'/property-sets" " id="create_new_property_set" >Add New Property Set</a>';
+								$records[$i][0]['attribute']='style="padding-left:10px;"';
+								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']=$records[$i][5]['text']='';
+								$obj=new Createtable($title,$header,$records);
+								echo $obj->render();
+							}
+							else
+							{
+								echo "You have no Property Sets . Lets create one. ".'<a class="add-links" href="'.ROOTURL.'/property-sets" " id="create_new_property_set" >Add New Property Set</a>';
+							}
+						    break;
+							
+							
+							/*	
 							$html='<h4>Property Set List</h4><table cellspacing="0"><tr><th width="20%">Name</th><th width="20%">Experiment</th><th>Platform</th><th>VN</th><th>Description</th><th width="5%">Edit</th><th width="7%">Delete</th></tr>';
 							$property_sets=FollowPropertySets();
 							if(!empty($property_sets))
@@ -125,6 +185,7 @@ if(isset($_POST) &&  !empty($_POST) )
 							}
 							echo $html;
 							break;
+							*/
 			case "virtual-nodegroups":
 							$html='<h4>Virtual Node Groups</h4><table cellspacing="0"><tr><th width="20%">Name</th><th width="20%">Experiment</th><th width="10%">VN</th><th>Description</th><th width="5%">Edit</th><th width="7%">Delete</th></tr>';
 							$VirtualNodesGroups=FollowVirtualNodeGroup();

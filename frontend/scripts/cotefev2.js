@@ -25,6 +25,15 @@ var Experiments=function()
 	submitEvent(function(){Experiments();});
 }
 
+var PropertySets=function()
+{
+	progressBar();
+	loadPropertySetList();
+	addEventDelete(function(){PropertySets();});
+	tabs();
+	submitEvent(function(){PropertySets();});
+}
+
 
  
 var loadProjectList=function(){	
@@ -37,9 +46,16 @@ var loadExperimentsList=function(){
 }
 
 
+
+var loadPropertySetList=function()
+{
+	var response=sendAjax("List=property-sets","html","#content",function(){loadFormProject();});	
+}
+
+
 var loadFormProject=function(){
-	$('a[class=edit],#create_new_project,#create_new_exp').die('click');
-	$('a[class=edit],#create_new_project,#create_new_exp').live('click',function(event)
+	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set').die('click');
+	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set').live('click',function(event)
 			{event.preventDefault();event.stopPropagation();		
 				var link=$(this).attr('href');			
 				var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(arg);});				

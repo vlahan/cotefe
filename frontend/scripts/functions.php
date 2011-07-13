@@ -9,8 +9,8 @@ session_start();
  */
 
 //define("ROOTURL", "http://localhost:8081");
-//define("ROOTURL", "https://conet-testbed-federation.appspot.com");
-define("ROOTURL", "http://api.cotefe.net");
+define("ROOTURL", "https://conet-testbed-federation.appspot.com");
+//define("ROOTURL", "http://api.cotefe.net");
 
 
 include_once 'class/Form.class.php';
@@ -226,6 +226,7 @@ function CreatePropertySetForm($url)
 			 */
 			$html='';
 			$html.=Form::Header('New PropertySet');
+			$html.="<hr/>";
 			$html.=Form::FormStart();
 			$html.=HiddenField::HiddeBox('form-type','property-set');
 			$html.=TextField::TextBox('PropertySet Name : ','name', '');
@@ -243,6 +244,7 @@ function CreatePropertySetForm($url)
 			$obj=json_decode($resource, true);
 			$html='';
 			$html.=Form::Header('Update PropertySet');
+			$html.="<hr/>";
 			$html.=Form::FormStart();
 			$html.=HiddenField::HiddeBox('form-type','property-setUpdate');
 			$html.=HiddenField::HiddeBox('uri',$obj['uri']);

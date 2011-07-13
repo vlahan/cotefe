@@ -13,7 +13,7 @@ include_once 'scripts/functions.php';
 <script type="text/javascript" src="scripts/cotefev2.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {	
-	Experiments();	
+	PropertySets();	
  });
 </script>
 
@@ -42,8 +42,8 @@ $(document).ready(function() {
         <hr />
         <table class="left-nav">				
 					<tr><td><a href="dashboard.php"  >Projects</a></td></tr>
-					<tr><td><a href="experiments.php" class="current-selected" >Experiments</a></td></tr>	
-					<tr><td><a href="propertySets.php" >Property Sets</a></td></tr>
+					<tr><td><a href="experiments.php"  >Experiments</a></td></tr>	
+					<tr><td><a href="propertySets.php" class="current-selected" id="create_new_property_set">Property Sets</a></td></tr>
 					<tr><td><a href="<?php echo ROOTURL."/virtual-nodegroups" ?>" id="create_new_virtual_node_group">Virtual Node Groups</a></td></tr>
 					<tr><td><a href="<?php echo ROOTURL."/testbeds" ?>" id="explore_testbed">Explore Testbeds</a></td></tr>														
 					<tr><td><a href="<?php echo ROOTURL."/testbeds-find" ?>" id="find_testbed">Find Testbed</a></td></tr>	
