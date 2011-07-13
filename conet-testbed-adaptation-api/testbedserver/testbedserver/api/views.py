@@ -104,9 +104,6 @@ def node_collection_handler(request):
         Node.objects.exclude(native_id__in = native_node_id_list).delete()
         
         nodes = Node.objects.all().order_by('location_x', 'location_y', 'location_z')
-        
-        if 'name' in request.GET and not (request.GET['name'] is None):
-            nodes = nodes.filter(name = request.GET['name'])
             
         if 'native_id' in request.GET and not (request.GET['native_id'] is None):
             nodes = nodes.filter(native_id = request.GET['native_id'])
