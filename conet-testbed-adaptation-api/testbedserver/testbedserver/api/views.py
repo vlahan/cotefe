@@ -114,6 +114,9 @@ def node_collection_handler(request):
         if 'platform' in request.GET and not (request.GET['platform'] is None):
             nodes = nodes.filter(platform = Platform.objects.get(id = request.GET['platform']))
             
+        if 'image' in request.GET and not (request.GET['image'] is None):
+            nodes = nodes.filter(image = Image.objects.get(id = request.GET['image']))
+            
         if 'n' in request.GET and not (request.GET['n'] is None):
             nodes = nodes[:request.GET['n']]
             
