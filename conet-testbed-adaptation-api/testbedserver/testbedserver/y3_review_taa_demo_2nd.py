@@ -8,7 +8,7 @@ from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 import urllib2
 
-DESCRIPTION = 'CONET 3Y REVIEW TFA DEMO - PLEASE DO NOT DELETE'
+DESCRIPTION = 'CONET 3Y REVIEW - PLEASE DO NOT DELETE'
 
 IMAGEFILE_PATH = '/Users/claudiodonzelli/Desktop/images/blink_test_image_telosb'
 

@@ -9,7 +9,7 @@ from poster.streaminghttp import register_openers
 import urllib2
 
 DAYS = 7
-DESCRIPTION = 'CONET 3Y REVIEW TFA DEMO - PLEASE DO NOT DELETE'
+DESCRIPTION = 'CONET 3Y REVIEW DEMO - PLEASE DO NOT DELETE'
 
 def main():
     
@@ -99,8 +99,8 @@ def main():
     logging.debug(job_list)
     logging.info('%d jobs returned' % len(job_list))
     
-    datetime_from = datetime(2011, 07, 12, 00, 15, 00)
-    datetime_to = datetime(2011, 07, 12, 01, 00, 00)
+    datetime_from = datetime(2011, 07, 12, 10, 45, 00)
+    datetime_to = datetime(2011, 07, 12, 11, 00, 00)
     
     str_from = berlin_datetime_to_utc_string(datetime_from)
     str_to = berlin_datetime_to_utc_string(datetime_to)
@@ -120,7 +120,7 @@ def main():
     assert response.status == 201
     logging.info('%d %s' % (response.status, response.reason))
     job_uri = response['content-location']
-    logging.debug(job_uri)
+    logging.info(job_uri)
     
 if __name__ == "__main__":
     main()

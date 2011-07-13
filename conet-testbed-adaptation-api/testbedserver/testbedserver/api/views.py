@@ -92,6 +92,10 @@ def node_collection_handler(request):
                     'name' : 'WSN node',
                     'native_id' : native_node_dict['node_id'],
                     'platform' : platform,
+                    'location_x' : native_node_dict['location_x'],
+                    'location_y' : native_node_dict['location_y'],
+                    'location_z' : native_node_dict['location_z'],
+                    
                 }
             )
         
@@ -99,7 +103,16 @@ def node_collection_handler(request):
         native_node_id_list = [ native_resource_dict['node_id'] for native_resource_dict in native_node_list ]
         Node.objects.exclude(native_id__in = native_node_id_list).delete()
         
-        nodes = Node.objects.all()
+        nodes = Node.objects.all().order_by('location_x', 'location_y', 'location_z')
+        
+        if 'name' in request.GET and not (request.GET['name'] is None):
+            nodes = nodes.filter(name = request.GET['name'])
+            
+        if 'native_id' in request.GET and not (request.GET['native_id'] is None):
+            nodes = nodes.filter(native_id = request.GET['native_id'])
+            
+        if 'native_id__in' in request.GET and not (request.GET['native_id__in'] is None):
+            nodes = nodes.filter(native_id__in = map(int, request.GET['native_id__in'].split(',')))
         
         if 'platform' in request.GET and not (request.GET['platform'] is None):
             nodes = nodes.filter(platform = Platform.objects.get(id = request.GET['platform']))

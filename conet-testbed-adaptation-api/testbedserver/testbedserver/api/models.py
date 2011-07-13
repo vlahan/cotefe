@@ -148,7 +148,10 @@ class Node(Resource):
     name = models.CharField(max_length=255)
     platform = models.ForeignKey(Platform, verbose_name='Platform')
     image = models.ForeignKey(Image, null=True, blank=True)
-    
+    location_x = models.DecimalField(max_digits=10, decimal_places=5, verbose_name='Location X')
+    location_y = models.DecimalField(max_digits=10, decimal_places=5, verbose_name='Location Y')
+    location_z = models.DecimalField(max_digits=10, decimal_places=5, verbose_name='Location Z')
+
     def __unicode__(self):
         return self.id
 
@@ -161,12 +164,15 @@ class Node(Resource):
         resource['media_type'] = MEDIA_TYPE
         resource['name'] = self.name
         resource['id'] = self.id
+        # resource['native_id'] = self.native_id
         if not head_only:
             resource['platform'] = build_url(server_url = FEDERATION_URL, path = self.platform.get_absolute_url())
             if self.image:
                 resource['image'] = build_url(path = self.image.get_absolute_url())
             else:
                 resource['image'] = None
+            resource['serial_tunnel'] = 'ssh://twistextern@www.twist.tu-berlin.de:%d' % (9000+self.native_id)
+            resource['location'] = (str(self.location_x), str(self.location_y), str(self.location_z))
         return resource
     
     class Meta:
