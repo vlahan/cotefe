@@ -1,0 +1,191 @@
+@charset "utf-8";
+/* CSS Document */
+
+body{
+	margin: 0px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+}
+a {
+	text-decoration: none;
+}
+
+hr{border:none;height:1px;background-color:#b9b9b9;}
+.head-container {
+	height: 154px;
+	width: 100%;
+	background-image: url(../images/header.png);
+	background-repeat: repeat-x;
+}
+.header-nav {
+	height: 39px;
+}
+.auto-margin,.logo-container,.body-container{margin:auto;}
+
+.relative-position,.header-nav
+{position:relative;}
+
+.absolute-position,.header-nav-container
+{position:absolute;}
+
+.color-white,.header-nav,.header-nav-container ul li a
+{color:#FFFFFF;}
+
+.color-dark,h3,#content p,input:focus,.left-nav tr td a{color:#333333;}
+
+.current-selected{font-weight: bolder;}
+
+.float-left,.header-nav-container ul li
+{float:left;}
+
+#progressbar{float:right;width:128px;height:15px;margin-top:10px;margin-right:10px;}
+
+.cut-left-top-corner,.login-form table tr td input[type=text],.login-form table tr td input[type=password],.login-form table tr td input[type=submit],input[type=reset],.left-nav tr td a,input[type=submit]
+{
+	-moz-border-radius-topleft: 4px;
+    -webkit-border-top-left-radius:4px;
+    -khtml-border-top-left-radius: 4px;
+    border-top-left-radius: 4px;
+	
+}
+
+.cut-left-bottom-corner,.login-form table tr td input[type=text],.login-form table tr td input[type=password],.login-form table tr td input[type=submit],input[type=reset],.left-nav tr td a,input[type=submit]
+{
+	-moz-border-radius-bottomleft: 4px;
+    -webkit-border-bottom-left-radius:4px;
+    -khtml-border-bottom-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.cut-right-top-corner,.login-form table tr td input[type=text],.login-form table tr td input[type=password],.login-form table tr td input[type=submit],input[type=reset],.left-nav tr td a,input[type=submit]
+{
+	-moz-border-radius-topright: 4px;
+    -webkit-border-top-right-radius:4px;
+    -khtml-border-top-right-radius: 4px;
+    border-top-right-radius: 4px;
+	
+}
+
+.cut-right-bottom-corner,.login-form table tr td input[type=text],.login-form table tr td input[type=password],.login-form table tr td input[type=submit],input[type=reset],.left-nav tr td a,input[type=submit]
+{
+	
+	-moz-border-radius-bottomright: 4px;
+    -webkit-border-bottom-right-radius:4px;
+    -khtml-border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.standard-width,.logo-container,.body-container{width:950px;}
+
+.header-nav-container{left:0px; top:0px;height:39px;}
+.header-nav-container ul
+{list-style-type:none;margin:0px;padding:0px;}
+.header-nav-container ul li a{padding:10px;line-height:39px;}
+.header-nav-container ul li a:hover{background-color:#333333;}
+.logo-container{
+	height:115px;	
+	background-image: url(../images/logo.png);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+
+.body-container{overflow: hidden;,height:100%;}
+
+.column-left{
+	width:198px;
+	padding-right:7px;
+	padding-bottom:100%; margin-bottom:-100%;
+	float:left;
+}
+.column-right{
+	width:735px;
+	padding-left:7px;
+	padding-bottom:100%; margin-bottom:-100%;
+	height:inherit;
+	display:block;	
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: #b9b9b9;
+	float:left;
+}
+.clean-float{clear:both;}
+
+.login-form
+{
+	margin-top:10px;
+}
+.login-form table tr td {padding-bottom:5px;}
+input[type=text],input[type=password],select{width:250px;}
+textarea{height:100px;width:252px;padding:0px;}
+
+input:focus{background-color:#eaeaea;}
+.login-form table tr td input[type=text],.login-form table tr td input[type=password]{width:191px; border:1px solid #b9b9b9;height:25px;background-color: #eaeaea;padding-left:5px;}
+input[type=reset]{float:right;}
+input[type=submit],input[type=reset]
+{padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;border:1px solid #b9b9b9;background-color: #eaeaea;}
+input[type=submit]:hover,input[type=reset]:hover
+{background-color: #b9b9b9;color:#ffffff;}
+.left-nav{margin-top:5px;border:none;margin-bottom:50px;}
+
+.left-nav tr td{height:auto;}
+.left-nav tr td a{padding-left:10px;padding-top:5px;height:24px;display:block;width:180px;}
+.left-nav tr td a:hover{padding-left:10px;padding-top:5px;background-color: #eaeaea;height:24px;display:block;width:180px;color:#565656;}
+.table-list{width:100%;}
+.table-list tr th{padding-top:5px;padding-bottom:5px;color:#ffffff;background-color:#565656;}
+.table-list tr td{padding-top:5px;padding-bottom:5px;border-top:1px solid #b9b9b9;background-color: #eaeaea;}
+
+
+/**tabs**/
+#editingfield{margin-top:20px;,margin-bottom:20px;}
+#editingfield h3{font-size:13px;}
+ul.tabs {
+	margin: 0;
+	padding: 0;
+	float: left;
+	list-style: none;
+	height: 32px; /*--Set height of tabs--*/
+	border-bottom: 1px solid #999;
+	border-left: 1px solid #999;
+	width: 100%;
+}
+ul.tabs li {
+	float: left;
+	margin: 0;
+	padding: 0;
+	height: 31px; /*--Subtract 1px from the height of the unordered list--*/
+	line-height: 31px; /*--Vertically aligns the text within the tab--*/
+	border: 1px solid #999;
+	border-left: none;
+	margin-bottom: -1px; /*--Pull the list item down 1px--*/
+	overflow: hidden;
+	position: relative;
+	background: #EAEAEA;
+}
+ul.tabs li a {
+	text-decoration: none;
+	color: #000;
+	display: block;
+	padding: 0 20px;
+	border: 1px solid #fff; /*--Gives the bevel look with a 1px white border inside the list item--*/
+	outline: none;
+}
+ul.tabs li a:hover {
+	background: #ccc;
+}
+html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that the active tab does not listen to the hover properties--*/
+	background: #fff;
+	border-bottom: 1px solid #fff; /*--Makes the active tab look like it's connected with its content--*/
+}
+.tab_container {
+	border: 1px solid #999;
+	border-top: none;
+	overflow: hidden;
+	clear: both;
+	float: left; width: 100%;
+	background: #fff;
+}
+.tab_content {
+	padding: 20px;
+}
+.spacer{margin-top:20px;width:100%;height:5px;display:block;}
+
