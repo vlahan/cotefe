@@ -715,93 +715,9 @@ def imagefile_upload_handler(request, image_id):
         del response['Content-Type']
         return response
     
-def image_resource_in_node_handler(request, node_id, image_id):
+def burn_image_to_nodegroup_handler(request, nodegroup_id, image_id):
     
-    allowed_methods = ['PUT', 'DELETE']
-    
-    try:
-        node  = Node.objects.get(id = node_id)
-        image = Image.objects.get(id = image_id)
-    
-    except ObjectDoesNotExist:
-        # 404
-        response = HttpResponseNotFound()
-        response['Content-Type'] = 'application/json'
-        return response
-        
-    if request.method == 'PUT':
-            
-        node.image = image
-        node.save()
-        
-        # call the xmlrpc function with node_id_list and image_path
-        
-        node_native_id_list = [ node.native_id ]
-        image_path = image.file.file.name
-        
-        try:
-            dt_now_utc = get_dt_now_utc()
-            job_native_id = Job.objects.filter(datetime_from__lt = dt_now_utc).filter(datetime_to__gt = dt_now_utc)[0].native_id
-        except None:
-            # 403
-            response =  HttpResponseForbidden()
-            response['Content-Type'] = 'application/json'
-            return response
-        
-        try:
-            result = proxy.burnImageToNodeList(job_native_id, node_native_id_list, image_path)
-            logging.warning(result)
-            
-        except None:
-            # 500
-            response = HttpResponseServerError()
-            response['Content-Type'] = 'application/json'
-            return response
-         
-        # generate response
-        response = HttpResponse()
-        response['Content-Type'] = 'application/json'
-        return response
-        
-    if request.method == 'DELETE':
-        
-        node.image = None
-        node.save()
-        
-        # call the xmlrpc function with node_id_list and image_path
-        
-        node_native_id_list = [ node.native_id ]
-        image_path = image.file.file.name
-        
-        try:
-            proxy.burnImageToNodeList(None, node_native_id_list)
-            
-        except None:
-            # 500
-            response = HttpResponseServerError()
-            response['Content-Type'] = 'application/json'
-            return response
-            
-        # generate response
-        response = HttpResponse()
-        response['Content-Type'] = 'application/json'
-        return response
-    
-    if request.method == 'OPTIONS':
-        # 204
-        response = HttpResponse(status=204)
-        response['Allow'] = ', '.join(allowed_methods)
-        del response['Content-Type']
-        return response
-        
-    else:
-        response = HttpResponseNotAllowed(allowed_methods)
-        del response['Content-Type']
-        return response
-    
-def image_resource_in_nodegroup_handler(request, nodegroup_id, image_id):
-    
-    allowed_methods = ['PUT', 'DELETE']
+    allowed_methods = ['PUT']
     
     try:
         nodegroup  = NodeGroup.objects.get(id = nodegroup_id)
@@ -840,30 +756,54 @@ def image_resource_in_nodegroup_handler(request, nodegroup_id, image_id):
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
         return response
+    
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+        
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+def erase_image_from_nodegroup_handler(request, nodegroup_id):
+    
+    allowed_methods = ['DELETE']
+    
+    try:
+        nodegroup  = NodeGroup.objects.get(id = nodegroup_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
         
     if request.method == 'DELETE':
         
         nodegroup.image = None
         nodegroup.save()
         
-        for nodegroup2node in NodeGroup2Node.objects.filter(nodegroup = nodegroup):
-            nodegroup2node.node.image = None
-            nodegroup2node.node.save()
+        for ng2n in nodegroup.nodes.all():
+            ng2n.node.image = None
+            ng2n.node.save()
+
+        job_native_id = Job.objects.get(id = nodegroup.job).native_id
+        node_native_id_list = [ ng2n.node.native_id for ng2n in nodegroup.nodes.all() ]
         
-        # call the xmlrpc function with node_id_list and image_path
-        
-        node_native_id_list = [ nodegroup2node.node.native_id for nodegroup2node in NodeGroup2Node.objects.filter(nodegroup = nodegroup) ]
-        image_path = image.file.file.name
-        
-#        try:
-#            proxy.burnImageToNodeList(None, node_native_id_list)
-#            
-#        except None:
-#            # 500
-#            response = HttpResponseServerError()
-#            response['Content-Type'] = 'application/json'
-#            return response
+        try:
+            result = proxy.eraseImageFromNodeList(job_native_id, node_native_id_list)
+            logging.warning(result)
             
+        except None:
+            # 500
+            response = HttpResponseServerError()
+            response['Content-Type'] = 'application/json'
+            return response
+         
         # generate response
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
