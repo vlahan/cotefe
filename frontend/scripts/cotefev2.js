@@ -125,9 +125,10 @@ var addEventDelete=function(callback)
 {
 	
 	$("#progressbar").ajaxStart(function(){
-		   $(this).fadeIn();
+		   $(this).css('display','block'); 
 		 }).ajaxStop(function(){
-			  $(this).fadeOut(); 
+		   $(this).css('display','none'); 
+			  
 		 });
 	
 }

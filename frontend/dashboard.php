@@ -65,9 +65,10 @@ include_once 'scripts/functions.php';
                            <!--Content-->
                         </div>
                     </div>
+                    
                     <!--editingfield ends hier-->
             </div>
-            <div class="clean-float spacer"></div>
+            <div class="clean-float"></div>
     </div>
     <div class="clean-float"></div>
 <!--the .body-container ends--></div>

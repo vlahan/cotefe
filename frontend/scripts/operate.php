@@ -44,7 +44,7 @@ if(isset($_POST) &&  !empty($_POST) )
 									
 									$i++;
 								}
-								$records[$i][0]['text']='<a href="'.ROOTURL.'/projects" " id="create_new_project" >Add New Project +</a>';
+								$records[$i][0]['text']='<a class="add-links" href="'.ROOTURL.'/projects" " id="create_new_project" >Add New Project +</a>';
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
 								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']='';
 								$obj=new Createtable($title,$header,$records);
