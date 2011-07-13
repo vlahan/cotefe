@@ -184,7 +184,7 @@ var sendAjax=function(data,responseEvent,place,func)
 {
 	$.ajax({
 		   type: "POST",
-		   url: "operate.php",
+		   url: "scripts/operate.php",
 		   data: data,
 		   success:function(response, status, xhr){
 			   

@@ -1,8 +1,8 @@
 <?php
 
-//include_once 'functions.php';
-echo "i am here ";
-/*if(isset($_POST) &&  !empty($_POST) )
+include_once 'functions.php';
+
+if(isset($_POST) &&  !empty($_POST) )
 {
 	if(isset($_POST['Home']) && $_POST['Home']=="content")
 	{
@@ -365,5 +365,5 @@ echo "i am here ";
 		
 	}
 	//submit ends here
-}	*/
+}	
 ?>
