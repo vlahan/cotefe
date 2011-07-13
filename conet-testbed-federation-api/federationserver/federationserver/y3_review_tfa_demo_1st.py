@@ -4,6 +4,9 @@ import logging
 import sys
 from datetime import date, datetime, timedelta
 from utils import *
+from poster.encode import multipart_encode
+from poster.streaminghttp import register_openers
+import urllib2
 
 SERVER_URL = 'http://api.cotefe.net'
 PLATFORM = 'TmoteSky'
@@ -14,6 +17,10 @@ PUBLISHERS = 99
 INTERFERERS = 2
 
 N = SUBSCRIBER + PUBLISHERS + INTERFERERS
+
+IMAGEFILE_PATH_SUBSCRIBER = '/Users/claudiodonzelli/Desktop/images/blink_test_image_telosb'
+IMAGEFILE_PATH_PUBLISHERS = '/Users/claudiodonzelli/Desktop/images/blink_test_image_telosb'
+IMAGEFILE_PATH_INTERFERERS = '/Users/claudiodonzelli/Desktop/images/blink_test_image_telosb'
 
 def main():
     
@@ -300,6 +307,27 @@ def main():
     
     # UPLOADING THE 3 IMAGE FILES
     
+#    logging.info('uploading the actual image file for subscriber...')
+#    register_openers()
+#    datagen, headers = multipart_encode({'imagefile': open(IMAGEFILE_PATH_SUBSCRIBER, 'rb')})
+#    request = urllib2.Request(image_dict_subscriber['upload_to'], datagen, headers)
+#    logging.info('200 OK')
+#    logging.debug(urllib2.urlopen(request).read())
+#    
+#    logging.info('uploading the actual image file for publishers...')
+#    register_openers()
+#    datagen, headers = multipart_encode({'imagefile': open(IMAGEFILE_PATH_PUBLISHERS, 'rb')})
+#    request = urllib2.Request(image_dict_publishers['upload_to'], datagen, headers)
+#    logging.info('200 OK')
+#    logging.debug(urllib2.urlopen(request).read())
+#    
+#    logging.info('uploading the actual image file...')
+#    register_openers()
+#    datagen, headers = multipart_encode({'imagefile': open(IMAGEFILE_PATH_INTERFERERS, 'rb')})
+#    request = urllib2.Request(image_dict_interferers['upload_to'], datagen, headers)
+#    logging.info('200 OK')
+#    logging.debug(urllib2.urlopen(request).read())
+    
     # GETTING THE UPDATED EXPERIMENT
     
     logging.info('getting the updated experiment...')
@@ -320,6 +348,8 @@ def main():
     
     logging.info('choosing the first testbed on the list (TWIST)...')
     testbed_dict = testbed_list[0]
+    
+    exit()
     
     # GETTING THE LIST OF COLLIDING JOBS
     

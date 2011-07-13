@@ -64,7 +64,7 @@ def testbed_collection_handler(request):
             discovery_matrix[testbed.id] = dict()
             discovery_array[testbed.id] = True
             for property_set in property_sets:
-                discovery_matrix[testbed.id][property_set.id] = Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count > property_set.node_count
+                discovery_matrix[testbed.id][property_set.id] = Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count >= property_set.node_count
                 # print testbed.id, property_set.id, Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count > property_set.node_count
             for ps in discovery_matrix[testbed.id]:
                 discovery_array[testbed.id] = discovery_array[testbed.id] and discovery_matrix[testbed.id][ps]
@@ -825,7 +825,8 @@ def image_collection_handler(request):
             image = Image(
                 id = generate_id(),
                 name = image_dict['name'],
-                description = image_dict['description']
+                description = image_dict['description'],
+                experiment = Experiment(id = image_dict['experiment'])
             )
             
             image.save()
