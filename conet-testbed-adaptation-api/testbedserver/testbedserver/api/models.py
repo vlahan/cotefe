@@ -34,7 +34,7 @@ class Testbed(Resource):
             resource['nodegroups'] = build_url(path = '/nodegroups/')
             resource['jobs'] = build_url(path = '/jobs/')
             resource['images'] = build_url(path = '/images/')
-            resource['background_image'] = build_url(path = '/static/testbed_background_image.jpg')
+            resource['background_image'] = build_url(path = '/uploads/testbed/background_image.jpg')
             resource['coordinates_mapping_function'] = ( 'f(x,y,z)', 'g(x,y,x)')
             
         return resource
@@ -94,7 +94,7 @@ class Image(Resource):
         if not head_only:
             resource['description'] = self.description
             if self.file:
-                resource['file'] = build_url(path = '/static/' + self.file.name)
+                resource['file'] = build_url(path = '/uploads/' + self.file.name)
             else:
                 resource['file'] = None
             resource['upload_to'] = build_url(path = '%s/upload' % self.get_absolute_url())
