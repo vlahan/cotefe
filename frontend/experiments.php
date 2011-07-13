@@ -13,7 +13,7 @@ include_once 'scripts/functions.php';
 <script type="text/javascript" src="scripts/cotefev2.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {	
-	Project();	
+	Experiments();	
  });
 </script>
 
@@ -41,8 +41,8 @@ $(document).ready(function() {
     	<h3>Dashboard</h3>
         <hr />
         <table class="left-nav">				
-					<tr><td><a href="dashboard.php" class="current-selected" >Projects</a></td></tr>
-					<tr><td><a href="experiments.php" >Experiments</a></td></tr>	
+					<tr><td><a href="dashboard.php"  >Projects</a></td></tr>
+					<tr><td><a href="experiments.php" class="current-selected" >Experiments</a></td></tr>	
 					<tr><td><a href="<?php echo ROOTURL."/property-sets" ?>" id="create_new_property_set">Property Sets</a></td></tr>
 					<tr><td><a href="<?php echo ROOTURL."/virtual-nodegroups" ?>" id="create_new_virtual_node_group">Virtual Node Groups</a></td></tr>
 					<tr><td><a href="<?php echo ROOTURL."/testbeds" ?>" id="explore_testbed">Explore Testbeds</a></td></tr>														
@@ -58,7 +58,7 @@ $(document).ready(function() {
             </div>
             <div id="editingfield">
            			<ul class="tabs">
-                        <li><a href="#tab1">Add/Edit Project</a></li>
+                        <li><a href="#tab1">Add/Edit Experiments</a></li>
                         <li><a href="#tab2">Raw Json</a></li>
                     </ul>
                     

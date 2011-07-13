@@ -31,7 +31,7 @@ hr{border:none;height:1px;background-color:#b9b9b9;}
 .color-white,.header-nav,.header-nav-container ul li a
 {color:#FFFFFF;}
 
-.color-dark,h3,#content p,input:focus,.left-nav tr td a,.add-links{color:#333333;}
+.color-dark,h3,#content p,input:focus,.left-nav tr td a{color:#333333;}
 
 .current-selected{font-weight: bolder;}
 
@@ -41,6 +41,7 @@ hr{border:none;height:1px;background-color:#b9b9b9;}
 #progressbar{float:right;width:128px;height:15px;margin-top:10px;margin-right:10px;display:none;}
 
 .cut-left-top-corner,.login-form table tr td input[type=text],.login-form table tr td input[type=password],.login-form table tr td input[type=submit],input[type=reset],.left-nav tr td a,input[type=submit]
+
 {
 	-moz-border-radius-topleft: 4px;
     -webkit-border-top-left-radius:4px;
@@ -50,6 +51,7 @@ hr{border:none;height:1px;background-color:#b9b9b9;}
 }
 
 .cut-left-bottom-corner,.login-form table tr td input[type=text],.login-form table tr td input[type=password],.login-form table tr td input[type=submit],input[type=reset],.left-nav tr td a,input[type=submit]
+
 {
 	-moz-border-radius-bottomleft: 4px;
     -webkit-border-bottom-left-radius:4px;
@@ -58,6 +60,7 @@ hr{border:none;height:1px;background-color:#b9b9b9;}
 }
 
 .cut-right-top-corner,.login-form table tr td input[type=text],.login-form table tr td input[type=password],.login-form table tr td input[type=submit],input[type=reset],.left-nav tr td a,input[type=submit]
+
 {
 	-moz-border-radius-topright: 4px;
     -webkit-border-top-right-radius:4px;
@@ -67,6 +70,7 @@ hr{border:none;height:1px;background-color:#b9b9b9;}
 }
 
 .cut-right-bottom-corner,.login-form table tr td input[type=text],.login-form table tr td input[type=password],.login-form table tr td input[type=submit],input[type=reset],.left-nav tr td a,input[type=submit]
+
 {
 	
 	-moz-border-radius-bottomright: 4px;
@@ -115,8 +119,7 @@ hr{border:none;height:1px;background-color:#b9b9b9;}
 	margin-top:10px;
 }
 .login-form table tr td {padding-bottom:5px;}
-input[type=text],input[type=password],select{width:250px;}
-textarea{height:100px;width:252px;padding:0px;}
+input[type=text],input[type=password]{width:250px;}
 
 input:focus{background-color:#eaeaea;}
 .login-form table tr td input[type=text],.login-form table tr td input[type=password]{width:191px; border:1px solid #b9b9b9;height:25px;background-color: #eaeaea;padding-left:5px;}
@@ -133,10 +136,20 @@ input[type=submit]:hover,input[type=reset]:hover
 .table-list{width:100%;}
 .table-list tr th{padding-top:5px;padding-bottom:5px;color:#ffffff;background-color:#565656;}
 .table-list tr td{padding-top:5px;padding-bottom:5px;border-top:1px solid #b9b9b9;background-color: #eaeaea;}
+.add-links{
+	color:#333333;
+	background-image: url(../images/add.png);
+	background-repeat: no-repeat;
+	background-position: right 5px;
+	padding-top: 5px;
+	padding-right: 20px;
+	padding-bottom: 5px;
+	padding-left: 0px;
+}
 .add-links:hover{color:#ffffff;background-color:#565656;}
 
 /**tabs**/
-#editingfield{margin-top:20px;,margin-bottom:20px;}
+#editingfield{margin-top:20px;margin-bottom:20px;}
 #editingfield h3{font-size:13px;}
 ul.tabs {
 	margin: 0;
@@ -189,4 +202,6 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 	padding: 20px;
 }
 
-
+.tab_content input[type=text]{border:1px solid #b9b9b9;height:25px;padding-left:5px;width:248px;}/*background-color: #eaeaea;*/
+.tab_content textarea{height:100px;width:252px;padding:0px;border:1px solid #b9b9b9;;}
+.tab_content select{padding:0px;width:253px;height:25px;}

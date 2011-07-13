@@ -44,7 +44,7 @@ if(isset($_POST) &&  !empty($_POST) )
 									
 									$i++;
 								}
-								$records[$i][0]['text']='<a class="add-links" href="'.ROOTURL.'/projects" " id="create_new_project" >Add New Project +</a>';
+								$records[$i][0]['text']='<a class="add-links" href="'.ROOTURL.'/projects" " id="create_new_project" >Add New Project</a>';
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
 								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']='';
 								$obj=new Createtable($title,$header,$records);
@@ -52,28 +52,63 @@ if(isset($_POST) &&  !empty($_POST) )
 							}
 							else
 							{
-								echo "You have no projects . Lets create One.";
+								echo "You have no projects . Lets create One. ".'<a class="add-links" href="'.ROOTURL.'/projects" " id="create_new_project" >Add New Project</a>';
 							}
 						    break;
 							
 							
 							
 			case "experiment":
-							$html='<h4>Experiments List</h4><table cellspacing="0"><tr><th width="20%">Name</th><th width="20%">Project</th><th>VN</th><th>Description</th><th width="5%">Edit</th><th width="7%">Delete</th></tr>';
-							$experiments=FollowExperiment();
-							if(!empty($experiments))
+			
+							$title='Your current Experiments:';
+							$header[0]['text']='Name';
+							$header[0]['attribute']='width="40%" style="text-align:left;padding-left:10px;"';
+							$header[1]['text']='Project';
+							$header[1]['attribute']='style="text-align:center;"';
+							$header[2]['text']='Virtual Nodes';
+							$header[2]['attribute']='style="text-align:center;"';
+							$header[3]['text']='Edit';
+							$header[3]['attribute']='width="5%"';
+							$header[4]['text']='Delete';
+							$header[4]['attribute']='width="7%"';
+			
+							$records=array();
+							$exps=FollowExperiment();
+							if(!empty($exps))
 							{
-								foreach ($experiments as $experiment)
+								$i=0;
+								foreach ($exps as $exp)
 								{
-									$experiment_info=json_decode(getUrl($experiment['uri']),TRUE);
-									$project_info=json_decode(getUrl($experiment_info['project']),TRUE);				
-									$html.="<td>".$experiment_info['name'].'</td><td>'.$project_info['name'].'</td><td>'.$experiment_info['node_count'].'</td><td class="description"  >'.shortenString($experiment_info['description'],50).'</td><td class="center_text" ><a class="edit" href="'.$experiment_info['uri'].'"><img src="images/edit.png" /></a></td><td class="center_text" ><a class="deleteProject" href="'.$experiment_info['uri'].'"><img src="images/close.png" /></a></td></tr>';
-								
+									$exp_info=json_decode(getUrl($exp['uri']),TRUE);
+									
+									$records[$i][0]['text']=$exp_info['name'];
+									$records[$i][0]['attribute']='style="padding-left:10px;"';
+									$project_info=json_decode(getUrl($exp_info['project']),TRUE);
+									$records[$i][1]['text']=$project_info['name'];
+									$records[$i][1]['attribute']='style="text-align:center;"';
+									$records[$i][2]['text']=$exp_info['node_count'];
+									$records[$i][2]['attribute']='style="text-align:center;"';
+									
+									$records[$i][3]['text']='<a class="edit" href="'.$exp_info['uri'].'" ><img src="images/edit.png" /></a>';
+									$records[$i][3]['attribute']='style="padding-left:10px;"';
+									$records[$i][4]['text']='<a class="deleteProject" href="'.$exp_info['uri'].'"><img src="images/close.png" /></a>';
+									$records[$i][4]['attribute']='style="padding-left:15px;"';
+									
+									
+									$i++;
 								}
-								$html.='<tr><td class="last_row" colspan="6" style="height: 16px;"></td></tr></table> ';
+								$records[$i][0]['text']='<a class="add-links" href="'.ROOTURL.'/experiments" " id="create_new_exp" >Add New Experiments</a>';
+								$records[$i][0]['attribute']='style="padding-left:10px;"';
+								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']='';
+								$obj=new Createtable($title,$header,$records);
+								echo $obj->render();
 							}
-							echo $html;
+							else
+							{
+								echo "You have no Experiments . Lets create one. ".'<a class="add-links" href="'.ROOTURL.'/experiments" " id="create_new_exp" >Add New Experiments</a>';
+							}
 						    break;
+			
 			case "property-sets":
 							$html='<h4>Property Set List</h4><table cellspacing="0"><tr><th width="20%">Name</th><th width="20%">Experiment</th><th>Platform</th><th>VN</th><th>Description</th><th width="5%">Edit</th><th width="7%">Delete</th></tr>';
 							$property_sets=FollowPropertySets();

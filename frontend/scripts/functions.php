@@ -9,8 +9,8 @@ session_start();
  */
 
 //define("ROOTURL", "http://localhost:8081");
-define("ROOTURL", "https://conet-testbed-federation.appspot.com");
-//define("ROOTURL", "http://api.cotefe.net");
+//define("ROOTURL", "https://conet-testbed-federation.appspot.com");
+define("ROOTURL", "http://api.cotefe.net");
 
 
 include_once 'class/Form.class.php';
@@ -133,6 +133,7 @@ function CreateExperimentForm($url)
 			 */
 			$html='';
 			$html.=Form::Header('New Experiment');
+			$html.="<hr/>";
 			$html.=Form::FormStart();
 			$html.=HiddenField::HiddeBox('form-type','experiment');
 			$html.=TextField::TextBox('Experiment Name : ','name', '');
@@ -148,6 +149,7 @@ function CreateExperimentForm($url)
 			$obj=json_decode($resource, true);
 			$html='';
 			$html.=Form::Header('Update Experiment');
+			$html.="<hr/>";
 			$html.=Form::FormStart();
 			$html.=HiddenField::HiddeBox('form-type','experimentUpdate');
 			$html.=HiddenField::HiddeBox('uri',$obj['uri']);
@@ -162,7 +164,7 @@ function CreateExperimentForm($url)
 	}
 	else
 	{
-		return "No Projects Found! Please create at leas a project.";
+		return "No Projects Found! Please create a project.";
 	}
 }
 function getExperimentList()

@@ -2,9 +2,7 @@
 
 
 /*starts of script */
-$(document).ready(function() {	
-	Project();	
- });
+
  
  
 var Project=function()
@@ -14,19 +12,34 @@ var Project=function()
 	addEventDelete(function(){Project();});
 	tabs();
 	submitEvent(function(){Project();});
-	/*
-	 * function ends
-	 */
 }
+
+
+
+var Experiments=function()
+{
+	progressBar();
+	loadExperimentsList();
+	addEventDelete(function(){Experiments();});
+	tabs();
+	submitEvent(function(){Experiments();});
+}
+
+
  
- 
- var loadProjectList=function(){	
+var loadProjectList=function(){	
 	var  response=sendAjax("List=project","html","#content",function(){loadFormProject();});	
 }
 
+
+var loadExperimentsList=function(){
+	var  response=sendAjax("List=experiment","html","#content",function(){loadFormProject();});	
+}
+
+
 var loadFormProject=function(){
-	$('a[class=edit],#create_new_project').die('click');
-	$('a[class=edit],#create_new_project').live('click',function(event)
+	$('a[class=edit],#create_new_project,#create_new_exp').die('click');
+	$('a[class=edit],#create_new_project,#create_new_exp').live('click',function(event)
 			{event.preventDefault();event.stopPropagation();		
 				var link=$(this).attr('href');			
 				var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(arg);});				
@@ -82,14 +95,18 @@ var OnSubmitFinish=function(response,callback){
 			   }
 		   else
 			   {
-			   	messageGenerate('.error_message',"There was an error : "+response);
+			   	//messageGenerate('.error_message',"There was an error : "+response);
 			   }
 		  
-		    Project();
+		    var isfun=jQuery.isFunction(callback);
+					  	if(isfun==true)
+					  		{callback();}
 		}
 	else
 		{
-			Project();
+			var isfun=jQuery.isFunction(callback);
+					  	if(isfun==true)
+					  		{callback();}
 		}
 	
 }
@@ -106,7 +123,7 @@ var addEventDelete=function(callback)
 }
  
  
- var addDeleteEvent=function(response,callback)
+var addDeleteEvent=function(response,callback)
 {
 	if(response!=false || response=='200')
 	{
@@ -121,7 +138,7 @@ var addEventDelete=function(callback)
 }
  
  /*all ajax calls this function */
- var progressBar=function ()
+var progressBar=function ()
 {
 	
 	$("#progressbar").ajaxStart(function(){
