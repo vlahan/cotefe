@@ -93,11 +93,13 @@ def main():
     
     logging.info('deploying the image to the nodegroup...')
     response, content = h.request(uri='%s/image/%s' % (nodegroup_uri, image_dict['id']), method='PUT', body='')
+    logging.debug(content)
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     
     logging.info('erasing the image from the nodegroup...')
     response, content = h.request(uri='%s/image' % nodegroup_uri, method='DELETE', body='')
+    logging.debug(content)
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     

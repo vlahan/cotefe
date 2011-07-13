@@ -99,8 +99,8 @@ def main():
     logging.debug(job_list)
     logging.info('%d jobs returned' % len(job_list))
     
-    datetime_from = datetime(2011, 07, 13, 12, 52, 00)
-    datetime_to = datetime(2011, 07, 13, 13, 15, 00)
+    datetime_from = datetime(2011, 07, 13, 15, 32, 00)
+    datetime_to = datetime(2011, 07, 13, 15, 40, 00)
     
     str_from = berlin_datetime_to_utc_string(datetime_from)
     str_to = berlin_datetime_to_utc_string(datetime_to)
