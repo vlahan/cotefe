@@ -1,7 +1,7 @@
 <?php
 
 include_once 'functions.php';
-
+header('Content-type: text/html');
 if(isset($_POST) &&  !empty($_POST) )
 {
 	if(isset($_POST['Home']) && $_POST['Home']=="content")
