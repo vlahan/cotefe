@@ -1,8 +1,9 @@
 <?php
 
 include_once 'functions.php';
-header('content-type: text/html');
-if(isset($_POST) &&  !empty($_POST) )
+header('content-type: text/plain');
+echo "i am here ";
+/*if(isset($_POST) &&  !empty($_POST) )
 {
 	if(isset($_POST['Home']) && $_POST['Home']=="content")
 	{
@@ -365,5 +366,5 @@ if(isset($_POST) &&  !empty($_POST) )
 		
 	}
 	//submit ends here
-}	
+}	*/
 ?>
