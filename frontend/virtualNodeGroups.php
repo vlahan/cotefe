@@ -9,11 +9,14 @@ include_once 'scripts/functions.php';
 <title>Cotefe</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript" src="scripts/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="scripts/css/ui-lightness/jquery-ui-1.8.14.custom.css" />		
+<script type="text/javascript" src="scripts/js/jquery-ui-1.8.14.custom.min.js"></script>
 
 <script type="text/javascript" src="scripts/cotefev2.js"></script>
+
 <script type="text/javascript">
 $(document).ready(function() {	
-	PropertySets();	
+	VirtualNodeGroup();	
  });
 </script>
 
@@ -43,8 +46,8 @@ $(document).ready(function() {
         <table class="left-nav">				
 					<tr><td><a href="dashboard.php"  >Projects</a></td></tr>
 					<tr><td><a href="experiments.php"  >Experiments</a></td></tr>	
-					<tr><td><a href="propertySets.php" class="current-selected">Property Sets</a></td></tr>
-					<tr><td><a href="virtualNodeGroups.php" >Virtual Node Groups</a></td></tr>
+					<tr><td><a href="propertySets.php" >Property Sets</a></td></tr>
+					<tr><td><a href="virtualNodeGroups.php" class="current-selected">Virtual Node Groups</a></td></tr>
 					<tr><td><a href="<?php echo ROOTURL."/testbeds" ?>" id="explore_testbed">Explore Testbeds</a></td></tr>														
 					<tr><td><a href="<?php echo ROOTURL."/testbeds-find" ?>" id="find_testbed">Find Testbed</a></td></tr>	
 				</table>

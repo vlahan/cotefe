@@ -34,6 +34,15 @@ var PropertySets=function()
 	submitEvent(function(){PropertySets();});
 }
 
+var VirtualNodeGroup=function()
+{
+	progressBar();
+	loadVirtualNodeGroupList();
+	addEventDelete(function(){VirtualNodeGroupList();});
+	tabs();
+	submitEvent(function(){VirtualNodeGroupList();});
+}
+
 
  
 var loadProjectList=function(){	
@@ -52,10 +61,15 @@ var loadPropertySetList=function()
 	var response=sendAjax("List=property-sets","html","#content",function(){loadFormProject();});	
 }
 
+var loadVirtualNodeGroupList=function()
+{
+	var response=sendAjax("List=virtual-nodegroups","html","#content",function(){loadFormProject();});	
+}
+
 
 var loadFormProject=function(){
-	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set').die('click');
-	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set').live('click',function(event)
+	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group').die('click');
+	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group').live('click',function(event)
 			{event.preventDefault();event.stopPropagation();		
 				var link=$(this).attr('href');			
 				var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(arg);});				

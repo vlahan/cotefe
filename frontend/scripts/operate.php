@@ -169,24 +169,61 @@ if(isset($_POST) &&  !empty($_POST) )
 						    break;
 							
 							
-							/*	
-							$html='<h4>Property Set List</h4><table cellspacing="0"><tr><th width="20%">Name</th><th width="20%">Experiment</th><th>Platform</th><th>VN</th><th>Description</th><th width="5%">Edit</th><th width="7%">Delete</th></tr>';
-							$property_sets=FollowPropertySets();
-							if(!empty($property_sets))
-							{
-								foreach ($property_sets as $property_set)
-								{
-									$property_set_info=json_decode(getUrl($property_set['uri']),TRUE);
-									$experiment_info=json_decode(getUrl($property_set_info['experiment']),TRUE);
-									$platform_info=json_decode(getUrl($property_set_info['platform']),TRUE);						
-									$html.="<td>".$property_set_info['name'].'</td><td>'.$experiment_info['name'].'</td><td>'.$platform_info['name'].'</td><td>'.$property_set_info['node_count'].'</td><td class="description"  >'.shortenString($property_set_info['description'],50).'</td><td class="center_text" ><a class="edit" href="'.$property_set_info['uri'].'"><img src="images/view.png" /></a></td><td class="center_text" ><a class="deleteProject" href="'.$property_set_info['uri'].'"><img src="images/close.png" /></a></td></tr>';
-								}
-								$html.='<tr><td class="last_row" colspan="7" style="height: 16px;"></td></tr></table> ';
-							}
-							echo $html;
-							break;
-							*/
+							
 			case "virtual-nodegroups":
+							$title='Your current Virtual Node Groups:';
+							$header[0]['text']='Name';
+							$header[0]['attribute']='width="40%" style="text-align:left;padding-left:10px;"';
+							$header[1]['text']='Experiment';
+							$header[1]['attribute']='style="text-align:left;"';					
+							$header[2]['text']='VN';
+							$header[2]['attribute']='style="text-align:center;"';
+							$header[3]['text']='Edit';
+							$header[3]['attribute']='width="5%"';
+							$header[4]['text']='Delete';
+							$header[4]['attribute']='width="7%"';
+			
+							$records=array();
+							$VirtualNodeGroups=FollowVirtualNodeGroup();
+							if(!empty($VirtualNodeGroups))
+							{
+								$i=0;
+								foreach ($VirtualNodeGroups as $VirtualNodeGroup)
+								{
+									$VirtualNodeGroup_info=json_decode(getUrl($VirtualNodeGroup['uri']),TRUE);
+									
+									$records[$i][0]['text']=$VirtualNodeGroup_info['name'];
+									$records[$i][0]['attribute']='style="padding-left:10px;"';
+									
+									$experiment_info=json_decode(getUrl($VirtualNodeGroup_info['experiment']),TRUE);
+									$records[$i][1]['text']=$experiment_info['name'];
+									$records[$i][1]['attribute']='style="text-align:left;"';
+											
+									$records[$i][2]['text']=$VirtualNodeGroup_info['node_count'];
+									$records[$i][2]['attribute']='style="text-align:center;"';
+									
+									$records[$i][3]['text']='<a class="edit" href="'.$VirtualNodeGroup_info['uri'].'" ><img src="images/edit.png" /></a>';
+									$records[$i][3]['attribute']='style="padding-left:10px;"';
+									$records[$i][4]['text']='<a class="deleteProject" href="'.$VirtualNodeGroup_info['uri'].'"><img src="images/close.png" /></a>';
+									$records[$i][4]['attribute']='style="padding-left:15px;"';
+									
+									
+									$i++;
+								}
+								$records[$i][0]['text']='<a class="add-links" href="'.ROOTURL.'/virtual-nodegroups" " id="create_new_property_set" >Add New Property Set</a>';
+								$records[$i][0]['attribute']='style="padding-left:10px;"';
+								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']=$records[$i][5]['text']='';
+								$obj=new Createtable($title,$header,$records);
+								echo $obj->render();
+							}
+							else
+							{
+								echo "You have no Virtual Node Group . Lets create one. ".'<a class="add-links" href="'.ROOTURL.'/virtual-nodegroups" " id="create_new_virtual_node_group" >Add New Property Set</a>';
+							}
+						    break;
+			
+			
+			
 							$html='<h4>Virtual Node Groups</h4><table cellspacing="0"><tr><th width="20%">Name</th><th width="20%">Experiment</th><th width="10%">VN</th><th>Description</th><th width="5%">Edit</th><th width="7%">Delete</th></tr>';
 							$VirtualNodesGroups=FollowVirtualNodeGroup();
 							if(!empty($VirtualNodesGroups))

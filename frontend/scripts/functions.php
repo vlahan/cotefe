@@ -9,8 +9,8 @@ session_start();
  */
 
 //define("ROOTURL", "http://localhost:8081");
-define("ROOTURL", "https://conet-testbed-federation.appspot.com");
-//define("ROOTURL", "http://api.cotefe.net");
+//define("ROOTURL", "https://conet-testbed-federation.appspot.com");
+define("ROOTURL", "http://api.cotefe.net");
 
 
 include_once 'class/Form.class.php';
