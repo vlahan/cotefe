@@ -809,20 +809,12 @@ def image_collection_handler(request):
     
     if request.method == 'GET':
         
-        images = Image.objects.all()
-        
-        if 'name' in request.GET and not (request.GET['name'] is None):
-            images = images.filter(name = request.GET['name'])
-            
-        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
-            images = images.filter(experiment = Experiment.objects.get(id = request.GET['experiment']))
-            
-        image_list = [ i.to_dict(head_only = True) for i in images ]
+        collection_list = [ resource_model.to_dict(head_only = True) for resource_model in Image.objects.all() ]
         
         # 200
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(serialize(image_list))
+        response.write(serialize(collection_list))
         return response
     
     if request.method == 'POST':
@@ -833,9 +825,9 @@ def image_collection_handler(request):
             image = Image(
                 id = generate_id(),
                 name = image_dict['name'],
-                description = image_dict['description'],
-                experiment = Experiment.objects.get(id = image_dict['experiment'])
+                description = image_dict['description']
             )
+            
             image.save()
             
             # 201
@@ -844,7 +836,6 @@ def image_collection_handler(request):
             response['Content-Location'] = build_url(path = image.get_absolute_url())
             response['Content-Type'] = 'application/json'
             return response
-        
         except None:
             # 400
             response = HttpResponseBadRequest()
@@ -923,6 +914,45 @@ def image_resource_handler(request, image_id):
         del response['Content-Type']
         return response
         
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+
+def imagefile_upload_handler(request, image_id):
+    
+    allowed_methods = ['POST']
+      
+    if request.method == 'POST':
+                
+        try:
+            imagefile = request.FILES['imagefile']
+            
+            image = Image.objects.get(id = image_id)
+            
+            image.file = imagefile            
+            image.save()
+            
+            # 200
+            response = HttpResponse()
+            response['Content-Type'] = 'application/json'
+            response.write(serialize(image.to_dict()))
+            return response
+        
+        except None:
+            # 400
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+
     else:
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']

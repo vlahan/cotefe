@@ -175,15 +175,21 @@ class Platform(Resource):
 
     class Meta:
         verbose_name = "Platform"
+        
+# returns random filename
+def update_filename(instance, filename):
+    filepath = 'images'
+    filename = instance.id
+    return os.path.join(filepath, filename)
 
+# IMAGE
 class Image(Resource):
-    id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
-    name = models.CharField(max_length=255, verbose_name='Name')
-    description = models.TextField(verbose_name='Description')
+    id = models.CharField(max_length=255, primary_key=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    file = models.FileField(upload_to=update_filename, null=True, blank=True)
     experiment = models.ForeignKey(Experiment, related_name='images', verbose_name='Experiment', on_delete=models.PROTECT)
-    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
-    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
-    
+
     def __unicode__(self):
         return self.name
 
@@ -198,8 +204,12 @@ class Image(Resource):
         resource['id'] = self.id
         if not head_only:
             resource['description'] = self.description
-            resource['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            resource['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+            resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
+            if self.file:
+                resource['file'] = build_url(path = '/static/' + self.file.name)
+            else:
+                resource['file'] = None
+            resource['upload_to'] = build_url(path = '%s/upload' % self.get_absolute_url())
         return resource
 
     class Meta:
@@ -321,30 +331,15 @@ class VirtualNodeGroup(Resource):
         verbose_name = "Virtual NodeGroup"
         verbose_name_plural = verbose_name +'s'
         
-# AUXILIARY TABLES
-class VirtualNodeGroup2VirtualNode(models.Model):
-    virtual_nodegroup = models.ForeignKey(VirtualNodeGroup, verbose_name='VirtualNodeGroup', related_name='virtual_nodes', on_delete=models.PROTECT)
-    virtual_node = models.ForeignKey(VirtualNode, verbose_name='VirtualNode', related_name='virtual_nodegroups', on_delete=models.PROTECT)
+class VirtualTask(Resource):
+    id = models.CharField(max_length=255, primary_key=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    experiment = models.ForeignKey(Experiment, blank=True, null=True, related_name='jobs', verbose_name='Experiment', on_delete=models.PROTECT)
+    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
+    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
-    def __unicode__(self):
-        return u'%s %s' % (self.virtual_nodegroup, self.virtual_node)
-    
-    class Meta:
-        verbose_name = "VirtualNodeGroup2VirtualNode"
-        verbose_name_plural = verbose_name +'s'
-
-class Testbed2Platform(models.Model):
-    testbed = models.ForeignKey(Testbed, related_name='platforms', verbose_name='Testbed', on_delete=models.PROTECT)
-    platform = models.ForeignKey(Platform, related_name='testbeds',verbose_name='Platform', on_delete=models.PROTECT)
-    node_count = models.IntegerField(default=0, verbose_name='Number of Nodes')
-    
-    def __unicode__(self):
-        return '%s %s' % (self.testbed, self.platform)
-    
-    class Meta:
-        verbose_name = "Testbed2Platform"
-        verbose_name_plural = verbose_name +'s'
-
+        
 class Job(Resource):
     id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
@@ -385,6 +380,30 @@ class Job(Resource):
 
     class Meta:
         verbose_name = "Job"
+        verbose_name_plural = verbose_name +'s'
+        
+        
+class VirtualNodeGroup2VirtualNode(models.Model):
+    virtual_nodegroup = models.ForeignKey(VirtualNodeGroup, verbose_name='VirtualNodeGroup', related_name='virtual_nodes', on_delete=models.PROTECT)
+    virtual_node = models.ForeignKey(VirtualNode, verbose_name='VirtualNode', related_name='virtual_nodegroups', on_delete=models.PROTECT)
+    
+    def __unicode__(self):
+        return u'%s %s' % (self.virtual_nodegroup, self.virtual_node)
+    
+    class Meta:
+        verbose_name = "VirtualNodeGroup2VirtualNode"
+        verbose_name_plural = verbose_name +'s'
+
+class Testbed2Platform(models.Model):
+    testbed = models.ForeignKey(Testbed, related_name='platforms', verbose_name='Testbed', on_delete=models.PROTECT)
+    platform = models.ForeignKey(Platform, related_name='testbeds',verbose_name='Platform', on_delete=models.PROTECT)
+    node_count = models.IntegerField(default=0, verbose_name='Number of Nodes')
+    
+    def __unicode__(self):
+        return '%s %s' % (self.testbed, self.platform)
+    
+    class Meta:
+        verbose_name = "Testbed2Platform"
         verbose_name_plural = verbose_name +'s'
         
 #class Job2Node(models.Model):
