@@ -25,6 +25,7 @@ class Root(resource.Resource):
 
 class PHPScript(twcgi.FilteredScript):
     filter = '/usr/bin/php-cgi'
+
     def runProcess(self, env, *a, **kw):
         env['REDIRECT_STATUS'] = '200'
         return twcgi.FilteredScript.runProcess(self, env, *a, **kw)
