@@ -1,5 +1,6 @@
 <?php
 
+header('content-type: text/html');
 include_once 'functions.php';
 
 if(isset($_POST) &&  !empty($_POST) )
