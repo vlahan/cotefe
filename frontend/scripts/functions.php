@@ -362,7 +362,7 @@ function CreateVNGForm($url)
 				array_multisort( $sort_numcie,SORT_DESC,$node_array);
 				for($i=0;$i<$no_of_nodes;$i++)
 				{
-					$node_pack.="<li class='node available' id=".$node_array[$i]['id']." style='background:#".$style[$node_array[$i]['property_set_id']].";' title='".$node_array[$i]['property_set_id']."' ></li>";
+					$node_pack.="<li class='node available' id=".$node_array[$i]['id']." style='background:#".$style[$node_array[$i]['property_set_id']].";' title=\"".$node_array[$i]['property_set_id']."\" ></li>";
 				}
 				$node_pack.="</ol>";
 				//getting total VNG Ends
@@ -373,7 +373,7 @@ function CreateVNGForm($url)
 				foreach($style as $key=>$value)
 				{
 					$propertySetSingle=getSinglePropertySet($key);
-					$colorlegend.="<li style='background:#".$value."' title='".$key."'><span>".$propertySetSingle['name']."</span></li>";
+					$colorlegend.="<li style='background:#".$value."' title=\"".$key."\"><span>".$propertySetSingle['name']."</span></li>";
 				}
 				$colorlegend.="</ol>";
 				$html.=EmptyTR::EmptyTableTR('Color Legends:<br>'.$colorlegend, 'You have selected :<ol id="nos_selected_node"></ol>');
@@ -423,7 +423,7 @@ function CreateVNGForm($url)
 				array_multisort( $sort_numcie,SORT_DESC,$node_array);
 				for($i=0;$i<$no_of_nodes;$i++)
 				{
-					$node_pack.="<li class='node available' id=".$node_array[$i]['id']." style='background:#".$style[$node_array[$i]['property_set_id']].";' title='".$node_array[$i]['property_set_id']."' ></li>";
+					$node_pack.="<li class='node available' id=".$node_array[$i]['id']." style='background:#".$style[$node_array[$i]['property_set_id']].";' title=\"".$node_array[$i]['property_set_id']."\" ></li>";
 				}
 				$node_pack.="</ol>";
 								
@@ -451,7 +451,7 @@ function CreateVNGForm($url)
 				foreach($style as $key=>$value)
 				{
 					$propertySetSingle=getSinglePropertySet(ROOTURL.'/property-sets/'.$key);
-					$colorlegend.="<li style='background:#".$value."' title='".$key."'><span>".$propertySetSingle['name']."</span></li>";
+					$colorlegend.="<li style='background:#".$value."' title=\"".$key."\"><span>".$propertySetSingle['name']."</span></li>";
 				}
 				$colorlegend.="</ol>";
 				
