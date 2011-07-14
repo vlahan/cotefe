@@ -8,8 +8,8 @@ from poster.streaminghttp import register_openers
 import urllib2
 import webbrowser
 
-# SERVER_URL = 'http://api.cotefe.net'
-SERVER_URL = 'http://localhost:8080'
+SERVER_URL = 'http://api.cotefe.net'
+#SERVER_URL = 'http://localhost:8080'
 PLATFORM = 'TmoteSky'
 
 DESCRIPTION = 'CONET 3Y REVIEW TFA DEMO - PLEASE DO NOT DELETE'
