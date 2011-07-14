@@ -4,13 +4,7 @@ from datetime import datetime, tzinfo
 import pytz
 from anyjson import json
 from django.http import HttpResponse
-
-try:
-    from federationserver.settings import *
-except ImportError:
-    from settings import *
-
-# UTILITY FUNCTIONS
+from settings import *
 
 def build_url(server_url = SERVER_URL, path = '/'):
     return '%s%s' % (server_url, path)
@@ -29,11 +23,7 @@ def deserialize(string, format = 'json'):
         pass
     
 def generate_id():
-    # logging.debug('uid start')
-    id = uuid.uuid4().hex[:UUID_LENGTH]
-    # logging.debug('uid done')
-    return id
-
+    return uuid.uuid4().hex[:UUID_LENGTH]
 
 # UTC time zone
 utc = pytz.utc

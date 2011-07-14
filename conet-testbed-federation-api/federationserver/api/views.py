@@ -4,15 +4,9 @@ from datetime import datetime
 from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
 from filetransfers.api import prepare_upload, serve_file
-
-try:
-    from federationserver.api.models import *
-    from federationserver.settings import *
-    from federationserver.utils import *
-except ImportError:
-    from api.models import *
-    from settings import *
-    from utils import *
+from api.models import *
+from settings import *
+from utils import *
 
 def federation_resource_handler(request):
     
@@ -66,7 +60,6 @@ def testbed_collection_handler(request):
             discovery_array[testbed.id] = True
             for property_set in property_sets:
                 discovery_matrix[testbed.id][property_set.id] = Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count >= property_set.node_count
-                # print testbed.id, property_set.id, Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count > property_set.node_count
             for ps in discovery_matrix[testbed.id]:
                 discovery_array[testbed.id] = discovery_array[testbed.id] and discovery_matrix[testbed.id][ps]
         
@@ -74,7 +67,7 @@ def testbed_collection_handler(request):
             if not discovery_array[t.id]:
                 testbeds = testbeds.exclude(id = t.id)
                 
-        testbed_list = [ t.to_dict(head_only = True) for t in testbeds ]
+        testbed_list = [ t.to_dict() for t in testbeds ]
         
         # 200
         response = HttpResponse()
@@ -173,7 +166,7 @@ def platform_collection_handler(request):
         if 'name' in request.GET and not (request.GET['name'] is None):
             platforms = platforms.filter(name = request.GET['name'])
         
-        platform_list = [ p.to_dict(head_only = True) for p in platforms ]
+        platform_list = [ p.to_dict() for p in platforms ]
         
         # 200
         response = HttpResponse()
@@ -243,7 +236,7 @@ def project_collection_handler(request):
         if 'name' in request.GET and not (request.GET['name'] is None):
             projects = projects.filter(name = request.GET['name'])
         
-        project_list = [ p.to_dict(head_only = True) for p in projects ]
+        project_list = [ p.to_dict() for p in projects ]
         
         # 200
         response = HttpResponse()
@@ -316,7 +309,6 @@ def project_resource_handler(request, project_id):
         
         try:
             project_dict = json.loads(request.raw_post_data)
-
             project_model.name = project_dict['name']
             project_model.description = project_dict['description']
             
@@ -372,7 +364,7 @@ def experiment_collection_handler(request):
         if 'name' in request.GET and not (request.GET['name'] is None):
             experiments = experiments.filter(name = request.GET['name'])
         
-        experiment_list = [ e.to_dict(head_only = True) for e in experiments ]
+        experiment_list = [ e.to_dict() for e in experiments ]
         
         # 200
         response = HttpResponse()
@@ -385,17 +377,18 @@ def experiment_collection_handler(request):
         try:
             experiment_dict = json.loads(request.raw_post_data)
 
-            experiment_model = Experiment(
+            experiment = Experiment(
                 id = generate_id(),
                 name = experiment_dict['name'],
                 description = experiment_dict['description'],
-                project = Project.objects.get(id = experiment_dict['project']))
-            experiment_model.save()
+                project = Project.objects.get(id = experiment_dict['project'])
+            )
+            experiment.save()
             
             # 201
             response = HttpResponse(status=201)
-            response['Location'] = build_url(path = experiment_model.get_absolute_url())
-            response['Content-Location'] = build_url(path = experiment_model.get_absolute_url())
+            response['Location'] = build_url(path = experiment.get_absolute_url())
+            response['Content-Location'] = build_url(path = experiment.get_absolute_url())
             response['Content-Type'] = 'application/json'
             return response
         
@@ -424,7 +417,7 @@ def experiment_resource_handler(request, experiment_id):
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
-        experiment_model = Experiment.objects.get(id = experiment_id)
+        experiment = Experiment.objects.get(id = experiment_id)
     
     except ObjectDoesNotExist:
         # 404
@@ -436,7 +429,7 @@ def experiment_resource_handler(request, experiment_id):
         # generate response
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(serialize(experiment_model.to_dict()))
+        response.write(serialize(experiment.to_dict()))
         return response
     
     if request.method == 'PUT':
@@ -444,16 +437,16 @@ def experiment_resource_handler(request, experiment_id):
         try:
             experiment_dict = json.loads(request.raw_post_data)
 
-            experiment_model.name = experiment_dict['name']
-            experiment_model.description = experiment_dict['description']
-            experiment_model.project = Project.objects.get(id = experiment_dict['project'])
+            experiment.name = experiment_dict['name']
+            experiment.description = experiment_dict['description']
+            experiment.project = Project.objects.get(id = experiment_dict['project'])
             
-            experiment_model.save()
+            experiment.save()
             
             # 200
             response = HttpResponse()
             response['Content-Type'] = 'application/json'
-            response.write(serialize(experiment_model.to_dict()))
+            response.write(serialize(experiment.to_dict()))
             return response
             
         except None:
@@ -465,7 +458,7 @@ def experiment_resource_handler(request, experiment_id):
         
     if request.method == 'DELETE':
         
-        experiment_model.delete()
+        experiment.delete()
         
         # 200
         response = HttpResponse()
@@ -487,21 +480,27 @@ def experiment_resource_handler(request, experiment_id):
         return response
     
 
-def property_set_collection_handler(request):
+def property_set_collection_handler(request, experiment_id):
     
     allowed_methods = ['GET', 'POST']
     
+    try:
+        experiment = Experiment.objects.get(id = experiment_id)
+        
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+    
     if request.method == 'GET':
         
-        property_sets = PropertySet.objects.all()
+        property_sets = PropertySet.objects.filter(experiment = experiment)
         
         if 'name' in request.GET and not (request.GET['name'] is None):
             property_sets = property_sets.filter(name = request.GET['name'])
-            
-        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
-            property_sets = property_sets.filter(experiment = Experiment.objects.get(id = request.GET['experiment']))
         
-        property_set_list = [ ps.to_dict(head_only = True) for ps in property_sets ]
+        property_set_list = [ ps.to_dict() for ps in property_sets ]
         
         # 200
         response = HttpResponse()
@@ -518,7 +517,7 @@ def property_set_collection_handler(request):
                 id = generate_id(),
                 name = property_set_dict['name'],
                 description = property_set_dict['description'],
-                experiment = Experiment.objects.get(id = property_set_dict['experiment']),
+                experiment = experiment,
                 platform = Platform.objects.get(id = property_set_dict['platform']),
                 node_count = property_set_dict['node_count']
             )
@@ -532,12 +531,13 @@ def property_set_collection_handler(request):
                     experiment = property_set.experiment,
                     property_set = property_set).save()
             
-            # generate response
+            # 201
             response = HttpResponse(status=201)
             response['Location'] = build_url(path = property_set.get_absolute_url())
             response['Content-Location'] = build_url(path = property_set.get_absolute_url())
             response['Content-Type'] = 'application/json'
             return response
+        
         except None:
             # 400
             response = HttpResponseBadRequest()
@@ -556,24 +556,18 @@ def property_set_collection_handler(request):
         del response['Content-Type']
         return response
     
-def property_set_resource_handler(request, property_set_id):
+def property_set_resource_handler(request, experiment_id, property_set_id):
     
     allowed_methods = ['GET', 'DELETE']
     
     try:
+        experiment = Experiment.objects.get(id = experiment_id)
         property_set = PropertySet.objects.get(id = property_set_id)
     
     except ObjectDoesNotExist:
         # 404
         response = HttpResponseNotFound()
         response['Content-Type'] = 'application/json'
-        return response
-    
-    if request.method == 'OPTIONS':
-        # 204
-        response = HttpResponse(status=204)
-        response['Allow'] = ', '.join(allowed_methods)
-        del response['Content-Type']
         return response
     
     if request.method == 'GET':
@@ -591,6 +585,13 @@ def property_set_resource_handler(request, property_set_id):
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
         return response
+
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
         
     else:
         response = HttpResponseNotAllowed(allowed_methods)
@@ -598,13 +599,22 @@ def property_set_resource_handler(request, property_set_id):
         return response
     
 
-def virtual_node_collection_handler(request):
+def virtual_node_collection_handler(request, experiment_id):
     
     allowed_methods = ['GET']
     
+    try:
+        experiment = Experiment.objects.get(id = experiment_id)
+        
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+    
     if request.method == 'GET':
         
-        virtual_nodes = VirtualNode.objects.all()
+        virtual_nodes = VirtualNode.objects.filter(experiment = experiment)
         # virtual_nodes = VirtualNode.objects.all().order_by('property_set', 'name')
         
         if 'name' in request.GET and not (request.GET['name'] is None):
@@ -616,16 +626,17 @@ def virtual_node_collection_handler(request):
         if 'property_set' in request.GET and not (request.GET['property_set'] is None):
             virtual_nodes = virtual_nodes.filter(property_set = PropertySet.objects.get(id = request.GET['property_set']))
             
-        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
-            virtual_nodes = virtual_nodes.filter(experiment = Experiment.objects.get(id = request.GET['experiment']))
-            
         if 'n' in request.GET and not (request.GET['n'] is None):
-            virtual_nodes = virtual_nodes[:request.GET['n']]
-            
-        virtual_node_list = [ vn.to_dict(head_only = True) for vn in virtual_nodes ]
-        
-        logging.warning('NUMBER OF NODES RETURNED: %d' % len(virtual_node_list))
-        
+            if len(virtual_nodes) >= request.GET['n']:
+                virtual_nodes = virtual_nodes[:request.GET['n']]
+            else:
+                # 404
+                response = HttpResponseNotFound()
+                response['Content-Type'] = 'application/json'
+                return response
+                
+        virtual_node_list = [ vn.to_dict() for vn in virtual_nodes ]
+                
         # 200
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
@@ -644,11 +655,12 @@ def virtual_node_collection_handler(request):
         del response['Content-Type']
         return response
     
-def virtual_node_resource_handler(request, virtual_node_id):
+def virtual_node_resource_handler(request, experiment_id, virtual_node_id):
     
     allowed_methods = ['GET']
     
     try:
+        experiment = Experiment.objects.get(id = experiment_id)
         virtual_node = VirtualNode.objects.get(id = virtual_node_id)
     
     except ObjectDoesNotExist:
@@ -676,18 +688,24 @@ def virtual_node_resource_handler(request, virtual_node_id):
         del response['Content-Type']
         return response
     
-def virtual_nodegroup_collection_handler(request):
+def virtual_nodegroup_collection_handler(request, experiment_id):
     
     allowed_methods = ['GET', 'POST']
     
+    try:
+        experiment = Experiment.objects.get(id = experiment_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+    
     if request.method == 'GET':
         
-        virtual_nodegroups = VirtualNodeGroup.objects.all()
-        
-        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
-            virtual_nodegroups = virtual_nodegroups.filter(experiment = Experiment.objects.get(id = request.GET['experiment']))
+        virtual_nodegroups = VirtualNodeGroup.objects.filter(experiment = experiment)
             
-        virtual_nodegroup_list = [ vng.to_dict(head_only = True) for vng in virtual_nodegroups ]
+        virtual_nodegroup_list = [ vng.to_dict() for vng in virtual_nodegroups ]
         
         # 200
         response = HttpResponse()
@@ -704,7 +722,7 @@ def virtual_nodegroup_collection_handler(request):
                 id = generate_id(),
                 name = virtual_nodegroup_dict['name'],
                 description = virtual_nodegroup_dict['description'],
-                experiment = Experiment.objects.get(id = virtual_nodegroup_dict['experiment']))
+                experiment = experiment)
             virtual_nodegroup.save()
             
             for virtual_node_id in virtual_nodegroup_dict['virtual_nodes']:
@@ -734,13 +752,14 @@ def virtual_nodegroup_collection_handler(request):
         del response['Content-Type']
         return response
     
-def virtual_nodegroup_resource_handler(request, virtual_nodegroup_id):
+def virtual_nodegroup_resource_handler(request, experiment_id, virtual_nodegroup_id):
     
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
         virtual_nodegroup = VirtualNodeGroup.objects.get(id = virtual_nodegroup_id)
-    
+        experiment = Experiment.objects.get(id = experiment_id)
+
     except ObjectDoesNotExist:
         # 404
         response = HttpResponseNotFound()
@@ -805,18 +824,29 @@ def virtual_nodegroup_resource_handler(request, virtual_nodegroup_id):
         del response['Content-Type']
         return response
 
-def image_collection_handler(request):
+def image_collection_handler(request, experiment_id):
     
     allowed_methods = ['GET', 'POST']
     
+    try:
+        experiment = Experiment.objects.get(id = experiment_id)
+        
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+    
     if request.method == 'GET':
         
-        collection_list = [ resource_model.to_dict(head_only = True) for resource_model in Image.objects.all() ]
+        images = Image.objects.filter(experiment = experiment)
+        
+        image_list = [ i.to_dict() for i in images ]
         
         # 200
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(serialize(collection_list))
+        response.write(serialize(image_list))
         return response
     
     if request.method == 'POST':
@@ -828,7 +858,7 @@ def image_collection_handler(request):
                 id = generate_id(),
                 name = image_dict['name'],
                 description = image_dict['description'],
-                experiment = Experiment.objects.get(id = image_dict['experiment'])
+                experiment = experiment,
             )
             
             image.save()
@@ -857,12 +887,13 @@ def image_collection_handler(request):
         del response['Content-Type']
         return response
     
-def image_resource_handler(request, image_id):
+def image_resource_handler(request, experiment_id, image_id):
     
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
         image = Image.objects.get(id = image_id)
+        experiment = Experiment.objects.get(id = experiment_id)
     
     except ObjectDoesNotExist:
         # 404
@@ -876,9 +907,9 @@ def image_resource_handler(request, image_id):
         response['Content-Type'] = 'application/json'
         
         image_dict = image.to_dict()
-        upload_url, upload_data = prepare_upload(request, '/images/%s/upload' % image_id)
+        upload_url, upload_data = prepare_upload(request, '/experiments/%s/images/%s/upload' % (experiment_id, image_id))
         image_dict['upload'] = upload_url
-        image_dict['download'] = build_url(path = '/images/%s/download' % image_id)
+        image_dict['download'] = build_url(path = '/experiments/%s/images/%s/download' % (experiment_id, image_id))
         response.write(serialize(image_dict))
         
         return response
@@ -929,11 +960,12 @@ def image_resource_handler(request, image_id):
         return response
 
 
-def imagefile_upload_handler(request, image_id):
+def imagefile_upload_handler(request, experiment_id, image_id):
     
     allowed_methods = ['POST']
     
     try:
+        experiment = Experiment.objects.get(id = experiment_id)
         image = Image.objects.get(id = image_id)
     
     except ObjectDoesNotExist:
@@ -950,67 +982,8 @@ def imagefile_upload_handler(request, image_id):
             image.file = imagefile            
             image.save()
             
-            ###############################################################################################           
-            ################################## TO BE REMOVED - TEST ONLY ##################################
-            ###############################################################################################
-            
-            from google.appengine.ext import blobstore
-            
-            from filetransfers.backends.default import ChunkedFile
-            from poster.encode import multipart_encode, MultipartParam
-            from poster.streaminghttp import register_openers
-            import urllib2
-            
-            SERVER_URL = 'http://localhost:8001'
-            
-            h = httplib2.Http()
-    
-            logging.info('getting the testbed resource...')
-            response, content = h.request(uri=SERVER_URL, method='GET', body='')
-            assert response.status == 200
-            logging.info('%d %s' % (response.status, response.reason))
-            testbed_dict = json.loads(content)
-            logging.debug(testbed_dict)
-        
-            image_dict = {
-                    'name' : image.name,
-                    'description' : image.description,
-                }
-                
-            logging.info('creating a new image...')
-            response, content = h.request(uri=testbed_dict['images'], method='POST', body=json.dumps(image_dict))
-            assert response.status == 201
-            logging.info('%d %s' % (response.status, response.reason))
-            image_uri = response['content-location']
-            logging.debug(image_uri)
-            
-            logging.info('getting the information about the image...')
-            response, content = h.request(uri=image_uri, method='GET', body='')
-            assert response.status == 200
-            logging.info('%d %s' % (response.status, response.reason))
-            image_dict= json.loads(content)
-            logging.debug(image_dict)
-            
-            blob_key = image.file.file.blobstore_info.key()
-            blob_info = blobstore.BlobInfo(blob_key)
-            blob_reader = blobstore.BlobReader(blob_key) # file object
-            content = blobstore.fetch_data(blob_info, 0, blobstore.MAX_BLOB_FETCH_SIZE-1) # file content
-            
-            logging.info('uploading the actual image file...')
-            register_openers()
-            
-            image_param = MultipartParam(name='imagefile', filetype='application/octet-stream', value = blob_reader.read())            
-            datagen, headers = multipart_encode([image_param])
-            request = urllib2.Request(image_dict['upload_to'], datagen, headers)
-            logging.debug(urllib2.urlopen(request).read())
-            logging.info('200 OK')
-            
-            ###############################################################################################           
-            ################################## TO BE REMOVED - TEST ONLY ##################################
-            ###############################################################################################
-            
             # 200
-            response = HttpResponseRedirect('/images/%s' % image_id)
+            response = HttpResponseRedirect('/experiments/%s/images/%s' % (experiment_id, image_id))
             return response
         
         except None:
@@ -1031,11 +1004,12 @@ def imagefile_upload_handler(request, image_id):
         del response['Content-Type']
         return response
     
-def imagefile_download_handler(request, image_id):
+def imagefile_download_handler(request, experiment_id, image_id):
     
     allowed_methods = ['GET']
     
     try:
+        experiment = Experiment.objects.get(id = experiment_id)
         image = Image.objects.get(id = image_id)
     
     except ObjectDoesNotExist:
@@ -1060,21 +1034,27 @@ def imagefile_download_handler(request, image_id):
         del response['Content-Type']
         return response
 
-def virtual_task_collection_handler(request):
+def virtual_task_collection_handler(request, experiment_id):
 
     allowed_methods = ['GET', 'POST']
+    
+    try:
+        experiment = Experiment.objects.get(id = experiment_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
 
     if request.method == 'GET':
 
-        virtual_tasks = VirtualTask.objects.all()
+        virtual_tasks = VirtualTask.objects.filter(experiment = experiment)
 
         if 'name' in request.GET and not (request.GET['name'] is None):
             virtual_tasks = virtual_tasks.filter(name = request.GET['name'])
 
-        if 'experiment' in request.GET and not (request.GET['experiment'] is None):
-            virtual_tasks = virtual_tasks.filter(experiment = Experiment.objects.get(id = request.GET['experiment']))
-
-        virtual_task_list = [ vt.to_dict(head_only = True) for vt in virtual_tasks ]
+        virtual_task_list = [ vt.to_dict() for vt in virtual_tasks ]
 
         # 200
         response = HttpResponse()
@@ -1091,7 +1071,7 @@ def virtual_task_collection_handler(request):
                 id = generate_id(),
                 name = virtual_task_dict['name'],
                 description = virtual_task_dict['description'],
-                experiment = Experiment.objects.get(id = virtual_task_dict['experiment']),
+                experiment = experiment,
                 method = virtual_task_dict['method'],
                 target = virtual_task_dict['target']
             )
@@ -1121,11 +1101,12 @@ def virtual_task_collection_handler(request):
         del response['Content-Type']
         return response
 
-def virtual_task_resource_handler(request, virtual_task_id):
+def virtual_task_resource_handler(request, experiment_id, virtual_task_id):
 
     allowed_methods = ['GET', 'PUT', 'DELETE']
 
     try:
+        experiment = Experiment.objects.get(id = experiment_id)
         virtual_task = VirtualTask.objects.get(id = virtual_task_id)
 
     except ObjectDoesNotExist:
@@ -1180,11 +1161,12 @@ def virtual_task_resource_handler(request, virtual_task_id):
         return response
 
     
-def image_resource_in_virtual_node_handler(request, virtual_node_id, image_id):
+def image_resource_in_virtual_node_handler(request, experiment_id, virtual_node_id, image_id):
     
     allowed_methods = ['PUT', 'DELETE']
     
     try:
+        experiment = Experiment.objects.get(id = experiment_id)
         node  = VirtualNode.objects.get(id = virtual_node_id)
         image = Image.objects.get(id = image_id)
     
@@ -1226,11 +1208,12 @@ def image_resource_in_virtual_node_handler(request, virtual_node_id, image_id):
         del response['Content-Type']
         return response
     
-def image_resource_in_virtual_nodegroup_handler(request, virtual_nodegroup_id, image_id):
+def image_resource_in_virtual_nodegroup_handler(request, experiment_id, virtual_nodegroup_id, image_id):
     
     allowed_methods = ['PUT', 'DELETE']
     
     try:
+        experiment = Experiment.objects.get(id = experiment_id)
         virtual_nodegroup  = VirtualNodeGroup.objects.get(id = virtual_nodegroup_id)
         image = Image.objects.get(id = image_id)
     
@@ -1324,7 +1307,7 @@ def job_collection_handler(request):
                 job.description = job_dict['description']
         
         jobs = Job.objects.all()
-        job_list = [ j.to_dict(head_only = True) for j in jobs ]
+        job_list = [ j.to_dict() for j in jobs ]
         
         # 200
         response = HttpResponse()
@@ -1343,3 +1326,68 @@ def job_collection_handler(request):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
+    
+def job_resource_handler(request, job_id):
+    
+    allowed_methods = ['GET']
+    
+    if request.method == 'GET':
+        
+        if 'testbed' in request.GET and not (request.GET['testbed'] is None):
+            testbed = Testbed.objects.get(id = request.GET['testbed'])
+            print testbed.server_url + 'jobs/?'
+            job_uri = build_url(path = testbed.server_url + 'jobs/?')
+            
+        if 'supports_experiment' in request.GET and not (request.GET['supports_experiment'] is None):
+            experiment = Experiment.objects.get(id = request.GET['supports_experiment'])
+            
+        if 'date_from' in request.GET and not (request.GET['date_from'] is None):
+            date_from = request.GET['date_from']
+            job_uri = job_uri + 'date_from=' + date_from
+            
+        if 'date_to' in request.GET and not (request.GET['date_to'] is None):
+            date_to = request.GET['date_to']
+            job_uri = job_uri + 'date_to=' + date_to
+        
+        testbed_proxy = httplib2.Http()
+        # testbed_proxy.add_credentials('name', 'password')
+        response, content = testbed_proxy.request(uri=job_uri, method='GET', body='')
+        assert response.status == 200
+        job_list = json.loads(content)
+        
+        for job_dict in job_list:
+            job, created = Job.objects.get_or_create(
+                id = job_dict['id'],
+                defaults = {
+                    'name' : job_dict['name'],
+                    'description' : job_dict['description'],
+                    'datetime_from' : utc_string_to_utc_datetime(job_dict['datetime_from']),
+                    'datetime_to' : utc_string_to_utc_datetime(job_dict['datetime_to']),
+                    'testbed' : testbed
+                }
+            )
+            if not created:
+                job.name = job_dict['name']
+                job.description = job_dict['description']
+        
+        jobs = Job.objects.all()
+        job_list = [ j.to_dict() for j in jobs ]
+        
+        # 200
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(job_list))
+        return response
+        
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+

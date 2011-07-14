@@ -25,11 +25,6 @@ indexes:
   - name: __key__
     direction: desc
 
-- kind: api_image
-  properties:
-  - name: __key__
-    direction: desc
-
 - kind: api_propertyset
   properties:
   - name: __key__
@@ -44,6 +39,21 @@ indexes:
   properties:
   - name: __key__
     direction: desc
+    
+- kind: api_image
+  properties:
+  - name: __key__
+    direction: desc
+    
+- kind: api_virtualtask
+  properties:
+  - name: __key__
+    direction: desc
+    
+- kind: api_job
+  properties:
+  - name: __key__
+    direction: desc
 
 - kind: api_virtualnodegroup2virtualnode
   properties:
@@ -51,11 +61,6 @@ indexes:
     direction: desc
 
 - kind: api_testbed2platform
-  properties:
-  - name: __key__
-    direction: desc
-
-- kind: api_job
   properties:
   - name: __key__
     direction: desc

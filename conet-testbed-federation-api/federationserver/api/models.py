@@ -1,18 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-try:
-    from federationserver.settings import *
-    from federationserver.utils import *
-except ImportError:
-    from settings import *
-    from utils import *
-
+from settings import *
+from utils import *
 
 class Resource(models.Model):
     class Meta:
         abstract = True
-
 
 class Federation(Resource):
     name = models.CharField(max_length=255, verbose_name='Name')
@@ -22,29 +15,23 @@ class Federation(Resource):
         return self.name
         
     def get_absolute_url(self):
-        return "/"
+        return '/'
         
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url()
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        if not head_only:
-            resource['description'] = self.description
-            resource['testbeds'] = build_url(path = '/testbeds/')
-            resource['platforms'] = build_url(path = '/platforms/')
-            resource['projects'] = build_url(path = '/projects/')
-            resource['experiments'] = build_url(path = '/experiments/')
-            resource['property_sets'] = build_url(path = '/property-sets/')
-            resource['virtual_nodes'] = build_url(path = '/virtual-nodes/')
-            resource['virtual_nodegroups'] = build_url(path = '/virtual-nodegroups/')
-            resource['virtual_tasks'] = build_url(path = '/virtual-tasks/')
-            resource['images'] = build_url(path = '/images/')
-            resource['jobs'] = build_url(path = '/jobs/')
-        return resource
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url()
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['description'] = self.description
+        r['testbeds'] = build_url(path = '/testbeds/')
+        r['platforms'] = build_url(path = '/platforms/')
+        r['projects'] = build_url(path = '/projects/')
+        r['experiments'] = build_url(path = '/experiments/')
+        r['jobs'] = build_url(path = '/jobs/')
+        return r
         
     class Meta:
-        verbose_name = "Federation"
+        verbose_name = 'Federation'
         verbose_name_plural = verbose_name
 
 
@@ -59,23 +46,22 @@ class Project(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return "/projects/%s" % self.id
+        return '/projects/%s' % (self.id, )
 
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        resource['id'] = self.id
-        if not head_only:
-            resource['description'] = self.description
-            resource['experiments'] = [ experiment.to_dict(head_only = True) for experiment in self.experiments.all() ]
-            resource['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            resource['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
-        return resource
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id
+        r['description'] = self.description
+        r['experiments'] = [ experiment.to_dict() for experiment in self.experiments.all() ]
+        r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
+        r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+        return r
 
     class Meta:
-        verbose_name = "Project"
+        verbose_name = 'Project'
         verbose_name_plural = verbose_name +'s'
 
 
@@ -91,28 +77,27 @@ class Experiment(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return "/experiments/%s" % self.id
+        return '/experiments/%s' % (self.id, )
 
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        resource['id'] = self.id
-        if not head_only:
-            resource['description'] = self.description
-            resource['project'] = build_url(path = self.project.get_absolute_url())
-            resource['property_sets'] = [ ps.to_dict(head_only = True) for ps in self.property_sets.all() ]
-            resource['virtual_nodes'] = [ vn.to_dict(head_only = True) for vn in self.virtual_nodes.all() ]
-            resource['node_count'] = len(resource['virtual_nodes'])
-            resource['virtual_nodegroups'] = [ vng.to_dict(head_only = True) for vng in self.virtual_nodegroups.all() ]
-            resource['images'] = [ i.to_dict(head_only = True) for i in self.images.all() ]
-            resource['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            resource['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
-        return resource
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id
+        r['description'] = self.description
+        r['project'] = build_url(path = self.project.get_absolute_url())
+        r['property_sets'] = [ ps.to_dict() for ps in self.property_sets.all() ]
+        r['virtual_nodes'] = [ vn.to_dict() for vn in self.virtual_nodes.all() ]
+        r['node_count'] = len(r['virtual_nodes'])
+        r['virtual_nodegroups'] = [ vng.to_dict() for vng in self.virtual_nodegroups.all() ]
+        r['images'] = [ i.to_dict() for i in self.images.all() ]
+        r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
+        r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+        return r
     
     class Meta:
-        verbose_name = "Experiment"
+        verbose_name = 'Experiment'
         verbose_name_plural = verbose_name +'s'
         
 
@@ -128,26 +113,25 @@ class Testbed(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return "/testbeds/%s" % self.id
+        return '/testbeds/%s' % (self.id, )
         
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        resource['id'] = self.id
-        if not head_only:
-            resource['organization'] = self.organization
-            resource['description'] = self.description
-            resource['server_url'] = self.server_url
-            resource['node_count'] = self.node_count
-            # resource['node_count_per_platform'] = [ { "platform" : t2p.platform.to_dict(head_only=True), "node_count" : t2p.node_count } for t2p in self.platforms.all()]
-            resource['platforms'] = [ t2p.platform.to_dict(head_only=True) for t2p in self.platforms.all() ]
-            resource['jobs'] = [ j.to_dict(head_only=True) for j in self.jobs.all() ]
-        return resource
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id
+        r['organization'] = self.organization
+        r['description'] = self.description
+        r['server_url'] = self.server_url
+        r['node_count'] = self.node_count
+        # r['node_count_per_platform'] = [ { 'platform' : t2p.platform.to_dict(head_only=True), 'node_count' : t2p.node_count } for t2p in self.platforms.all()]
+        r['platforms'] = [ t2p.platform.to_dict() for t2p in self.platforms.all() ]
+        r['jobs'] = [ j.to_dict() for j in self.jobs.all() ]
+        return r
         
     class Meta:
-        verbose_name = "Testbed"
+        verbose_name = 'Testbed'
         verbose_name_plural = verbose_name +'s'
 
 
@@ -162,54 +146,19 @@ class Platform(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return "/platforms/%s" % self.id
+        return '/platforms/%s' % (self.id, )
 
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        resource['id'] = self.id
-        if not head_only:
-            resource['description'] = self.description
-        return resource
-
-    class Meta:
-        verbose_name = "Platform"
-        
-def update_filename(instance, filename):
-    filepath = 'uploads/images'
-    filename = instance.id
-    return os.path.join(filepath, filename)
-
-# IMAGE
-class Image(Resource):
-    id = models.CharField(max_length=255, primary_key=True)
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    experiment = models.ForeignKey(Experiment, related_name='images', verbose_name='Experiment', on_delete=models.PROTECT)
-    file = models.FileField(upload_to=update_filename, null=True, blank=True)
-    
-    def __unicode__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return "/images/%s" % self.id
-
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        resource['id'] = self.id
-        if not head_only:
-            resource['description'] = self.description
-            resource['experiment'] = build_url(path = self.experiment.get_absolute_url()) 
-        return resource
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id
+        r['description'] = self.description
+        return r
 
     class Meta:
-        verbose_name = "Image"
-        verbose_name_plural = verbose_name +'s'
+        verbose_name = 'Platform'
 
 class PropertySet(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
@@ -225,26 +174,58 @@ class PropertySet(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return "/property-sets/%s" % self.id
+        return '/experiments/%s/property-sets/%s' % (self.experiment.id, self.id)
 
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        resource['id'] = self.id
-        if not head_only:
-            resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
-            resource['description'] = self.description
-            resource['platform'] = build_url(path = self.platform.get_absolute_url())
-            resource['node_count'] = self.node_count
-            resource['virtual_nodes'] = [ virtual_node.to_dict(head_only = True) for virtual_node in self.virtual_nodes.all() ]
-            resource['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            resource['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
-        return resource
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id
+        r['experiment'] = build_url(path = self.experiment.get_absolute_url())
+        r['description'] = self.description
+        r['platform'] = build_url(path = self.platform.get_absolute_url())
+        r['node_count'] = self.node_count
+        r['virtual_nodes'] = [ virtual_node.to_dict() for virtual_node in self.virtual_nodes.all() ]
+        r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
+        r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+        return r
 
     class Meta:
-        verbose_name = "Property Set"
+        verbose_name = 'Property Set'
+        verbose_name_plural = verbose_name +'s'
+        
+        
+def update_filename(instance, filename):
+    filepath = 'uploads/images'
+    filename = instance.id
+    return os.path.join(filepath, filename)
+
+class Image(Resource):
+    id = models.CharField(max_length=255, primary_key=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    experiment = models.ForeignKey(Experiment, related_name='images', verbose_name='Experiment', on_delete=models.PROTECT)
+    file = models.FileField(upload_to=update_filename, null=True, blank=True)
+    
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return '/experiments/%s/images/%s' % (self.experiment.id, self.id)
+
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id
+        r['description'] = self.description
+        r['experiment'] = build_url(path = self.experiment.get_absolute_url()) 
+        return r
+
+    class Meta:
+        verbose_name = 'Image'
         verbose_name_plural = verbose_name +'s'
         
 
@@ -262,31 +243,30 @@ class VirtualNode(Resource):
         return self.id
 
     def get_absolute_url(self):
-        return "/virtual-nodes/%s" % self.id
+        return '/experiments/%s/virtual-nodes/%s' % (self.experiment.id, self.id)
 
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        resource['id'] = self.id
-        resource['property_set'] = build_url(path = self.property_set.get_absolute_url())
-        if not head_only:
-            resource['platform'] = build_url(path = self.platform.get_absolute_url())
-            resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
-            resource['property_set'] = build_url(path = self.property_set.get_absolute_url())
-            if self.image:
-                resource['image'] = build_url(path = self.image.get_absolute_url())
-            else:
-                resource['image'] = None
-            resource['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            resource['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
-        return resource
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id
+        r['property_set'] = build_url(path = self.property_set.get_absolute_url())
+        r['platform'] = build_url(path = self.platform.get_absolute_url())
+        r['experiment'] = build_url(path = self.experiment.get_absolute_url())
+        r['property_set'] = build_url(path = self.property_set.get_absolute_url())
+        if self.image:
+            r['image'] = build_url(path = self.image.get_absolute_url())
+        else:
+            r['image'] = None
+        r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
+        r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+        return r
     
     class Meta:
-        verbose_name = "Virtual Node"
+        verbose_name = 'Virtual Node'
         verbose_name_plural = verbose_name +'s'
-
+        
 
 class VirtualNodeGroup(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
@@ -301,38 +281,39 @@ class VirtualNodeGroup(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return "/virtual-nodegroups/%s" % self.id
+        return '/experiments/%s/virtual-nodegroups/%s' % (self.experiment.id, self.id)
 
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        resource['id'] = self.id
-        if not head_only:
-            resource['description'] = self.description
-            resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
-            resource['virtual_nodes'] = [ vng2vn.virtual_node.to_dict(head_only=True) for vng2vn in self.virtual_nodes.all()]
-            resource['node_count'] = len(resource['virtual_nodes'])
-            if self.image:
-                resource['image'] = build_url(path = self.image.get_absolute_url())
-            else:
-                resource['image'] = None
-            resource['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            resource['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
-        return resource
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id
+        r['description'] = self.description
+        r['experiment'] = build_url(path = self.experiment.get_absolute_url())
+        r['virtual_nodes'] = [ vng2vn.virtual_node.to_dict() for vng2vn in self.virtual_nodes.all()]
+        r['node_count'] = len(r['virtual_nodes'])
+        if self.image:
+            r['image'] = build_url(path = self.image.get_absolute_url())
+        else:
+            r['image'] = None
+        r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
+        r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+        return r
         
     class Meta:
-        verbose_name = "Virtual NodeGroup"
+        verbose_name = 'Virtual NodeGroup'
         verbose_name_plural = verbose_name +'s'
         
+
 class VirtualTask(Resource):
     id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
     method = models.CharField(max_length=10)
     target = models.URLField()
-    experiment = models.ForeignKey(Experiment, blank=True, null=True, related_name='virtual_tasks', verbose_name='Experiment', on_delete=models.PROTECT)
+    payload = models.TextField()
+    experiment = models.ForeignKey(Experiment, related_name='virtual_tasks', verbose_name='Experiment', on_delete=models.PROTECT)
     datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
     datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
     
@@ -340,29 +321,26 @@ class VirtualTask(Resource):
         return self.id
 
     def get_absolute_url(self):
-        return "/virtual-tasks/%s" % self.id
+        return '/experiments/%s/virtual-tasks/%s' % (self.experiment.id, self.id)
 
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        resource['id'] = self.id
-        if not head_only:
-            resource['description'] = self.description
-            resource['method'] = self.method
-            resource['target'] = self.target
-            if self.experiment:
-                resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
-            resource['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            resource['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
-        return resource
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id
+        r['description'] = self.description
+        r['method'] = self.method
+        r['target'] = self.target
+        r['experiment'] = build_url(path = self.experiment.get_absolute_url())
+        r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
+        r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+        return r
 
     class Meta:
-        verbose_name = "Virtual Task"
+        verbose_name = 'Virtual Task'
         verbose_name_plural = verbose_name +'s'
-    
-        
+
 class Job(Resource):
     id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
@@ -378,30 +356,28 @@ class Job(Resource):
         return self.id
 
     def get_absolute_url(self):
-        return "/jobs/%s" % self.id
+        return '/jobs/%s' % (self.id, )
 
-    def to_dict(self, head_only = False):
-        resource = dict()
-        resource['uri'] = build_url(path = self.get_absolute_url())
-        resource['media_type'] = MEDIA_TYPE
-        resource['name'] = self.name
-        resource['id'] = self.id
-        if not head_only:
-            resource['description'] = self.description
-            resource['datetime_from'] = utc_datetime_to_utc_string(self.datetime_from)
-            resource['datetime_to'] = utc_datetime_to_utc_string(self.datetime_to)
-            resource['testbed'] = build_url(path = self.testbed.get_absolute_url())
-            if self.experiment:
-                resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
-            else:
-                resource['experiment'] = None
-            # resource['nodes'] = 
-            resource['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            resource['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
-        return resource
+    def to_dict(self):
+        r = dict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id
+        r['description'] = self.description
+        r['datetime_from'] = utc_datetime_to_utc_string(self.datetime_from)
+        r['datetime_to'] = utc_datetime_to_utc_string(self.datetime_to)
+        r['testbed'] = build_url(path = self.testbed.get_absolute_url())
+        if self.experiment:
+            r['experiment'] = build_url(path = self.experiment.get_absolute_url())
+        else:
+            r['experiment'] = None
+        r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
+        r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+        return r
 
     class Meta:
-        verbose_name = "Job"
+        verbose_name = 'Job'
         verbose_name_plural = verbose_name +'s'
         
         
@@ -413,7 +389,7 @@ class VirtualNodeGroup2VirtualNode(models.Model):
         return u'%s %s' % (self.virtual_nodegroup, self.virtual_node)
     
     class Meta:
-        verbose_name = "VirtualNodeGroup2VirtualNode"
+        verbose_name = 'VirtualNodeGroup2VirtualNode'
         verbose_name_plural = verbose_name +'s'
 
 class Testbed2Platform(models.Model):
@@ -425,7 +401,7 @@ class Testbed2Platform(models.Model):
         return '%s %s' % (self.testbed, self.platform)
     
     class Meta:
-        verbose_name = "Testbed2Platform"
+        verbose_name = 'Testbed2Platform'
         verbose_name_plural = verbose_name +'s'
         
 #class Job2Node(models.Model):
@@ -436,5 +412,5 @@ class Testbed2Platform(models.Model):
 #        return u'%s %s' % (self.job, self.node)
 #    
 #    class Meta:
-#        verbose_name = "Job2Node"
+#        verbose_name = 'Job2Node'
 #        verbose_name_plural = verbose_name +'s'
