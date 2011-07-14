@@ -48,7 +48,7 @@ $(document).ready(function() {
 					<tr><td><a href="experiments.php"  >Experiments</a></td></tr>	
 					<tr><td><a href="propertySets.php" >Property Sets</a></td></tr>
 					<tr><td><a href="virtualNodeGroups.php" class="current-selected">Virtual Node Groups</a></td></tr>
-					<tr><td><a href="<?php echo ROOTURL."/testbeds" ?>" id="explore_testbed">Explore Testbeds</a></td></tr>														
+					<tr><td><a href="testbed.php" >Explore Testbeds</a></td></tr>														
 					<tr><td><a href="<?php echo ROOTURL."/testbeds-find" ?>" id="find_testbed">Find Testbed</a></td></tr>	
 				</table>
     </div>
@@ -81,6 +81,6 @@ $(document).ready(function() {
     <div class="clean-float"></div>
 <!--the .body-container ends--></div>
 	<hr style="margin:0px;" />
-
+	<div class="copyright"><span>&copy;2011 Conet Testbed Federation</span></div>
 </body>
 </html>

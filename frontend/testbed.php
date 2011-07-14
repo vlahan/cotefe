@@ -4,7 +4,7 @@ include_once 'scripts/functions.php';
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="content-cype" content="text/html; charset=utf-8" />
 
 <title>Cotefe</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
@@ -13,7 +13,8 @@ include_once 'scripts/functions.php';
 <script type="text/javascript" src="scripts/cotefev2.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {	
-	Project();	
+	progressBar();
+	var  response=sendAjax("List=testbeds","html","#content",function(args){loadtestbeds();});	
  });
 </script>
 
@@ -41,11 +42,11 @@ $(document).ready(function() {
     	<h3>Dashboard</h3>
         <hr />
         <table class="left-nav">				
-					<tr><td><a href="dashboard.php" class="current-selected" >Projects</a></td></tr>
-					<tr><td><a href="experiments.php" >Experiments</a></td></tr>	
+					<tr><td><a href="dashboard.php"  >Projects</a></td></tr>
+					<tr><td><a href="experiments.php"  >Experiments</a></td></tr>	
 					<tr><td><a href="propertySets.php" >Property Sets</a></td></tr>
 					<tr><td><a href="virtualNodeGroups.php" >Virtual Node Groups</a></td></tr>
-					<tr><td><a href="testbed.php" >Explore Testbeds</a></td></tr>														
+					<tr><td><a href="testbed.php" class="current-selected">Explore Testbeds</a></td></tr>														
 					<tr><td><a href="<?php echo ROOTURL."/testbeds-find" ?>" id="find_testbed">Find Testbed</a></td></tr>	
 				</table>
     </div>
@@ -56,9 +57,9 @@ $(document).ready(function() {
         	<div id="content">
         	<p>The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities.	</p>
             </div>
-            <div id="editingfield">
+            <div id="editingfield" style="display:none;">
            			<ul class="tabs">
-                        <li><a href="#tab1">Add/Edit Project</a></li>
+                        <li><a href="#tab1">Add/Edit Experiments</a></li>
                         <li><a href="#tab2">Raw Json</a></li>
                     </ul>
                     
@@ -78,6 +79,6 @@ $(document).ready(function() {
     <div class="clean-float"></div>
 <!--the .body-container ends--></div>
 	<hr style="margin:0px;" />
-	<div class="copyright"><span>&copy;2011 Conet Testbed Federation</span></div>
+
 </body>
 </html>

@@ -36,6 +36,7 @@ if(isset($_POST) &&  !empty($_POST) )
 									$exp_count=count($project_info["experiments"]);
 									$records[$i][0]['text']=$project_info['name'];
 									$records[$i][0]['attribute']='style="padding-left:10px;"';
+									$records[$i][0]['a']='experiments.php?pid='.$project_info['id'];
 									$records[$i][1]['text']=$exp_count;
 									$records[$i][1]['attribute']='style="text-align:center;"';
 									$records[$i][2]['text']='<a class="edit" href="'.$project_info['uri'].'" ><img src="images/edit.png" /></a>';
@@ -50,12 +51,12 @@ if(isset($_POST) &&  !empty($_POST) )
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
 								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']='';
 								$obj=new Createtable($title,$header,$records);
-								header('content-type: text/html');
+								
 								echo $obj->render();
 							}
 							else
 							{
-								header('content-type: text/html');
+								
 								echo "You have no projects . Lets create One. ".'<a class="add-links" href="'.ROOTURL.'/projects" " id="create_new_project" >Add New Project</a>';
 							}
 						    break;
@@ -105,12 +106,12 @@ if(isset($_POST) &&  !empty($_POST) )
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
 								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']='';
 								$obj=new Createtable($title,$header,$records);
-								header('content-type: text/html');
+								
 								echo $obj->render();
 							}
 							else
 							{
-								header('content-type: text/html');
+								
 								echo "You have no Experiments . Lets create one. ".'<a class="add-links" href="'.ROOTURL.'/experiments" " id="create_new_exp" >Add New Experiments</a>';
 							}
 						    break;
@@ -166,12 +167,12 @@ if(isset($_POST) &&  !empty($_POST) )
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
 								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']=$records[$i][5]['text']='';
 								$obj=new Createtable($title,$header,$records);
-								header('content-type: text/html');
+								
 								echo $obj->render();
 							}
 							else
 							{
-								header('content-type: text/html');
+								
 								echo "You have no Property Sets . Lets create one. ".'<a class="add-links" href="'.ROOTURL.'/property-sets" " id="create_new_property_set" >Add New Property Set</a>';
 							}
 						    break;
@@ -190,9 +191,10 @@ if(isset($_POST) &&  !empty($_POST) )
 							$header[3]['attribute']='width="5%"';
 							$header[4]['text']='Delete';
 							$header[4]['attribute']='width="7%"';
-			
+							
 							$records=array();
 							$VirtualNodeGroups=FollowVirtualNodeGroup();
+							
 							if(!empty($VirtualNodeGroups))
 							{
 								$i=0;
@@ -220,37 +222,21 @@ if(isset($_POST) &&  !empty($_POST) )
 								}
 								$records[$i][0]['text']='<a class="add-links" href="'.ROOTURL.'/virtual-nodegroups" " id="create_new_property_set" >Add New Property Set</a>';
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
-								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']=$records[$i][5]['text']='';
+								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']='';
 								$obj=new Createtable($title,$header,$records);
-								header('content-type: text/html');
-								echo $obj->render();
+								
+								//echo $obj->render();
 							}
 							else
 							{
-								header('content-type: text/html');
+								
 								echo "You have no Virtual Node Group . Lets create one. ".'<a class="add-links" href="'.ROOTURL.'/virtual-nodegroups" " id="create_new_virtual_node_group" >Add New Property Set</a>';
 							}
 						    break;
-			
-			
-			
-							/*$html='<h4>Virtual Node Groups</h4><table cellspacing="0"><tr><th width="20%">Name</th><th width="20%">Experiment</th><th width="10%">VN</th><th>Description</th><th width="5%">Edit</th><th width="7%">Delete</th></tr>';
-							$VirtualNodesGroups=FollowVirtualNodeGroup();
-							if(!empty($VirtualNodesGroups))
-							{
-								foreach ($VirtualNodesGroups as $VirtualNodesGroup)
-								{
-									$VirtualNodesGroup_info=json_decode(getUrl($VirtualNodesGroup['uri']),TRUE);
-									$experiment_info=json_decode(getUrl($VirtualNodesGroup_info['experiment']),TRUE);
-															
-									$html.="<td>".$VirtualNodesGroup_info['name'].'</td><td>'.$experiment_info['name'].'</td><td>'.$VirtualNodesGroup_info['node_count'].'</td><td class="description"  >'.shortenString($VirtualNodesGroup_info['description'],50).'</td><td class="center_text" ><a class="edit" href="'.$VirtualNodesGroup_info['uri'].'"><img src="images/edit.png" /></a></td><td class="center_text" ><a class="deleteProject" href="'.$VirtualNodesGroup_info['uri'].'"><img src="images/close.png" /></a></td></tr>';
-								}
-								$html.='<tr><td class="last_row" colspan="6" style="height: 16px;"></td></tr></table> ';
-							}
-							echo $html;
-							break;*/
+							
+							
 			case "testbeds"	:
-							$html='<h4>TestBeds</h4><table cellspacing="0" id="expandable-table"><tr><th width="55%">Name</th><th width="20%">Organization</th><th width="15%">Node Count</th><th width="5%">Link</th><th></th></tr>';
+							$html='<h4>TestBeds</h4><table cellspacing="0" id="expandable-table" class="table-list"><tr><th width="50%" style="text-align:left;padding-left:10px;">Name</th><th width="20%">Organization</th><th width="15%">Node Count</th><th width="5%">Link</th><th></th></tr>';
 							$TestBeds=FollowTestBeds();
 							if(!empty($TestBeds))
 							{
@@ -258,12 +244,12 @@ if(isset($_POST) &&  !empty($_POST) )
 								{
 									$TestBed_info=json_decode(getUrl($TestBed['uri']),TRUE);
 														
-									$html.="<td>".$TestBed_info['name'].'</td><td>'.$TestBed_info['organization'].'</td><td >'.$TestBed_info['node_count'].'</td><td ><a href="'.$TestBed_info['url'].'" target="_new"> Click </a></td><td><div class="arrow"></div></td></tr>';
+									$html.="<td style='text-align:left;padding-left:10px;'>".$TestBed_info['name'].'</td><td>'.$TestBed_info['organization'].'</td><td >'.$TestBed_info['node_count'].'</td><td ><a href="'.$TestBed_info['server_url'].'" target="_new"> Click </a></td><td><div class="arrow"></div></td></tr>';
 									$html.="<td colspan='5'>".$TestBed_info['description']."</td>";
 								}
 								$html.='<tr><td class="last_row" colspan="6" style="height: 16px;"></td></tr></table> ';
 							}
-							header('content-type: text/html');
+							
 							echo $html;
 							break;							
 								

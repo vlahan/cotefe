@@ -262,19 +262,22 @@ function CreatePropertySetForm($url)
 	}
 	else
 	{
-		return "No Experiment Found! Please Create a Experiement";
+		return "No Experiment Found! Please Create an Experiement";
 	}
 }
 function FollowVirtualNode()
 {
 	$root=json_decode(getUrl(ROOTURL),TRUE);
+	
 	$virtual_nodes=json_decode(getUrl($root["virtual_nodes"]),TRUE);
+	
     return $virtual_nodes;
 }
 function getVirtualNodeList($params)
 {
 	$arr=null;
 	$VirtualNodes=FollowVirtualNode();
+	
 	if(!empty($VirtualNodes))
 	{
 		if($params=='count')
@@ -316,12 +319,14 @@ function CreateVNGForm($url)
 {
 	if(getExperimentList()!=null)
 	{
-		if(getVirtualNodeList('count')!=null)
+		$node_num=getVirtualNodeList(null);
+		if(count($node_num)!=null)
 		{
 			if(empty($url))
 			{
 				$html='';
 				$html.=Form::Header('New Virtual Node Group');
+				$html.="<hr/>";
 				$html.=Form::FormStart();
 				$html.=HiddenField::HiddeBox('form-type','VNG');
 				$html.=TextField::TextBox('Virtual Node Group Name : ','name', '');
@@ -330,8 +335,8 @@ function CreateVNGForm($url)
 				
 				//get total VNG
 				$node_pack="<ol id='nodesource' class='ui-selected' >";
-				$no_of_nodes=getVirtualNodeList('count');
-				$node_array=getVirtualNodeList(null);
+				$no_of_nodes=count($node_num);
+				$node_array=$node_num;
 				
 				$propertyset=array();
 				for($i=0;$i<$no_of_nodes;$i++)
@@ -380,7 +385,8 @@ function CreateVNGForm($url)
 				$resource=getUrl($url);
 				$obj=json_decode($resource, true);
 				$html='';
-				$html.=Form::Header('Edit Virtual Node Group');
+				$html.=Form::Header('Update Virtual Node Group');
+				$html.="<hr/>";
 				$html.=Form::FormStart();
 				$html.=HiddenField::HiddeBox('form-type','VNG');
 				$html.=TextField::TextBox('Virtual Node Group Name : ','name', $obj['name']);
@@ -584,6 +590,7 @@ function RESTUrl($url,$method,$data)
 	curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
 	curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($handle, CURLOPT_TIMEOUT,40);
 	
 	switch($method)
 	{

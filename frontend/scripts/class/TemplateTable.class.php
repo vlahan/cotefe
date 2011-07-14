@@ -46,11 +46,17 @@ class CreateTable{
 				{
 					if(!isset($item['attribute']))
 					{
-						$td.="<td  >".$item['text']."</td>";
+						if(!isset($item['a']))
+							{$td.="<td  >".$item['text']."</td>";}
+						else
+							{$td.="<td  ><a href='".$item['a']."'>".$item['text']."</a></td>";	}
 					}
 					else
 					{
-					$td.="<td ".$item['attribute']." >".$item['text']."</td>";
+						if(!isset($item['a']))
+						{	$td.="<td ".$item['attribute']." >".$item['text']."</td>";}
+						else
+						{$td.="<td ".$item['attribute']." ><a href='".$item['a']."'>".$item['text']."</a></td>";}
 					}
 				}
 				$td.="</tr>";

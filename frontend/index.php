@@ -48,6 +48,7 @@
     <div class="clean-float"></div>
 <!--the .body-container ends--></div>
 	<hr style="margin:0px;" />
+    <div class="copyright"><span>&copy;2011 Conet Testbed Federation</span></div>
 
 </body>
 </html>

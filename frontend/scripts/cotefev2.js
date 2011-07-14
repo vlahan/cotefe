@@ -71,7 +71,7 @@ var loadFormProject=function(){
 	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group').die('click');
 	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group').live('click',function(event)
 			{event.preventDefault();event.stopPropagation();		
-				var link=$(this).attr('href');			
+				var link=$(this).attr('href');		
 				var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(arg);});				
 			});
 	 }
@@ -239,13 +239,14 @@ var tabs=function()
 var loadtestbeds=function(){
     
     //$("#expandable-table").jExpand();
-    $("#table-list tr:odd").addClass("odd");
-    $("#table-list tr:odd").css("cursor","pointer");
-    $("#table-list tr:not(.odd)").hide();
-    $("#table-list tr:first-child").show();
-    $("#table-list tr.odd").click(function(){
+	
+    $("#expandable-table tr:odd").addClass("odd");
+    $("#expandable-table tr:odd").css("cursor","pointer");
+    $("#expandable-table tr:not(.odd)").hide();
+    $("#expandable-table tr:first-child").show();
+    $("#expandable-table tr.odd").click(function(){
         $(this).next("tr").toggle();
-        //$(this).find(".arrow").toggleClass("up");
+        $(this).find(".arrow").toggleClass("up");
     });
     
 
