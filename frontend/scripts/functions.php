@@ -587,7 +587,7 @@ function RESTUrl($url,$method,$data)
             set_time_limit(45); 
       } 
 	$headers = array('Accept: application/json','Content-Type: application/json',);
-	$useragent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
+	//$useragent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
 	$useragent="cotefe.minds.website";
 	
 	$handle = curl_init();
@@ -597,7 +597,7 @@ function RESTUrl($url,$method,$data)
 	curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
 	curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($handle, CURLOPT_TIMEOUT,40);
-	curl_setopt($handle, CURLOPT_USERAGENT, $useragent);
+	//curl_setopt($handle, CURLOPT_USERAGENT, $useragent);
 
 	
 	switch($method)
