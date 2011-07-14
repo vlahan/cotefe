@@ -1,3 +1,5 @@
+
+
 try:
     from djangoappengine.settings_base import *
     has_djangoappengine = True
@@ -5,6 +7,7 @@ except ImportError:
     has_djangoappengine = False
     DEBUG = True
     TEMPLATE_DEBUG = DEBUG
+
 
 import os
 
@@ -23,8 +26,8 @@ MANAGERS = ADMINS
 INSTALLED_APPS = (
     'djangotoolbox',
     # 'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    # 'django.contrib.contenttypes',
+    # 'django.contrib.sessions',
     # 'django.contrib.admin',
     # 'django.contrib.databrowse',
     'api',
@@ -35,6 +38,7 @@ if has_djangoappengine:
     INSTALLED_APPS = ('djangoappengine',) + INSTALLED_APPS
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
     # 'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
@@ -65,6 +69,7 @@ try:
 except ImportError:
     pass
     
+
 APPEND_SLASH = True
 
 ############################ NON DJANGO SETTINGS
@@ -77,5 +82,9 @@ JSON_ENSURE_ASCII = True
 UUID_LENGTH = 8
 
 # TESTBED FEDERATION API
-# SERVER_URL = 'http://api.cotefe.net'
-SERVER_URL = 'http://localhost:8080'
+from djangoappengine.utils import on_production_server, have_appserver
+if on_production_server:
+    SERVER_URL = 'http://api.cotefe.net'
+else:
+    SERVER_URL = 'http://localhost:8080'
+
