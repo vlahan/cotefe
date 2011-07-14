@@ -114,7 +114,7 @@ def testbed_resource_handler(request, testbed_id):
         
         testbed_proxy = httplib2.Http()
         # testbed_proxy.add_credentials('name', 'password')
-        response, content = testbed_proxy.request(uri=testbed.url, method='GET', body='')
+        response, content = testbed_proxy.request(uri=testbed.server_url, method='GET', body='')
         assert response.status == 200
         testbed_dict = json.loads(content)
         
