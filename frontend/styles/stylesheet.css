@@ -137,7 +137,7 @@ input[type=submit]:hover,input[type=reset]:hover
 .left-nav tr td a:hover{padding-left:10px;padding-top:5px;background-color: #eaeaea;height:24px;display:block;width:180px;color:#565656;}
 .table-list{width:100%;}
 .table-list tr th{padding-top:5px;padding-bottom:5px;color:#ffffff;background-color:#565656;}
-.table-list tr td{padding-top:5px;padding-bottom:5px;border-top:1px solid #b9b9b9;background-color: #eaeaea;}
+.table-list tr td{padding-top:5px;padding-bottom:5px;border-bottom:1px solid #b9b9b9;background-color: #eaeaea;}
 .table-list a:hover{padding-top:5px;padding-bottom:5px;border-top:1px solid #b9b9b9;background-color: #b9b9b9;}
 .add-links{
 	color:#333333;

@@ -633,4 +633,19 @@ function shortenString($str , $str_length) //get string to be shortened and leng
 	}
 }
 
+
+function urlGenerate($page,$params_n)
+{
+	$params   =$_SERVER['QUERY_STRING'];;
+	echo $params;
+	 if(empty($params))
+	 	$params=$params;
+	 else
+	 {$params.='&'.$params_n;}
+	$currentUrl = $page.'?' . $params;
+	 
+	return $currentUrl;
+}
+
+
 ?>
