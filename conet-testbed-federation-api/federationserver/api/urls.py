@@ -36,7 +36,9 @@ urlpatterns = patterns('',
     
     url(r'^images/$', image_collection_handler),
     url(r'^images/(?P<image_id>\w+)$', image_resource_handler),
-    # url(r'^images/(?P<image_id>\w+)/upload$', imagefile_upload_handler),
+    
+    url(r'^images/(?P<image_id>\w+)/upload$', imagefile_upload_handler),
+    url(r'^images/(?P<image_id>\w+)/download$', imagefile_download_handler),
     
     url(r'^virtual-nodes/(?P<virtual_node_id>\w+)/image/(?P<image_id>\w+)$', image_resource_in_virtual_node_handler),
     url(r'^virtual-nodegroups/(?P<virtual_nodegroup_id>\w+)/image/(?P<image_id>\w+)$', image_resource_in_virtual_nodegroup_handler),

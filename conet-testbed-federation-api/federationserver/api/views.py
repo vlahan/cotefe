@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
-from filetransfers.api import prepare_upload
+from filetransfers.api import prepare_upload, serve_file
 
 try:
     from federationserver.api.models import *
@@ -875,12 +875,11 @@ def image_resource_handler(request, image_id):
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
         
-        response.write(serialize(image.to_dict()))
-        
-        # image_dict = image.to_dict()
-        # upload_url, upload_data = prepare_upload(request, '')
-        # image_dict['upload_to'] = upload_url
-        # response.write(serialize(image_dict))
+        image_dict = image.to_dict()
+        upload_url, upload_data = prepare_upload(request, '/images/%s/upload' % image_id)
+        image_dict['upload'] = upload_url
+        image_dict['download'] = build_url(path = '/images/%s/download' % image_id)
+        response.write(serialize(image_dict))
         
         return response
     
@@ -933,21 +932,85 @@ def image_resource_handler(request, image_id):
 def imagefile_upload_handler(request, image_id):
     
     allowed_methods = ['POST']
+    
+    try:
+        image = Image.objects.get(id = image_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
       
     if request.method == 'POST':
                 
-        try:
+        try:       
             imagefile = request.FILES['imagefile']
-            
-            image = Image.objects.get(id = image_id)
             
             image.file = imagefile            
             image.save()
             
+            ###############################################################################################           
+            ################################## TO BE REMOVED - TEST ONLY ##################################
+            ###############################################################################################
+            
+            from google.appengine.ext import blobstore
+            
+            from filetransfers.backends.default import ChunkedFile
+            from poster.encode import multipart_encode, MultipartParam
+            from poster.streaminghttp import register_openers
+            import urllib2
+            
+            SERVER_URL = 'http://localhost:8001'
+            
+            h = httplib2.Http()
+    
+            logging.info('getting the testbed resource...')
+            response, content = h.request(uri=SERVER_URL, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            testbed_dict = json.loads(content)
+            logging.debug(testbed_dict)
+        
+            image_dict = {
+                    'name' : image.name,
+                    'description' : image.description,
+                }
+                
+            logging.info('creating a new image...')
+            response, content = h.request(uri=testbed_dict['images'], method='POST', body=json.dumps(image_dict))
+            assert response.status == 201
+            logging.info('%d %s' % (response.status, response.reason))
+            image_uri = response['content-location']
+            logging.debug(image_uri)
+            
+            logging.info('getting the information about the image...')
+            response, content = h.request(uri=image_uri, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            image_dict= json.loads(content)
+            logging.debug(image_dict)
+            
+            blob_key = image.file.file.blobstore_info.key()
+            blob_info = blobstore.BlobInfo(blob_key)
+            blob_reader = blobstore.BlobReader(blob_key) # file object
+            content = blobstore.fetch_data(blob_info, 0, blobstore.MAX_BLOB_FETCH_SIZE-1) # file content
+            
+            logging.info('uploading the actual image file...')
+            register_openers()
+            
+            image_param = MultipartParam(name='imagefile', filetype='application/octet-stream', value = blob_reader.read())            
+            datagen, headers = multipart_encode([image_param])
+            request = urllib2.Request(image_dict['upload_to'], datagen, headers)
+            logging.debug(urllib2.urlopen(request).read())
+            logging.info('200 OK')
+            
+            ###############################################################################################           
+            ################################## TO BE REMOVED - TEST ONLY ##################################
+            ###############################################################################################
+            
             # 200
-            response = HttpResponse()
-            response['Content-Type'] = 'application/json'
-            response.write(serialize(image.to_dict()))
+            response = HttpResponseRedirect('/images/%s' % image_id)
             return response
         
         except None:
@@ -955,6 +1018,35 @@ def imagefile_upload_handler(request, image_id):
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
             return response
+        
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+def imagefile_download_handler(request, image_id):
+    
+    allowed_methods = ['GET']
+    
+    try:
+        image = Image.objects.get(id = image_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+      
+    if request.method == 'GET':
+                
+        return serve_file(request, image.file, save_as=True, content_type='application/octet-stream')
         
     if request.method == 'OPTIONS':
         # 204

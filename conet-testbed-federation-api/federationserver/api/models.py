@@ -177,9 +177,8 @@ class Platform(Resource):
     class Meta:
         verbose_name = "Platform"
         
-# returns random filename
 def update_filename(instance, filename):
-    filepath = 'images'
+    filepath = 'uploads/images'
     filename = instance.id
     return os.path.join(filepath, filename)
 
@@ -188,9 +187,9 @@ class Image(Resource):
     id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
-    file = models.FileField(upload_to=update_filename, null=True, blank=True)
     experiment = models.ForeignKey(Experiment, related_name='images', verbose_name='Experiment', on_delete=models.PROTECT)
-
+    file = models.FileField(upload_to=update_filename, null=True, blank=True)
+    
     def __unicode__(self):
         return self.name
 
@@ -205,14 +204,7 @@ class Image(Resource):
         resource['id'] = self.id
         if not head_only:
             resource['description'] = self.description
-            resource['experiment'] = build_url(path = self.experiment.get_absolute_url())
-            if self.file:
-                resource['file'] = build_url(path = '/static/' + self.file.name)
-            else:
-                resource['file'] = None
-            # resource['upload_to'] = build_url(path = '%s/upload' % self.get_absolute_url())
-            
-            
+            resource['experiment'] = build_url(path = self.experiment.get_absolute_url()) 
         return resource
 
     class Meta:
