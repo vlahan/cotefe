@@ -433,14 +433,14 @@ function CreateVNGForm($url)
 				
 				$nodes_already_in=$obj['virtual_nodes'];
 				foreach($nodes_already_in as $c=>$key) {
-			        $sort_numcie1[] = $key['property_set_id'];
+			        $sort_numcie1[] = $key['property_set'];
 			        
 			    }
 			    array_multisort( $sort_numcie1,SORT_DESC,$nodes_already_in);
 				$already_nodes="";
 				foreach ($nodes_already_in as $node)
 				{
-					$already_nodes.="<li class='node available' id=".$node['id']." style='background:#".$style[$node['property_set_id']].";' title='".$node['property_set_id']."' ></li>";;
+					$already_nodes.="<li class='node available' id=".$node['id']." style='background:#".$style[$node['property_set']].";' title='".$node['property_set']."' ></li>";;
 				}
 				
 				//getting total VNG Ends
@@ -450,7 +450,7 @@ function CreateVNGForm($url)
 				$colorlegend="<ol class='node-legends'>";
 				foreach($style as $key=>$value)
 				{
-					$propertySetSingle=getSinglePropertySet(ROOTURL.'/property-sets/'.$key);
+					$propertySetSingle=getSinglePropertySet($key);
 					$colorlegend.="<li style='background:#".$value."' title=\"".$key."\"><span>".$propertySetSingle['name']."</span></li>";
 				}
 				$colorlegend.="</ol>";

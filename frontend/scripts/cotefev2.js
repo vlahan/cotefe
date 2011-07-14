@@ -12,6 +12,7 @@ var Project=function()
 	addEventDelete(function(){Project();});
 	tabs();
 	submitEvent(function(){Project();});
+	
 }
 
 
@@ -38,14 +39,15 @@ var VirtualNodeGroup=function()
 {
 	progressBar();
 	loadVirtualNodeGroupList();
-	addEventDelete(function(){VirtualNodeGroupList();});
+	addEventDelete(function(){VirtualNodeGroup();});
 	tabs();
-	submitEvent(function(){VirtualNodeGroupList();});
+	submitEvent(function(){VirtualNodeGroup();});
 }
 
 
  
-var loadProjectList=function(){	
+var loadProjectList=function(){
+	
 	var  response=sendAjax("List=project","html","#content",function(){loadFormProject();});	
 }
 
@@ -68,17 +70,19 @@ var loadVirtualNodeGroupList=function()
 
 
 var loadFormProject=function(){
+	
 	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group').die('click');
 	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group').live('click',function(event)
 			{event.preventDefault();event.stopPropagation();		
-				var link=$(this).attr('href');		
-				var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(arg);});	
-				return false;
+				var link=$(this).attr('href');
+				var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(link,arg);});	
+				
 			});
 	 }
- var onFormEvent=function(response)//getting event after ajax responds for update click
+ var onFormEvent=function(elem,response)//getting event after ajax responds for update click
 {
-	if(response!=false)
+	
+	 if(response!=false)
 	{
 		$('#tab1').html(response);
 		/*
@@ -92,40 +96,47 @@ var loadFormProject=function(){
 		/*
 		 * for node dragg and run
 		 */
-		$('#nodesource li').bind('click',function(){alert('hey');});
-		/*$('#nodesource').selectable({ filter:".available",
-			create:function()
-						{
-							var emp=$("#nodeselected").is(":empty");
-							if(!emp)
-								{
-									$(".node-legends li").each(function(){
-									nos=$('#nodeselected li[title='+this.title+']').size();
-									$("#nos_selected_node").append('<li style="padding:0.4em;">'+nos+'</li>');
-							      });
-								}
-						},
-			stop: function() {
-				var result = $( "#nodeselected" ).empty();
-				$( ".ui-selected", this ).each(function() {
-					var index = $( "#nodesource li" ).index( this );
-					id=$("ol li:nth-child("+(index+1)+")").attr('id');
-					title=$("ol li:nth-child("+(index+1)+")").attr('title');
-					color=$("ol li:nth-child("+(index+1)+")").css('background-color');
-					result.append('<li class="node" id="'+id+'" style="background-color:'+color+';" title="'+title+'"></li>');
-				});
-				$( "#nos_selected_node" ).empty();
-				$(".node-legends li").each(function(){
-					nos=$('#nodeselected li[title='+this.title+']').size();
-					$("#nos_selected_node").append('<li style="padding:0.4em;">'+nos+'</li>');
-			      });
-			}
-		});
-		*/
+		//$('#nodesource li').bind('click',function(){alert('hey');});
+		
+		var Ergebnis = elem.search(/virtual-nodegroups/);
+		if (Ergebnis != -1)
+			{selectable_node();}
 		/*
 		 * node drag event ends here;
 		 */
 	}
+}
+ 
+var selectable_node= function()
+{
+	$('#nodesource').selectable({ filter:".available",
+		create:function()
+					{
+						var emp=$("#nodeselected").is(":empty");
+						if(!emp)
+							{
+								$(".node-legends li").each(function(){
+								nos=$('#nodeselected li[title=\"'+this.title+'\"]').size();
+								$("#nos_selected_node").append('<li style="padding:0.4em;">'+nos+'</li>');
+						      });
+							}
+					},
+		stop: function() {
+			var result = $( "#nodeselected" ).empty();
+			$( ".ui-selected", this ).each(function() {
+				var index = $( "#nodesource li" ).index( this );
+				id=$("ol li:nth-child("+(index+1)+")").attr('id');
+				title=$("ol li:nth-child("+(index+1)+")").attr('title');
+				color=$("ol li:nth-child("+(index+1)+")").css('background-color');
+				result.append('<li class="node" id="'+id+'" style="background-color:'+color+';" title="'+title+'" ></li>');
+			});
+			$( "#nos_selected_node" ).empty();
+			$(".node-legends li").each(function(){
+				nos=$('#nodeselected li[title=\"'+this.title+'\"]').size();
+				$("#nos_selected_node").append('<li style="padding:0.4em;">'+nos+'</li>');
+		      });
+		}
+	});
 }
 var submitEvent=function(List)
 {
@@ -140,13 +151,13 @@ var submitEvent=function(List)
 				    ids=ids+( '' + $(this).attr('id')+',');
 				  });
 				ids_send=(ids+'');
-				var response=sendAjax("Submit=form&"+($('form').serialize())+'&'+'virtual_nodes='+ids_send,null,null,function (arg){OnSubmitFinish(arg);});
+				var response=sendAjax("Submit=form&"+($('form').serialize())+'&'+'virtual_nodes='+ids_send,null,null,function (arg){OnSubmitFinish(arg,function(){List();});});
 			}
 			else
 			{
 				var response=sendAjax("Submit=form&"+($('form').serialize()),null,null,function (arg){OnSubmitFinish(arg,function(){List();});});
 			}
-			return false;
+			
 		});
 }
 
@@ -189,7 +200,7 @@ var addEventDelete=function(callback)
 		{e.preventDefault();e.stopPropagation();
 		 var project_link=$(this).attr('href');
 		 var response=sendAjax("Delete="+project_link,null,null,function (arg){addDeleteEvent(arg,function(){callback()});});
-		 return false;
+		 
 		});
 }
  
@@ -216,9 +227,7 @@ var progressBar=function ()
 		   $(this).css('display','block'); 
 		 }).ajaxStop(function(){
 		   $(this).css('display','none'); 
-			  
 		 });
-	
 }
 
 var sendAjax=function(data,responseEvent,place,func)
@@ -272,7 +281,7 @@ var tabs=function()
 
 		var activeTab = $(this).find("a").attr("href"); //Find the href attribute value to identify the active tab + content
 		$(activeTab).css('display','block'); //Fade in the active ID content
-		return false;
+		
 	});
 }
 
