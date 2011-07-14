@@ -20,12 +20,13 @@ dt = datetime.now()
 
 # adds information about time zone Europe/Berlin
 print 'DATETIME REPRESANTATION IN %s' % (berlin)
-dt_berlin = berlin.localize(dt)
+dt_berlin = berlin.localize(datetime.now())
 print dt_berlin.strftime(FMT_DT_TO_STR)
 print
 
 # translates into time zone UTC
 print 'DATETIME REPRESANTATION IN %s' % (utc)
+dt_berlin = berlin.localize(datetime.now())
 dt_utc = dt_berlin.astimezone(utc)
 print dt_utc.strftime(FMT_DT_TO_STR)
 print
@@ -38,8 +39,7 @@ dt = datetime.strptime(dt_str, FMT_STR_TO_DT)
 
 # adds information about time zone UTC
 print 'DATETIME REPRESANTATION IN %s' % (utc)
-dt_utc= utc.localize(dt)
-print dt_utc.strftime(FMT_DT_TO_STR)
+print utc.localize(dt).strftime(FMT_DT_TO_STR)
 print
 
 # translates into time zone Europe/Berlin
@@ -47,3 +47,6 @@ print 'DATETIME REPRESANTATION IN %s' % (berlin)
 dt_berlin = dt_utc.astimezone(berlin).replace(tzinfo=None)
 print dt_berlin.strftime(FMT_DT_TO_STR)
 print
+
+
+print datetime.now()
