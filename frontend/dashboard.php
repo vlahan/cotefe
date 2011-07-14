@@ -16,7 +16,7 @@ $(document).ready(function() {
 	Project();	
  });
 </script>
-
+</head>
 <body>
 
 <div class="head-container">

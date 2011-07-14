@@ -19,7 +19,7 @@ $(document).ready(function() {
 	VirtualNodeGroup();	
  });
 </script>
-
+</head>
 <body>
 
 <div class="head-container">

@@ -17,7 +17,7 @@ $(document).ready(function() {
 	var  response=sendAjax("List=testbeds","html","#content",function(args){loadtestbeds();});	
  });
 </script>
-
+</head>
 <body>
 
 <div class="head-container">

@@ -5,6 +5,7 @@
 
 <title>Cotefe</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
+</head>
 <body>
 
 <div class="head-container">

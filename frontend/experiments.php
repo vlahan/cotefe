@@ -16,7 +16,7 @@ $(document).ready(function() {
 	Experiments();	
  });
 </script>
-
+</head>
 <body>
 
 <div class="head-container">

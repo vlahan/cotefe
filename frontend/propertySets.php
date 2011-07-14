@@ -16,7 +16,7 @@ $(document).ready(function() {
 	PropertySets();	
  });
 </script>
-
+</head>
 <body>
 
 <div class="head-container">
