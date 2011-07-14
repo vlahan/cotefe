@@ -22,7 +22,6 @@ urlpatterns = patterns('',
   
     url(r'^images/$', image_collection_handler),
     url(r'^images/(?P<image_id>\w+)$', image_resource_handler),
-    
     url(r'^images/(?P<image_id>\w+)/upload$', imagefile_upload_handler),   
     
 )
