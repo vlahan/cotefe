@@ -195,7 +195,9 @@ if(isset($_POST) &&  !empty($_POST) )
 							$header[4]['attribute']='width="7%"';
 							
 							$records=array();
+							
 							$VirtualNodeGroups=FollowVirtualNodeGroup();
+							//echo "yes man ";
 							
 							if(!empty($VirtualNodeGroups))
 							{
@@ -217,17 +219,15 @@ if(isset($_POST) &&  !empty($_POST) )
 									$records[$i][3]['text']='<a class="edit" href="'.$VirtualNodeGroup_info['uri'].'" ><img src="images/edit.png" /></a>';
 									$records[$i][3]['attribute']='style="padding-left:10px;"';
 									$records[$i][4]['text']='<a class="deleteProject" href="'.$VirtualNodeGroup_info['uri'].'"><img src="images/close.png" /></a>';
-									$records[$i][4]['attribute']='style="padding-left:15px;"';
-									
-									
+									$records[$i][4]['attribute']='style="padding-left:15px;"';								
 									$i++;
 								}
-								$records[$i][0]['text']='<a class="add-links" href="'.ROOTURL.'/virtual-nodegroups" " id="create_new_property_set" >Add New Property Set</a>';
+								$records[$i][0]['text']='<a class="add-links" href="'.ROOTURL.'/virtual-nodegroups" " id="create_new_virtual_node_group" >Add New Virtual Node Group</a>';
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
 								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']='';
 								$obj=new Createtable($title,$header,$records);
 								
-								//echo $obj->render();
+								echo $obj->render();
 							}
 							else
 							{
@@ -238,7 +238,7 @@ if(isset($_POST) &&  !empty($_POST) )
 							
 							
 			case "testbeds"	:
-							$html='<h4>TestBeds</h4><table cellspacing="0" id="expandable-table" class="table-list"><tr><th width="50%" style="text-align:left;padding-left:10px;">Name</th><th width="20%">Organization</th><th width="15%">Node Count</th><th width="5%">Link</th><th></th></tr>';
+							$html='<h4>TestBeds</h4><table cellspacing="0" id="expandable-table" class="table-list"><tr><th width="50%" style="text-align:left;padding-left:10px;">Name</th><th width="20%" style="text-align:left;">Organization</th><th width="15%">Node Count</th><th width="5%">Link</th><th></th></tr>';
 							$TestBeds=FollowTestBeds();
 							if(!empty($TestBeds))
 							{

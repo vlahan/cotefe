@@ -290,7 +290,8 @@ function getVirtualNodeList($params)
 		{			
 			$arr[$c]['id']=$VirtualNode['id'];
 			$arr[$c]['name']=$VirtualNode['name'];
-			$arr[$c]['property_set_id']=$VirtualNode['property_set_id'];
+			
+			$arr[$c]['property_set_id']=$VirtualNode['property_set'];
 			$c++;
 		}
 		
@@ -371,7 +372,7 @@ function CreateVNGForm($url)
 				$colorlegend="<ol class='node-legends'>";
 				foreach($style as $key=>$value)
 				{
-					$propertySetSingle=getSinglePropertySet(ROOTURL.'/property-sets/'.$key);
+					$propertySetSingle=getSinglePropertySet($key);
 					$colorlegend.="<li style='background:#".$value."' title='".$key."'><span>".$propertySetSingle['name']."</span></li>";
 				}
 				$colorlegend.="</ol>";
@@ -582,7 +583,12 @@ function getResponse($response)
 function RESTUrl($url,$method,$data)
 {
 	
+	if( !ini_get('safe_mode') ){ 
+            set_time_limit(45); 
+      } 
 	$headers = array('Accept: application/json','Content-Type: application/json',);
+	$useragent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
+	$useragent="cotefe.minds.website";
 	
 	$handle = curl_init();
 	curl_setopt($handle, CURLOPT_URL, $url);
@@ -591,6 +597,8 @@ function RESTUrl($url,$method,$data)
 	curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, false);
 	curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($handle, CURLOPT_TIMEOUT,40);
+	curl_setopt($handle, CURLOPT_USERAGENT, $useragent);
+
 	
 	switch($method)
 	{
@@ -614,6 +622,10 @@ function RESTUrl($url,$method,$data)
 	}
 		
 	$response['response'] = curl_exec($handle);
+	if($response['response']===false)
+	{
+		$response['response']="Something is wrong with Connection";
+	}
 	$response['code'] = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 	return $response;
 }

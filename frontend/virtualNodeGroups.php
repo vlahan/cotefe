@@ -8,7 +8,7 @@ include_once 'scripts/functions.php';
 
 <title>Cotefe</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
-<script type="text/javascript" src="scripts/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
 <link rel="stylesheet" type="text/css" href="scripts/css/ui-lightness/jquery-ui-1.8.14.custom.css" />		
 <script type="text/javascript" src="scripts/js/jquery-ui-1.8.14.custom.min.js"></script>
 
