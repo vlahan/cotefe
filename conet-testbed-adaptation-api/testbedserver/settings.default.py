@@ -91,7 +91,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     # 'django.contrib.admindocs',
-    'django.contrib.databrowse',
     'testbedserver.api',
     # 'registration',
     # 'profiles',
@@ -148,11 +147,11 @@ JSON_ENSURE_ASCII = True
 UUID_LENGTH = 8
 
 # TESTBED ADAPTATION API
-# SERVER_URL = 'http://localhost:8001'
-SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
+SERVER_URL = 'http://localhost:8001'
+# SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
 
-# FEDERATION_URL = 'http://localhost:8080'
-FEDERATION_URL = 'http://api.cotefe.net'
+FEDERATION_URL = 'http://localhost:8080'
+# FEDERATION_URL = 'http://api.cotefe.net'
 
 XMLRPC_PROTOCOL = 'https'
 XMLRPC_USERNAME = 'conetuser'
