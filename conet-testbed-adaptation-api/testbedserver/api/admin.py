@@ -1,5 +1,5 @@
 from django.contrib import admin
-from testbedserver.api.models import *
+from api.models import *
 
 admin.site.register(Testbed)
 admin.site.register(Platform)

@@ -3,10 +3,10 @@ import xmlrpclib
 from datetime import datetime
 from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
-from testbedserver.api.models import *
-from testbedserver.settings import *
-from testbedserver.utils import *
-from testbedserver.proxy import TestbedProxy
+from api.models import *
+from settings import *
+from utils import *
+from proxy import TestbedProxy
 from django.contrib.auth.models import UserManager
 
 proxy = TestbedProxy(
@@ -48,7 +48,7 @@ def platform_collection_handler(request):
     
     if request.method == 'GET':
         
-        platform_list = [ p.to_dict(head_only = True) for p in Platform.objects.all() ]
+        platform_list = [ p.to_dict() for p in Platform.objects.all() ]
         
         # 200
         response = HttpResponse()
@@ -110,6 +110,9 @@ def node_collection_handler(request):
             
         if 'native_id__in' in request.GET and not (request.GET['native_id__in'] is None):
             nodes = nodes.filter(native_id__in = map(int, request.GET['native_id__in'].split(',')))
+            
+        if 'native_id__not_in' in request.GET and not (request.GET['native_id__not_in'] is None):
+            nodes = nodes.exclude(native_id__in = map(int, request.GET['native_id__not_in'].split(',')))
         
         if 'platform' in request.GET and not (request.GET['platform'] is None):
             nodes = nodes.filter(platform = Platform.objects.get(id = request.GET['platform']))
@@ -120,7 +123,7 @@ def node_collection_handler(request):
         if 'n' in request.GET and not (request.GET['n'] is None):
             nodes = nodes[:request.GET['n']]
             
-        nodes = [ node.to_dict(head_only = True) for node in nodes ]
+        nodes = [ n.to_dict(head_only = True) for n in nodes ]
         
         logging.warning('NUMBER OF NODES RETURNED: %d' % len(nodes))
         
