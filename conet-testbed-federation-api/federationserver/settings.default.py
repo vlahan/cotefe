@@ -1,13 +1,4 @@
-
-
-try:
-    from djangoappengine.settings_base import *
-    has_djangoappengine = True
-except ImportError:
-    has_djangoappengine = False
-    DEBUG = True
-    TEMPLATE_DEBUG = DEBUG
-
+from djangoappengine.settings_base import *
 
 import os
 
@@ -31,21 +22,21 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # 'django.contrib.databrowse',
     'api',
-    'filetransfers'
+    'filetransfers',
+    
+    'djangoappengine',
 )
 
-if has_djangoappengine:
-    INSTALLED_APPS = ('djangoappengine',) + INSTALLED_APPS
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-    # 'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
-    # 'django.core.context_processors.request',
+    'django.core.context_processors.request',
 )
 
 ADMIN_MEDIA_PREFIX = '/media/admin/'
@@ -61,13 +52,13 @@ USE_L10N = False
 ROOT_URLCONF = 'urls'
 
 # Activate django-dbindexer if available
-try:
-    import dbindexer
-    DATABASES['native'] = DATABASES['default']
-    DATABASES['default'] = {'ENGINE': 'dbindexer', 'TARGET': 'native', 'DOMAIN': 'cotefe.net'}
-    INSTALLED_APPS += ('dbindexer',)
-except ImportError:
-    pass
+#try:
+#    import dbindexer
+#    DATABASES['native'] = DATABASES['default']
+#    DATABASES['default'] = {'ENGINE': 'dbindexer', 'TARGET': 'native', 'DOMAIN': 'cotefe.net'}
+#    INSTALLED_APPS += ('dbindexer',)
+#except ImportError:
+#    pass
     
 
 APPEND_SLASH = True

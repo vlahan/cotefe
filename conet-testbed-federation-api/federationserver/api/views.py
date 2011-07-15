@@ -519,11 +519,11 @@ def property_set_collection_handler(request, experiment_id):
                 description = property_set_dict['description'],
                 experiment = experiment,
                 platform = Platform.objects.get(id = property_set_dict['platform']),
-                node_count = property_set_dict['node_count']
+                virtual_node_count = property_set_dict['virtual_node_count']
             )
             property_set.save()
             
-            for k in range(1, property_set.node_count+1):
+            for k in range(1, property_set.virtual_node_count+1):
                 VirtualNode(
                     id = generate_id(),
                     name = 'virtual_node_%d' % k,
