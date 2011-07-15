@@ -95,7 +95,7 @@ $(document).ready(function() {
                     
             </div>
             <div class="clean-float"></div>
-            <div id="editingfield" style="margin-top:40px;">
+            <div id="editingfield" style="margin-top:60px;">
            			<ul class="tabs">
                         <li><a href="#tab1">Add/Edit Properties</a></li>
                         <li><a href="#tab2">Raw Json</a></li>

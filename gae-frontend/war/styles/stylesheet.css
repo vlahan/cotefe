@@ -232,9 +232,9 @@ height:20px;display:block;background-color:#0C3;}
 /**drop down**/
 
 #drop-down, #drop-down ul { list-style-type:none; margin:0; padding:0;background-color:#565656; }
-
-#drop-down li a{ width:171px;; float:left;padding-top:5px;padding-bottom:5px;padding-left:10px;color:#ffffff;background-color:#565656;}
-#drop-down li ul { display:none; }
-#drop-down .drop-down-bottom{background-image: url(../images/add.png);	background-repeat: no-repeat;	background-position: right 5px;}
+#drop-down li{position:relative;}
+#drop-down li a{ width:171px; float:left;padding-top:5px;padding-bottom:5px;padding-left:10px;color:#ffffff;background-color:#565656;}
+#drop-down li ul { display:none;position:absolute;left:0px;top:26px;}
+#drop-down .drop-down-bottom{background-image: url(../images/add.png);	background-repeat: no-repeat;background-position: right 5px;}
 #drop-down li:hover ul { display:block; }
 body { behavior:url("csshover.htc"); }
