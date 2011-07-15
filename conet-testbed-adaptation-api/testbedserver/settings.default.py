@@ -147,34 +147,14 @@ JSON_ENSURE_ASCII = True
 UUID_LENGTH = 8
 
 # TESTBED ADAPTATION API
-SERVER_URL = 'http://localhost:8001'
-# SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
+# SERVER_URL = 'http://localhost:8001'
+SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
 
-FEDERATION_URL = 'http://localhost:8080'
-# FEDERATION_URL = 'http://api.cotefe.net'
+# FEDERATION_URL = 'http://localhost:8080'
+FEDERATION_URL = 'http://api.cotefe.net'
 
 XMLRPC_PROTOCOL = 'https'
 XMLRPC_USERNAME = 'conetuser'
 XMLRPC_PASSWORD = 'password'
 XMLRPC_HOST = 'localhost'
 XMLRPC_PORT = '8005'
-
-IMAGE_FILEPATH = '/var/twist/twist_v1/images/'
-
-PLATFORM_IDS = [
-    None,
-    'eyesIFXv21',
-    'eyesIFXv20',
-    'TelosA',
-    'TelosB',
-    'TmoteSky'
-]
-
-PLATFORM_NAMES = [
-    None,
-    'eyesIFX WSN node v2.1',
-    'eyesIFX WSN node v2.0',
-    'Telos (Rev A 2004-04-27)',
-    'Telos (Rev B 2004-xx-xx)',
-    'Tmote Sky'
-]
