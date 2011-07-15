@@ -46,6 +46,7 @@ var VirtualNodeGroup=function()
 
 var ExperimentDetails=function()
 {
+	loadFormProject();
 	
 }
  

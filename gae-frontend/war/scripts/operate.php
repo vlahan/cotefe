@@ -104,6 +104,7 @@ if(isset($_POST) &&  !empty($_POST) )
 									$exp_info=$exp;
 									$records[$i][0]['text']=$exp_info['name'];
 									$records[$i][0]['attribute']='style="padding-left:10px;"';
+									
 									$records[$i][0]['a']='experimentsdetails.php?eid='.$exp_info['id'];
 									$records[$i][1]['text']=$exp_info['virtual_node_count'];
 									$records[$i][1]['attribute']='style="text-align:center;"';
@@ -298,6 +299,18 @@ if(isset($_POST) &&  !empty($_POST) )
 				case 'property-sets':echo CreatePropertySetForm($item); break;
 				case 'virtual-nodegroups':echo CreateVNGForm($item);break;
 			}
+		}
+		elseif(count($conditions)==4)
+		{
+			
+			switch ($conditions[3])
+			{
+				case 'property-sets':echo CreatePropertySetForm(''); break;
+			}
+		}
+		elseif(count($conditions)==5)
+		{
+			print_r($conditions);
 		}
 		
 		
