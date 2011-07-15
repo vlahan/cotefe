@@ -11,17 +11,17 @@ import time
 def main():
     
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         # filename='%s.log' % __file__, filemode='w',
         format='%(asctime)s %(message)s',
         datefmt='[%Y-%m-%d %H:%M:%S %z]',
     )
-    
-    # SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
-    SERVER_URL = 'http://localhost:8001'
-    
-    JOB_URI = str(sys.argv[1])
 
+    SERVER_URL = str(sys.argv[1])
+    JOB_URI = str(sys.argv[2])
+
+    SINK_NODE_ID = 12
+    
     DESCRIPTION = 'CONET 3Y REVIEW - PLEASE DO NOT DELETE'
     
     PLATFORM = 'TmoteSky'
@@ -50,10 +50,42 @@ def main():
     job_dict = json.loads(content)
     logging.debug(job_dict)
     
-    # GETTING THE NODES AND CREATING THE NODEGROUP SUBSCRIBERS
+    # GETTING THE NODES AND CREATING THE NODEGROUP ALL
+    
+    logging.info('getting the nodes for nodegroup all (96 node)...')
+    response, content = h.request(uri='%s?platform=%s' % (testbed_dict['nodes'], PLATFORM), method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    node_list_all = json.loads(content)
+    logging.debug(node_list_all)
+    assert len(node_list_all) == 96
+        
+    nodegroup_dict_all = {
+        'name' : 'subscriber',
+        'description' : DESCRIPTION,
+        'nodes' : [ n['id'] for n in node_list_all ],
+        'job' : job_dict['id']
+    }
+    
+    logging.info('creating the nodegroup for all...')    
+    response, content = h.request(uri=testbed_dict['nodegroups'], method='POST', body=json.dumps(nodegroup_dict_all))
+    assert response.status == 201
+    logging.info('%d %s' % (response.status, response.reason))
+    nodegroup_uri_all = response['content-location']
+    logging.debug(nodegroup_uri_all)
+    
+    logging.info('getting the information about the created nodegroup all...')
+    response, content = h.request(uri=nodegroup_uri_all, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    nodegroup_dict_all = json.loads(content)
+    logging.debug(nodegroup_dict_all)
+    assert len(nodegroup_dict_all['nodes']) == 96
+    
+    # GETTING THE NODES AND CREATING THE NODEGROUP SUBSCRIBER
     
     logging.info('getting the nodes for nodegroup subscriber (1 node)...')
-    response, content = h.request(uri='%s?native_id=%d' % (testbed_dict['nodes'], 10), method='GET', body='')
+    response, content = h.request(uri='%s?native_id=%d' % (testbed_dict['nodes'], SINK_NODE_ID), method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     node_list_subscriber = json.loads(content)
@@ -84,14 +116,15 @@ def main():
     
     # GETTING THE NODES AND CREATING THE NODEGROUP PUBLISHERS
     
-    logging.info('getting the nodes for nodegroup publishers (99 nodes)...')
-    response, content = h.request(uri='%s?platform=%s&native_id__not_in=%d,%d,%d' % (testbed_dict['nodes'], PLATFORM, 10, 187, 90), method='GET', body='')
+    logging.info('getting the nodes for nodegroup publishers (93 nodes)...')
+    # node_blacklist = [ 59, 60, 274, 275, 62, 64, 276, 277, 171, 174, 278, 279]
+    response, content = h.request(uri='%s?platform=%s&native_id__not_in=%d,%d,%d' % (testbed_dict['nodes'], PLATFORM, SINK_NODE_ID, 187, 90), method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     node_list_publishers = json.loads(content)
     logging.debug(node_list_publishers)
     logging.debug(len(node_list_publishers))
-    assert len(node_list_publishers) == 99
+    assert len(node_list_publishers) == 93
         
     nodegroup_dict_publishers = {
         'name' : 'publishers',
@@ -113,9 +146,9 @@ def main():
     logging.info('%d %s' % (response.status, response.reason))
     nodegroup_dict_publishers = json.loads(content)
     logging.debug(nodegroup_dict_publishers)
-    assert len(nodegroup_dict_publishers['nodes']) == 99
+    assert len(nodegroup_dict_publishers['nodes']) == 93
     
-    # GETTING THE NODES AND CREATING THE NODEGROUP PUBLISHERS
+    # GETTING THE NODES AND CREATING THE NODEGROUP INTERFERERS
     
     logging.info('getting the nodes for nodegroup interferers (2 nodes)...')
     response, content = h.request(uri='%s?native_id__in=%d,%d' % (testbed_dict['nodes'], 187, 90), method='GET', body='')
@@ -190,7 +223,7 @@ def main():
     logging.debug(image_uri_publishers)
     
     logging.info('getting the information about the image for publishers...')
-    response, content = h.request(uri=image_uri_subscriber, method='GET', body='')
+    response, content = h.request(uri=image_uri_publishers, method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     image_dict_publishers= json.loads(content)
@@ -231,13 +264,19 @@ def main():
     logging.info('200 OK')
     logging.debug(urllib2.urlopen(request).read())
     
-    exit()
-    
     ##########################################################################
     ##########################################################################
     ############# THIS CAN ONLY BE EXECUTED ON REAL NODES!! ##################
     ##########################################################################
     ##########################################################################
+    
+    # DELETING THE IMAGE FROM NODEGROUP ALL NODES
+    
+    logging.info('erasing image from the nodegroup all...')
+    response, content = h.request(uri='%s/image' % nodegroup_uri_all, method='DELETE', body='')
+    logging.debug(content)
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
 
     # INSTALLING THE IMAGE TO NODEGROUP SUBSCRIBER
     

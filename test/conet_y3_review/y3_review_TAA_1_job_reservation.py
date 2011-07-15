@@ -51,16 +51,16 @@ def main():
         datefmt='[%Y-%m-%d %H:%M:%S %z]',
     )
     
-    # SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
-    SERVER_URL = 'http://localhost:8001'
+    SERVER_URL = str(sys.argv[1])
+    
+    START_JOB_IN_MINUTES = int(sys.argv[2])
+    END_JOB_IN_MINUTES = int(sys.argv[3])
+    
     CALENDAR_SPAN_IN_DAYS = 7
     DESCRIPTION = 'CONET 3Y REVIEW DEMO - PLEASE DO NOT DELETE'
     PLATFORM = 'TmoteSky'
     N = 102
-    
-    START_JOB_IN_MINUTES = 30
-    END_JOB_IN_MINUTES = 40
-        
+
     assert PLATFORM in [ 'TmoteSky' , 'eyesIFXv21' ]
 
     h = httplib2.Http()
@@ -122,6 +122,12 @@ def main():
             N = len(node_list)
         else:
             exit()
+            
+    r = raw_input('Do you want to reserve a job? (Y/N)')
+    if r != 'Y':
+        exit()
+            
+    # GETTING THE CALENDAR
     
     date_from = date.today()
     date_to = date_from + timedelta(days=CALENDAR_SPAN_IN_DAYS)
@@ -139,6 +145,8 @@ def main():
     
     str_from = berlin_datetime_to_utc_string(datetime_from)
     str_to = berlin_datetime_to_utc_string(datetime_to)
+    
+    # CREATING A JOB
     
     job_dict = {
         'name' : 'sample job',
