@@ -55,8 +55,7 @@ $(document).ready(function() {
         <table class="left-nav">				
 					<tr><td><a href="dashboard.php">Projects</a></td></tr>
 					<tr><td><a href="experiments.php?pid=<?php echo $_GET['eid']?>" class="current-selected">Experiments</a></td></tr>	
-					<tr><td><a href="propertySets.php" class="sub-menu-item">Property Sets</a></td></tr>
-					<tr><td><a href="virtualNodeGroups.php" class="sub-menu-item">Virtual Node Groups</a></td></tr>
+					
 					<tr><td><a href="testbed.php" id="explore_testbed">Explore Testbeds</a></td></tr>														
 					<tr><td><a href="<?php echo ROOTURL."/testbeds-find" ?>" id="find_testbed">Find Testbed</a></td></tr>	
 		</table>
@@ -70,7 +69,7 @@ $(document).ready(function() {
                     <ul id="drop-down">
                       <li><a href="#">PropertySet</a>
                       	<ul>
-                          <li><a href="#" class="drop-down-bottom">Add PropertySet</a></li>
+                          <li><a href="<?php echo ROOTURL."/experiments/".$_GET['eid']."/property-sets" ?>" class="drop-down-bottom" id="create_new_property_set">Add PropertySet</a></li>
                          
                         </ul>
                       </li>
@@ -93,8 +92,10 @@ $(document).ready(function() {
                         </ul>
                       </li>
                     </ul>
+                    
             </div>
-            <div id="editingfield" style="margin-top:20px;">
+            <div class="clean-float"></div>
+            <div id="editingfield" style="margin-top:40px;">
            			<ul class="tabs">
                         <li><a href="#tab1">Add/Edit Properties</a></li>
                         <li><a href="#tab2">Raw Json</a></li>
@@ -110,6 +111,7 @@ $(document).ready(function() {
                     </div>
                     
                     <!--editingfield ends hier-->
+                    <div class="clean-float"></div>
             </div>
             <div class="clean-float"></div>
     </div>
