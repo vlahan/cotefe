@@ -55,8 +55,8 @@ $(document).ready(function() {
         <table class="left-nav">				
 					<tr><td><a href="dashboard.php">Projects</a></td></tr>
 					<tr><td><a href="experiments.php" class="current-selected" >Experiments</a></td></tr>	
-					<tr><td><a href="propertySets.php" >Property Sets</a></td></tr>
-					<tr><td><a href="virtualNodeGroups.php" >Virtual Node Groups</a></td></tr>
+					<tr><td><a href="propertySets.php" class="sub-menu-item" >Property Sets</a></td></tr>
+					<tr><td><a href="virtualNodeGroups.php" class="sub-menu-item" >Virtual Node Groups</a></td></tr>
 					<tr><td><a href="testbed.php" id="explore_testbed">Explore Testbeds</a></td></tr>														
 					<tr><td><a href="<?php echo ROOTURL."/testbeds-find" ?>" id="find_testbed">Find Testbed</a></td></tr>	
 				</table>

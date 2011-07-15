@@ -100,7 +100,7 @@ if(isset($_POST) &&  !empty($_POST) )
 									
 									$records[$i][0]['text']=$exp_info['name'];
 									$records[$i][0]['attribute']='style="padding-left:10px;"';
-									$url_g=urlGenerate('propertySet.php',('expId='.$exp_info['id']));
+									$url_g=urlGenerate('propertySets.php',('expId='.$exp_info['id']));
 									$records[$i][0]['a']=$url_g;
 									$project_info=json_decode(getUrl($exp_info['project']),TRUE);
 									$records[$i][1]['text']=$project_info['name'];

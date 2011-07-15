@@ -135,6 +135,7 @@ input[type=submit]:hover,input[type=reset]:hover
 
 .left-nav tr td{height:auto;}
 .left-nav tr td a{padding-left:10px;padding-top:5px;height:24px;display:block;width:180px;}
+.left-nav .sub-menu-item{padding-left:20px;}
 .left-nav tr td a:hover{padding-left:10px;padding-top:5px;background-color: #eaeaea;height:24px;display:block;width:180px;color:#565656;}
 .table-list{width:100%;}
 .table-list tr th{padding-top:5px;padding-bottom:5px;color:#ffffff;background-color:#565656;}
