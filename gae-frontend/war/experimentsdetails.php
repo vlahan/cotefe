@@ -1,15 +1,15 @@
 <?php
 include_once 'scripts/functions.php';
-$project_id=null;
+$ex_id=null;
 if(isset($_GET) && !empty($_GET))
 {
-	if(isset($_GET['pid']) && !empty($_GET['pid']))
+	if(isset($_GET['eid']) && !empty($_GET['eid']))
 	{
-		$project_id= "id='".trim($_GET['pid'])."'";
+		$ex_id= "id='".trim($_GET['eid'])."'";
 	}
 	else 
 	{
-		$project_id= "";
+		$ex_id= "";
 	}
 }
 ?>
@@ -25,11 +25,11 @@ if(isset($_GET) && !empty($_GET))
 <script type="text/javascript" src="scripts/cotefev2.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {		
-	Experiments();	
+	ExperimentDetails();	
  });
 </script>
 </head>
-<body <?php echo $project_id; ?>>
+<body <?php echo $ex_id; ?>>
 
 <div class="head-container">
 	<div class="header-nav">
@@ -54,7 +54,7 @@ $(document).ready(function() {
         <hr />
         <table class="left-nav">				
 					<tr><td><a href="dashboard.php">Projects</a></td></tr>
-					<tr><td><a href="experiments.php?pid=<?php echo $_GET['pid']?>" class="current-selected">Experiments</a></td></tr>	
+					<tr><td><a href="experiments.php?pid=<?php echo $_GET['eid']?>" class="current-selected">Experiments</a></td></tr>	
 					<tr><td><a href="propertySets.php" class="sub-menu-item">Property Sets</a></td></tr>
 					<tr><td><a href="virtualNodeGroups.php" class="sub-menu-item">Virtual Node Groups</a></td></tr>
 					<tr><td><a href="testbed.php" id="explore_testbed">Explore Testbeds</a></td></tr>														
@@ -67,11 +67,36 @@ $(document).ready(function() {
         <hr />
         <div id="breadcrumb"></div>
         	<div id="content">
-        	
+                    <ul id="drop-down">
+                      <li><a href="#">PropertySet</a>
+                      	<ul>
+                          <li><a href="#" class="drop-down-bottom">Add PropertySet</a></li>
+                         
+                        </ul>
+                      </li>
+                      <li><a href="#">Virtual Node Group</a>
+                        <ul>
+                          <li><a href="#" class="drop-down-bottom">Add Virtual Node Group</a></li>
+                          
+                        </ul>
+                      </li>
+                      <li><a href="#">Images</a>
+                        <ul>
+                          <li><a href="#" class="drop-down-bottom">Upload Image</a></li>
+                         
+                        </ul>
+                      </li>
+                      <li><a href="#">Virtual Task</a>
+                      	<ul>
+                          <li><a href="#" class="drop-down-bottom">Add Task</a></li>
+                          
+                        </ul>
+                      </li>
+                    </ul>
             </div>
-            <div id="editingfield">
+            <div id="editingfield" style="margin-top:20px;">
            			<ul class="tabs">
-                        <li><a href="#tab1">Add/Edit Experiments</a></li>
+                        <li><a href="#tab1">Add/Edit Properties</a></li>
                         <li><a href="#tab2">Raw Json</a></li>
                     </ul>
                     

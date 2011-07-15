@@ -52,7 +52,7 @@ $(document).ready(function() {
         <hr />
         	<div id="breadcrumb"></div>
         	<div id="content">
-        	<p>The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities.	</p>
+        	<p>	</p>
             </div>
             <div id="editingfield">
            			<ul class="tabs">

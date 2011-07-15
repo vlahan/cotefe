@@ -17,13 +17,13 @@ if(isset($_POST) &&  !empty($_POST) )
 			case "project": 
 							$title='Your current projects:';
 							$header[0]['text']='Name';
-							$header[0]['attribute']='width="40%" style="text-align:left;padding-left:10px;"';
+							$header[0]['attribute']='width="40%" style="text-align:left;"';
 							$header[1]['text']='No. Of Experiment';
 							$header[1]['attribute']='style="text-align:center;"';
 							$header[2]['text']='Edit';
 							$header[2]['attribute']='width="5%"';
 							$header[3]['text']='Delete';
-							$header[3]['attribute']='width="7%"';
+							$header[3]['attribute']='width="8%" style="padding-right:0px;"';
 							
 							$records=array();
 							$projects=FollowProject();
@@ -42,7 +42,7 @@ if(isset($_POST) &&  !empty($_POST) )
 									$records[$i][2]['text']='<a class="edit" href="'.$project_info['uri'].'" ><img src="images/edit.png" /></a>';
 									$records[$i][2]['attribute']='style="padding-left:10px;"';
 									$records[$i][3]['text']='<a class="deleteProject" href="'.$project_info['uri'].'"><img src="images/close.png" /></a>';
-									$records[$i][3]['attribute']='style="padding-left:15px;"';
+									$records[$i][3]['attribute']='style="padding-left:20px;"';
 									
 									
 									$i++;
@@ -91,7 +91,7 @@ if(isset($_POST) &&  !empty($_POST) )
 							$header[2]['text']='Edit';
 							$header[2]['attribute']='width="5%"';
 							$header[3]['text']='Delete';
-							$header[3]['attribute']='width="7%"';
+							$header[3]['attribute']='width="8%"';
 			
 							$records=array();
 							$exps=FollowExperiment($project_id);
@@ -104,14 +104,14 @@ if(isset($_POST) &&  !empty($_POST) )
 									$exp_info=$exp;
 									$records[$i][0]['text']=$exp_info['name'];
 									$records[$i][0]['attribute']='style="padding-left:10px;"';
-									$records[$i][0]['a']='experimentsdetails.php?pid='.$exp_info['id'];
+									$records[$i][0]['a']='experimentsdetails.php?eid='.$exp_info['id'];
 									$records[$i][1]['text']=$exp_info['virtual_node_count'];
 									$records[$i][1]['attribute']='style="text-align:center;"';
 									
 									$records[$i][2]['text']='<a class="edit" href="'.$exp_info['uri'].'" ><img src="images/edit.png" /></a>';
 									$records[$i][2]['attribute']='style="padding-left:10px;"';
 									$records[$i][3]['text']='<a class="deleteProject" href="'.$exp_info['uri'].'"><img src="images/close.png" /></a>';
-									$records[$i][3]['attribute']='style="padding-left:15px;"';
+									$records[$i][3]['attribute']='style="padding-left:20px;"';
 									
 									
 									$i++;

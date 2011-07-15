@@ -44,7 +44,10 @@ var VirtualNodeGroup=function()
 	submitEvent(function(){VirtualNodeGroup();});
 }
 
-
+var ExperimentDetails=function()
+{
+	
+}
  
 var loadProjectList=function(){
 	
@@ -93,7 +96,7 @@ var loadFormProject=function(){
 				
 			});
 	 }
- var onFormEvent=function(elem,response)//getting event after ajax responds for update click
+var onFormEvent=function(elem,response)//getting event after ajax responds for update click
 {
 	
 	 if(response!=false)
@@ -287,8 +290,8 @@ var tabs=function()
 	$(".tab_content:first").show(); //Show first tab content
 
 	//On Click Event
-	$("ul.tabs li").click(function() {
-
+	$("ul.tabs li").click(function(event) {
+		event.preventDefault();event.stopPropagation();
 		$("ul.tabs li").removeClass("active"); //Remove any "active" class
 		$(this).addClass("active"); //Add "active" class to selected tab
 		$(".tab_content").hide(); //Hide all tab content
