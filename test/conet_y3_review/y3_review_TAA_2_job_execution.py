@@ -3,32 +3,36 @@ import json
 import logging
 import sys
 from datetime import datetime, timedelta, date
-from utils import *
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 import urllib2
-
-DESCRIPTION = 'CONET 3Y REVIEW - PLEASE DO NOT DELETE'
-IMAGEFILE_PATH = '/Users/claudiodonzelli/Desktop/images/blink_test_image_telosb'
+import time
 
 def main():
     
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         # filename='%s.log' % __file__, filemode='w',
         format='%(asctime)s %(message)s',
         datefmt='[%Y-%m-%d %H:%M:%S %z]',
     )
     
-    try:
-        SERVER_URL = str(sys.argv[1])
-        JOB_URI = str(sys.argv[2])
-    except Exception:
-        print 'Usage: python %s SERVER_URL JOB_URI' % __file__
-        print 'Example: python %s https://www.twist.tu-berlin.de:8001 https://www.twist.tu-berlin.de:8001/jobs/af2ebeba' % __file__
-        sys.exit()
+    # SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
+    SERVER_URL = 'http://localhost:8001'
+    
+    JOB_URI = str(sys.argv[1])
+
+    DESCRIPTION = 'CONET 3Y REVIEW - PLEASE DO NOT DELETE'
+    
+    PLATFORM = 'TmoteSky'
+
+    IMAGEFILE_PATH_SUBSCRIBER = '/Users/claudiodonzelli/Desktop/images/y3_review_image_subscriber.exe'
+    IMAGEFILE_PATH_PUBLISHERS = '/Users/claudiodonzelli/Desktop/images/y3_review_image_publishers.exe'
+    IMAGEFILE_PATH_INTERFERERS = '/Users/claudiodonzelli/Desktop/images/y3_review_image_interferers.exe'
 
     h = httplib2.Http()
+    
+    # GETTING THE TESTBED
     
     logging.info('getting the testbed resource...')
     response, content = h.request(uri=SERVER_URL, method='GET', body='')
@@ -37,71 +41,254 @@ def main():
     testbed_dict = json.loads(content)
     logging.debug(testbed_dict)
     
+    # GETTING THE JOB (INCLUDING NODES)
+    
     logging.info('getting the information about the created job...')
     response, content = h.request(uri=JOB_URI, method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     job_dict = json.loads(content)
     logging.debug(job_dict)
+    
+    # GETTING THE NODES AND CREATING THE NODEGROUP SUBSCRIBERS
+    
+    logging.info('getting the nodes for nodegroup subscriber (1 node)...')
+    response, content = h.request(uri='%s?native_id=%d' % (testbed_dict['nodes'], 10), method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    node_list_subscriber = json.loads(content)
+    logging.debug(node_list_subscriber)
+    assert len(node_list_subscriber) == 1
         
-    nodegroup_dict = {
-        'name' : 'sample node group',
+    nodegroup_dict_subscriber = {
+        'name' : 'subscriber',
         'description' : DESCRIPTION,
-        'nodes' : [ n['id'] for n in job_dict['nodes'] ],
+        'nodes' : [ n['id'] for n in node_list_subscriber ],
         'job' : job_dict['id']
     }
     
-    logging.info('creating a nodegroup..')    
-    response, content = h.request(uri=testbed_dict['nodegroups'], method='POST', body=json.dumps(nodegroup_dict))
+    logging.info('creating the nodegroup for subscriber...')    
+    response, content = h.request(uri=testbed_dict['nodegroups'], method='POST', body=json.dumps(nodegroup_dict_subscriber))
     assert response.status == 201
     logging.info('%d %s' % (response.status, response.reason))
-    nodegroup_uri = response['content-location']
-    logging.debug(nodegroup_uri)
+    nodegroup_uri_subscriber = response['content-location']
+    logging.debug(nodegroup_uri_subscriber)
     
-    logging.info('getting the information about the created nodegroup...')
-    response, content = h.request(uri=nodegroup_uri, method='GET', body='')
+    logging.info('getting the information about the created nodegroup subscriber...')
+    response, content = h.request(uri=nodegroup_uri_subscriber, method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
-    nodegroup_dict = json.loads(content)
-    logging.debug(nodegroup_dict)
+    nodegroup_dict_subscriber = json.loads(content)
+    logging.debug(nodegroup_dict_subscriber)
+    assert len(nodegroup_dict_subscriber['nodes']) == 1
     
-    image_dict = {
-        'name' : 'sample image',
+    # GETTING THE NODES AND CREATING THE NODEGROUP PUBLISHERS
+    
+    logging.info('getting the nodes for nodegroup publishers (99 nodes)...')
+    response, content = h.request(uri='%s?platform=%s&native_id__not_in=%d,%d,%d' % (testbed_dict['nodes'], PLATFORM, 10, 187, 90), method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    node_list_publishers = json.loads(content)
+    logging.debug(node_list_publishers)
+    logging.debug(len(node_list_publishers))
+    assert len(node_list_publishers) == 99
+        
+    nodegroup_dict_publishers = {
+        'name' : 'publishers',
         'description' : DESCRIPTION,
+        'nodes' : [ n['id'] for n in node_list_publishers ],
+        'job' : job_dict['id']
     }
     
-    logging.info('creating a new image...')
-    response, content = h.request(uri=testbed_dict['images'], method='POST', body=json.dumps(image_dict))
+    logging.info('creating a nodegroup publishers...')    
+    response, content = h.request(uri=testbed_dict['nodegroups'], method='POST', body=json.dumps(nodegroup_dict_publishers))
     assert response.status == 201
     logging.info('%d %s' % (response.status, response.reason))
-    image_uri = response['content-location']
-    logging.debug(image_uri)
+    nodegroup_uri_publishers = response['content-location']
+    logging.debug(nodegroup_uri_publishers)
     
-    logging.info('getting the information about the image...')
-    response, content = h.request(uri=image_uri, method='GET', body='')
+    logging.info('getting the information about the created nodegroup publishers...')
+    response, content = h.request(uri=nodegroup_uri_publishers, method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
-    image_dict= json.loads(content)
-    logging.debug(image_dict)
+    nodegroup_dict_publishers = json.loads(content)
+    logging.debug(nodegroup_dict_publishers)
+    assert len(nodegroup_dict_publishers['nodes']) == 99
     
-    logging.info('uploading the actual image file...')
+    # GETTING THE NODES AND CREATING THE NODEGROUP PUBLISHERS
+    
+    logging.info('getting the nodes for nodegroup interferers (2 nodes)...')
+    response, content = h.request(uri='%s?native_id__in=%d,%d' % (testbed_dict['nodes'], 187, 90), method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    node_list_interferers = json.loads(content)
+    logging.debug(node_list_interferers)
+    assert len(node_list_interferers) == 2
+        
+    nodegroup_dict_interferers = {
+        'name' : 'interferers',
+        'description' : DESCRIPTION,
+        'nodes' : [ n['id'] for n in node_list_interferers ],
+        'job' : job_dict['id']
+    }
+    
+    logging.info('creating a nodegroup interferers...')    
+    response, content = h.request(uri=testbed_dict['nodegroups'], method='POST', body=json.dumps(nodegroup_dict_interferers))
+    assert response.status == 201
+    logging.info('%d %s' % (response.status, response.reason))
+    nodegroup_uri_interferers = response['content-location']
+    logging.debug(nodegroup_uri_interferers)
+    
+    logging.info('getting the information about the created nodegroup interferers...')
+    response, content = h.request(uri=nodegroup_uri_interferers, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    nodegroup_dict_interferers = json.loads(content)
+    logging.debug(nodegroup_dict_interferers)
+    assert len(nodegroup_dict_interferers['nodes']) == 2
+    
+    # UPLOADING THE IMAGE FOR SUBSCRIBER
+    
+    image_dict_subscriber = {
+            'name' : 'image for subscriber',
+            'description' : DESCRIPTION,
+        }
+        
+    logging.info('creating a new image resource...')
+    response, content = h.request(uri=testbed_dict['images'], method='POST', body=json.dumps(image_dict_subscriber))
+    assert response.status == 201
+    logging.info('%d %s' % (response.status, response.reason))
+    image_uri_subscriber = response['content-location']
+    logging.debug(image_uri_subscriber)
+    
+    logging.info('getting the information about the image for subscriber...')
+    response, content = h.request(uri=image_uri_subscriber, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    image_dict_subscriber= json.loads(content)
+    logging.debug(image_dict_subscriber)
+    
+    logging.info('uploading the actual image file for subscriber...')
     register_openers()
-    datagen, headers = multipart_encode({'imagefile': open(IMAGEFILE_PATH, 'rb')})
-    request = urllib2.Request(image_dict['upload_to'], datagen, headers)
+    datagen, headers = multipart_encode({'imagefile': open(IMAGEFILE_PATH_SUBSCRIBER, 'rb')})
+    request = urllib2.Request(image_dict_subscriber['upload'], datagen, headers)
     logging.info('200 OK')
     logging.debug(urllib2.urlopen(request).read())
     
-    logging.info('deploying the image to the nodegroup...')
-    response, content = h.request(uri='%s/image/%s' % (nodegroup_uri, image_dict['id']), method='PUT', body='')
+    # UPLOADING THE IMAGE FOR PUBLISHERS
+    
+    image_dict_publishers = {
+            'name' : 'image for publishers',
+            'description' : DESCRIPTION,
+        }
+        
+    logging.info('creating a new image resource...')
+    response, content = h.request(uri=testbed_dict['images'], method='POST', body=json.dumps(image_dict_publishers))
+    assert response.status == 201
+    logging.info('%d %s' % (response.status, response.reason))
+    image_uri_publishers = response['content-location']
+    logging.debug(image_uri_publishers)
+    
+    logging.info('getting the information about the image for publishers...')
+    response, content = h.request(uri=image_uri_subscriber, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    image_dict_publishers= json.loads(content)
+    logging.debug(image_dict_publishers)
+    
+    logging.info('uploading the actual image file for publishers...')
+    register_openers()
+    datagen, headers = multipart_encode({'imagefile': open(IMAGEFILE_PATH_PUBLISHERS, 'rb')})
+    request = urllib2.Request(image_dict_publishers['upload'], datagen, headers)
+    logging.info('200 OK')
+    logging.debug(urllib2.urlopen(request).read())
+    
+    # UPLOADING THE IMAGE FOR INTERFERERS
+    
+    image_dict_interferers = {
+            'name' : 'image for interferers',
+            'description' : DESCRIPTION,
+        }
+        
+    logging.info('creating a new image resource...')
+    response, content = h.request(uri=testbed_dict['images'], method='POST', body=json.dumps(image_dict_interferers))
+    assert response.status == 201
+    logging.info('%d %s' % (response.status, response.reason))
+    image_uri_interferers = response['content-location']
+    logging.debug(image_uri_interferers)
+    
+    logging.info('getting the information about the image for interferers...')
+    response, content = h.request(uri=image_uri_interferers, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    image_dict_interferers= json.loads(content)
+    logging.debug(image_dict_interferers)
+    
+    logging.info('uploading the actual image file for interferers...')
+    register_openers()
+    datagen, headers = multipart_encode({'imagefile': open(IMAGEFILE_PATH_INTERFERERS, 'rb')})
+    request = urllib2.Request(image_dict_interferers['upload'], datagen, headers)
+    logging.info('200 OK')
+    logging.debug(urllib2.urlopen(request).read())
+    
+    exit()
+    
+    ##########################################################################
+    ##########################################################################
+    ############# THIS CAN ONLY BE EXECUTED ON REAL NODES!! ##################
+    ##########################################################################
+    ##########################################################################
+
+    # INSTALLING THE IMAGE TO NODEGROUP SUBSCRIBER
+    
+    logging.info('deploying the image to the nodegroup subscriber...')
+    response, content = h.request(uri='%s/image/%s' % (nodegroup_uri_subscriber, image_dict_subscriber['id']), method='PUT', body='')
     logging.debug(content)
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     
-    logging.info('erasing the image from the nodegroup...')
-    response, content = h.request(uri='%s/image' % nodegroup_uri, method='DELETE', body='')
+    # INSTALLING THE IMAGE TO NODEGROUP PUBLISHERS
+    
+    logging.info('deploying the image to the nodegroup publishers...')
+    response, content = h.request(uri='%s/image/%s' % (nodegroup_uri_publishers, image_dict_publishers['id']), method='PUT', body='')
     logging.debug(content)
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
+    
+    # DELETING THE IMAGE FROM NODEGROUP INTERFERERS
+    
+    logging.info('erasing image from the nodegroup interferers...')
+    response, content = h.request(uri='%s/image' % nodegroup_uri_interferers, method='DELETE', body='')
+    logging.debug(content)
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    
+    logging.info('(waiting 60 seconds...)')
+    time.sleep(60)
+    
+    # INSTALLING THE IMAGE TO NODEGROUP INTERFERERS
+    
+    logging.info('deploying the image to the nodegroup interferers...')
+    response, content = h.request(uri='%s/image/%s' % (nodegroup_uri_interferers, image_dict_interferers['id']), method='PUT', body='')
+    logging.debug(content)
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    
+    logging.info('(waiting 60 seconds...)')
+    time.sleep(60)
+    
+    # DELETING THE IMAGE FROM NODEGROUP INTERFERERS
+    
+    logging.info('erasing the image from the nodegroup interferers...')
+    response, content = h.request(uri='%s/image' % nodegroup_uri_interferers, method='DELETE', body='')
+    logging.debug(content)
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    
+    logging.info('(waiting 60 seconds...)')
+    time.sleep(60)
+    
+    logging.info('DONE!')
     
 if __name__ == "__main__":
     main()

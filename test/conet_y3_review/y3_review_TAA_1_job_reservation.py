@@ -57,6 +57,9 @@ def main():
     DESCRIPTION = 'CONET 3Y REVIEW DEMO - PLEASE DO NOT DELETE'
     PLATFORM = 'TmoteSky'
     N = 102
+    
+    START_JOB_IN_MINUTES = 30
+    END_JOB_IN_MINUTES = 40
         
     assert PLATFORM in [ 'TmoteSky' , 'eyesIFXv21' ]
 
@@ -69,7 +72,7 @@ def main():
     testbed_dict = json.loads(content)
     logging.debug(testbed_dict)
 
-    logging.info('getting the list of platforms...')
+    logging.info('getting the list of provided node platforms...')
     response, content = h.request(uri=testbed_dict['platforms'], method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
@@ -78,7 +81,7 @@ def main():
     platform_id_list = [p['id'] for p in platform_list]
     logging.info('list of platform ids %s' % platform_id_list)
     
-    logging.info('getting the list of nodes...')
+    logging.info('getting all available testbed nodes...')
     response, content = h.request(uri=testbed_dict['nodes'], method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
@@ -86,6 +89,8 @@ def main():
     logging.debug(node_list)
     node_total_count = len(node_list)
     logging.info('%d nodes received in total' % node_total_count)
+    
+    logging.info('exploring %s...' % (testbed_dict['id']))
     
     node_count = 0
     
@@ -100,7 +105,7 @@ def main():
         node_count += len(node_list)
     
     assert node_count == node_total_count
-    logging.info('the total sum of nodes is equal to the sum of nodes per platform')
+    logging.debug('the total sum of nodes is equal to the sum of nodes per platform')
     
     logging.info('getting a list of %d of nodes with platform %s...' % (N, PLATFORM))
     response, content = h.request(uri='%s?platform=%s&n=%d' % (testbed_dict['nodes'], PLATFORM, N), method='GET', body='')
@@ -129,8 +134,8 @@ def main():
     logging.debug(job_list)
     logging.info('%d jobs returned' % len(job_list))
     
-    datetime_from = datetime.now() + timedelta(minutes=2)
-    datetime_to = datetime.now() + timedelta(minutes=12)
+    datetime_from = datetime.now() + timedelta(minutes=START_JOB_IN_MINUTES)
+    datetime_to = datetime.now() + timedelta(minutes=END_JOB_IN_MINUTES)
     
     str_from = berlin_datetime_to_utc_string(datetime_from)
     str_to = berlin_datetime_to_utc_string(datetime_to)

@@ -5,10 +5,6 @@ import sys
 from datetime import date, datetime, timedelta
 from utils import *
 
-NODE_COUNT_VNG_1 = 10
-NODE_COUNT_VNG_2 = 1
-NODE_COUNT_TOT = NODE_COUNT_VNG_1 + NODE_COUNT_VNG_2
-
 DESCRIPTION = 'CONET 3Y REVIEW TFA DEMO - PLEASE DO NOT DELETE'
 
 def main():
