@@ -28,6 +28,11 @@
 	<div class="column-left">
     	<h3>Login</h3>
         <hr />
+        
+        <a class="rpxnow" onclick="return false;"
+        href="https://cotefe.rpxnow.com/openid/v2/signin?token_url=http%3A%2F%2Fwww.cotefe.net%2Fopenid%2Fcallback.php"> Sign In </a>
+        
+        <!--
         <form method="post" action="dashboard.php" class="login-form">
         <table>
         	<tr><td>Username:</td></tr>
@@ -37,6 +42,7 @@
             <tr><td><input id="logD" type="submit" name="SignIn" value="Sign In" /></td></tr>
         </table>
         </form>
+        -->
     </div>
    	
     <div class="column-right">
@@ -51,5 +57,15 @@
 	<hr style="margin:0px;" />
     <div class="copyright"><span>&copy;2011 Conet Testbed Federation</span></div>
 
+    <script type="text/javascript">
+      var rpxJsHost = (("https:" == document.location.protocol) ? "https://" : "http://static.");
+      document.write(unescape("%3Cscript src='" + rpxJsHost +
+    "rpxnow.com/js/lib/rpx.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      RPXNOW.overlay = true;
+      RPXNOW.language_preference = 'en';
+    </script>
+    
 </body>
 </html>
