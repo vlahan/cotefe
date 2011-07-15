@@ -4,20 +4,16 @@ include_once 'scripts/functions.php';
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <title>Cotefe</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript" src="scripts/jquery.min.js"></script>
-<link rel="stylesheet" type="text/css" href="scripts/css/ui-lightness/jquery-ui-1.8.14.custom.css" />		
-<script type="text/javascript" src="scripts/js/jquery-ui-1.8.14.custom.min.js"></script>
 
 <script type="text/javascript" src="scripts/cotefev2.js"></script>
-
 <script type="text/javascript">
 $(document).ready(function() {	
-	VirtualNodeGroup();	
-	
+	Project();	
  });
 </script>
 </head>
@@ -45,10 +41,11 @@ $(document).ready(function() {
     	<h3>Dashboard</h3>
         <hr />
         <table class="left-nav">				
-					<tr><td><a href="dashboard.php"  >Projects</a></td></tr>
-					<tr><td><a href="experiments.php"  >Experiments</a></td></tr>	
+					<tr><td><a href="dashboard.php" class="current-selected" >Projects</a></td></tr>
+					<tr><td><a href="experiments.php" >Experiments</a></td></tr>	
 					<tr><td><a href="propertySets.php" >Property Sets</a></td></tr>
-					<tr><td><a href="virtualNodeGroups.php" class="current-selected">Virtual Node Groups</a></td></tr>
+					<tr><td><a href="virtualNodeGroups.php" >Virtual Node Groups</a></td></tr>
+					<tr><td><a href="images.php" >Images</a></td></tr>
 					<tr><td><a href="testbed.php" >Explore Testbeds</a></td></tr>														
 					<tr><td><a href="<?php echo ROOTURL."/testbeds-find" ?>" id="find_testbed">Find Testbed</a></td></tr>	
 				</table>
@@ -62,7 +59,7 @@ $(document).ready(function() {
             </div>
             <div id="editingfield">
            			<ul class="tabs">
-                        <li><a href="#tab1">Add/Edit Experiments</a></li>
+                        <li><a href="#tab1">Add/Edit Project</a></li>
                         <li><a href="#tab2">Raw Json</a></li>
                     </ul>
                     

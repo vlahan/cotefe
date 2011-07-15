@@ -116,11 +116,20 @@ function getProjectList()
 /*
  * experiment functions
  */
-function FollowExperiment()
+function FollowExperiment($pid)
 {
-	$root=json_decode(getUrl(ROOTURL),TRUE);
-	$projects=json_decode(getUrl($root["experiments"]),TRUE);
-    return $projects;
+	if($pid==null)
+	{
+		$root=json_decode(getUrl(ROOTURL),TRUE);
+		$projects=json_decode(getUrl($root["experiments"]),TRUE);
+    	return $projects;
+	}
+    else
+    {
+    	$root=json_decode(getUrl($pid),TRUE);
+    	
+    	return $root["experiments"];
+    }
 }
 function CreateExperimentForm($url)
 {
@@ -510,6 +519,24 @@ function getVirtualNodeGroupList($params)
  * virtual node group ends
  */
 
+/*
+ * images
+ */
+function FollowImages($experimentpath)
+{
+	//$root=json_decode(getUrl(ROOTURL),TRUE);
+	$virtual_nodegroups=json_decode(getUrl($experimentpath.'/images'),TRUE);
+    return $images;
+}
+function createImageList($experimentPath)
+{
+	/*
+	 * get image list in an experiment
+	 */
+}
+/*
+ * images ends
+ */
 
 /*
  * platforms

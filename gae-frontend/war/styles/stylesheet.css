@@ -40,7 +40,8 @@ hr{border:none;height:1px;background-color:#b9b9b9;}
 .float-left,.header-nav-container ul li
 {float:left;}
 
-#progressbar{float:right;width:128px;height:15px;margin-top:10px;margin-right:10px;display:none;}
+#progressbar{float:right;width:128px;height:25px;margin-top:10px;margin-right:10px;display:none;}
+#progressbar #progressMsg{font-family:"Times New Roman", Times, serif;font-size:9px;text-align:left;color:#fffff;}
 
 .cut-left-top-corner,.login-form table tr td input[type=text],.login-form table tr td input[type=password],.login-form table tr td input[type=submit],input[type=reset],.left-nav tr td a,input[type=submit]
 
@@ -214,7 +215,7 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 #nodesource .ui-selecting { background: #FECA40; }
 #nodesource .ui-selected { background: #F39814; color: white; }
 #nodesource, #nodeselected { list-style-type: none; margin: 0; padding: 0; width:300px; }
-#nodesource li, #nodeselected li { margin: 1px; padding: 0.4em; font-size: 7px; height: 10px;width:10px;float:left; cursor:pointer;border:1px solid orange;}
+#nodesource li, #nodeselected li { margin: 1px; padding: 0.2em; font-size: 7px; height: 7px;width:7px;float:left; cursor:pointer;border:1px solid orange;}
 #nodeselected li{background: #F39814;}
 .node-legends,#nos_selected_node{list-style-type: none; margin: 0; padding: 0;}
 .node-legends li{width:30px;height:20px;display:block;border:1px solid orange;position:relative;margin-bottom:2px;}

@@ -53,7 +53,15 @@ var loadProjectList=function(){
 
 
 var loadExperimentsList=function(){
-	var  response=sendAjax("List=experiment","html","#content",function(){loadFormProject();});	
+	id=$('body').attr('id');
+	if(id!=undefined || id!=null)
+		{
+			var  response=sendAjax("List=experiment&pid="+id,"html","#content",function(){loadFormProject();});	
+		}
+	else
+		{
+			var  response=sendAjax("List=experiment","html","#content",function(){loadFormProject();});	
+		}
 }
 
 

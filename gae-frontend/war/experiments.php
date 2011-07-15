@@ -1,5 +1,17 @@
 <?php
 include_once 'scripts/functions.php';
+$project_id=null;
+if(isset($_GET) && !empty($_GET))
+{
+	if(isset($_GET['pid']) && !empty($_GET['pid']))
+	{
+		$project_id= "id='".trim($_GET['pid'])."'";
+	}
+	else 
+	{
+		$project_id= "";
+	}
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -8,16 +20,16 @@ include_once 'scripts/functions.php';
 
 <title>Cotefe</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+<script type="text/javascript" src="scripts/jquery.min.js"></script>
 
 <script type="text/javascript" src="scripts/cotefev2.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {	
+$(document).ready(function() {		
 	Experiments();	
  });
 </script>
 </head>
-<body>
+<body <?php echo $project_id; ?>>
 
 <div class="head-container">
 	<div class="header-nav">
@@ -29,7 +41,7 @@ $(document).ready(function() {
             <li><a href="">Contact</a></li>
             </ul>
         </div>
-        <div id="progressbar"><img src="images/ajax-loader.gif"/></div>
+        <div id="progressbar"><img src="images/ajax-loader.gif"/><div id="progressMsg"></div></div>
     
     <!--header menu ends here--></div>
     <div class="logo-container">

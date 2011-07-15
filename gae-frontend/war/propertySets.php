@@ -8,7 +8,7 @@ include_once 'scripts/functions.php';
 
 <title>Cotefe</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+<script type="text/javascript" src="scripts/jquery.min.js"></script>
 
 <script type="text/javascript" src="scripts/cotefev2.js"></script>
 <script type="text/javascript">
@@ -29,7 +29,7 @@ $(document).ready(function() {
             <li><a href="">Contact</a></li>
             </ul>
         </div>
-        <div id="progressbar"><img src="images/ajax-loader.gif"/></div>
+        <div id="progressbar"><img src="images/ajax-loader.gif"/><div id="progressMsg"></div></div>
     
     <!--header menu ends here--></div>
     <div class="logo-container">

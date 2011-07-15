@@ -32,12 +32,12 @@ if(isset($_POST) &&  !empty($_POST) )
 								$i=0;
 								foreach ($projects as $project)
 								{
-									$project_info=json_decode(getUrl($project['uri']),TRUE);
-									$exp_count=count($project_info["experiments"]);
+									$project_info=$project;//json_decode(getUrl($project['uri']),TRUE);
+									
 									$records[$i][0]['text']=$project_info['name'];
 									$records[$i][0]['attribute']='style="padding-left:10px;"';
-									$records[$i][0]['a']='experiments.php?pid='.$project_info['id'];
-									$records[$i][1]['text']=$exp_count;
+									$records[$i][0]['a']='experiments.php?pid='.$project_info['uri'];
+									$records[$i][1]['text']=$project_info['experiment_count'];
 									$records[$i][1]['attribute']='style="text-align:center;"';
 									$records[$i][2]['text']='<a class="edit" href="'.$project_info['uri'].'" ><img src="images/edit.png" /></a>';
 									$records[$i][2]['attribute']='style="padding-left:10px;"';
@@ -64,7 +64,18 @@ if(isset($_POST) &&  !empty($_POST) )
 							
 							
 			case "experiment":
-			
+							$project_id=null;
+							
+							if(isset($_POST['pid']) && !empty($_POST['pid']))
+							{
+								if($_POST['pid']=="")
+								{
+									$project_id=null;
+								}
+								else $project_id=$_POST['pid'];
+								
+							}
+							
 							$title='Your current Experiments:';
 							$header[0]['text']='Name';
 							$header[0]['attribute']='width="40%" style="text-align:left;padding-left:10px;"';
@@ -78,7 +89,8 @@ if(isset($_POST) &&  !empty($_POST) )
 							$header[4]['attribute']='width="7%"';
 			
 							$records=array();
-							$exps=FollowExperiment();
+							$exps=FollowExperiment($project_id);
+							
 							if(!empty($exps))
 							{
 								$i=0;
