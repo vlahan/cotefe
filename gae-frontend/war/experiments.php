@@ -54,19 +54,18 @@ $(document).ready(function() {
         <hr />
         <table class="left-nav">				
 					<tr><td><a href="dashboard.php">Projects</a></td></tr>
-					<tr><td><a href="experiments.php" class="current-selected" >Experiments</a></td></tr>	
-					<tr><td><a href="propertySets.php" class="sub-menu-item" >Property Sets</a></td></tr>
-					<tr><td><a href="virtualNodeGroups.php" class="sub-menu-item" >Virtual Node Groups</a></td></tr>
+					<tr><td><a href="experiments.php?pid=<?php echo $_GET['pid']?>" class="current-selected">Experiments</a></td></tr>	
 					<tr><td><a href="testbed.php" id="explore_testbed">Explore Testbeds</a></td></tr>														
 					<tr><td><a href="<?php echo ROOTURL."/testbeds-find" ?>" id="find_testbed">Find Testbed</a></td></tr>	
-				</table>
+		</table>
     </div>
    	
     <div class="column-right">
     	<h3>Welcome to CONET Testbed Federation</h3>
         <hr />
+        <div id="breadcrumb"></div>
         	<div id="content">
-        	<p>The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities.	</p>
+        	
             </div>
             <div id="editingfield">
            			<ul class="tabs">

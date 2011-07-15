@@ -83,7 +83,13 @@ var loadFormProject=function(){
 	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group').live('click',function(event)
 			{event.preventDefault();event.stopPropagation();		
 				var link=$(this).attr('href');
-				var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(link,arg);});	
+				id=$('body').attr('id');
+				if(id!=undefined || id!=null)
+					{
+						var response=sendAjax("Update="+link+"&pid="+id,null,null,function (arg){onFormEvent(link,arg);});	
+					}
+				else
+				{var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(link,arg);});	}
 				
 			});
 	 }

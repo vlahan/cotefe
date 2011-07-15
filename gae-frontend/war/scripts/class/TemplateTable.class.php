@@ -17,6 +17,7 @@ class CreateTable{
 		return "<h3>".$this->title."</h3>";
 	}
 	
+	
 	function generateHeads()
 	{
 		$th="<tr>";

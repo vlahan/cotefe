@@ -98,7 +98,7 @@ function getProjectList()
 	{
 		foreach ($projects as $project)
 		{
-			$project_info=json_decode(getUrl($project['uri']),TRUE);
+			$project_info=$project;
 			$arr[$project_info['id']]=$project_info['name'];
 		}
 	}
@@ -126,8 +126,7 @@ function FollowExperiment($pid)
 	}
     else
     {
-    	$root=json_decode(getUrl($pid),TRUE);
-    	
+    	$root=json_decode(getUrl(ROOTURL.'/projects/'.$pid),TRUE);    	
     	return $root["experiments"];
     }
 }
@@ -147,7 +146,8 @@ function CreateExperimentForm($url)
 			$html.=HiddenField::HiddeBox('form-type','experiment');
 			$html.=TextField::TextBox('Experiment Name : ','name', '');
 			$html.=Description::DescriptionField('Experiment Description : ', "");
-			$html.=ListSelector::ListSelectorField('Project List:', 'project',getProjectList(),'');
+			//$html.=ListSelector::ListSelectorField('Project List:', 'project',getProjectList(),'');
+			$html.=HiddenField::HiddeBox('project',$_POST['pid']);
 			$html.=Form::FromSubmit('Add Experiment');
 			$html.=Form::FormEnd();
 			return $html;

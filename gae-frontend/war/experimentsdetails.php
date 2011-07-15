@@ -1,10 +1,22 @@
 <?php
 include_once 'scripts/functions.php';
+$project_id=null;
+if(isset($_GET) && !empty($_GET))
+{
+	if(isset($_GET['pid']) && !empty($_GET['pid']))
+	{
+		$project_id= "id='".trim($_GET['pid'])."'";
+	}
+	else 
+	{
+		$project_id= "";
+	}
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="content-cype" content="text/html; charset=utf-8" />
 
 <title>Cotefe</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
@@ -12,12 +24,12 @@ include_once 'scripts/functions.php';
 
 <script type="text/javascript" src="scripts/cotefev2.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {	
-	Project();	
+$(document).ready(function() {		
+	Experiments();	
  });
 </script>
 </head>
-<body>
+<body <?php echo $project_id; ?>>
 
 <div class="head-container">
 	<div class="header-nav">
@@ -41,22 +53,25 @@ $(document).ready(function() {
     	<h3>Dashboard</h3>
         <hr />
         <table class="left-nav">				
-					<tr><td><a href="dashboard.php" class="current-selected" >Projects</a></td></tr>
-					<tr><td><a href="testbed.php" >Explore Testbeds</a></td></tr>														
+					<tr><td><a href="dashboard.php">Projects</a></td></tr>
+					<tr><td><a href="experiments.php?pid=<?php echo $_GET['pid']?>" class="current-selected">Experiments</a></td></tr>	
+					<tr><td><a href="propertySets.php" class="sub-menu-item">Property Sets</a></td></tr>
+					<tr><td><a href="virtualNodeGroups.php" class="sub-menu-item">Virtual Node Groups</a></td></tr>
+					<tr><td><a href="testbed.php" id="explore_testbed">Explore Testbeds</a></td></tr>														
 					<tr><td><a href="<?php echo ROOTURL."/testbeds-find" ?>" id="find_testbed">Find Testbed</a></td></tr>	
-				</table>
+		</table>
     </div>
    	
     <div class="column-right">
     	<h3>Welcome to CONET Testbed Federation</h3>
         <hr />
-        	<div id="breadcrumb"></div>
+        <div id="breadcrumb"></div>
         	<div id="content">
-        	<p>The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities.	</p>
+        	
             </div>
             <div id="editingfield">
            			<ul class="tabs">
-                        <li><a href="#tab1">Add/Edit Project</a></li>
+                        <li><a href="#tab1">Add/Edit Experiments</a></li>
                         <li><a href="#tab2">Raw Json</a></li>
                     </ul>
                     

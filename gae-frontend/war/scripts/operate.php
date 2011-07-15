@@ -32,11 +32,11 @@ if(isset($_POST) &&  !empty($_POST) )
 								$i=0;
 								foreach ($projects as $project)
 								{
-									$project_info=$project;//json_decode(getUrl($project['uri']),TRUE);
+									$project_info=$project;
 									
 									$records[$i][0]['text']=$project_info['name'];
 									$records[$i][0]['attribute']='style="padding-left:10px;"';
-									$records[$i][0]['a']='experiments.php?pid='.$project_info['uri'];
+									$records[$i][0]['a']='experiments.php?pid='.$project_info['id'];
 									$records[$i][1]['text']=$project_info['experiment_count'];
 									$records[$i][1]['attribute']='style="text-align:center;"';
 									$records[$i][2]['text']='<a class="edit" href="'.$project_info['uri'].'" ><img src="images/edit.png" /></a>';
@@ -71,22 +71,27 @@ if(isset($_POST) &&  !empty($_POST) )
 								if($_POST['pid']=="")
 								{
 									$project_id=null;
+									$proj_info="";
 								}
-								else $project_id=$_POST['pid'];
+								else 
+								{
+									$project_id=$_POST['pid'];
+									$proj_n=json_decode(getUrl(ROOTURL.'/projects/'.$project_id),TRUE);
+									$proj_info=$proj_n['name'];
+								}
 								
 							}
 							
-							$title='Your current Experiments:';
+							$title='Your current Experiments under Project: '.$proj_info;
 							$header[0]['text']='Name';
 							$header[0]['attribute']='width="40%" style="text-align:left;padding-left:10px;"';
-							$header[1]['text']='Project';
+							
+							$header[1]['text']='Virtual Nodes';
 							$header[1]['attribute']='style="text-align:center;"';
-							$header[2]['text']='Virtual Nodes';
-							$header[2]['attribute']='style="text-align:center;"';
-							$header[3]['text']='Edit';
-							$header[3]['attribute']='width="5%"';
-							$header[4]['text']='Delete';
-							$header[4]['attribute']='width="7%"';
+							$header[2]['text']='Edit';
+							$header[2]['attribute']='width="5%"';
+							$header[3]['text']='Delete';
+							$header[3]['attribute']='width="7%"';
 			
 							$records=array();
 							$exps=FollowExperiment($project_id);
@@ -96,29 +101,24 @@ if(isset($_POST) &&  !empty($_POST) )
 								$i=0;
 								foreach ($exps as $exp)
 								{
-									$exp_info=json_decode(getUrl($exp['uri']),TRUE);
-									
+									$exp_info=$exp;
 									$records[$i][0]['text']=$exp_info['name'];
 									$records[$i][0]['attribute']='style="padding-left:10px;"';
-									$url_g=urlGenerate('propertySets.php',('expId='.$exp_info['id']));
-									$records[$i][0]['a']=$url_g;
-									$project_info=json_decode(getUrl($exp_info['project']),TRUE);
-									$records[$i][1]['text']=$project_info['name'];
+									$records[$i][0]['a']='experimentsdetails.php?pid='.$exp_info['id'];
+									$records[$i][1]['text']=$exp_info['virtual_node_count'];
 									$records[$i][1]['attribute']='style="text-align:center;"';
-									$records[$i][2]['text']=$exp_info['node_count'];
-									$records[$i][2]['attribute']='style="text-align:center;"';
 									
-									$records[$i][3]['text']='<a class="edit" href="'.$exp_info['uri'].'" ><img src="images/edit.png" /></a>';
-									$records[$i][3]['attribute']='style="padding-left:10px;"';
-									$records[$i][4]['text']='<a class="deleteProject" href="'.$exp_info['uri'].'"><img src="images/close.png" /></a>';
-									$records[$i][4]['attribute']='style="padding-left:15px;"';
+									$records[$i][2]['text']='<a class="edit" href="'.$exp_info['uri'].'" ><img src="images/edit.png" /></a>';
+									$records[$i][2]['attribute']='style="padding-left:10px;"';
+									$records[$i][3]['text']='<a class="deleteProject" href="'.$exp_info['uri'].'"><img src="images/close.png" /></a>';
+									$records[$i][3]['attribute']='style="padding-left:15px;"';
 									
 									
 									$i++;
 								}
 								$records[$i][0]['text']='<a class="add-links" href="'.ROOTURL.'/experiments" " id="create_new_exp" >Add New Experiments</a>';
 								$records[$i][0]['attribute']='style="padding-left:10px;"';
-								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']=$records[$i][4]['text']='';
+								$records[$i][1]['text']=$records[$i][2]['text']=$records[$i][3]['text']='';
 								$obj=new Createtable($title,$header,$records);
 								
 								echo $obj->render();
