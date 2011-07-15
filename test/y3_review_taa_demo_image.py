@@ -7,12 +7,12 @@ from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 import urllib2
 
-# SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
-SERVER_URL = 'http://localhost:8001'
+SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
+# SERVER_URL = 'http://localhost:8001'
 
 DESCRIPTION = 'CONET 3Y REVIEW - PLEASE DO NOT DELETE'
 
-IMAGEFILE_PATH = '/Users/claudiodonzelli/Desktop/images/blink_test_image_telosb'
+IMAGEFILE_PATH = '/Users/claudiodonzelli/Desktop/images/'
 
 def main():
     
