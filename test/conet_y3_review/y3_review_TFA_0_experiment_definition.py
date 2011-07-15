@@ -101,7 +101,7 @@ def main():
         'name' : 'sample property set',
         'description' : DESCRIPTION,
         'platform' : platform_dict['id'],
-        'node_count' : N,
+        'virtual_node_count' : N,
     }
     
     logging.info('creating a new property set made of %d nodes of platform %s...' % (N, PLATFORM))
@@ -395,7 +395,7 @@ def main():
     
     # CHECK THE EXPERIMENT RESOURCE
     
-    logging.info('check the including its subresrouces at %s' % (experiment_dict['uri'], ))
+    logging.info('check the created experiment including its subresrouces at %s' % (experiment_dict['uri'], ))
 
 if __name__ == "__main__":
     main()
