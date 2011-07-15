@@ -3,11 +3,18 @@ import xmlrpclib
 from datetime import datetime
 from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
-from api.models import *
-from settings import *
-from utils import *
-from proxy import TestbedProxy
-from django.contrib.auth.models import UserManager
+
+try:
+    from api.models import *
+    from settings import *
+    from utils import *
+    from proxy import TestbedProxy
+except ImportError:
+    from testbedserver.api.models import *
+    from testbedserver.settings import *
+    from testbedserver.utils import *
+    from testbedserver.proxy import TestbedProxy
+
 
 proxy = TestbedProxy(
     '%s://%s:%s@%s:%s' % (

@@ -4,7 +4,10 @@ from datetime import datetime, tzinfo
 import pytz
 from anyjson import json
 from django.http import HttpResponse
-from settings import *
+try:
+    from settings import *
+except ImportError:
+    from testbedserver.settings import *
 
 # UTILITY FUNCTIONS
 

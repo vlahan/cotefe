@@ -1,5 +1,9 @@
 from django.conf.urls.defaults import *
-from testbedserver.api.views import *
+
+try:
+    from api.views import *
+except ImportError:
+    from testbedserver.api.views import *
 
 urlpatterns = patterns('',
                        

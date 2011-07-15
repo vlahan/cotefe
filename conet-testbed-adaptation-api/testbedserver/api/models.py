@@ -1,8 +1,12 @@
 import os
 from django.db import models
 from django.contrib.auth.models import User
-from settings import *
-from utils import *
+try:
+    from settings import *
+    from utils import *
+except ImportError:
+    from testbedserver.settings import *
+    from testbedserver.utils import *
 
 class Resource(models.Model):
     class Meta:

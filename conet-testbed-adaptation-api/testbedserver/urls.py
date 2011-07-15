@@ -2,8 +2,12 @@ from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.contrib import databrowse
 
-from api.admin import *
-from api.views import *
+try:
+    from api.admin import *
+    from api.views import *
+except ImportError:
+    from testbedserver.api.admin import *
+    from testbedserver.api.views import *
 
 # admin.autodiscover()
 

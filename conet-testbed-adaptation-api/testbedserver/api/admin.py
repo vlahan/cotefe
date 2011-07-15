@@ -1,5 +1,9 @@
 from django.contrib import admin
-from api.models import *
+
+try:
+    from api.models import *
+except ImportError:
+    from testbedserver.api.models import *
 
 admin.site.register(Testbed)
 admin.site.register(Platform)
