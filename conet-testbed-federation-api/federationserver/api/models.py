@@ -61,8 +61,8 @@ class Project(Resource):
             r['description'] = self.description
             r['experiments'] = [ experiment.to_dict(head_only = True) for experiment in self.experiments.all() ]
             r['experiment_count'] = len(r['experiments'])
-            r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+            r['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            r['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return r
 
     class Meta:
@@ -100,10 +100,10 @@ class Experiment(Resource):
             r['virtual_node_count'] = len(r['virtual_nodes'])
             r['virtual_nodegroups'] = [ vng.to_dict(head_only = True) for vng in self.virtual_nodegroups.all() ]
             r['images'] = [ i.to_dict(head_only = True) for i in self.images.all() ]
-            r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
             r['virtual_tasks'] = [ vt.to_dict(head_only = True) for vt in self.virtual_tasks.all().order_by('step') ]
             r['job'] = [ j.to_dict(head_only = True) for j in self.jobs.all().order_by('datetime_from') ]
+            r['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            r['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return r
     
     class Meta:
@@ -150,8 +150,6 @@ class Platform(Resource):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
     name = models.CharField(max_length=255, verbose_name='Name')
     description = models.TextField(verbose_name='Description')
-    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
-    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Created')
 
     def __unicode__(self):
         return self.name
@@ -202,8 +200,8 @@ class PropertySet(Resource):
             r['platform'] = build_url(path = self.platform.get_absolute_url())
             r['virtual_nodes'] = [ virtual_node.to_dict(head_only = True) for virtual_node in self.virtual_nodes.all() ]
             r['virtual_node_count'] = len(r['virtual_nodes'])
-            r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+            r['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            r['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return r
 
     class Meta:
@@ -277,8 +275,8 @@ class VirtualNode(Resource):
                 r['image'] = build_url(path = self.image.get_absolute_url())
             else:
                 r['image'] = None
-            r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+            r['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            r['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return r
     
     class Meta:
@@ -318,8 +316,8 @@ class VirtualNodeGroup(Resource):
                 r['image'] = build_url(path = self.image.get_absolute_url())
             else:
                 r['image'] = None
-            r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+            r['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            r['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return r
         
     class Meta:
@@ -357,8 +355,8 @@ class VirtualTask(Resource):
             r['method'] = self.method
             r['target'] = self.target
             r['experiment'] = build_url(path = self.experiment.get_absolute_url())
-            r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+            r['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            r['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return r
 
     class Meta:
@@ -397,8 +395,8 @@ class Job(Resource):
                 r['experiment'] = build_url(path = self.experiment.get_absolute_url())
             else:
                 r['experiment'] = None
-            r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
-            r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+            r['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            r['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return r
 
     class Meta:
