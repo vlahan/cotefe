@@ -208,7 +208,7 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 	padding: 20px;
 }
 
-.tab_content input[type=text]{border:1px solid #b9b9b9;height:25px;padding-left:5px;width:248px;}/*background-color: #eaeaea;*/
+.tab_content input[type=text],.tab_content input[type=file]{border:1px solid #b9b9b9;height:25px;padding-left:5px;width:248px;}/*background-color: #eaeaea;*/
 .tab_content textarea{height:100px;width:252px;padding:0px;border:1px solid #b9b9b9;;}
 .tab_content select{padding:0px;width:253px;height:25px;}
 
@@ -217,7 +217,7 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 #nodesource .ui-selecting { background: #FECA40; }
 #nodesource .ui-selected { background: #F39814; color: white; }
 #nodesource, #nodeselected { list-style-type: none; margin: 0; padding: 0; width:300px; }
-#nodesource li, #nodeselected li { margin: 1px; padding: 0.2em; font-size: 7px; height: 7px;width:7px;float:left; cursor:pointer;border:1px solid orange;}
+#nodesource li, #nodeselected li { margin: 1px; padding: 0.2em; font-size: 7px; height: 16px;width:16px;float:left; cursor:pointer;border:1px solid orange;}
 #nodeselected li{background: #F39814;}
 .node-legends,#nos_selected_node{list-style-type: none; margin: 0; padding: 0;}
 .node-legends li{width:30px;height:20px;display:block;border:1px solid orange;position:relative;margin-bottom:2px;}

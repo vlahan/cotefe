@@ -100,8 +100,8 @@ var createPropertyList=function(){
 
 var loadFormProject=function(){
 	
-	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group').die('click');
-	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group').live('click',function(event)
+	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group,#upload_new_image').die('click');
+	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group,#upload_new_image').live('click',function(event)
 			{event.preventDefault();event.stopPropagation();		
 				var link=$(this).attr('href');
 				id=$('body').attr('id');
@@ -252,8 +252,8 @@ var addEventDelete=function(callback)
 	$("a[class=deleteProject]").die('click');
 	$("a[class=deleteProject]").live('click', function(e) 
 		{e.preventDefault();e.stopPropagation();
-		 var project_link=$(this).attr('href');
-		 var response=sendAjax("Delete="+project_link,null,null,function (arg){addDeleteEvent(arg,function(){callback()});});
+		 	var project_link=$(this).attr('href');
+		 	var response=sendAjax("Delete="+project_link,null,null,function (arg){addDeleteEvent(arg,function(){callback()});});
 		 
 		});
 }

@@ -25,6 +25,7 @@ $proj_id=explode('/',$exp['project']);
 <title>CONET Testbed Federation</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript" src="scripts/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/js/jquery-ui-1.8.14.custom.min.js"></script>
 
 <script type="text/javascript" src="scripts/cotefev2.js"></script>
 <script type="text/javascript">

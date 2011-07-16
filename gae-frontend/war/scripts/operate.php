@@ -269,12 +269,36 @@ if(isset($_POST) &&  !empty($_POST) )
 							break;
 			case 'properties': 	$propertyset=FollowPropertySets($_POST['pid']);
 								$propertyset_s="";
-								
-								foreach($propertyset as $property)
+								if(!empty($propertyset))
 								{
-									$propertyset_s.='<li><a href="'.ROOTURL."/experiments/".$_POST['pid'].'/property-sets/'.$property['id'].'" class="item-edit" >'.$property['name'].'</a></li>';
+									foreach($propertyset as $property)
+									{
+										$propertyset_s.='<li><a href="'.ROOTURL."/experiments/".$_POST['pid'].'/property-sets/'.$property['id'].'" class="item-edit" >'.$property['name'].'</a></li>';
+									}
 								}
-			
+								
+								
+								$vng=FollowVirtualNodeGroup($_POST['pid']);
+								
+								$vng_s="";
+								if(!empty($vng))
+								{
+									foreach($vng as $vns)
+									{
+										$vng_s.='<li><a href="'.ROOTURL."/experiments/".$_POST['pid'].'/virtual-nodegroups/'.$vns['id'].'" class="item-edit" >'.$vns['name'].'</a></li>';
+									}
+								}
+								
+								
+								$images=FollowImages($_POST['pid']);								
+								$imgs="";
+								if(!empty($images))
+								{
+									foreach($images as $img)
+									{
+										$imgs.='<li><a href="'.ROOTURL."/experiments/".$_POST['pid'].'/images/'.$img['id'].'" class="item-edit" >'.$img['name'].'</a></li>';
+									}
+								}
 								$html='<ul id="drop-down">
 									  <li><a href="#">PropertySet</a>
 										<ul id="property-set-tab">
@@ -285,13 +309,15 @@ if(isset($_POST) &&  !empty($_POST) )
 									  </li>
 									  <li><a href="#">Virtual Node Group</a>
 										<ul id="virtual-node-group-tab">
+										'.$vng_s.'
 										  <li><a href="'.ROOTURL."/experiments/".$_POST['pid']."/virtual-nodegroups".'" class="drop-down-bottom" id="create_new_virtual_node_group">Add Virtual Node Group</a></li>
 										  
 										</ul>
 									  </li>
 									  <li><a href="#">Images</a>
 										<ul id="images-tab">
-										  <li><a href="#" class="drop-down-bottom">Upload Image</a></li>
+										'.$imgs.'
+										  <li><a href="'.ROOTURL."/experiments/".$_POST['pid']."/images".'" class="drop-down-bottom" id="upload_new_image">Upload Image</a></li>
 										 
 										</ul>
 									  </li>
@@ -325,7 +351,7 @@ if(isset($_POST) &&  !empty($_POST) )
 				case 'projects':echo CreateProjectForm('');break;
 				case 'experiments':echo CreateExperimentForm(''); break;
 				//case 'property-sets':echo CreatePropertySetForm(''); break;
-				case 'virtual-nodegroups':echo CreateVNGForm('');break;
+				//case 'virtual-nodegroups':echo CreateVNGForm('');break;
 			}
 		}
 		elseif (count($conditions)==3)//update
@@ -345,6 +371,8 @@ if(isset($_POST) &&  !empty($_POST) )
 			switch ($conditions[3])
 			{
 				case 'property-sets':echo CreatePropertySetForm('',$_POST['pid']); break;
+				case 'virtual-nodegroups':echo CreateVNGForm('',$_POST['pid']);break;
+				case 'images':echo ImageForm('',$_POST['pid']);break;
 			}
 		}
 		elseif(count($conditions)==5)
@@ -352,6 +380,7 @@ if(isset($_POST) &&  !empty($_POST) )
 			switch ($conditions[3])
 			{
 				case 'property-sets':echo CreatePropertySetForm($_POST['Update'],$_POST['pid']); break;
+				case 'virtual-nodegroups':echo CreateVNGForm($_POST['Update'],$_POST['pid']);break;
 			}
 		}
 		
@@ -414,21 +443,47 @@ if(isset($_POST) &&  !empty($_POST) )
 								unset($params['Submit']);
 								unset($params['form-type']);
 								unset($params['uri']);								
-								$resp=RESTUrl(ROOTURL.'/experiments/'.$exp.'/property-sets/'.$id,'POST',json_encode($params,JSON_NUMERIC_CHECK));
+								$resp=RESTUrl(ROOTURL.'/experiments/'.$exp.'/property-sets/'.$id,'PUT',json_encode($params,JSON_NUMERIC_CHECK));
 								echo getResponseCode($resp);
 								break;									
-				case "VNG":		
-								
+				case "VNG":	
 								$params=$_POST;
+								$exp=$params['experiments'];
 								unset($params['Submit']);
 								unset($params['form-type']);
+								unset($params['experiments']);
 								$nodes=explode(',',$params['virtual_nodes']);
 								unset($nodes[count($nodes)-1]);
-								$params['virtual_nodes']=$nodes;
-								//echo json_encode($params);								
-								$resp=RESTUrl(ROOTURL.'/virtual-nodegroups/','POST',json_encode($params));
+								$params['virtual_nodes']=$nodes;													
+								$resp=RESTUrl(ROOTURL.'/experiments/'.$exp.'/virtual-nodegroups/','POST',json_encode($params));
 								echo getResponseCode($resp);
-								break;		
+								break;
+				case "VNGUPDATE":	
+								$uri=trim($_POST['uri']);
+								$params=$_POST;
+								$exp=$params['experiments'];
+								$id=$params['uri'];
+								unset($params['Submit']);
+								unset($params['form-type']);
+								unset($params['experiments']);
+								unset($params['uri']);
+								$nodes=explode(',',$params['virtual_nodes']);
+								unset($nodes[count($nodes)-1]);
+								$params['virtual_nodes']=$nodes;													
+								$resp=RESTUrl($uri,'PUT',json_encode($params));
+								echo getResponseCode($resp);
+								break;
+				
+								
+				case "image":	$params=$_POST;	
+								$exp=$params['experiments'];
+								unset($params['experiments']);
+								unset($params['Submit']); 
+								unset($params['form-type']);
+								print_r($params);
+								break;
+								//$resp=RESTUrl(ROOTURL.'/experiments/'.$exp.'/images/','POST',json_encode($params,JSON_NUMERIC_CHECK));
+								//echo getResponseCode($resp);
 			}
 			
 		}

@@ -285,19 +285,18 @@ function CreatePropertySetForm($url,$eid)
 	
 	
 }
-function FollowVirtualNode()
+function FollowVirtualNode($eid)
 {
-	$root=json_decode(getUrl(ROOTURL),TRUE);
+	$root=json_decode(getUrl(ROOTURL.'/experiments/'.$eid.'/virtual-nodes/'),TRUE);
 	
-	$virtual_nodes=json_decode(getUrl($root["virtual_nodes"]),TRUE);
+	//$virtual_nodes=json_decode(getUrl($root["virtual_nodes"]),TRUE);
 	
-    return $virtual_nodes;
+    return $root;
 }
-function getVirtualNodeList($params)
+function getVirtualNodeList($params,$eid)
 {
 	$arr=null;
-	$VirtualNodes=FollowVirtualNode();
-	
+	$VirtualNodes=FollowVirtualNode($eid);
 	if(!empty($VirtualNodes))
 	{
 		if($params=='count')
@@ -311,7 +310,7 @@ function getVirtualNodeList($params)
 			$arr[$c]['id']=$VirtualNode['id'];
 			$arr[$c]['name']=$VirtualNode['name'];
 			
-			$arr[$c]['property_set_id']=$VirtualNode['property_set'];
+			$arr[$c]['property_set_id']=$VirtualNode['property_set_name'];
 			$c++;
 		}
 		
@@ -330,17 +329,16 @@ function getVirtualNodeList($params)
 /*
  * virtual node group
  */
-function FollowVirtualNodeGroup()
+function FollowVirtualNodeGroup($eid)
 {
-	$root=json_decode(getUrl(ROOTURL),TRUE);
-	$virtual_nodegroups=json_decode(getUrl($root["virtual_nodegroups"]),TRUE);
-    return $virtual_nodegroups;
+	$root=json_decode(getUrl(ROOTURL.'/experiments/'.$eid.'/virtual-nodegroups/'),TRUE);
+	
+    return $root;
 }
-function CreateVNGForm($url)
+function CreateVNGForm($url,$eid)
 {
-	if(getExperimentList()!=null)
-	{
-		$node_num=getVirtualNodeList(null);
+	
+		$node_num=getVirtualNodeList(null,$eid);
 		if(count($node_num)!=null)
 		{
 			if(empty($url))
@@ -350,9 +348,10 @@ function CreateVNGForm($url)
 				$html.="<hr/>";
 				$html.=Form::FormStart();
 				$html.=HiddenField::HiddeBox('form-type','VNG');
+				$html.=HiddenField::HiddeBox('experiments',$eid);
 				$html.=TextField::TextBox('Virtual Node Group Name : ','name', '');
 				$html.=Description::DescriptionField('Virtual Node Group Description : ', "");
-				$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList(),'');
+				//$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList(),'');
 				
 				//get total VNG
 				$node_pack="<ol id='nodesource' class='ui-selected' >";
@@ -392,8 +391,8 @@ function CreateVNGForm($url)
 				$colorlegend="<ol class='node-legends'>";
 				foreach($style as $key=>$value)
 				{
-					$propertySetSingle=getSinglePropertySet($key);
-					$colorlegend.="<li style='background:#".$value."' title=\"".$key."\"><span>".$propertySetSingle['name']."</span></li>";
+					//$propertySetSingle=getSinglePropertySet($key);
+					$colorlegend.="<li style='background:#".$value."' title=\"".$key."\"><span>".$key."</span></li>";
 				}
 				$colorlegend.="</ol>";
 				$html.=EmptyTR::EmptyTableTR('Color Legends:<br>'.$colorlegend, 'You have selected :<ol id="nos_selected_node"></ol>');
@@ -409,16 +408,17 @@ function CreateVNGForm($url)
 				$html.=Form::Header('Update Virtual Node Group');
 				$html.="<hr/>";
 				$html.=Form::FormStart();
-				$html.=HiddenField::HiddeBox('form-type','VNG');
+				$html.=HiddenField::HiddeBox('form-type','VNGUPDATE');
+				$html.=HiddenField::HiddeBox('experiments',$eid);
 				$html.=TextField::TextBox('Virtual Node Group Name : ','name', $obj['name']);
 				$html.=Description::DescriptionField('Virtual Node Group Description : ', $obj['description']);
 				$experiment=json_decode(getUrl($obj['experiment']),TRUE);
-				$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList(),$experiment['id']);
+				//$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList(),$experiment['id']);
 				
 				//get total VNG
 				$node_pack="<ol id='nodesource' class='ui-selected' >";
-				$no_of_nodes=getVirtualNodeList('count');
-				$node_array=getVirtualNodeList(null);
+				$no_of_nodes=count($node_num);
+				$node_array=$node_num;
 				
 				$propertyset=array();
 				for($i=0;$i<$no_of_nodes;$i++)
@@ -488,11 +488,8 @@ function CreateVNGForm($url)
 			echo "No Nodes Found! Please Create Nodes first.";
 			return null;
 		}
-	}
-	else
-	{
-		echo "No Experiment Found! Please Create Experiment.";
-	}
+	
+	
 }
 function random_color(){
     mt_srand((double)microtime()*1000000);
@@ -536,14 +533,32 @@ function getVirtualNodeGroupList($params)
 function FollowImages($experimentpath)
 {
 	//$root=json_decode(getUrl(ROOTURL),TRUE);
-	$virtual_nodegroups=json_decode(getUrl($experimentpath.'/images'),TRUE);
+	$images=json_decode(getUrl(ROOTURL.'/experiments/'.$experimentpath.'/images'),TRUE);
     return $images;
 }
 function createImageList($experimentPath)
 {
-	/*
-	 * get image list in an experiment
-	 */
+	$result=FollowImages($experimentpath);
+	
+}
+
+function ImageForm($url,$eid)
+{
+	if(empty($url))
+	{
+		$html='';
+		$html.=Form::Header('New Image');
+		$html.="<hr/>";
+		$html.=Form::FormStart();
+		$html.=HiddenField::HiddeBox('form-type','image');
+		$html.=HiddenField::HiddeBox('experiments',$eid);
+		$html.=TextField::TextBox('Image Name : ','name', '');
+		$html.=Description::DescriptionField('Image Description : ', "");
+		$html.=EmptyTR::EmptyTableTR('Select File: ','<input type="file" name="image_file" >');
+		$html.=Form::FromSubmit('Upload Image');
+		$html.=Form::FormEnd();
+		return $html;
+	}
 }
 /*
  * images ends
