@@ -3,12 +3,6 @@
  * start of session of new user
  */
 session_start();
-if ($_SESSION[$_SESSION["session"]]["logged"]!=1) {
-    session_destroy();
-    $host  = $_SERVER['HTTP_HOST'];
-    $extra = 'index.php';
-    header("Location: http://$host/$extra");
-}
 
 /*
  * called in everypage for checking user validity

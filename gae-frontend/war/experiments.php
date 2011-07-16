@@ -1,4 +1,5 @@
 <?php
+include_once 'openid/check.php';
 include_once 'scripts/functions.php';
 $project_id=null;
 if(isset($_GET) && !empty($_GET))

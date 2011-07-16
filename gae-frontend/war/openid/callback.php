@@ -52,16 +52,16 @@ if(strlen($token) == 40) {
     if (in_array($auth_info["profile"]["identifier"], $valid_identifiers)) {
 
         session_start();
-
-        $host  = $_SERVER['HTTP_HOST'];
-        $extra = 'dashboard.php';
+        
         $_SESSION["session"]=session_id();
-        $_SESSION[$_SESSION["session"]]["logged"]=1;			
+        $_SESSION[$_SESSION["session"]]["logged"]=true;			
         $_SESSION[$_SESSION["session"]]["identifier"]=$auth_info["profile"]["identifier"];
         $_SESSION[$_SESSION["session"]]["name"]=$auth_info["profile"]["name"]["formatted"];
         $_SESSION[$_SESSION["session"]]["providerName"]=$auth_info["profile"]["providerName"];
+
+        $host  = $_SERVER['HTTP_HOST'];
+        $extra = 'dashboard.php';
         header("Location: http://$host/$extra");
-    
         //echo "http://$host/$extra"
     } else {
         echo 'Authentication failed.';
