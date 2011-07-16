@@ -27,6 +27,7 @@ if(isset($_POST) &&  !empty($_POST) )
 							
 							$records=array();
 							$projects=FollowProject();
+							
 							if(!empty($projects))
 							{
 								$i=0;

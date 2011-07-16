@@ -33,6 +33,7 @@ $(document).ready(function() {
 	ExperimentDetails();	
  });
 </script>
+<link href="scripts/css/ui-lightness/jquery-ui-1.8.14.custom.css" rel="stylesheet" type="text/css" />
 </head>
 <body <?php echo $ex_id; ?>>
 
