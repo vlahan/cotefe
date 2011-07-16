@@ -20,7 +20,7 @@ $proj_id=explode('/',$exp['project']);
 <head>
 <meta http-equiv="content-cype" content="text/html; charset=utf-8" />
 
-<title>Cotefe</title>
+<title>CONET Testbed Federation</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript" src="scripts/jquery.min.js"></script>
 

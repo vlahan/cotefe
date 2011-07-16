@@ -6,6 +6,10 @@ $valid_identifiers = array(
     "https://www.google.com/profiles/110662023037380294102", // solenoidd@gmail.com
     "https://www.google.com/profiles/103269797818246441292", // donzelli@cotefe.net
     "https://www.google.com/profiles/101901861915259369647", // vlahan@cotefe.net
+    "http://www.facebook.com/profile.php?id=639690295", // facebook claudio donzelli
+    "http://twitter.com/account/profile?user_id=11489012", //twitter claudio donzelli
+    "http://www.linkedin.com/profile?viewProfile=CRLQv3ihZy", // linkedin claudio donzelli
+    "https://me.yahoo.com/a/5XYKjKB1hIWzWViIlrY86oCFhhf_WN7j#b20f2" // yahoo claudio donzelli
     );
 
 $rpx_api_key = '726651f55a8c05d5adc230edba6a253c30276b99';
@@ -42,26 +46,28 @@ if(strlen($token) == 40) {
   $auth_info = json_decode($result, true);
 
   if ($auth_info['stat'] == 'ok') {
-    //echo "\n auth_info:";
-    //echo "\n"; var_dump($auth_info);
+    echo "\n auth_info:";
+    echo "\n"; var_dump($auth_info);
     
-        if (in_array($auth_info["identifier"], $valid_identifiers))
-        {
+    if (in_array($auth_info["profile"]["identifier"], $valid_identifiers)) {
+
+        session_start();
+
+        $host  = $_SERVER['HTTP_HOST'];
+        $extra = 'dashboard.php';
+        $_SESSION["session"]=session_id();
+        $_SESSION[$_SESSION["session"]]["logged"]=1;			
+        $_SESSION[$_SESSION["session"]]["identifier"]=$auth_info["profile"]["identifier"];
+        $_SESSION[$_SESSION["session"]]["name"]=$auth_info["profile"]["name"]["formatted"];
+        $_SESSION[$_SESSION["session"]]["providerName"]=$auth_info["profile"]["providerName"];
+        header("Location: http://$host/$extra");
     
-            session_start();
-    
-            $host  = $_SERVER['HTTP_HOST'];
-            $extra = 'dashboard.php';
-            $_SESSION["session"]=session_id();
-            $_SESSION[$_SESSION["session"]]["logged"]=1;			
-            $_SESSION[$_SESSION["session"]]["identifier"]=$auth_info["identifier"];
-            $_SESSION[$_SESSION["session"]]["name"]=$auth_info["name"]["formatted"];
-            $_SESSION[$_SESSION["session"]]["email"]=$auth_info["email"];
-            header("Location: http://$host/$extra");
-        }
+        //echo "http://$host/$extra"
+    } else {
+        echo "no user found"
     }
 
-    } else {
+  } else {
       echo "\n".'An error occured: ' . $auth_info['err']['msg']."\n";
       var_dump($auth_info);
       echo "\n";
@@ -69,8 +75,10 @@ if(strlen($token) == 40) {
       $host  = $_SERVER['HTTP_HOST'];
       $extra = 'index.php';
       header("Location: http://$host/$extra");
-    }
-}else{
+      
+      //echo "http://$host/$extra"
+  }
+} else {
   
   echo 'Authentication canceled.';
   $host  = $_SERVER['HTTP_HOST'];

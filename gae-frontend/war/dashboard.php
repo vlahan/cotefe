@@ -6,7 +6,7 @@ include_once 'scripts/functions.php';
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-<title>Cotefe</title>
+<title>CONET Testbed Federation</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript" src="scripts/jquery.min.js"></script>
 
@@ -41,8 +41,9 @@ $(document).ready(function() {
     	<h3>Dashboard</h3>
         <hr />
         <div id="userinfo">
-            <p>Welcome back,<br /><?php echo $_SESSION[$_SESSION["session"]]["name"]; ?></p>
-            <p>Email: <?php echo $_SESSION[$_SESSION["session"]]["email"]=$auth_info["email"]; ?></p>
+            <h2>Welcome back,<br /><?php echo $_SESSION[$_SESSION["session"]]["name"]; ?>!</h2>
+            <p>(You logged in with <?php echo $_SESSION[$_SESSION["session"]]["providerName"]; ?>)</p>
+            <p><a href="openid/logout.php">Logout</a></p>
         </div>
         <table class="left-nav">				
 					<tr><td><a href="dashboard.php" class="current-selected" >Projects</a></td></tr>

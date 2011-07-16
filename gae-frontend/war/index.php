@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-<title>Cotefe</title>
+<title>CONET Testbed Federation</title>
 <link href="styles/stylesheet.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 <body>
