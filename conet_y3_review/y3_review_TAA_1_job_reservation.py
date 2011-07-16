@@ -8,39 +8,13 @@ from poster.streaminghttp import register_openers
 import urllib2
 import pytz
 
-# UTC time zone
-utc = pytz.utc
-
-# Europe/Berlin time zone
-berlin = pytz.timezone('Europe/Berlin')
-
-# datetime string formats
-FMT_DT_TO_STR = '%Y-%m-%dT%H:%M:%S%z'
-FMT_STR_TO_DT = '%Y-%m-%dT%H:%M:%S+0000'
-
-def berlin_datetime_to_berlin_string(dt):
-    dt_berlin = berlin.localize(dt)
-    return dt_berlin.strftime(FMT_DT_TO_STR)
-
-def utc_datetime_to_utc_string(dt):
-    dt_utc = utc.localize(dt)
-    return dt_utc.strftime(FMT_DT_TO_STR)
-
 def berlin_datetime_to_utc_string(dt):
+    FMT_DT_TO_STR = '%Y-%m-%dT%H:%M:%S%z'
+    utc = pytz.utc
+    berlin = pytz.timezone('Europe/Berlin')
     dt_berlin = berlin.localize(dt)
     dt_utc = dt_berlin.astimezone(utc)
     return dt_utc.strftime(FMT_DT_TO_STR)
-
-def naive_string_to_utc_datetime(dt_str):
-    return berlin.localize(datetime.strptime(dt_str, FMT_STR_TO_DT))
-
-def utc_string_to_utc_datetime(dt_str):
-    return datetime.strptime(dt_str, FMT_STR_TO_DT)
-
-def get_dt_now_utc():
-    dt_now_berlin = berlin.localize(datetime.now())
-    dt_now_utc = dt_now_berlin.astimezone(utc)
-    return dt_now_utc
 
 def main():
     
@@ -51,17 +25,22 @@ def main():
         datefmt='[%Y-%m-%d %H:%M:%S %z]',
     )
     
-    SERVER_URL = str(sys.argv[1])
+#    SERVER_URL = str(sys.argv[1]) or 'https://www.twist.tu-berlin.de:8001/'
+#    PLATFORM = str(sys.argv[2]) or 'TmoteSky'
+#    N = int(sys.argv[3]) or 96
+#    START_JOB_IN_MINUTES = int(sys.argv[4]) or 1
+#    END_JOB_IN_MINUTES = int(sys.argv[5]) or 31
     
-    START_JOB_IN_MINUTES = int(sys.argv[2])
-    END_JOB_IN_MINUTES = int(sys.argv[3])
+    SERVER_URL = 'https://www.twist.tu-berlin.de:8001/'
+    PLATFORM = 'TmoteSky'
+    N = 96
+    START_JOB_IN_MINUTES = 1
+    END_JOB_IN_MINUTES = 31
     
     CALENDAR_SPAN_IN_DAYS = 7
     DESCRIPTION = 'CONET 3Y REVIEW DEMO - PLEASE DO NOT DELETE'
-    PLATFORM = 'TmoteSky'
-    N = 102
-
-    assert PLATFORM in [ 'TmoteSky' , 'eyesIFXv21' ]
+    
+    assert PLATFORM in [ 'TmoteSky' , 'eyesIFXv20', 'eyesIFXv21' ]
 
     h = httplib2.Http()
     
@@ -115,17 +94,14 @@ def main():
     logging.debug(node_list)
     if len(node_list) == N:
         logging.info('OK! %d nodes found with platform %s' % (len(node_list), PLATFORM))
+        r = raw_input('Do you want to reserve a job? (Y/N) ')
+        if r != 'Y':
+            exit()
     else:
         logging.info('OUCH! you asked for %d nodes with platform %s but you only received %d' % (N, PLATFORM, len(node_list)))
         r = raw_input('Do you still want to go on with %d nodes? (Y/N) ' % len(node_list))
-        if r == 'Y':
-            N = len(node_list)
-        else:
+        if r != 'Y':
             exit()
-            
-    r = raw_input('Do you want to reserve a job? (Y/N)')
-    if r != 'Y':
-        exit()
             
     # GETTING THE CALENDAR
     
@@ -140,20 +116,14 @@ def main():
     logging.debug(job_list)
     logging.info('%d jobs returned' % len(job_list))
     
-    datetime_from = datetime.now() + timedelta(minutes=START_JOB_IN_MINUTES)
-    datetime_to = datetime.now() + timedelta(minutes=END_JOB_IN_MINUTES)
-    
-    str_from = berlin_datetime_to_utc_string(datetime_from)
-    str_to = berlin_datetime_to_utc_string(datetime_to)
-    
     # CREATING A JOB
     
     job_dict = {
         'name' : 'sample job',
         'description' : DESCRIPTION,
         'nodes' : [ n['id'] for n in node_list ],
-        'datetime_from' : str_from,
-        'datetime_to' : str_to,
+        'datetime_from' : berlin_datetime_to_utc_string(datetime.now() + timedelta(minutes=START_JOB_IN_MINUTES)),
+        'datetime_to' : berlin_datetime_to_utc_string(datetime.now() + timedelta(minutes=END_JOB_IN_MINUTES)),
     }
     
     logging.debug(job_dict)
