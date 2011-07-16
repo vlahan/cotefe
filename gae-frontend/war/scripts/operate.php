@@ -467,9 +467,10 @@ if(isset($_POST) &&  !empty($_POST) )
 								$nodes=explode(',',$params['virtual_nodes']);
 								unset($nodes[count($nodes)-1]);
 								$params['virtual_nodes']=$nodes;
-								echo json_encode($params);													
+								
 								$resp=RESTUrl($uri,'PUT',json_encode($params));
 								echo getResponseCode($resp);
+								
 								break;
 				
 								

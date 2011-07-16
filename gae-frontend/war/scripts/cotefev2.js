@@ -202,8 +202,7 @@ var submitEvent=function(List)
 				$('#nodeselected li').each(function(index) {
 				    ids=ids+($(this).attr('id')+',');
 				  });
-				ids_send=ids;
-				
+				ids_send=ids;				
 				var response=sendAjax("Submit=form&"+($('form').serialize())+'&'+'virtual_nodes='+ids_send,null,null,function (arg){OnSubmitFinish(arg,function(){List();});});
 			}
 			else
