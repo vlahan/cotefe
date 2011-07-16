@@ -1,4 +1,6 @@
 <?php
+
+session_start();
 ob_start();
 
 $valid_identifiers = array(
@@ -50,8 +52,6 @@ if(strlen($token) == 40) {
     echo "\n"; var_dump($auth_info);
     
     if (in_array($auth_info["profile"]["identifier"], $valid_identifiers)) {
-
-        session_start();
         
         $_SESSION["session"]=session_id();
         $_SESSION[$_SESSION["session"]]["logged"]=true;			
