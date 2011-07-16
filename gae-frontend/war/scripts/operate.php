@@ -272,7 +272,7 @@ if(isset($_POST) &&  !empty($_POST) )
 								
 								foreach($propertyset as $property)
 								{
-									$propertyset_s.='<li><a href="">'.$property[name].'</a></li>';
+									$propertyset_s.='<li><a href="'.$property['id'].'">'.$property['name'].'</a></li>';
 								}
 			
 								$html='<ul id="drop-down">
@@ -396,7 +396,7 @@ if(isset($_POST) &&  !empty($_POST) )
 								$params=$_POST;				
 								unset($params['Submit']); 
 								unset($params['form-type']);
-								$resp=RESTUrl(ROOTURL.'/property-sets/','POST',json_encode($params,JSON_NUMERIC_CHECK));
+								//$resp=RESTUrl(ROOTURL.'/property-sets/','POST',json_encode($params,JSON_NUMERIC_CHECK));
 								echo getResponseCode($resp);
 								break;
 				case 'property-setUpdate':
