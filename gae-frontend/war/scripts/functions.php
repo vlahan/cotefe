@@ -262,7 +262,7 @@ function CreatePropertySetForm($url,$eid)
 		else
 		{
 			$resource=getUrl($url);
-			print_r($resource);
+			
 			$obj=json_decode($resource, true);
 			$html='';
 			$html.=Form::Header('Update PropertySet');
@@ -277,7 +277,7 @@ function CreatePropertySetForm($url,$eid)
 			//$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList(),$experiment['id']);
 			$platform=json_decode(getUrl($obj['platform']),TRUE);
 			$html.=ListSelector::ListSelectorField('Select a Platform :', 'platform',getPlatformsList(),$platform['id']);
-			$html.=TextField::TextBox('Nr. of Node : ','node_count', $obj['node_count']);
+			$html.=TextField::TextBox('Nr. of Node : ','virtual_node_count', $obj['virtual_node_count']);
 			//$html.=Form::FromSubmit('Add PropertySet');
 			$html.=Form::FormEnd();
 			return $html;
