@@ -553,8 +553,8 @@ function createImageList($experimentPath)
 function FollowTestBeds()
 {
 	$root=json_decode(getUrl(ROOTURL),TRUE);
-	$virtual_nodegroups=json_decode(getUrl($root["testbeds"]),TRUE);
-    return $virtual_nodegroups;
+	$testbeds=json_decode(getUrl($root["testbeds"]),TRUE);
+    return $testbeds;
 }
 /*
  * platfomr ends
