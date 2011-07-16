@@ -180,7 +180,7 @@ var submitEvent=function(List)
 	$('.submitP').live('click',function(e)
 		{
 			e.preventDefault();e.stopPropagation();
-			/*if($("input[name='form-type']").val()=='VNG')
+			if($("input[name='form-type']").val()=='VNG')
 			{
 				ids='';
 				$('#nodeselected li').each(function(index) {
@@ -191,9 +191,10 @@ var submitEvent=function(List)
 			}
 			else
 			{
-				var response=sendAjax("Submit=form&"+($('form').serialize()),null,null,function (arg){OnSubmitFinish(arg,function(){List();});});
-			}*/
-			alert('bla bla');
+				var response=sendAjax("Submit=form&"+($('form').serialize()),null,null,function (arg){;OnSubmitFinish(arg,function(){List();});});
+				
+			}
+			
 			
 		});
 }

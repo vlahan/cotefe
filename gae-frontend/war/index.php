@@ -29,10 +29,10 @@
     	<h3>Login</h3>
         <hr />
         
-        <a class="rpxnow" onclick="return false;"
-        href="https://cotefe.rpxnow.com/openid/v2/signin?token_url=http%3A%2F%2Fwww.cotefe.net%2Fopenid%2Fcallback.php"> Sign In </a>
+        <!--.<a class="rpxnow" onclick="return false;"
+        href="https://cotefe.rpxnow.com/openid/v2/signin?token_url=http%3A%2F%2Fwww.cotefe.net%2Fopenid%2Fcallback.php"> Sign In </a>-->
         
-        <!--
+     
         <form method="post" action="dashboard.php" class="login-form">
         <table>
         	<tr><td>Username:</td></tr>
@@ -42,7 +42,7 @@
             <tr><td><input id="logD" type="submit" name="SignIn" value="Sign In" /></td></tr>
         </table>
         </form>
-        -->
+        
     </div>
    	
     <div class="column-right">

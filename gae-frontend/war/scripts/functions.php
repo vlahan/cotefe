@@ -226,8 +226,8 @@ function FollowPropertySets($eid)
     	return $property_sets;}
 	else
 	{
+		$property_sets=json_decode(getUrl(ROOTURL.'/experiments/'.$eid.'/property-sets/'),TRUE);
 		
-		$property_sets=json_decode(getUrl(ROOTURL.'/experiments/'.$eid.'/property-sets'),TRUE);
     	return $property_sets;
 	}
 }
@@ -248,13 +248,13 @@ function CreatePropertySetForm($url,$eid)
 			$html.="<hr/>";
 			$html.=Form::FormStart();
 			$html.=HiddenField::HiddeBox('form-type','property-set');
-			$html.=HiddenField::HiddeBox('experiment',$eid);
+			$html.=HiddenField::HiddeBox('experiments',$eid);
 			$html.=TextField::TextBox('PropertySet Name : ','name', '');
 			$html.=Description::DescriptionField('PropertySet Description : ', "");
 			//$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList($eid),'');
 			
 			$html.=ListSelector::ListSelectorField('Select a Platform :', 'platform',getPlatformsList(),'');
-			$html.=TextField::TextBox('Nr. of Node : ','node_count', '');
+			$html.=TextField::TextBox('Nr. of Node : ','virtual_node_count', '');
 			$html.=Form::FromSubmit('Add PropertySet');
 			$html.=Form::FormEnd();
 			return $html;

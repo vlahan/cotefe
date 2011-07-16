@@ -257,7 +257,7 @@ if(isset($_POST) &&  !empty($_POST) )
 							{
 								foreach ($TestBeds as $TestBed)
 								{
-									$TestBed_info=json_decode(getUrl($TestBed['uri']),TRUE);
+									$TestBed_info=$TestBed;
 														
 									$html.="<td style='text-align:left;padding-left:10px;'>".$TestBed_info['name'].'</td><td>'.$TestBed_info['organization'].'</td><td >'.$TestBed_info['node_count'].'</td><td ><a href="'.$TestBed_info['server_url'].'" target="_new"> Click </a></td><td><div class="arrow"></div></td></tr>';
 									$html.="<td colspan='5'>".$TestBed_info['description']."</td>";
@@ -272,7 +272,7 @@ if(isset($_POST) &&  !empty($_POST) )
 								
 								foreach($propertyset as $property)
 								{
-									$propertyset_s.='<li><a href="'.$property['id'].'">'.$property['name'].'</a></li>';
+									$propertyset_s.='<li><a href="'.$property['id'].'" class="edit" >'.$property['name'].'</a></li>';
 								}
 			
 								$html='<ul id="drop-down">
@@ -393,10 +393,12 @@ if(isset($_POST) &&  !empty($_POST) )
 								echo getResponseCode($resp);							
 								break;
 				case 'property-set':
-								$params=$_POST;				
+								$params=$_POST;	
+								$exp=$params['experiments'];
+								unset($params['experiments']);
 								unset($params['Submit']); 
 								unset($params['form-type']);
-								//$resp=RESTUrl(ROOTURL.'/property-sets/','POST',json_encode($params,JSON_NUMERIC_CHECK));
+								$resp=RESTUrl(ROOTURL.'/experiments/'.$exp.'/property-sets/','POST',json_encode($params,JSON_NUMERIC_CHECK));
 								echo getResponseCode($resp);
 								break;
 				case 'property-setUpdate':

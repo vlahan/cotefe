@@ -1,7 +1,7 @@
 <?php
 
 include_once 'scripts/functions.php';
-include_once 'openid/check.php';
+//include_once 'openid/check.php';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -43,8 +43,8 @@ $(document).ready(function() {
     	<h3>Dashboard</h3>
         <hr />
         <div id="userinfo">
-            <h2>Welcome back,<br /><?php echo $_SESSION[$_SESSION["session"]]["name"]; ?>!</h2>
-            <p>(You logged in with <?php echo $_SESSION[$_SESSION["session"]]["providerName"]; ?>)</p>
+            <h2>Welcome back,<br /><?php //echo $_SESSION[$_SESSION["session"]]["name"]; ?>!</h2>
+            <p>(You logged in with <?php //echo $_SESSION[$_SESSION["session"]]["providerName"]; ?>)</p>
             <p><a href="openid/logout.php">Logout</a></p>
         </div>
         <table class="left-nav">				
