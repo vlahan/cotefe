@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 if ($_SESSION[$_SESSION["session"]]["logged"]==true) {
     session_destroy();
