@@ -40,6 +40,10 @@ $(document).ready(function() {
 	<div class="column-left">
     	<h3>Dashboard</h3>
         <hr />
+        <div id="userinfo">
+            <p>Welcome back,<br /><?php echo $_SESSION[$_SESSION["session"]]["name"]; ?></p>
+            <p>Email: <?php echo $_SESSION[$_SESSION["session"]]["email"]=$auth_info["email"]; ?></p>
+        </div>
         <table class="left-nav">				
 					<tr><td><a href="dashboard.php" class="current-selected" >Projects</a></td></tr>
 					<tr><td><a href="testbed.php" >Explore Testbeds</a></td></tr>														
