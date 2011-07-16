@@ -350,7 +350,7 @@ def job_collection_handler(request):
         native_resource_id_list = [ native_resource_dict['job_id'] for native_resource_dict in native_job_list ]
         Job.objects.exclude(native_id__in = native_resource_id_list).delete()
         
-        jobs = Job.objects.all()
+        jobs = Job.objects.all().order_by('datetime_from')
         
         if 'date_from' in request.GET and not (request.GET['date_from'] is None):
             datetime_from = request.GET['date_from'] + 'T00:00:00+0000'
