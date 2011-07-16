@@ -204,7 +204,7 @@ var submitEvent=function(List)
 				  });
 				ids_send=ids;
 				alert("Submit=form&"+($('form').serialize())+'&'+'virtual_nodes='+ids_send);
-				var response=sendAjax("Submit=form&"+($('form').serialize())+'&'+'virtual_nodes='+ids_send,'append','#content',function (arg){OnSubmitFinish(arg,function(){List();});});
+				var response=sendAjax("Submit=form&"+($('form').serialize())+'&'+'virtual_nodes='+ids_send,null,null,function (arg){OnSubmitFinish(arg,function(){List();});});
 			}
 			else
 			{
