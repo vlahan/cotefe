@@ -217,11 +217,19 @@ function deleteResource($uri)
 /*
  * propertyset
  */
-function FollowPropertySets()
+function FollowPropertySets($eid)
 {
-	$root=json_decode(getUrl(ROOTURL),TRUE);
-	$property_sets=json_decode(getUrl($root["property_sets"]),TRUE);
-    return $property_sets;
+	if($eid==null)
+	{
+		$root=json_decode(getUrl(ROOTURL),TRUE);
+		$property_sets=json_decode(getUrl($root["property_sets"]),TRUE);
+    	return $property_sets;}
+	else
+	{
+		
+		$property_sets=json_decode(getUrl(ROOTURL.'/experiments/'.$eid.'/property-sets'),TRUE);
+    	return $property_sets;
+	}
 }
 function getSinglePropertySet($url)
 {

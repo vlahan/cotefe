@@ -70,25 +70,25 @@ $(document).ready(function() {
         	<div id="content">
                     <ul id="drop-down">
                       <li><a href="#">PropertySet</a>
-                      	<ul>
+                      	<ul id="property-set-tab">
                           <li><a href="<?php echo ROOTURL."/experiments/".$_GET['eid']."/property-sets" ?>" class="drop-down-bottom" id="create_new_property_set">Add PropertySet</a></li>
                          
                         </ul>
                       </li>
                       <li><a href="#">Virtual Node Group</a>
-                        <ul>
+                        <ul id="virtual-node-group-tab">
                           <li><a href="#" class="drop-down-bottom">Add Virtual Node Group</a></li>
                           
                         </ul>
                       </li>
                       <li><a href="#">Images</a>
-                        <ul>
+                        <ul id="images-tab">
                           <li><a href="#" class="drop-down-bottom">Upload Image</a></li>
                          
                         </ul>
                       </li>
                       <li><a href="#">Virtual Task</a>
-                      	<ul>
+                      	<ul id="virtual-task-tab">
                           <li><a href="#" class="drop-down-bottom">Add Task</a></li>
                           
                         </ul>

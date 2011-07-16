@@ -266,7 +266,45 @@ if(isset($_POST) &&  !empty($_POST) )
 							}
 							
 							echo $html;
-							break;							
+							break;
+			case 'properties': 	$propertyset=FollowPropertySets($_POST['pid']);
+								$propertyset_s="";
+								
+								foreach($propertyset as $property)
+								{
+									$propertyset_s.='<li><a href="">'.$property[name].'</a></li>';
+								}
+			
+								$html='<ul id="drop-down">
+									  <li><a href="#">PropertySet</a>
+										<ul id="property-set-tab">
+										'.$propertyset_s.'
+										  <li><a href="'.ROOTURL."/experiments/".$_POST['pid']."/property-sets".'" class="drop-down-bottom" id="create_new_property_set">Add PropertySet</a></li>
+										 
+										</ul>
+									  </li>
+									  <li><a href="#">Virtual Node Group</a>
+										<ul id="virtual-node-group-tab">
+										  <li><a href="'.ROOTURL."/experiments/".$_POST['pid']."/virtual-nodegroups".'" class="drop-down-bottom" id="create_new_virtual_node_group">Add Virtual Node Group</a></li>
+										  
+										</ul>
+									  </li>
+									  <li><a href="#">Images</a>
+										<ul id="images-tab">
+										  <li><a href="#" class="drop-down-bottom">Upload Image</a></li>
+										 
+										</ul>
+									  </li>
+									  <li><a href="#">Virtual Task</a>
+										<ul id="virtual-task-tab">
+										  <li><a href="#" class="drop-down-bottom">Add Task</a></li>
+										  
+										</ul>
+									  </li>
+									</ul>';
+									echo $html;
+			
+							   break;							
 								
 		}
 	}
