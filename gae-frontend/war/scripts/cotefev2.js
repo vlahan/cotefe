@@ -196,14 +196,15 @@ var submitEvent=function(List)
 	$('.submitP').live('click',function(e)
 		{
 			e.preventDefault();e.stopPropagation();
-			if($("input[name='form-type']").val()=='VNG')
+			if($("input[name='form-type']").val()=='VNG' || $("input[name='form-type']").val()=='VNGUPDATE')
 			{
 				ids='';
 				$('#nodeselected li').each(function(index) {
-				    ids=ids+( '' + $(this).attr('id')+',');
+				    ids=ids+($(this).attr('id')+',');
 				  });
-				ids_send=(ids+'');
-				var response=sendAjax("Submit=form&"+($('form').serialize())+'&'+'virtual_nodes='+ids_send,null,null,function (arg){OnSubmitFinish(arg,function(){List();});});
+				ids_send=ids;
+				alert("Submit=form&"+($('form').serialize())+'&'+'virtual_nodes='+ids_send);
+				var response=sendAjax("Submit=form&"+($('form').serialize())+'&'+'virtual_nodes='+ids_send,'append','#content',function (arg){OnSubmitFinish(arg,function(){List();});});
 			}
 			else
 			{

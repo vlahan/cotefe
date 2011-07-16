@@ -410,9 +410,10 @@ function CreateVNGForm($url,$eid)
 				$html.=Form::FormStart();
 				$html.=HiddenField::HiddeBox('form-type','VNGUPDATE');
 				$html.=HiddenField::HiddeBox('experiments',$eid);
+				$html.=HiddenField::HiddeBox('uri',$url);
 				$html.=TextField::TextBox('Virtual Node Group Name : ','name', $obj['name']);
 				$html.=Description::DescriptionField('Virtual Node Group Description : ', $obj['description']);
-				$experiment=json_decode(getUrl($obj['experiment']),TRUE);
+				//$experiment=json_decode(getUrl($obj['experiment']),TRUE);
 				//$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList(),$experiment['id']);
 				
 				//get total VNG
@@ -426,6 +427,7 @@ function CreateVNGForm($url,$eid)
 						$propertyset[]=$node_array[$i]['property_set_id'];
 				}
 				$unique_propertyset_values=array_unique($propertyset);
+				
 				//create key and style
 				$style=array();
 				$colorcounter=0;
@@ -453,14 +455,14 @@ function CreateVNGForm($url,$eid)
 				
 				$nodes_already_in=$obj['virtual_nodes'];
 				foreach($nodes_already_in as $c=>$key) {
-			        $sort_numcie1[] = $key['property_set'];
+			        $sort_numcie1[] = $key['property_set_id'];
 			        
 			    }
 			    array_multisort( $sort_numcie1,SORT_DESC,$nodes_already_in);
 				$already_nodes="";
 				foreach ($nodes_already_in as $node)
 				{
-					$already_nodes.="<li class='node available' id=".$node['id']." style='background:#".$style[$node['property_set']].";' title='".$node['property_set']."' ></li>";;
+					$already_nodes.="<li class='node available' id=".$node['id']." style='background:#".$style[$node['property_set_name']].";' title='".$node['property_set_name']."' ></li>";;
 				}
 				
 				//getting total VNG Ends
@@ -470,8 +472,8 @@ function CreateVNGForm($url,$eid)
 				$colorlegend="<ol class='node-legends'>";
 				foreach($style as $key=>$value)
 				{
-					$propertySetSingle=getSinglePropertySet($key);
-					$colorlegend.="<li style='background:#".$value."' title=\"".$key."\"><span>".$propertySetSingle['name']."</span></li>";
+					//$propertySetSingle=getSinglePropertySet($key);
+					$colorlegend.="<li style='background:#".$value."' title=\"".$key."\"><span>".$key."</span></li>";
 				}
 				$colorlegend.="</ol>";
 				
