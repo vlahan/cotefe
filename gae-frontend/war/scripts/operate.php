@@ -272,7 +272,7 @@ if(isset($_POST) &&  !empty($_POST) )
 								
 								foreach($propertyset as $property)
 								{
-									$propertyset_s.='<li><a href="'.$property['id'].'" class="edit" >'.$property['name'].'</a></li>';
+									$propertyset_s.='<li><a href="'.ROOTURL."/experiments/".$_POST['pid'].'/property-sets/'.$property['id'].'" class="item-edit" >'.$property['name'].'</a></li>';
 								}
 			
 								$html='<ul id="drop-down">
@@ -335,7 +335,7 @@ if(isset($_POST) &&  !empty($_POST) )
 			{
 				case 'projects':echo CreateProjectForm($item);break;
 				case 'experiments':echo CreateExperimentForm($item); break;
-				case 'property-sets':echo CreatePropertySetForm($item,''); break;
+				//case 'property-sets':echo CreatePropertySetForm($item,''); break;
 				case 'virtual-nodegroups':echo CreateVNGForm($item);break;
 			}
 		}
@@ -349,7 +349,10 @@ if(isset($_POST) &&  !empty($_POST) )
 		}
 		elseif(count($conditions)==5)
 		{
-			print_r($conditions);
+			switch ($conditions[3])
+			{
+				case 'property-sets':echo CreatePropertySetForm($_POST['Update'],$_POST['pid']); break;
+			}
 		}
 		
 		
@@ -404,10 +407,14 @@ if(isset($_POST) &&  !empty($_POST) )
 				case 'property-setUpdate':
 								$uri=trim($_POST['uri']);
 								$params=$_POST;
+								$exp=$params['experiments'];
+								$id=$params['uri'];
+								unset($params['experiments']);
+								unset($params['uri']);
 								unset($params['Submit']);
 								unset($params['form-type']);
 								unset($params['uri']);								
-								$resp=RESTUrl($uri,'PUT',json_encode($params));
+								$resp=RESTUrl(ROOTURL.'/experiments/'.$exp.'/property-sets/'.$id,'POST',json_encode($params,JSON_NUMERIC_CHECK));
 								echo getResponseCode($resp);
 								break;									
 				case "VNG":		

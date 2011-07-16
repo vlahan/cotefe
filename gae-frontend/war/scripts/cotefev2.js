@@ -114,6 +114,22 @@ var loadFormProject=function(){
 				{var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(link,arg);});	}
 				
 			});
+		
+		$('.item-edit').die('click');
+		$('.item-edit').live('click',function(event)
+			{event.preventDefault();event.stopPropagation();		
+				
+				var link=$(this).attr('href');
+				id=$('body').attr('id');
+				if(id!=undefined || id!=null)
+					{
+						
+						var response=sendAjax("Update="+link+"&pid="+id,null,null,function (arg){onFormEvent(link,arg);});							
+					}
+				else
+				{var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(link,arg);});	}
+				
+			});
 	 }
 var onFormEvent=function(elem,response)//getting event after ajax responds for update click
 {

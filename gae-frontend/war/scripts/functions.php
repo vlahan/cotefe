@@ -262,17 +262,19 @@ function CreatePropertySetForm($url,$eid)
 		else
 		{
 			$resource=getUrl($url);
+			print_r($resource);
 			$obj=json_decode($resource, true);
 			$html='';
 			$html.=Form::Header('Update PropertySet');
 			$html.="<hr/>";
 			$html.=Form::FormStart();
 			$html.=HiddenField::HiddeBox('form-type','property-setUpdate');
-			$html.=HiddenField::HiddeBox('uri',$obj['uri']);
+			$html.=HiddenField::HiddeBox('uri',$obj['id']);
+			$html.=HiddenField::HiddeBox('experiments',$eid);
 			$html.=TextField::TextBox('PropertySet Name : ','name', $obj['name']);
 			$html.=Description::DescriptionField('PropertySet Description : ', $obj['description']);
-			$experiment=json_decode(getUrl($obj['experiment']),TRUE);
-			$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList(),$experiment['id']);
+			//$experiment=json_decode(getUrl($obj['experiment']),TRUE);
+			//$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList(),$experiment['id']);
 			$platform=json_decode(getUrl($obj['platform']),TRUE);
 			$html.=ListSelector::ListSelectorField('Select a Platform :', 'platform',getPlatformsList(),$platform['id']);
 			$html.=TextField::TextBox('Nr. of Node : ','node_count', $obj['node_count']);
