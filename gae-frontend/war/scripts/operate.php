@@ -61,8 +61,6 @@ if(isset($_POST) &&  !empty($_POST) )
 							}
 						    break;
 							
-							
-							
 			case "experiment":
 							$project_id=null;
 							
