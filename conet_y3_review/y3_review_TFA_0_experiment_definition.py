@@ -8,13 +8,13 @@ from poster.streaminghttp import register_openers
 import urllib2
 import webbrowser
 
-SERVER_URL = 'http://api.cotefe.net'
-#SERVER_URL = 'http://localhost:8080'
+#SERVER_URL = 'http://api.cotefe.net'
+SERVER_URL = 'http://localhost:8080'
 PLATFORM = 'TmoteSky'
 
 DESCRIPTION = 'CONET 3Y REVIEW TFA DEMO - PLEASE DO NOT DELETE'
 SUBSCRIBER = 1
-PUBLISHERS = 99
+PUBLISHERS = 93
 INTERFERERS = 2
 
 N = SUBSCRIBER + PUBLISHERS + INTERFERERS
@@ -129,13 +129,13 @@ def main():
     
     # CHECK THAT YOU GET EXACTLY THE RIGHT NUMBER OF VIRTUAL NODES
     
-    assert len(virtual_node_list) == 102
+    assert len(virtual_node_list) == 96
     
     # SLICE THE VIRTUAL NODES IN 3 VIRTUAL GROUPS
     
     virtual_node_list_subscriber = virtual_node_list[0:1]
-    virtual_node_list_publishers = virtual_node_list[1:100]
-    virtual_node_list_interferers = virtual_node_list[100:]
+    virtual_node_list_publishers = virtual_node_list[1:94]
+    virtual_node_list_interferers = virtual_node_list[94:]
     
     # CHECK AGAIN THE NUMBER OF NODES
     

@@ -7,6 +7,8 @@ from utils import *
 
 DESCRIPTION = 'CONET 3Y REVIEW TFA DEMO - PLEASE DO NOT DELETE'
 
+EXPERIMENT = 'http://localhost:8080/experiments/63ddf55c'
+
 def main():
     
     logging.basicConfig(

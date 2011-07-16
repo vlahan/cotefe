@@ -17,18 +17,21 @@ def main():
         datefmt='[%Y-%m-%d %H:%M:%S %z]',
     )
 
-    SERVER_URL = str(sys.argv[1])
-    JOB_URI = str(sys.argv[2])
+#    SERVER_URL = str(sys.argv[1])
+#    PLATFORM = str(sys.argv[2])
+#    JOB_URI = str(sys.argv[3])
+    
+    SERVER_URL = 'https://www.twist.tu-berlin.de:8001/'
+    PLATFORM = 'TmoteSky'
+    JOB_URI = 'https://www.twist.tu-berlin.de:8001/jobs/a95502ad'
 
     SINK_NODE_ID = 12
     
     DESCRIPTION = 'CONET 3Y REVIEW - PLEASE DO NOT DELETE'
     
-    PLATFORM = 'TmoteSky'
-
-    IMAGEFILE_PATH_SUBSCRIBER = '/Users/claudiodonzelli/Desktop/images/y3_review_image_subscriber.exe'
-    IMAGEFILE_PATH_PUBLISHERS = '/Users/claudiodonzelli/Desktop/images/y3_review_image_publishers.exe'
-    IMAGEFILE_PATH_INTERFERERS = '/Users/claudiodonzelli/Desktop/images/y3_review_image_interferers.exe'
+    IMAGEFILE_PATH_SUBSCRIBER = '/Users/claudiodonzelli/Desktop/images/y3_review_image_subscriber'
+    IMAGEFILE_PATH_PUBLISHERS = '/Users/claudiodonzelli/Desktop/images/y3_review_image_publishers'
+    IMAGEFILE_PATH_INTERFERERS = '/Users/claudiodonzelli/Desktop/images/y3_review_image_interferers'
 
     h = httplib2.Http()
     
@@ -50,9 +53,11 @@ def main():
     job_dict = json.loads(content)
     logging.debug(job_dict)
     
+    assert len(job_dict['nodes']) == 96
+    
     # GETTING THE NODES AND CREATING THE NODEGROUP ALL
     
-    logging.info('getting the nodes for nodegroup all (96 node)...')
+    logging.info('getting the nodes for nodegroup including all nodes %s...' % (PLATFORM, ))
     response, content = h.request(uri='%s?platform=%s' % (testbed_dict['nodes'], PLATFORM), method='GET', body='')
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
@@ -67,7 +72,7 @@ def main():
         'job' : job_dict['id']
     }
     
-    logging.info('creating the nodegroup for all...')    
+    logging.info('creating the nodegroup for all nodes %s...' % (PLATFORM, ))    
     response, content = h.request(uri=testbed_dict['nodegroups'], method='POST', body=json.dumps(nodegroup_dict_all))
     assert response.status == 201
     logging.info('%d %s' % (response.status, response.reason))
@@ -296,14 +301,13 @@ def main():
     
     # DELETING THE IMAGE FROM NODEGROUP INTERFERERS
     
-    logging.info('erasing image from the nodegroup interferers...')
-    response, content = h.request(uri='%s/image' % nodegroup_uri_interferers, method='DELETE', body='')
-    logging.debug(content)
-    assert response.status == 200
-    logging.info('%d %s' % (response.status, response.reason))
+#    logging.info('erasing image from the nodegroup interferers...')
+#    response, content = h.request(uri='%s/image' % nodegroup_uri_interferers, method='DELETE', body='')
+#    logging.debug(content)
+#    assert response.status == 200
+#    logging.info('%d %s' % (response.status, response.reason))
     
-    logging.info('(waiting 60 seconds...)')
-    time.sleep(60)
+    raw_input('interferers are NOT activated - press ENTER to generate interference')
     
     # INSTALLING THE IMAGE TO NODEGROUP INTERFERERS
     
@@ -313,8 +317,7 @@ def main():
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
     
-    logging.info('(waiting 60 seconds...)')
-    time.sleep(60)
+    raw_input('interferers are now activated - press ENTER to switch them off again')
     
     # DELETING THE IMAGE FROM NODEGROUP INTERFERERS
     
@@ -323,9 +326,6 @@ def main():
     logging.debug(content)
     assert response.status == 200
     logging.info('%d %s' % (response.status, response.reason))
-    
-    logging.info('(waiting 60 seconds...)')
-    time.sleep(60)
     
     logging.info('DONE!')
     
