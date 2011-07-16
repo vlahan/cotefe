@@ -64,7 +64,10 @@ if(strlen($token) == 40) {
     
         //echo "http://$host/$extra"
     } else {
-        echo "no user found"
+        echo 'Authentication failed.';
+        $host  = $_SERVER['HTTP_HOST'];
+        $extra = 'index.php';
+        header("Location: http://$host/$extra");
     }
 
   } else {
