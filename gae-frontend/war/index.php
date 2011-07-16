@@ -15,7 +15,7 @@
             <li><a href="" class="current-selected">Home</a></li>
             <li><a href="https://www.cooperating-objects.eu/testbed-simulation/testbed-federation/" target="_new">Documents</a></li>
             
-            <li><a href="">Contact</a></li>
+            <li><a href="mailto:admin@cotefe.net">Contact</a></li>
             </ul>
         </div>
     
