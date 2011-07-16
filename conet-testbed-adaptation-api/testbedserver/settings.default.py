@@ -35,7 +35,6 @@ MEDIA_URL = '/uploads/'
 STATIC_ROOT = os.path.join(PROJECT_PATH, 'static')
 STATIC_URL = '/static/'
 
-ADMIN_MEDIA_PREFIX = '%sadmin-media/' % MEDIA_URL
 
 STATICFILES_DIRS = (
     os.path.join(PROJECT_PATH, 'uploads'),
