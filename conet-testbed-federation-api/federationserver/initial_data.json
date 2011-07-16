@@ -1,1 +1,839 @@
-[{"pk": 1, "model": "api.federation", "fields": {"name": "CONET Testbed Federation", "description": "The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities."}}, {"pk": "TWIST", "model": "api.testbed", "fields": {"server_url": "https://www.twist.tu-berlin.de:8001/", "organization": "TU Berlin", "node_count": 204, "name": "TKN Wireless Indoor Sensor network Testbed", "description": "The TKN Wireless Indoor Sensor network Testbed (TWIST), developed by the Telecommunication Networks Group (TKN) at the Technische Universit\u00e4t Berlin, is a scalable and flexible testbed architecture for experimenting with wireless sensor network applications in an indoor setting. It provides basic services like node configuration, network-wide programming, out-of-band extraction of debug data and gathering of application data, as well as several novel features:\r\n\r\n- experiments with heterogeneous node platforms\r\n- support for flat and hierarchical setups\r\n- active power supply control of the nodes\r\n\r\nThe self-configuration capability, the use of hardware with standardized interfaces and open-source software makes the TWIST architecture scalable, affordable, and easily replicable."}}, {"pk": "eyesIFXv20", "model": "api.platform", "fields": {"datetime_modified": "2011-07-10 15:01:40", "name": "eyesIFX WSN node v2.0", "datetime_created": "2011-07-10 14:49:47", "description": "Name: eyesIFXv2.1\r\nManufacturer: Infineon Technologies AG\r\nProcessor: Texas Instruments MSP430F1611\r\n\tClock: 4 MHz\r\n\tFlash memory: 48 KB\t\r\n\tRAM: 10 KB\r\n\tEnergy consumption: 7,2 mW (maximal)\r\nRadio: Infineon TDA5250\r\n\tStandard: ASK, FSK Modulation\r\n\tBand: 868 MHz ISM Band\r\n\tData rate: 19,2 kbit/s\r\n\tEnergy consumption: 36 mW (TX); 28 mW (RX)\r\nExternal memory: Atmel AT 45DB041B\r\n\tFlash: 4 Mbit\r\nSensors: Light, Temperature\r\nBattery Capacity: 2500 mAh"}}, {"pk": "eyesIFXv21", "model": "api.platform", "fields": {"datetime_modified": "2011-07-10 15:01:38", "name": "eyesIFX WSN node v2.1", "datetime_created": "2011-07-10 14:50:14", "description": "Name: eyesIFXv2.1\r\nManufacturer: Infineon Technologies AG\r\nProcessor: Texas Instruments MSP430F1611\r\n\tClock: 4 MHz\r\n\tFlash memory: 48 KB\t\r\n\tRAM: 10 KB\r\n\tEnergy consumption: 7,2 mW (maximal)\r\nRadio: Infineon TDA5250\r\n\tStandard: ASK, FSK Modulation\r\n\tBand: 868 MHz ISM Band\r\n\tData rate: 19,2 kbit/s\r\n\tEnergy consumption: 36 mW (TX); 28 mW (RX)\r\nExternal memory: Atmel AT 45DB041B\r\n\tFlash: 4 Mbit\r\nSensors: Light, Temperature\r\nBattery Capacity: 2500 mAh"}}, {"pk": "TmoteSky", "model": "api.platform", "fields": {"datetime_modified": "2011-07-10 15:01:14", "name": "Moteiv Tmote Sky", "datetime_created": "2011-07-10 15:01:14", "description": "Ultra low power IEEE 802.15.4 compliant wireless sensor module based on a TI MSP430 and Chipcon CC2420 radio. Also named Telos B.\r\n\r\nInfo: http://www.snm.ethz.ch/Projects/TmoteSky"}}, {"pk": "TelosB", "model": "api.platform", "fields": {"datetime_modified": "2011-07-10 15:01:34", "name": "Telos (Rev B 2004-xx-xx)", "datetime_created": "2011-07-10 15:01:22", "description": "TelosB"}}, {"pk": "TelosA", "model": "api.platform", "fields": {"datetime_modified": "2011-07-10 15:01:28", "name": "Telos (Rev A 2004-04-27)", "datetime_created": "2011-07-10 15:01:28", "description": "TelosA"}}, {"pk": 13, "model": "auth.permission", "fields": {"codename": "add_contenttype", "name": "Can add content type", "content_type": 5}}, {"pk": 28, "model": "auth.permission", "fields": {"codename": "add_experiment", "name": "Can add Experiment", "content_type": 10}}, {"pk": 22, "model": "auth.permission", "fields": {"codename": "add_federation", "name": "Can add Federation", "content_type": 8}}, {"pk": 4, "model": "auth.permission", "fields": {"codename": "add_group", "name": "Can add group", "content_type": 2}}, {"pk": 37, "model": "auth.permission", "fields": {"codename": "add_image", "name": "Can add Image", "content_type": 13}}, {"pk": 19, "model": "auth.permission", "fields": {"codename": "add_logentry", "name": "Can add log entry", "content_type": 7}}, {"pk": 10, "model": "auth.permission", "fields": {"codename": "add_message", "name": "Can add message", "content_type": 4}}, {"pk": 1, "model": "auth.permission", "fields": {"codename": "add_permission", "name": "Can add permission", "content_type": 1}}, {"pk": 34, "model": "auth.permission", "fields": {"codename": "add_platform", "name": "Can add Platform", "content_type": 12}}, {"pk": 25, "model": "auth.permission", "fields": {"codename": "add_project", "name": "Can add Project", "content_type": 9}}, {"pk": 40, "model": "auth.permission", "fields": {"codename": "add_propertyset", "name": "Can add Property Set", "content_type": 14}}, {"pk": 16, "model": "auth.permission", "fields": {"codename": "add_session", "name": "Can add session", "content_type": 6}}, {"pk": 31, "model": "auth.permission", "fields": {"codename": "add_testbed", "name": "Can add Testbed", "content_type": 11}}, {"pk": 52, "model": "auth.permission", "fields": {"codename": "add_testbed2platform", "name": "Can add Testbed2Platform", "content_type": 18}}, {"pk": 7, "model": "auth.permission", "fields": {"codename": "add_user", "name": "Can add user", "content_type": 3}}, {"pk": 43, "model": "auth.permission", "fields": {"codename": "add_virtualnode", "name": "Can add Virtual Node", "content_type": 15}}, {"pk": 46, "model": "auth.permission", "fields": {"codename": "add_virtualnodegroup", "name": "Can add Virtual NodeGroup", "content_type": 16}}, {"pk": 49, "model": "auth.permission", "fields": {"codename": "add_virtualnodegroup2virtualnode", "name": "Can add VirtualNodeGroup2VirtualNode", "content_type": 17}}, {"pk": 14, "model": "auth.permission", "fields": {"codename": "change_contenttype", "name": "Can change content type", "content_type": 5}}, {"pk": 29, "model": "auth.permission", "fields": {"codename": "change_experiment", "name": "Can change Experiment", "content_type": 10}}, {"pk": 23, "model": "auth.permission", "fields": {"codename": "change_federation", "name": "Can change Federation", "content_type": 8}}, {"pk": 5, "model": "auth.permission", "fields": {"codename": "change_group", "name": "Can change group", "content_type": 2}}, {"pk": 38, "model": "auth.permission", "fields": {"codename": "change_image", "name": "Can change Image", "content_type": 13}}, {"pk": 20, "model": "auth.permission", "fields": {"codename": "change_logentry", "name": "Can change log entry", "content_type": 7}}, {"pk": 11, "model": "auth.permission", "fields": {"codename": "change_message", "name": "Can change message", "content_type": 4}}, {"pk": 2, "model": "auth.permission", "fields": {"codename": "change_permission", "name": "Can change permission", "content_type": 1}}, {"pk": 35, "model": "auth.permission", "fields": {"codename": "change_platform", "name": "Can change Platform", "content_type": 12}}, {"pk": 26, "model": "auth.permission", "fields": {"codename": "change_project", "name": "Can change Project", "content_type": 9}}, {"pk": 41, "model": "auth.permission", "fields": {"codename": "change_propertyset", "name": "Can change Property Set", "content_type": 14}}, {"pk": 17, "model": "auth.permission", "fields": {"codename": "change_session", "name": "Can change session", "content_type": 6}}, {"pk": 32, "model": "auth.permission", "fields": {"codename": "change_testbed", "name": "Can change Testbed", "content_type": 11}}, {"pk": 53, "model": "auth.permission", "fields": {"codename": "change_testbed2platform", "name": "Can change Testbed2Platform", "content_type": 18}}, {"pk": 8, "model": "auth.permission", "fields": {"codename": "change_user", "name": "Can change user", "content_type": 3}}, {"pk": 44, "model": "auth.permission", "fields": {"codename": "change_virtualnode", "name": "Can change Virtual Node", "content_type": 15}}, {"pk": 47, "model": "auth.permission", "fields": {"codename": "change_virtualnodegroup", "name": "Can change Virtual NodeGroup", "content_type": 16}}, {"pk": 50, "model": "auth.permission", "fields": {"codename": "change_virtualnodegroup2virtualnode", "name": "Can change VirtualNodeGroup2VirtualNode", "content_type": 17}}, {"pk": 15, "model": "auth.permission", "fields": {"codename": "delete_contenttype", "name": "Can delete content type", "content_type": 5}}, {"pk": 30, "model": "auth.permission", "fields": {"codename": "delete_experiment", "name": "Can delete Experiment", "content_type": 10}}, {"pk": 24, "model": "auth.permission", "fields": {"codename": "delete_federation", "name": "Can delete Federation", "content_type": 8}}, {"pk": 6, "model": "auth.permission", "fields": {"codename": "delete_group", "name": "Can delete group", "content_type": 2}}, {"pk": 39, "model": "auth.permission", "fields": {"codename": "delete_image", "name": "Can delete Image", "content_type": 13}}, {"pk": 21, "model": "auth.permission", "fields": {"codename": "delete_logentry", "name": "Can delete log entry", "content_type": 7}}, {"pk": 12, "model": "auth.permission", "fields": {"codename": "delete_message", "name": "Can delete message", "content_type": 4}}, {"pk": 3, "model": "auth.permission", "fields": {"codename": "delete_permission", "name": "Can delete permission", "content_type": 1}}, {"pk": 36, "model": "auth.permission", "fields": {"codename": "delete_platform", "name": "Can delete Platform", "content_type": 12}}, {"pk": 27, "model": "auth.permission", "fields": {"codename": "delete_project", "name": "Can delete Project", "content_type": 9}}, {"pk": 42, "model": "auth.permission", "fields": {"codename": "delete_propertyset", "name": "Can delete Property Set", "content_type": 14}}, {"pk": 18, "model": "auth.permission", "fields": {"codename": "delete_session", "name": "Can delete session", "content_type": 6}}, {"pk": 33, "model": "auth.permission", "fields": {"codename": "delete_testbed", "name": "Can delete Testbed", "content_type": 11}}, {"pk": 54, "model": "auth.permission", "fields": {"codename": "delete_testbed2platform", "name": "Can delete Testbed2Platform", "content_type": 18}}, {"pk": 9, "model": "auth.permission", "fields": {"codename": "delete_user", "name": "Can delete user", "content_type": 3}}, {"pk": 45, "model": "auth.permission", "fields": {"codename": "delete_virtualnode", "name": "Can delete Virtual Node", "content_type": 15}}, {"pk": 48, "model": "auth.permission", "fields": {"codename": "delete_virtualnodegroup", "name": "Can delete Virtual NodeGroup", "content_type": 16}}, {"pk": 51, "model": "auth.permission", "fields": {"codename": "delete_virtualnodegroup2virtualnode", "name": "Can delete VirtualNodeGroup2VirtualNode", "content_type": 17}}, {"pk": 1, "model": "auth.user", "fields": {"username": "admin", "first_name": "", "last_name": "", "is_active": true, "is_superuser": true, "is_staff": true, "last_login": "2011-07-10 20:24:14", "groups": [], "user_permissions": [], "password": "sha1$4f8e4$9cc3426fb2b25233b55885a82d9c9ed51cab4296", "email": "donzelli@tkn.tu-berlin.de", "date_joined": "2011-07-08 19:08:58"}}]
+
+[
+    {
+        "pk": 1,
+         "model": "api.federation",
+         "fields": 
+        {
+            "name": "CONET Testbed Federation",
+             "description": "The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities."
+        }
+    },
+     
+    {
+        "pk": "TWIST",
+         "model": "api.testbed",
+         "fields": 
+        {
+            "server_url": "https://www.twist.tu-berlin.de:8001/",
+             "organization": "TUB",
+             "node_count": 204,
+             "name": "TKN Wireless Indoor Sensor network Testbed",
+             "description": "The TKN Wireless Indoor Sensor network Testbed (TWIST),
+             developed by the Telecommunication Networks Group (TKN) at the Technische Universit\u00e4t Berlin,
+             is a scalable and flexible testbed architecture for experimenting with wireless sensor network applications in an indoor setting. It provides basic services like node configuration,
+             network-wide programming,
+             out-of-band extraction of debug data and gathering of application data,
+             as well as several novel features:\r\n\r\n- experiments with heterogeneous node platforms\r\n- support for flat and hierarchical setups\r\n- active power supply control of the nodes\r\n\r\nThe self-configuration capability,
+             the use of hardware with standardized interfaces and open-source software makes the TWIST architecture scalable,
+             affordable,
+             and easily replicable."
+        }
+    },
+    {
+        "pk": "DSN",
+         "model": "api.testbed",
+         "fields": 
+        {
+            "server_url": "http://tec-pc-btnode.ethz.ch/dsngui/",
+             "organization": "ETHZ",
+             "node_count": 52,
+             "name": "DSN",
+             "description": "DSN"
+        }
+    },
+    {
+        "pk": "SOCRADES",
+         "model": "api.testbed",
+         "fields": 
+        {
+            "server_url": "http://www.socrades.eu/Home/default.html",
+             "organization": "SCHNEIDER",
+             "node_count": 13,
+             "name": "DSN",
+             "description": "SOCRADES"
+        }
+    },
+    {
+        "pk": "Piaggio",
+        "model": "api.testbed",
+        "fields": 
+        {
+            "server_url": "http://www.piaggio.ing.unipi.it/",
+            "organization": "UNIPI",
+            "node_count": 40,
+            "name": "Piaggio",
+            "description": "Piaggio"
+        }
+    },
+    {
+        "pk": "Powerbench",
+        "model": "api.testbed",
+        "fields": 
+        {
+            "server_url": "http://home.tudelft.nl/",
+            "organization": "TUD",
+            "node_count": 28,
+            "name": "Powerbench",
+            "description": "Powerbench"
+        }
+    },
+    {
+        "pk": "NUIG-DERI",
+        "model": "api.testbed",
+        "fields": 
+        {
+            "server_url": "http://www.deri.ie/",
+            "organization": "NUIG",
+            "node_count": 8,
+            "name": "NUIG-DERI",
+            "description": "NUIG-DERI"
+        }
+    },
+    {
+        "pk": "UBonnTestbed",
+        "model": "api.testbed",
+        "fields": 
+        {
+            "server_url": "http://net.cs.uni-bonn.de/start/",
+            "organization": "UBONN",
+            "node_count": 30,
+            "name": "UBonnTestbed",
+            "description": "UBonnTestbed"
+        }
+    },
+    {
+        "pk": "IoT@SAP",
+        "model": "api.testbed",
+        "fields": 
+        {
+            "server_url": "http://www.sap.com/country-selector.epx",
+            "organization": "SAP",
+            "node_count": 10,
+            "name": "IoT@SAP",
+            "description": "IoT@SAP"
+        }
+    },
+    {
+        "pk": "SICS-TB",
+        "model": "api.testbed",
+        "fields": 
+        {
+            "server_url": "http://www.sics.se/",
+            "organization": "SICS",
+            "node_count": 17,
+            "name": "SICS-TB",
+            "description": "SICS-TB"
+        }
+    },
+    {
+        "pk": "ART-WiSe",
+        "model": "api.testbed",
+        "fields": 
+        {
+            "server_url": "http://artwise.cister-isep.info/searchrescue.php",
+            "organization": "ISEP",
+            "node_count": 30,
+            "name": "ART-WiSe",
+            "description": "ART-WiSe"
+        }
+    },
+    {
+        "pk": "VSTL",
+        "model": "api.testbed",
+        "fields": 
+        {
+            "server_url": "http://www.boeing.com/companyoffices/aboutus/brief/pw.html",
+            "organization": "BRTE",
+            "node_count": 20,
+            "name": "VSTL",
+            "description": "VSTL"
+        }
+    },
+    {
+        "pk": "eyesIFXv20",
+         "model": "api.platform",
+         "fields": 
+        {
+            "datetime_modified": "2011-07-10 15:01:40",
+             "name": "eyesIFX WSN node v2.0",
+             "datetime_created": "2011-07-10 14:49:47",
+             "description": "Name: eyesIFXv2.1\r\nManufacturer: Infineon Technologies AG\r\nProcessor: Texas Instruments MSP430F1611\r\n\tClock: 4 MHz\r\n\tFlash memory: 48 KB\t\r\n\tRAM: 10 KB\r\n\tEnergy consumption: 7,
+            2 mW (maximal)\r\nRadio: Infineon TDA5250\r\n\tStandard: ASK,
+             FSK Modulation\r\n\tBand: 868 MHz ISM Band\r\n\tData rate: 19,
+            2 kbit/s\r\n\tEnergy consumption: 36 mW (TX); 28 mW (RX)\r\nExternal memory: Atmel AT 45DB041B\r\n\tFlash: 4 Mbit\r\nSensors: Light,
+             Temperature\r\nBattery Capacity: 2500 mAh"
+        }
+    },
+     
+    {
+        "pk": "eyesIFXv21",
+         "model": "api.platform",
+         "fields": 
+        {
+            "datetime_modified": "2011-07-10 15:01:38",
+             "name": "eyesIFX WSN node v2.1",
+             "datetime_created": "2011-07-10 14:50:14",
+             "description": "Name: eyesIFXv2.1\r\nManufacturer: Infineon Technologies AG\r\nProcessor: Texas Instruments MSP430F1611\r\n\tClock: 4 MHz\r\n\tFlash memory: 48 KB\t\r\n\tRAM: 10 KB\r\n\tEnergy consumption: 7,
+            2 mW (maximal)\r\nRadio: Infineon TDA5250\r\n\tStandard: ASK,
+             FSK Modulation\r\n\tBand: 868 MHz ISM Band\r\n\tData rate: 19,
+            2 kbit/s\r\n\tEnergy consumption: 36 mW (TX); 28 mW (RX)\r\nExternal memory: Atmel AT 45DB041B\r\n\tFlash: 4 Mbit\r\nSensors: Light,
+             Temperature\r\nBattery Capacity: 2500 mAh"
+        }
+    },
+     
+    {
+        "pk": "TmoteSky",
+         "model": "api.platform",
+         "fields": 
+        {
+            "datetime_modified": "2011-07-10 15:01:14",
+             "name": "Moteiv Tmote Sky",
+             "datetime_created": "2011-07-10 15:01:14",
+             "description": "Ultra low power IEEE 802.15.4 compliant wireless sensor module based on a TI MSP430 and Chipcon CC2420 radio. Also named Telos B.\r\n\r\nInfo: http://www.snm.ethz.ch/Projects/TmoteSky"
+        }
+    },
+     
+    {
+        "pk": "TelosB",
+         "model": "api.platform",
+         "fields": 
+        {
+            "datetime_modified": "2011-07-10 15:01:34",
+             "name": "Telos (Rev B 2004-xx-xx)",
+             "datetime_created": "2011-07-10 15:01:22",
+             "description": "TelosB"
+        }
+    },
+     
+    {
+        "pk": "TelosA",
+         "model": "api.platform",
+         "fields": 
+        {
+            "datetime_modified": "2011-07-10 15:01:28",
+             "name": "Telos (Rev A 2004-04-27)",
+             "datetime_created": "2011-07-10 15:01:28",
+             "description": "TelosA"
+        }
+    },
+     
+    {
+        "pk": 13,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_contenttype",
+             "name": "Can add content type",
+             "content_type": 5
+        }
+    },
+     
+    {
+        "pk": 28,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_experiment",
+             "name": "Can add Experiment",
+             "content_type": 10
+        }
+    },
+     
+    {
+        "pk": 22,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_federation",
+             "name": "Can add Federation",
+             "content_type": 8
+        }
+    },
+     
+    {
+        "pk": 4,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_group",
+             "name": "Can add group",
+             "content_type": 2
+        }
+    },
+     
+    {
+        "pk": 37,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_image",
+             "name": "Can add Image",
+             "content_type": 13
+        }
+    },
+     
+    {
+        "pk": 19,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_logentry",
+             "name": "Can add log entry",
+             "content_type": 7
+        }
+    },
+     
+    {
+        "pk": 10,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_message",
+             "name": "Can add message",
+             "content_type": 4
+        }
+    },
+     
+    {
+        "pk": 1,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_permission",
+             "name": "Can add permission",
+             "content_type": 1
+        }
+    },
+     
+    {
+        "pk": 34,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_platform",
+             "name": "Can add Platform",
+             "content_type": 12
+        }
+    },
+     
+    {
+        "pk": 25,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_project",
+             "name": "Can add Project",
+             "content_type": 9
+        }
+    },
+     
+    {
+        "pk": 40,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_propertyset",
+             "name": "Can add Property Set",
+             "content_type": 14
+        }
+    },
+     
+    {
+        "pk": 16,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_session",
+             "name": "Can add session",
+             "content_type": 6
+        }
+    },
+     
+    {
+        "pk": 31,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_testbed",
+             "name": "Can add Testbed",
+             "content_type": 11
+        }
+    },
+     
+    {
+        "pk": 52,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_testbed2platform",
+             "name": "Can add Testbed2Platform",
+             "content_type": 18
+        }
+    },
+     
+    {
+        "pk": 7,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_user",
+             "name": "Can add user",
+             "content_type": 3
+        }
+    },
+     
+    {
+        "pk": 43,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_virtualnode",
+             "name": "Can add Virtual Node",
+             "content_type": 15
+        }
+    },
+     
+    {
+        "pk": 46,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_virtualnodegroup",
+             "name": "Can add Virtual NodeGroup",
+             "content_type": 16
+        }
+    },
+     
+    {
+        "pk": 49,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "add_virtualnodegroup2virtualnode",
+             "name": "Can add VirtualNodeGroup2VirtualNode",
+             "content_type": 17
+        }
+    },
+     
+    {
+        "pk": 14,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_contenttype",
+             "name": "Can change content type",
+             "content_type": 5
+        }
+    },
+     
+    {
+        "pk": 29,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_experiment",
+             "name": "Can change Experiment",
+             "content_type": 10
+        }
+    },
+     
+    {
+        "pk": 23,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_federation",
+             "name": "Can change Federation",
+             "content_type": 8
+        }
+    },
+     
+    {
+        "pk": 5,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_group",
+             "name": "Can change group",
+             "content_type": 2
+        }
+    },
+     
+    {
+        "pk": 38,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_image",
+             "name": "Can change Image",
+             "content_type": 13
+        }
+    },
+     
+    {
+        "pk": 20,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_logentry",
+             "name": "Can change log entry",
+             "content_type": 7
+        }
+    },
+     
+    {
+        "pk": 11,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_message",
+             "name": "Can change message",
+             "content_type": 4
+        }
+    },
+     
+    {
+        "pk": 2,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_permission",
+             "name": "Can change permission",
+             "content_type": 1
+        }
+    },
+     
+    {
+        "pk": 35,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_platform",
+             "name": "Can change Platform",
+             "content_type": 12
+        }
+    },
+     
+    {
+        "pk": 26,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_project",
+             "name": "Can change Project",
+             "content_type": 9
+        }
+    },
+     
+    {
+        "pk": 41,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_propertyset",
+             "name": "Can change Property Set",
+             "content_type": 14
+        }
+    },
+     
+    {
+        "pk": 17,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_session",
+             "name": "Can change session",
+             "content_type": 6
+        }
+    },
+     
+    {
+        "pk": 32,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_testbed",
+             "name": "Can change Testbed",
+             "content_type": 11
+        }
+    },
+     
+    {
+        "pk": 53,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_testbed2platform",
+             "name": "Can change Testbed2Platform",
+             "content_type": 18
+        }
+    },
+     
+    {
+        "pk": 8,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_user",
+             "name": "Can change user",
+             "content_type": 3
+        }
+    },
+     
+    {
+        "pk": 44,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_virtualnode",
+             "name": "Can change Virtual Node",
+             "content_type": 15
+        }
+    },
+     
+    {
+        "pk": 47,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_virtualnodegroup",
+             "name": "Can change Virtual NodeGroup",
+             "content_type": 16
+        }
+    },
+     
+    {
+        "pk": 50,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "change_virtualnodegroup2virtualnode",
+             "name": "Can change VirtualNodeGroup2VirtualNode",
+             "content_type": 17
+        }
+    },
+     
+    {
+        "pk": 15,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_contenttype",
+             "name": "Can delete content type",
+             "content_type": 5
+        }
+    },
+     
+    {
+        "pk": 30,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_experiment",
+             "name": "Can delete Experiment",
+             "content_type": 10
+        }
+    },
+     
+    {
+        "pk": 24,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_federation",
+             "name": "Can delete Federation",
+             "content_type": 8
+        }
+    },
+     
+    {
+        "pk": 6,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_group",
+             "name": "Can delete group",
+             "content_type": 2
+        }
+    },
+     
+    {
+        "pk": 39,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_image",
+             "name": "Can delete Image",
+             "content_type": 13
+        }
+    },
+     
+    {
+        "pk": 21,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_logentry",
+             "name": "Can delete log entry",
+             "content_type": 7
+        }
+    },
+     
+    {
+        "pk": 12,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_message",
+             "name": "Can delete message",
+             "content_type": 4
+        }
+    },
+     
+    {
+        "pk": 3,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_permission",
+             "name": "Can delete permission",
+             "content_type": 1
+        }
+    },
+     
+    {
+        "pk": 36,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_platform",
+             "name": "Can delete Platform",
+             "content_type": 12
+        }
+    },
+     
+    {
+        "pk": 27,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_project",
+             "name": "Can delete Project",
+             "content_type": 9
+        }
+    },
+     
+    {
+        "pk": 42,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_propertyset",
+             "name": "Can delete Property Set",
+             "content_type": 14
+        }
+    },
+     
+    {
+        "pk": 18,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_session",
+             "name": "Can delete session",
+             "content_type": 6
+        }
+    },
+     
+    {
+        "pk": 33,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_testbed",
+             "name": "Can delete Testbed",
+             "content_type": 11
+        }
+    },
+     
+    {
+        "pk": 54,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_testbed2platform",
+             "name": "Can delete Testbed2Platform",
+             "content_type": 18
+        }
+    },
+     
+    {
+        "pk": 9,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_user",
+             "name": "Can delete user",
+             "content_type": 3
+        }
+    },
+     
+    {
+        "pk": 45,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_virtualnode",
+             "name": "Can delete Virtual Node",
+             "content_type": 15
+        }
+    },
+     
+    {
+        "pk": 48,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_virtualnodegroup",
+             "name": "Can delete Virtual NodeGroup",
+             "content_type": 16
+        }
+    },
+     
+    {
+        "pk": 51,
+         "model": "auth.permission",
+         "fields": 
+        {
+            "codename": "delete_virtualnodegroup2virtualnode",
+             "name": "Can delete VirtualNodeGroup2VirtualNode",
+             "content_type": 17
+        }
+    },
+     
+    {
+        "pk": 1,
+         "model": "auth.user",
+         "fields": 
+        {
+            "username": "admin",
+             "first_name": "",
+             "last_name": "",
+             "is_active": true,
+             "is_superuser": true,
+             "is_staff": true,
+             "last_login": "2011-07-10 20:24:14",
+             "groups": 
+            [
+            ],
+             "user_permissions": 
+            [
+            ],
+             "password": "sha1$4f8e4$9cc3426fb2b25233b55885a82d9c9ed51cab4296",
+             "email": "donzelli@tkn.tu-berlin.de",
+             "date_joined": "2011-07-08 19:08:58"
+        }
+    }
+]
+
