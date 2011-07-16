@@ -349,12 +349,13 @@ class VirtualTask(Resource):
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
         r['id'] = self.id
+        head_only = False
         if not head_only:
             r['description'] = self.description
+            r['experiment'] = build_url(path = self.experiment.get_absolute_url())
             r['step'] = self.step
             r['method'] = self.method
             r['target'] = self.target
-            r['experiment'] = build_url(path = self.experiment.get_absolute_url())
             r['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
             r['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
         return r
@@ -401,6 +402,43 @@ class Job(Resource):
 
     class Meta:
         verbose_name = 'Job'
+        verbose_name_plural = verbose_name +'s'
+        
+        
+class Task(Resource):
+    id = models.CharField(max_length=255, primary_key=True)
+    job = models.ForeignKey(Job, related_name='tasks', verbose_name='Job', on_delete=models.PROTECT)
+    virtual_task = models.OneToOneField(VirtualTask)
+    target = models.URLField()
+    datetime_created = models.DateTimeField(auto_now_add=True, verbose_name='DateTime Created')
+    datetime_modified = models.DateTimeField(auto_now=True, verbose_name='DateTime Modified')
+    
+    def __unicode__(self):
+        return self.id
+
+    def get_absolute_url(self):
+        return '/experiments/%s/virtual-tasks/%s' % (self.experiment.id, self.id)
+
+    def to_dict(self, head_only = False):
+        r = OrderedDict()
+        r['uri'] = build_url(path = self.get_absolute_url())
+        r['media_type'] = MEDIA_TYPE
+        r['name'] = self.virtual_task.name
+        r['id'] = self.id
+        r['virtual_task'] = build_url(path = self.virtual_task.get_absolute_url())
+        head_only = False
+        if not head_only:
+            r['description'] = self.virtual_task.description
+            r['job'] = build_url(path = self.job.get_absolute_url())
+            r['step'] = self.virtual_task.step
+            r['method'] = self.virtual_task.method
+            r['target'] = self.target
+            r['datetime_created'] = utc_datetime_to_utc_string(self.datetime_created)
+            r['datetime_modified'] = utc_datetime_to_utc_string(self.datetime_modified)
+        return r
+
+    class Meta:
+        verbose_name = 'Virtual Task'
         verbose_name_plural = verbose_name +'s'
         
         

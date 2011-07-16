@@ -1,12 +1,20 @@
 import httplib2
 import logging
-from datetime import datetime
 from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
 from filetransfers.api import prepare_upload, serve_file
 from api.models import *
 from settings import *
 from utils import *
+import httplib2
+from anyjson import json
+from datetime import datetime, timedelta, date
+from poster.encode import multipart_encode, MultipartParam
+from poster.streaminghttp import register_openers
+import urllib2
+import time
+from google.appengine.ext import blobstore
+from google.appengine.api import urlfetch
 
 def federation_resource_handler(request):
     
@@ -56,16 +64,18 @@ def testbed_collection_handler(request):
             property_sets = []
             
         for testbed in testbeds:
-            discovery_matrix[testbed.id] = dict()
-            discovery_array[testbed.id] = True
-            for property_set in property_sets:
-                discovery_matrix[testbed.id][property_set.id] = Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count >= property_set.virtual_node_count
-            for ps in discovery_matrix[testbed.id]:
-                discovery_array[testbed.id] = discovery_array[testbed.id] and discovery_matrix[testbed.id][ps]
+            if testbed.id == 'TWIST':
+                discovery_matrix[testbed.id] = dict()
+                discovery_array[testbed.id] = True
+                for property_set in property_sets:
+                    if Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count >= property_set.virtual_node_count:
+                        discovery_matrix[testbed.id][property_set.id] = True
+                for ps in discovery_matrix[testbed.id]:
+                    discovery_array[testbed.id] = discovery_array[testbed.id] and discovery_matrix[testbed.id][ps]
         
-        for t in testbeds:
-            if not discovery_array[t.id]:
-                testbeds = testbeds.exclude(id = t.id)
+        for testbed in testbeds:
+            if testbed.id in discovery_array and discovery_array[testbed.id]:
+                testbeds = testbeds.filter(id = testbed.id)
                 
         testbed_list = [ t.to_dict(head_only = True) for t in testbeds ]
         
@@ -779,8 +789,7 @@ def virtual_nodegroup_resource_handler(request, experiment_id, virtual_nodegroup
             virtual_nodegroup_dict = json.loads(request.raw_post_data)
 
             virtual_nodegroup.name = virtual_nodegroup_dict['name']
-            virtual_nodegroup.name = virtual_nodegroup_dict['description']
-            virtual_nodegroup.experiment = Experiment.objects.get(id = virtual_nodegroup_dict['experiment'])
+            virtual_nodegroup.description = virtual_nodegroup_dict['description']
             virtual_nodegroup.save()
             
             for vng2vn in VirtualNodeGroup2VirtualNode.objects.filter(virtual_nodegroup = virtual_nodegroup):
@@ -902,14 +911,16 @@ def image_resource_handler(request, experiment_id, image_id):
         return response
 
     if request.method == 'GET':
-        # 200
-        response = HttpResponse()
-        response['Content-Type'] = 'application/json'
         
         image_dict = image.to_dict()
         upload_url, upload_data = prepare_upload(request, '/experiments/%s/images/%s/upload' % (experiment_id, image_id))
+        if image.file:
+            image_dict['download'] = build_url(path = '/experiments/%s/images/%s/download' % (experiment_id, image_id))
         image_dict['upload'] = upload_url
-        image_dict['download'] = build_url(path = '/experiments/%s/images/%s/download' % (experiment_id, image_id))
+        
+        # 200
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
         response.write(serialize(image_dict))
         
         return response
@@ -1136,7 +1147,6 @@ def virtual_task_resource_handler(request, experiment_id, virtual_task_id):
         
         virtual_task.name = virtual_task_dict['name']
         virtual_task.description = virtual_task_dict['description']
-        virtual_task.experiment = Experiment.objects.get(id = virtual_task_dict['experiment'])
         virtual_task.method = virtual_task_dict['method']
         virtual_task.target = virtual_task_dict['target']
         virtual_task.save()
@@ -1270,48 +1280,53 @@ def job_collection_handler(request):
     
     if request.method == 'GET':
         
-        if 'testbed' in request.GET and not (request.GET['testbed'] is None):
-            testbed = Testbed.objects.get(id = request.GET['testbed'])
-            job_uri = testbed.server_url + 'jobs/?'
-            
-        if 'for_experiment' in request.GET and not (request.GET['for_experiment'] is None):
-            experiment = Experiment.objects.get(id = request.GET['for_experiment'])
-            
-        if 'date_from' in request.GET and not (request.GET['date_from'] is None):
-            date_from = request.GET['date_from']
-            job_uri = job_uri + '&date_from=' + date_from
-            
-        if 'date_to' in request.GET and not (request.GET['date_to'] is None):
-            date_to = request.GET['date_to']
-            job_uri = job_uri + '&date_to=' + date_to
-        
-        testbed_proxy = httplib2.Http()
-        # testbed_proxy.add_credentials('name', 'password')
-        response, content = testbed_proxy.request(uri=job_uri, method='GET', body='')
-        assert response.status == 200
-        job_list = json.loads(content)
-        
-        for job_item in job_list:
-            response, content = testbed_proxy.request(uri=job_item['uri'], method='GET', body='')
-            assert response.status == 200
-            job_dict = json.loads(content)
-            job, created = Job.objects.get_or_create(
-                id = job_dict['id'],
-                defaults = {
-                    'name' : job_dict['name'],
-                    'description' : job_dict['description'],
-                    'datetime_from' : utc_string_to_utc_datetime(job_dict['datetime_from']),
-                    'datetime_to' : utc_string_to_utc_datetime(job_dict['datetime_to']),
-                    'testbed' : testbed
-                }
-            )
-            if not created:
-                job.name = job_dict['name']
-                job.description = job_dict['description']
-        
-        # delete nodes that are not present in the taa database
-        job_id_list = [ job_dict['id'] for job_dict in job_list ]
-        Job.objects.exclude(id__in = job_id_list).delete()
+        for testbed in Testbed.objects.all():
+            if testbed.id == 'TWIST':
+                if 'testbed' in request.GET and not (request.GET['testbed'] is None):
+                    testbed = Testbed.objects.get(id = request.GET['testbed'])
+                    job_uri = testbed.server_url + 'jobs/?'
+                    
+                    if 'for_experiment' in request.GET and not (request.GET['for_experiment'] is None):
+                        experiment = Experiment.objects.get(id = request.GET['for_experiment'])
+                        
+                    if 'date_from' in request.GET and not (request.GET['date_from'] is None):
+                        date_from = request.GET['date_from']
+                        job_uri = job_uri + '&date_from=' + date_from
+                        
+                    if 'date_to' in request.GET and not (request.GET['date_to'] is None):
+                        date_to = request.GET['date_to']
+                        job_uri = job_uri + '&date_to=' + date_to
+                        
+                else:
+                    job_uri = testbed.server_url + 'jobs/'
+                
+                testbed_proxy = httplib2.Http()
+                # testbed_proxy.add_credentials('name', 'password')
+                response, content = testbed_proxy.request(uri=job_uri, method='GET', body='')
+                assert response.status == 200
+                job_list = json.loads(content)
+                
+                for job_item in job_list:
+                    response, content = testbed_proxy.request(uri=job_item['uri'], method='GET', body='')
+                    assert response.status == 200
+                    job_dict = json.loads(content)
+                    job, created = Job.objects.get_or_create(
+                        id = job_dict['id'],
+                        defaults = {
+                            'name' : job_dict['name'],
+                            'description' : job_dict['description'],
+                            'datetime_from' : utc_string_to_utc_datetime(job_dict['datetime_from']),
+                            'datetime_to' : utc_string_to_utc_datetime(job_dict['datetime_to']),
+                            'testbed' : testbed
+                        }
+                    )
+                    if not created:
+                        job.name = job_dict['name']
+                        job.description = job_dict['description']
+                
+                # delete nodes that are not present in the taa database
+                job_id_list = [ job_dict['id'] for job_dict in job_list ]
+                Job.objects.exclude(id__in = job_id_list).delete()
         
         jobs = Job.objects.all().order_by('datetime_from')
         job_list = [ j.to_dict(head_only = True) for j in jobs ]
@@ -1370,6 +1385,314 @@ def job_collection_handler(request):
             job_uri = response['content-location']
             logging.info(job_uri)
             
+            # create all necessary tasks with nodegroups instead of virtual nodegroups
+            
+            #####################################################################################################
+            #####################################################################################################
+            #####################################################################################################
+            #####################################################################################################
+            #####################################################################################################
+            
+            SERVER_URL = testbed.server_url
+            PLATFORM = 'TmoteSky'
+            JOB_URI = job_uri
+        
+            SINK_NODE_ID = 12
+            
+            DESCRIPTION = 'CONET 3Y REVIEW - PLEASE DO NOT DELETE'
+
+            # GETTING THE TESTBED
+    
+            logging.info('getting the testbed resource...')
+            response, content = testbed_proxy.request(uri=SERVER_URL, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            testbed_dict = json.loads(content)
+            logging.debug(testbed_dict)
+            
+            # GETTING THE JOB (INCLUDING NODES)
+            
+            logging.info('getting the information about the created job...')
+            response, content = testbed_proxy.request(uri=JOB_URI, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            job_dict = json.loads(content)
+            logging.debug(job_dict)
+            
+            assert len(job_dict['nodes']) == 96
+            
+            # GETTING THE NODES AND CREATING THE NODEGROUP ALL
+            
+            logging.info('getting the nodes for nodegroup including all nodes %s...' % (PLATFORM, ))
+            response, content = testbed_proxy.request(uri='%s?platform=%s' % (testbed_dict['nodes'], PLATFORM), method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            node_list_all = json.loads(content)
+            logging.debug(node_list_all)
+            assert len(node_list_all) == 96
+                
+            nodegroup_dict_all = {
+                'name' : 'subscriber',
+                'description' : DESCRIPTION,
+                'nodes' : [ n['id'] for n in node_list_all ],
+                'job' : job_dict['id']
+            }
+            
+            logging.info('creating the nodegroup for all nodes %s...' % (PLATFORM, ))    
+            response, content = testbed_proxy.request(uri=testbed_dict['nodegroups'], method='POST', body=json.dumps(nodegroup_dict_all))
+            assert response.status == 201
+            logging.info('%d %s' % (response.status, response.reason))
+            nodegroup_uri_all = response['content-location']
+            logging.debug(nodegroup_uri_all)
+            
+            logging.info('getting the information about the created nodegroup all...')
+            response, content = testbed_proxy.request(uri=nodegroup_uri_all, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            nodegroup_dict_all = json.loads(content)
+            logging.debug(nodegroup_dict_all)
+            assert len(nodegroup_dict_all['nodes']) == 96
+            
+            ngA = nodegroup_dict_all['id'] ###############################################################################################################################
+
+            
+            # GETTING THE NODES AND CREATING THE NODEGROUP SUBSCRIBER
+            
+            logging.info('getting the nodes for nodegroup subscriber (1 node)...')
+            response, content = testbed_proxy.request(uri='%s?native_id=%d' % (testbed_dict['nodes'], SINK_NODE_ID), method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            node_list_subscriber = json.loads(content)
+            logging.debug(node_list_subscriber)
+            assert len(node_list_subscriber) == 1
+                
+            nodegroup_dict_subscriber = {
+                'name' : 'subscriber',
+                'description' : DESCRIPTION,
+                'nodes' : [ n['id'] for n in node_list_subscriber ],
+                'job' : job_dict['id']
+            }
+            
+            logging.info('creating the nodegroup for subscriber...')    
+            response, content = testbed_proxy.request(uri=testbed_dict['nodegroups'], method='POST', body=json.dumps(nodegroup_dict_subscriber))
+            assert response.status == 201
+            logging.info('%d %s' % (response.status, response.reason))
+            nodegroup_uri_subscriber = response['content-location']
+            logging.debug(nodegroup_uri_subscriber)
+            
+            logging.info('getting the information about the created nodegroup subscriber...')
+            response, content = testbed_proxy.request(uri=nodegroup_uri_subscriber, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            nodegroup_dict_subscriber = json.loads(content)
+            logging.debug(nodegroup_dict_subscriber)
+            assert len(nodegroup_dict_subscriber['nodes']) == 1
+            
+            ngS = nodegroup_dict_subscriber['id'] ###############################################################################################################################
+            
+            # GETTING THE NODES AND CREATING THE NODEGROUP PUBLISHERS
+            
+            logging.info('getting the nodes for nodegroup publishers (93 nodes)...')
+            # node_blacklist = [ 59, 60, 274, 275, 62, 64, 276, 277, 171, 174, 278, 279]
+            response, content = testbed_proxy.request(uri='%s?platform=%s&native_id__not_in=%d,%d,%d' % (testbed_dict['nodes'], PLATFORM, SINK_NODE_ID, 187, 90), method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            node_list_publishers = json.loads(content)
+            logging.debug(node_list_publishers)
+            logging.debug(len(node_list_publishers))
+            assert len(node_list_publishers) == 93
+                
+            nodegroup_dict_publishers = {
+                'name' : 'publishers',
+                'description' : DESCRIPTION,
+                'nodes' : [ n['id'] for n in node_list_publishers ],
+                'job' : job_dict['id']
+            }
+            
+            logging.info('creating a nodegroup publishers...')    
+            response, content = testbed_proxy.request(uri=testbed_dict['nodegroups'], method='POST', body=json.dumps(nodegroup_dict_publishers))
+            assert response.status == 201
+            logging.info('%d %s' % (response.status, response.reason))
+            nodegroup_uri_publishers = response['content-location']
+            logging.debug(nodegroup_uri_publishers)
+            
+            logging.info('getting the information about the created nodegroup publishers...')
+            response, content = testbed_proxy.request(uri=nodegroup_uri_publishers, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            nodegroup_dict_publishers = json.loads(content)
+            logging.debug(nodegroup_dict_publishers)
+            assert len(nodegroup_dict_publishers['nodes']) == 93
+            
+            ngP = nodegroup_dict_publishers['id'] ###############################################################################################################################
+            
+            # GETTING THE NODES AND CREATING THE NODEGROUP INTERFERERS
+            
+            logging.info('getting the nodes for nodegroup interferers (2 nodes)...')
+            response, content = testbed_proxy.request(uri='%s?native_id__in=%d,%d' % (testbed_dict['nodes'], 187, 90), method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            node_list_interferers = json.loads(content)
+            logging.debug(node_list_interferers)
+            assert len(node_list_interferers) == 2
+                
+            nodegroup_dict_interferers = {
+                'name' : 'interferers',
+                'description' : DESCRIPTION,
+                'nodes' : [ n['id'] for n in node_list_interferers ],
+                'job' : job_dict['id']
+            }
+            
+            logging.info('creating a nodegroup interferers...')    
+            response, content = testbed_proxy.request(uri=testbed_dict['nodegroups'], method='POST', body=json.dumps(nodegroup_dict_interferers))
+            assert response.status == 201
+            logging.info('%d %s' % (response.status, response.reason))
+            nodegroup_uri_interferers = response['content-location']
+            logging.debug(nodegroup_uri_interferers)
+            
+            logging.info('getting the information about the created nodegroup interferers...')
+            response, content = testbed_proxy.request(uri=nodegroup_uri_interferers, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            nodegroup_dict_interferers = json.loads(content)
+            logging.debug(nodegroup_dict_interferers)
+            assert len(nodegroup_dict_interferers['nodes']) == 2
+            
+            ngI = nodegroup_dict_interferers['id'] ###############################################################################################################################
+            
+            # UPLOADING THE IMAGE FOR SUBSCRIBER
+            
+            image_dict_subscriber = {
+                    'name' : 'image for subscriber',
+                    'description' : DESCRIPTION,
+                }
+                
+            logging.info('creating a new image resource...')
+            response, content = testbed_proxy.request(uri=testbed_dict['images'], method='POST', body=json.dumps(image_dict_subscriber))
+            assert response.status == 201
+            logging.info('%d %s' % (response.status, response.reason))
+            image_uri_subscriber = response['content-location']
+            logging.debug(image_uri_subscriber)
+            
+            logging.info('getting the information about the image for subscriber...')
+            response, content = testbed_proxy.request(uri=image_uri_subscriber, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            image_dict_subscriber= json.loads(content)
+            logging.debug(image_dict_subscriber)
+        
+            logging.info('uploading the actual image file...')
+            image = Image.objects.filter(experiment = experiment).filter(name = 'SUSCRIBER')
+            blob_key = image.file.file.blobstore_info.key()
+            blob_info = blobstore.BlobInfo(blob_key)
+            params = []
+            params.append(MultipartParam('imagefile', filename=image.file.name, filetype='application/octet-stream', value=blob_info))
+            
+            datagen, headers = multipart_encode(params)
+            data = str().join(datagen)
+            result = urlfetch.fetch(url=image_dict_subscriber['upload'], payload=data, method=urlfetch.POST, headers=headers, deadline=10)
+            logging.info('%d' % (result.status_code))
+            
+            imS = image_dict_subscriber['id'] ################################################################################################################################
+            
+            # UPLOADING THE IMAGE FOR PUBLISHERS
+            
+            image_dict_publishers = {
+                    'name' : 'image for publishers',
+                    'description' : DESCRIPTION,
+                }
+                
+            logging.info('creating a new image resource...')
+            response, content = testbed_proxy.request(uri=testbed_dict['images'], method='POST', body=json.dumps(image_dict_publishers))
+            assert response.status == 201
+            logging.info('%d %s' % (response.status, response.reason))
+            image_uri_publishers = response['content-location']
+            logging.debug(image_uri_publishers)
+            
+            logging.info('getting the information about the image for publishers...')
+            response, content = testbed_proxy.request(uri=image_uri_publishers, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            image_dict_publishers= json.loads(content)
+            logging.debug(image_dict_publishers)
+            
+            logging.info('uploading the actual image file...')
+            image = Image.objects.filter(experiment = experiment).filter(name = 'PUBLISHER')
+            blob_key = image.file.file.blobstore_info.key()
+            blob_info = blobstore.BlobInfo(blob_key)
+            params = []
+            params.append(MultipartParam('imagefile', filename=image.file.name, filetype='application/octet-stream', value=blob_info))
+            
+            datagen, headers = multipart_encode(params)
+            data = str().join(datagen)
+            result = urlfetch.fetch(url=image_dict_publishers['upload'], payload=data, method=urlfetch.POST, headers=headers, deadline=10)
+            logging.info('%d' % (result.status_code))
+            
+            imP = image_dict_publishers['id'] ################################################################################################################################
+            
+            # UPLOADING THE IMAGE FOR INTERFERERS
+            
+            image_dict_interferers = {
+                    'name' : 'image for interferers',
+                    'description' : DESCRIPTION,
+                }
+                
+            logging.info('creating a new image resource...')
+            response, content = testbed_proxy.request(uri=testbed_dict['images'], method='POST', body=json.dumps(image_dict_interferers))
+            assert response.status == 201
+            logging.info('%d %s' % (response.status, response.reason))
+            image_uri_interferers = response['content-location']
+            logging.debug(image_uri_interferers)
+            
+            logging.info('getting the information about the image for interferers...')
+            response, content = testbed_proxy.request(uri=image_uri_interferers, method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            image_dict_interferers= json.loads(content)
+            logging.debug(image_dict_interferers)
+            
+            logging.info('uploading the actual image file...')
+            image = Image.objects.filter(experiment = experiment).filter(name = 'PUBLISHER')
+            blob_key = image.file.file.blobstore_info.key()
+            blob_info = blobstore.BlobInfo(blob_key)
+            params = []
+            params.append(MultipartParam('imagefile', filename=image.file.name, filetype='application/octet-stream', value=blob_info))
+            
+            datagen, headers = multipart_encode(params)
+            data = str().join(datagen)
+            result = urlfetch.fetch(url=image_dict_interferers['upload'], payload=data, method=urlfetch.POST, headers=headers, deadline=10)
+            logging.info('%d' % (result.status_code))
+            
+            imI = image_dict_interferers['id'] ################################################################################################################################
+            
+            #####################################################################################################
+            #####################################################################################################
+            #####################################################################################################
+            #####################################################################################################
+            #####################################################################################################
+            
+            ########## NOW CREATE TASKS ##############
+            
+            virtual_task = VirtualTask.objects.filter(experiment = job.experiment).filter(step = 1)
+            target = '%s%s/image' % (SERVER_URL, ngA)
+            Task(id = generate_id(), job = job, virtual_task = virtual_task, target = target).save()
+            
+            virtual_task = VirtualTask.objects.filter(experiment = job.experiment).filter(step = 2)
+            target = '%s%s/image/%s' % (SERVER_URL, ngS, imS)
+            Task(id = generate_id(), job = job, virtual_task = virtual_task, target = target).save()
+            
+            virtual_task = VirtualTask.objects.filter(experiment = job.experiment).filter(step = 3)
+            target = '%s%s/image/%s' % (SERVER_URL, ngP, imP)
+            Task(id = generate_id(), job = job, virtual_task = virtual_task, target = target).save()
+            
+            virtual_task = VirtualTask.objects.filter(experiment = job.experiment).filter(step = 4)
+            target = '%s%s/image/%s' % (SERVER_URL, ngI, imI)
+            Task(id = generate_id(), job = job, virtual_task = virtual_task, target = target).save()
+            
+            virtual_task = VirtualTask.objects.filter(experiment = job.experiment).filter(step = 5)
+            target = '%s%s/image' % (SERVER_URL, ngI)
+            Task(id = generate_id(), job = job, virtual_task = virtual_task, target = target).save()
+            
             # generate response
             response = HttpResponse(status=201)
             response['Location'] = build_url(path = job.get_absolute_url())
@@ -1422,6 +1745,81 @@ def job_resource_handler(request, job_id):
         response = HttpResponse(status=204)
         response['Allow'] = ', '.join(allowed_methods)
         del response['Content-Type']
+        return response
+
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+
+
+def task_collection_handler(request, job_id):
+
+    allowed_methods = ['GET']
+    
+    try:
+        job = Job.objects.get(id = job_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+
+    if request.method == 'GET':
+
+        tasks = Task.objects.filter(job = job).order_by('step')
+
+        if 'name' in request.GET and not (request.GET['name'] is None):
+            tasks = tasks.filter(name = request.GET['name'])
+
+        task_list = [ t.to_dict(head_only = True) for t in tasks ]
+
+        # 200
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(task_list))
+        return response
+
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+
+def task_resource_handler(request, job_id, task_id):
+
+    allowed_methods = ['GET']
+
+    try:
+        job = Job.objects.get(id = job_id)
+        task = Task.objects.get(id = task_id)
+
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+
+    if request.method == 'GET':
+        # 200
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(serialize(task.to_dict()))
         return response
 
     else:

@@ -41,5 +41,8 @@ urlpatterns = patterns('',
     url(r'^jobs/$', job_collection_handler),
     url(r'^jobs/(?P<job_id>\w+)$', job_resource_handler),
     
+    url(r'^jobs/(?P<job_id>\w+)/tasks/$', task_collection_handler),
+    url(r'^jobs/(?P<job_id>\w+)/tasks/(?P<task_id>\w+)$', task_resource_handler),
+    
     
 )
