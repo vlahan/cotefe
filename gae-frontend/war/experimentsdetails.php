@@ -72,8 +72,7 @@ $(document).ready(function() {
                     <ul id="drop-down">
                       <li><a href="#">PropertySet</a>
                       	<ul id="property-set-tab">
-                          <li><a href="<?php echo ROOTURL."/experiments/".$_GET['eid']."/property-sets" ?>" class="drop-down-bottom" id="create_new_property_set">Add PropertySet</a></li>
-                         
+                          <li><a href="<?php echo ROOTURL."/experiments/".$_GET['eid']."/property-sets" ?>" class="drop-down-bottom" id="create_new_property_set">Add PropertySet</a></li>                         
                         </ul>
                       </li>
                       <li><a href="#">Virtual Node Group</a>
