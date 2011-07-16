@@ -1,4 +1,5 @@
 import os
+from odict import OrderedDict
 from django.db import models
 from django.contrib.auth.models import User
 try:
@@ -25,7 +26,7 @@ class Testbed(Resource):
         return "/"
         
     def to_dict(self):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url()
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -57,7 +58,7 @@ class Platform(Resource):
         return "/platforms/%s" % self.id
 
     def to_dict(self):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(server_url = FEDERATION_URL, path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -88,7 +89,7 @@ class Image(Resource):
         return "/images/%s" % self.id
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -127,7 +128,7 @@ class Job(Resource):
         return "/jobs/%s" % self.id
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -168,7 +169,7 @@ class Node(Resource):
         return "/nodes/%s" % self.id
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -201,7 +202,7 @@ class NodeGroup(Resource):
         return "/nodegroups/%s" % self.id
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
