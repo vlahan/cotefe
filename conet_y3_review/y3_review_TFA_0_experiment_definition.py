@@ -8,7 +8,7 @@ from poster.streaminghttp import register_openers
 import urllib2
 import webbrowser
 
-#SERVER_URL = 'http://api.cotefe.net'
+# SERVER_URL = 'http://api.cotefe.net'
 SERVER_URL = 'http://localhost:8080'
 PLATFORM = 'TmoteSky'
 
@@ -149,6 +149,7 @@ def main():
 #    virtual_node_id_list_publishers = [ json.loads(h.request(uri=virtual_node_dict['uri'], method='GET', body='')[1])['id'] for virtual_node_dict in virtual_node_list_publishers ]
 #    virtual_node_id_list_interferers = [ json.loads(h.request(uri=virtual_node_dict['uri'], method='GET', body='')[1])['id'] for virtual_node_dict in virtual_node_list_interferers ]
     
+    virtual_node_id_list_all = [ virtual_node_dict['id'] for virtual_node_dict in virtual_node_list ]
     virtual_node_id_list_subscriber = [ virtual_node_dict['id'] for virtual_node_dict in virtual_node_list_subscriber ]
     virtual_node_id_list_publishers = [ virtual_node_dict['id'] for virtual_node_dict in virtual_node_list_publishers ]
     virtual_node_id_list_interferers = [ virtual_node_dict['id'] for virtual_node_dict in virtual_node_list_interferers ]
@@ -158,6 +159,30 @@ def main():
     assert len(virtual_node_id_list_subscriber) == SUBSCRIBER
     assert len(virtual_node_id_list_publishers) == PUBLISHERS
     assert len(virtual_node_id_list_interferers) == INTERFERERS
+    
+    # CREATING THE A VIRTUAL NODEGROUP WITH ALL NODES
+    
+    virtual_nodegroup_dict_all = {
+        'name' : 'all nodes',
+        'description' : DESCRIPTION,
+        'virtual_nodes' : virtual_node_id_list_all,
+    }
+    
+    logging.info('creating a virtual nodegroup out of all virtual nodes...')
+    response, content = h.request(uri='%s/virtual-nodegroups/' % (experiment_dict['uri'], ), method='POST', body=json.dumps(virtual_nodegroup_dict_all))
+    assert response.status == 201
+    logging.info('%d %s' % (response.status, response.reason))
+    virtual_nodegroup_uri_all = response['content-location']
+    logging.debug(virtual_nodegroup_uri_all)
+    
+    logging.info('getting the virtual nodegroup all nodes...')
+    response, content = h.request(uri=virtual_nodegroup_uri_all, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    virtual_nodegroup_dict_all = json.loads(content)
+    logging.debug(virtual_nodegroup_dict_all)
+    
+    assert len(virtual_nodegroup_dict_all['virtual_nodes']) == N
     
     # CREATING THE FIRST VIRTUAL NODEGROUP
     
@@ -315,11 +340,36 @@ def main():
     logging.debug(urllib2.urlopen(request).read())
     logging.info('200 OK')
     
+    # DEFINING VIRTUAL TASK 1 ERASE ALL NODES
+    
+    virtual_task_dict_erase_all = {
+        'name' : 'erase all nodes',
+        'description' : DESCRIPTION,
+        'step' : 1,
+        'method' : 'DELETE',
+        'target' : '%s/image' % (virtual_nodegroup_dict_all['uri'], )
+    }
+    
+    logging.info('creating virtual task: installing image on virtual nodegroup subscriber...')
+    response, content = h.request(uri='%s/virtual-tasks/' % (experiment_dict['uri'], ), method='POST', body=json.dumps(virtual_task_dict_erase_all))
+    assert response.status == 201
+    logging.info('%d %s' % (response.status, response.reason))
+    virtual_task_uri_erase_all = response['content-location']
+    logging.debug(virtual_task_uri_erase_all)
+    
+    logging.info('getting the created virtual task...')
+    response, content = h.request(uri=virtual_task_uri_erase_all, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    virtual_task_dict_erase_all = json.loads(content)
+    logging.debug(virtual_task_dict_erase_all)
+    
     # DEFINING VIRTUAL TASK 1 INSTALL IMAGE 1 ON VIRTUAL NODEGROUP 1
     
     virtual_task_dict_subscriber = {
         'name' : 'install image on subscriber node',
         'description' : DESCRIPTION,
+        'step' : 2,
         'method' : 'PUT',
         'target' : '%s/image/%s' % (virtual_nodegroup_dict_subscriber['uri'], image_dict_subscriber['id'])
     }
@@ -343,6 +393,7 @@ def main():
     virtual_task_dict_publishers = {
         'name' : 'install image on publishers node',
         'description' : DESCRIPTION,
+        'step' : 3,
         'method' : 'PUT',
         'target' : '%s/image/%s' % (virtual_nodegroup_dict_publishers['uri'], image_dict_publishers['id'])
     }
@@ -366,6 +417,7 @@ def main():
     virtual_task_dict_interferers = {
         'name' : 'install image on interferers node',
         'description' : DESCRIPTION,
+        'step' : 4,
         'method' : 'PUT',
         'target' : '%s/image/%s' % (virtual_nodegroup_dict_interferers['uri'], image_dict_interferers['id'])
     }
@@ -383,6 +435,30 @@ def main():
     logging.info('%d %s' % (response.status, response.reason))
     virtual_task_dict_interferers = json.loads(content)
     logging.debug(virtual_task_dict_interferers)
+    
+    # DEFINING VIRTUAL TASK 3 INSTALL IMAGE 3 ON VIRTUAL NODEGROUP 3
+    
+    virtual_task_dict_erase_interferers = {
+        'name' : 'erase interferers node',
+        'description' : DESCRIPTION,
+        'step' : 5,
+        'method' : 'DELETE',
+        'target' : '%s/image' % (virtual_nodegroup_dict_interferers['uri'], )
+    }
+    
+    logging.info('creating virtual task: erase virtual nodegroup interferers...')
+    response, content = h.request(uri='%s/virtual-tasks/' % (experiment_dict['uri'], ), method='POST', body=json.dumps(virtual_task_dict_erase_interferers))
+    assert response.status == 201
+    logging.info('%d %s' % (response.status, response.reason))
+    virtual_task_uri_erase_interferers = response['content-location']
+    logging.debug(virtual_task_uri_erase_interferers)
+    
+    logging.info('getting the created virtual task...')
+    response, content = h.request(uri=virtual_task_uri_erase_interferers, method='GET', body='')
+    assert response.status == 200
+    logging.info('%d %s' % (response.status, response.reason))
+    virtual_task_dict_erase_interferers = json.loads(content)
+    logging.debug(virtual_task_dict_erase_interferers)
     
     # GETTING THE UPDATED EXPERIMENT
     
