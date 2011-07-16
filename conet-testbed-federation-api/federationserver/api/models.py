@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from settings import *
 from utils import *
+from odict import OrderedDict
 
 class Resource(models.Model):
     class Meta:
@@ -18,7 +19,7 @@ class Federation(Resource):
         return '/'
         
     def to_dict(self):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url()
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -49,7 +50,7 @@ class Project(Resource):
         return '/projects/%s' % (self.id, )
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -84,7 +85,7 @@ class Experiment(Resource):
         return '/experiments/%s' % (self.id, )
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -101,6 +102,8 @@ class Experiment(Resource):
             r['images'] = [ i.to_dict(head_only = True) for i in self.images.all() ]
             r['datetime_created'] = berlin_datetime_to_utc_string(self.datetime_created)
             r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
+            r['virtual_tasks'] = [ vt.to_dict(head_only = True) for vt in self.virtual_tasks.all().order_by('step') ]
+            r['job'] = [ j.to_dict(head_only = True) for j in self.jobs.all().order_by('datetime_from') ]
         return r
     
     class Meta:
@@ -123,7 +126,7 @@ class Testbed(Resource):
         return '/testbeds/%s' % (self.id, )
         
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -157,7 +160,7 @@ class Platform(Resource):
         return '/platforms/%s' % (self.id, )
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -186,7 +189,7 @@ class PropertySet(Resource):
         return '/experiments/%s/property-sets/%s' % (self.experiment.id, self.id)
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -227,7 +230,7 @@ class Image(Resource):
         return '/experiments/%s/images/%s' % (self.experiment.id, self.id)
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -259,11 +262,13 @@ class VirtualNode(Resource):
         return '/experiments/%s/virtual-nodes/%s' % (self.experiment.id, self.id)
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
         r['id'] = self.id
+        r['property_set_id'] = self.property_set.id
+        r['property_set_name'] = self.property_set.name
         if not head_only:
             r['property_set'] = build_url(path = self.property_set.get_absolute_url())
             r['platform'] = build_url(path = self.platform.get_absolute_url())
@@ -297,7 +302,7 @@ class VirtualNodeGroup(Resource):
         return '/experiments/%s/virtual-nodegroups/%s' % (self.experiment.id, self.id)
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
@@ -326,6 +331,7 @@ class VirtualTask(Resource):
     id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
+    step = models.IntegerField()
     method = models.CharField(max_length=10)
     target = models.URLField()
     payload = models.TextField()
@@ -340,13 +346,14 @@ class VirtualTask(Resource):
         return '/experiments/%s/virtual-tasks/%s' % (self.experiment.id, self.id)
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
         r['id'] = self.id
         if not head_only:
             r['description'] = self.description
+            r['step'] = self.step
             r['method'] = self.method
             r['target'] = self.target
             r['experiment'] = build_url(path = self.experiment.get_absolute_url())
@@ -376,7 +383,7 @@ class Job(Resource):
         return '/jobs/%s' % (self.id, )
 
     def to_dict(self, head_only = False):
-        r = dict()
+        r = OrderedDict()
         r['uri'] = build_url(path = self.get_absolute_url())
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name

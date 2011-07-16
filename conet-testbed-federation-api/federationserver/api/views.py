@@ -59,7 +59,7 @@ def testbed_collection_handler(request):
             discovery_matrix[testbed.id] = dict()
             discovery_array[testbed.id] = True
             for property_set in property_sets:
-                discovery_matrix[testbed.id][property_set.id] = Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count >= property_set.node_count
+                discovery_matrix[testbed.id][property_set.id] = Testbed2Platform.objects.filter(testbed = testbed, platform=property_set.platform)[0].node_count >= property_set.virtual_node_count
             for ps in discovery_matrix[testbed.id]:
                 discovery_array[testbed.id] = discovery_array[testbed.id] and discovery_matrix[testbed.id][ps]
         
@@ -67,7 +67,7 @@ def testbed_collection_handler(request):
             if not discovery_array[t.id]:
                 testbeds = testbeds.exclude(id = t.id)
                 
-        testbed_list = [ t.to_dict() for t in testbeds ]
+        testbed_list = [ t.to_dict(head_only = True) for t in testbeds ]
         
         # 200
         response = HttpResponse()
@@ -166,7 +166,7 @@ def platform_collection_handler(request):
         if 'name' in request.GET and not (request.GET['name'] is None):
             platforms = platforms.filter(name = request.GET['name'])
         
-        platform_list = [ p.to_dict() for p in platforms ]
+        platform_list = [ p.to_dict(head_only = True) for p in platforms ]
         
         # 200
         response = HttpResponse()
@@ -236,7 +236,7 @@ def project_collection_handler(request):
         if 'name' in request.GET and not (request.GET['name'] is None):
             projects = projects.filter(name = request.GET['name'])
         
-        project_list = [ p.to_dict() for p in projects ]
+        project_list = [ p.to_dict(head_only = True) for p in projects ]
         
         # 200
         response = HttpResponse()
@@ -364,7 +364,7 @@ def experiment_collection_handler(request):
         if 'name' in request.GET and not (request.GET['name'] is None):
             experiments = experiments.filter(name = request.GET['name'])
         
-        experiment_list = [ e.to_dict() for e in experiments ]
+        experiment_list = [ e.to_dict(head_only = True) for e in experiments ]
         
         # 200
         response = HttpResponse()
@@ -500,7 +500,7 @@ def property_set_collection_handler(request, experiment_id):
         if 'name' in request.GET and not (request.GET['name'] is None):
             property_sets = property_sets.filter(name = request.GET['name'])
         
-        property_set_list = [ ps.to_dict() for ps in property_sets ]
+        property_set_list = [ ps.to_dict(head_only = True) for ps in property_sets ]
         
         # 200
         response = HttpResponse()
@@ -635,7 +635,7 @@ def virtual_node_collection_handler(request, experiment_id):
                 response['Content-Type'] = 'application/json'
                 return response
                 
-        virtual_node_list = [ vn.to_dict() for vn in virtual_nodes ]
+        virtual_node_list = [ vn.to_dict(head_only = True) for vn in virtual_nodes ]
                 
         # 200
         response = HttpResponse()
@@ -705,7 +705,7 @@ def virtual_nodegroup_collection_handler(request, experiment_id):
         
         virtual_nodegroups = VirtualNodeGroup.objects.filter(experiment = experiment)
             
-        virtual_nodegroup_list = [ vng.to_dict() for vng in virtual_nodegroups ]
+        virtual_nodegroup_list = [ vng.to_dict(head_only = True) for vng in virtual_nodegroups ]
         
         # 200
         response = HttpResponse()
@@ -841,7 +841,7 @@ def image_collection_handler(request, experiment_id):
         
         images = Image.objects.filter(experiment = experiment)
         
-        image_list = [ i.to_dict() for i in images ]
+        image_list = [ i.to_dict(head_only = True) for i in images ]
         
         # 200
         response = HttpResponse()
@@ -1049,12 +1049,12 @@ def virtual_task_collection_handler(request, experiment_id):
 
     if request.method == 'GET':
 
-        virtual_tasks = VirtualTask.objects.filter(experiment = experiment)
+        virtual_tasks = VirtualTask.objects.filter(experiment = experiment).order_by('step')
 
         if 'name' in request.GET and not (request.GET['name'] is None):
             virtual_tasks = virtual_tasks.filter(name = request.GET['name'])
 
-        virtual_task_list = [ vt.to_dict() for vt in virtual_tasks ]
+        virtual_task_list = [ vt.to_dict(head_only = True) for vt in virtual_tasks ]
 
         # 200
         response = HttpResponse()
@@ -1071,6 +1071,7 @@ def virtual_task_collection_handler(request, experiment_id):
                 id = generate_id(),
                 name = virtual_task_dict['name'],
                 description = virtual_task_dict['description'],
+                step = virtual_task_dict['step'],
                 experiment = experiment,
                 method = virtual_task_dict['method'],
                 target = virtual_task_dict['target']
@@ -1265,25 +1266,24 @@ def image_resource_in_virtual_nodegroup_handler(request, experiment_id, virtual_
     
 def job_collection_handler(request):
     
-    allowed_methods = ['GET']
+    allowed_methods = ['GET', 'POST']
     
     if request.method == 'GET':
         
         if 'testbed' in request.GET and not (request.GET['testbed'] is None):
             testbed = Testbed.objects.get(id = request.GET['testbed'])
-            print testbed.server_url + 'jobs/?'
-            job_uri = build_url(path = testbed.server_url + 'jobs/?')
+            job_uri = testbed.server_url + 'jobs/?'
             
-        if 'supports_experiment' in request.GET and not (request.GET['supports_experiment'] is None):
-            experiment = Experiment.objects.get(id = request.GET['supports_experiment'])
+        if 'for_experiment' in request.GET and not (request.GET['for_experiment'] is None):
+            experiment = Experiment.objects.get(id = request.GET['for_experiment'])
             
         if 'date_from' in request.GET and not (request.GET['date_from'] is None):
             date_from = request.GET['date_from']
-            job_uri = job_uri + 'date_from=' + date_from
+            job_uri = job_uri + '&date_from=' + date_from
             
         if 'date_to' in request.GET and not (request.GET['date_to'] is None):
             date_to = request.GET['date_to']
-            job_uri = job_uri + 'date_to=' + date_to
+            job_uri = job_uri + '&date_to=' + date_to
         
         testbed_proxy = httplib2.Http()
         # testbed_proxy.add_credentials('name', 'password')
@@ -1291,7 +1291,10 @@ def job_collection_handler(request):
         assert response.status == 200
         job_list = json.loads(content)
         
-        for job_dict in job_list:
+        for job_item in job_list:
+            response, content = testbed_proxy.request(uri=job_item['uri'], method='GET', body='')
+            assert response.status == 200
+            job_dict = json.loads(content)
             job, created = Job.objects.get_or_create(
                 id = job_dict['id'],
                 defaults = {
@@ -1306,14 +1309,80 @@ def job_collection_handler(request):
                 job.name = job_dict['name']
                 job.description = job_dict['description']
         
-        jobs = Job.objects.all()
-        job_list = [ j.to_dict() for j in jobs ]
+        # delete nodes that are not present in the taa database
+        job_id_list = [ job_dict['id'] for job_dict in job_list ]
+        Job.objects.exclude(id__in = job_id_list).delete()
+        
+        jobs = Job.objects.all().order_by('datetime_from')
+        job_list = [ j.to_dict(head_only = True) for j in jobs ]
         
         # 200
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
         response.write(serialize(job_list))
         return response
+    
+    if request.method == 'POST':
+        
+        try:
+            job_dict = json.loads(request.raw_post_data)
+            
+            testbed = Testbed.objects.get(id = job_dict['testbed'])
+            experiment = Experiment.objects.get(id = job_dict['experiment'])
+            
+            job = Job(
+                id = generate_id(),
+                name = job_dict['name'],
+                description = job_dict['description'],
+                datetime_from = utc_string_to_utc_datetime(job_dict['datetime_from']),
+                datetime_to = utc_string_to_utc_datetime(job_dict['datetime_to']),
+                testbed = testbed,
+                experiment = experiment
+            )
+            job.save()
+            
+            N = 96
+            PLATFORM = 'TmoteSky'
+            
+            testbed_proxy = httplib2.Http()
+            
+            logging.info('getting a list of %d of nodes with platform %s...' % (N, PLATFORM))
+            response, content = testbed_proxy.request(uri='%s?platform=%s&n=%d' % (testbed.server_url + 'nodes/', PLATFORM, N), method='GET', body='')
+            assert response.status == 200
+            logging.info('%d %s' % (response.status, response.reason))
+            node_list = json.loads(content)
+            logging.debug(node_list)
+        
+            taa_job_dict = {
+                'name' : job_dict['name'],
+                'description' : job_dict['description'],
+                'nodes' : [ n['id'] for n in node_list ],
+                'datetime_from' : job_dict['datetime_from'],
+                'datetime_to' : job_dict['datetime_to'],
+            }
+            
+            logging.debug(taa_job_dict)
+            
+            logging.info('creating a new job..')    
+            response, content = testbed_proxy.request(uri=testbed.server_url + 'jobs/', method='POST', body=json.dumps(taa_job_dict))
+            assert response.status == 201
+            logging.info('%d %s' % (response.status, response.reason))
+            job_uri = response['content-location']
+            logging.info(job_uri)
+            
+            # generate response
+            response = HttpResponse(status=201)
+            response['Location'] = build_url(path = job.get_absolute_url())
+            response['Content-Location'] = build_url(path = job.get_absolute_url())
+            response['Content-Type'] = 'application/json'
+            return response
+    
+        
+        except None:
+            # 400
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
         
     if request.method == 'OPTIONS':
         # 204
@@ -1331,52 +1400,21 @@ def job_resource_handler(request, job_id):
     
     allowed_methods = ['GET']
     
+    try:
+        job = Job.objects.get(id = job_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+    
     if request.method == 'GET':
-        
-        if 'testbed' in request.GET and not (request.GET['testbed'] is None):
-            testbed = Testbed.objects.get(id = request.GET['testbed'])
-            print testbed.server_url + 'jobs/?'
-            job_uri = build_url(path = testbed.server_url + 'jobs/?')
-            
-        if 'supports_experiment' in request.GET and not (request.GET['supports_experiment'] is None):
-            experiment = Experiment.objects.get(id = request.GET['supports_experiment'])
-            
-        if 'date_from' in request.GET and not (request.GET['date_from'] is None):
-            date_from = request.GET['date_from']
-            job_uri = job_uri + 'date_from=' + date_from
-            
-        if 'date_to' in request.GET and not (request.GET['date_to'] is None):
-            date_to = request.GET['date_to']
-            job_uri = job_uri + 'date_to=' + date_to
-        
-        testbed_proxy = httplib2.Http()
-        # testbed_proxy.add_credentials('name', 'password')
-        response, content = testbed_proxy.request(uri=job_uri, method='GET', body='')
-        assert response.status == 200
-        job_list = json.loads(content)
-        
-        for job_dict in job_list:
-            job, created = Job.objects.get_or_create(
-                id = job_dict['id'],
-                defaults = {
-                    'name' : job_dict['name'],
-                    'description' : job_dict['description'],
-                    'datetime_from' : utc_string_to_utc_datetime(job_dict['datetime_from']),
-                    'datetime_to' : utc_string_to_utc_datetime(job_dict['datetime_to']),
-                    'testbed' : testbed
-                }
-            )
-            if not created:
-                job.name = job_dict['name']
-                job.description = job_dict['description']
-        
-        jobs = Job.objects.all()
-        job_list = [ j.to_dict() for j in jobs ]
         
         # 200
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(serialize(job_list))
+        response.write(serialize(job.to_dict()))
         return response
         
     if request.method == 'OPTIONS':
