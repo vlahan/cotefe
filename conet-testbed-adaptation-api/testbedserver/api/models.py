@@ -37,8 +37,8 @@ class Testbed(Resource):
         r['nodegroups'] = build_url(path = '/nodegroups/')
         r['jobs'] = build_url(path = '/jobs/')
         r['images'] = build_url(path = '/images/')
-        r['background_image'] = build_url(path = '/uploads/testbed/background_image.jpg')
-        r['coordinates_mapping_function'] = ( 'f(x,y,z)', 'g(x,y,x)')
+        r['background_image'] = build_url(path = '/uploads/testbed/background.jpg')
+        r['coordinates_mapping_function'] = ( '-5.5+x*46.9+y*16.6', '1517-y*16.9 -z*78.3')
         return r
         
     class Meta:
