@@ -46,7 +46,10 @@ var VirtualNodeGroup=function()
 
 var ExperimentDetails=function()
 {
+	progressBar();
 	loadFormProject();
+	tabs();
+	//tabstop_auto();
 	
 }
  
@@ -80,7 +83,6 @@ var loadVirtualNodeGroupList=function()
 	var response=sendAjax("List=virtual-nodegroups","html","#content",function(){loadFormProject();});	
 }
 
-
 var loadFormProject=function(){
 	
 	$('a[class=edit],#create_new_project,#create_new_exp,#create_new_property_set,#create_new_virtual_node_group').die('click');
@@ -91,6 +93,7 @@ var loadFormProject=function(){
 				if(id!=undefined || id!=null)
 					{
 						var response=sendAjax("Update="+link+"&pid="+id,null,null,function (arg){onFormEvent(link,arg);});	
+						
 					}
 				else
 				{var response=sendAjax("Update="+link,null,null,function (arg){onFormEvent(link,arg);});	}

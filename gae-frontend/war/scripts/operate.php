@@ -279,13 +279,14 @@ if(isset($_POST) &&  !empty($_POST) )
 		$item=trim($_POST['Update']);
 		$uriPath=parse_url($item,PHP_URL_PATH);
 		$conditions=explode('/',$uriPath);
+		
 		if(count($conditions)==2)//add
 		{
 			switch ($conditions[1])
 			{
 				case 'projects':echo CreateProjectForm('');break;
 				case 'experiments':echo CreateExperimentForm(''); break;
-				case 'property-sets':echo CreatePropertySetForm(''); break;
+				//case 'property-sets':echo CreatePropertySetForm(''); break;
 				case 'virtual-nodegroups':echo CreateVNGForm('');break;
 			}
 		}
@@ -296,7 +297,7 @@ if(isset($_POST) &&  !empty($_POST) )
 			{
 				case 'projects':echo CreateProjectForm($item);break;
 				case 'experiments':echo CreateExperimentForm($item); break;
-				case 'property-sets':echo CreatePropertySetForm($item); break;
+				case 'property-sets':echo CreatePropertySetForm($item,''); break;
 				case 'virtual-nodegroups':echo CreateVNGForm($item);break;
 			}
 		}
@@ -305,7 +306,7 @@ if(isset($_POST) &&  !empty($_POST) )
 			
 			switch ($conditions[3])
 			{
-				case 'property-sets':echo CreatePropertySetForm(''); break;
+				case 'property-sets':echo CreatePropertySetForm('',$_POST['pid']); break;
 			}
 		}
 		elseif(count($conditions)==5)

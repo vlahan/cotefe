@@ -194,7 +194,11 @@ function getExperimentList()
 	}
 	return $arr;
 }
-
+function getSingleExperiment($id)
+{
+	$experiment_info=json_decode(getUrl(ROOTURL.'/experiments/'.$id),TRUE);
+	return $experiment_info;
+}
 /*
  * experiment functions ends
  */
@@ -224,10 +228,8 @@ function getSinglePropertySet($url)
 	$property_sets=json_decode(getUrl($url),TRUE);
     return $property_sets;
 }
-function CreatePropertySetForm($url)
+function CreatePropertySetForm($url,$eid)
 {
-	if(getExperimentList()!=null)
-	{
 		if(empty($url))
 		{
 			/*
@@ -238,9 +240,11 @@ function CreatePropertySetForm($url)
 			$html.="<hr/>";
 			$html.=Form::FormStart();
 			$html.=HiddenField::HiddeBox('form-type','property-set');
+			$html.=HiddenField::HiddeBox('experiment',$eid);
 			$html.=TextField::TextBox('PropertySet Name : ','name', '');
 			$html.=Description::DescriptionField('PropertySet Description : ', "");
-			$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList(),'');
+			//$html.=ListSelector::ListSelectorField('Select an Experiment :', 'experiment',getExperimentList($eid),'');
+			
 			$html.=ListSelector::ListSelectorField('Select a Platform :', 'platform',getPlatformsList(),'');
 			$html.=TextField::TextBox('Nr. of Node : ','node_count', '');
 			$html.=Form::FromSubmit('Add PropertySet');
@@ -268,11 +272,8 @@ function CreatePropertySetForm($url)
 			$html.=Form::FormEnd();
 			return $html;
 		}
-	}
-	else
-	{
-		return "No Experiment Found! Please Create an Experiement";
-	}
+	
+	
 }
 function FollowVirtualNode()
 {

@@ -12,6 +12,8 @@ if(isset($_GET) && !empty($_GET))
 		$ex_id= "";
 	}
 }
+$exp=getSingleExperiment($_GET['eid']);
+$proj_id=explode('/',$exp['project']);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -54,7 +56,7 @@ $(document).ready(function() {
         <hr />
         <table class="left-nav">				
 					<tr><td><a href="dashboard.php">Projects</a></td></tr>
-					<tr><td><a href="experiments.php?pid=<?php echo $_GET['eid']?>" class="current-selected">Experiments</a></td></tr>	
+					<tr><td><a href="experiments.php?pid=<?php echo $proj_id[4]?>" class="current-selected">Experiments</a></td></tr>	
 					
 					<tr><td><a href="testbed.php" id="explore_testbed">Explore Testbeds</a></td></tr>														
 					<tr><td><a href="<?php echo ROOTURL."/testbeds-find" ?>" id="find_testbed">Find Testbed</a></td></tr>	
@@ -64,7 +66,7 @@ $(document).ready(function() {
     <div class="column-right">
     	<h3>Welcome to CONET Testbed Federation</h3>
         <hr />
-        <div id="breadcrumb"></div>
+        <div id="breadcrumb"><?php echo $exp['name']; ?></div>
         	<div id="content">
                     <ul id="drop-down">
                       <li><a href="#">PropertySet</a>
@@ -101,7 +103,7 @@ $(document).ready(function() {
                         <li><a href="#tab2">Raw Json</a></li>
                     </ul>
                     
-                    <div class="tab_container">
+                	<div class="tab_container">
                         <div id="tab1" class="tab_content">
                             <!--Content-->
                         </div>
@@ -111,7 +113,6 @@ $(document).ready(function() {
                     </div>
                     
                     <!--editingfield ends hier-->
-                    <div class="clean-float"></div>
             </div>
             <div class="clean-float"></div>
     </div>
