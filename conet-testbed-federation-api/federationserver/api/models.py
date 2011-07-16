@@ -131,11 +131,11 @@ class Testbed(Resource):
         r['media_type'] = MEDIA_TYPE
         r['name'] = self.name
         r['id'] = self.id
+        r['node_count'] = self.node_count
         if not head_only:
             r['organization'] = self.organization
             r['description'] = self.description
             r['server_url'] = self.server_url
-            r['node_count'] = self.node_count
             # r['node_count_per_platform'] = [ { 'platform' : t2p.platform.to_dict(head_only=True), 'node_count' : t2p.node_count } for t2p in self.platforms.all()]
             r['platforms'] = [ t2p.platform.to_dict(head_only = True) for t2p in self.platforms.all() ]
             r['jobs'] = [ j.to_dict(head_only = True) for j in self.jobs.all() ]
