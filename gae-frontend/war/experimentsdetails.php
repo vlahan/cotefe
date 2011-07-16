@@ -40,8 +40,8 @@ $(document).ready(function() {
     	<div class="header-nav-container">
         	<ul>
             <li><a href="index.php" class="current-selected">Home</a></li>
-            <li><a href="">Documents</a></li>
-            <li><a href="">Help</a></li>
+            <li><a href="https://www.cooperating-objects.eu/testbed-simulation/testbed-federation/" target="_new">Documents</a></li>
+            
             <li><a href="">Contact</a></li>
             </ul>
         </div>
