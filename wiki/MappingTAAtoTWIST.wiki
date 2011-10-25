@@ -1,0 +1,37 @@
+||Description||Content-Type||TAA Req Methods||TAA Req URI||XML-RPC Input||XML-RPC API (twist_xmlprc_api.py)||XML-RPC Output||TWIST (user.py)||TWIST (store.py)||
+||how to get the information about the testbed||application/json||GET||/||
+||how to get a list of all images||application/json||GET||/images/||
+||how to upload (not burn) a new image||application/x-www-form-urlencoded||POST||/images/||
+||how to get the representation of a given image||application/json||GET||/images/ID||
+||how to edit information about a given image||application/json||PUT||/images/ID||
+||how to delete a given image||-||DELETE||/images/ID||
+||how to get a list of all reserved jobs by all users||application/json||GET||/jobs/||-||xmlrpc_getAllJobs()||list()||getAllJobs()||getAllJobRecords()||
+||how to create a new job||application/json||POST||/jobs/||dict()||xmlrpc_createJob()||-||addSingleJob()||insertSingleJobRecord()||
+||how to get the representation of a given job||application/json||GET||/jobs/ID||id||xmlrpc_getJobById()||dict()||getSingleJob()||getSingleJobRecord()||
+||how to edit information about a given job||application/json||PUT||/jobs/ID||dict()||xmlrpc_updateJobById()||-||updateSingleJob()||updateSingleJobRecord()||
+||how to cancel the reservation of a given job||-||DELETE||/jobs/ID||id||xmlrpc_deleteJobById()||-||deleteListJobs()||deleteListJobRecords()||
+||how to get the list of logs related to a given job||application/json||GET||/jobs/ID/logs/||
+||how to get the representation of a log||application/json||GET||/jobs/ID/logs/ID||
+||how to delete a given log (TBC)||-||DELETE||/jobs/ID/logs/ID||
+||how to get the list of traces related to a given job||application/json||GET||/jobs/ID/traces/||
+||how to get a given trace related to a given job||application/json||GET||/jobs/ID/traces/ID||
+||how to delete a given trace (TBC)||-||DELETE||/jobs/ID/traces/ID||
+||how to get the list of nodesgroups involved in the job||application/json||GET||/nodegroups/||
+||how to create a new nodegroup||application/json||POST||/nodegroups/||
+||how to get information about a given nodegroup||application/json||GET||/nodegroups/ID||
+||hot to update information about a nodegroup||application/json||PUT||/nodegroups/ID||
+||how to delete a nodegroup||-||DELETE||/nodegroups/ID||
+||how to install an image on a given nodegroup||application/json||PUT||/nodegroups/ID/image/ID||"image_path|| node_id_list"||xmlrpc_burnImageToNodeList()||-||executeOldBurnAction||oldburnaction (install)||
+||"how to ""uninstall"" an image from a nodegroup"||-||DELETE||/nodegroups/ID/image/ID||"image_path|| node_id_list"||xmlrpc_burnImageToNodeList()||-||executeOldBurnAction||oldburnaction (erase)||
+||how to get the list of nodes for a given nodegroup||application/json||GET||/nodegroups/ID/nodes/||
+||how to check whether a node is part of a nodegroup||application/json||GET||/nodegroups/ID/nodes/ID||
+||how to add a node to a given nodegroup||-||PUT||/nodegroups/ID/nodes/ID||
+||how to delete a node from a given nodegroup||-||DELETE||/nodegroups/ID/nodes/ID||
+||how to get all nodes of the testbed||application/json||GET||/nodes/||-||xmlrpc_getAllNodes()||list()||getAllNodes() - getAllBindedNodes()||getAllBindedNodeRecords()||
+||how to get the representation of a given node||application/json||GET||/nodes/ID||node_id||xmlrpc_getNodeById()||list()||getNodeById()||getNodeById()||
+||how to install an image on a given node||-||PUT||/nodes/ID/image/ID||"image_path|| node_id_list"||xmlrpc_burnImageToNodeList()||-||executeOldBurnAction||oldburnaction (install)||
+||"how to ""uninstall"" an image from a node"||-||DELETE||/nodes/ID/image/ID||"image_path|| node_id_list"||xmlrpc_burnImageToNodeList()||-||executeOldBurnAction||oldburnaction (erase)||
+||how to get the list of all platforms supported by a testbed||application/json||GET||/platforms/||-||xmlrpc_getAllPlatforms()||list()||getAllPlatforms()||getAllPlatforms()||
+||how to get information about a give platform||application/json||GET||/platforms/ID||id||xmlrpc_getPlatformById()||dict()||getPlatformById()||getPlatformById()||
+||how to get the list of the users||application/json||GET||/users/||
+||how to get the representation of a given user||application/json||GET||/users/ID||
