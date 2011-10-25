@@ -11,7 +11,7 @@
 ||how to get a list of all reserved jobs by all users||GET /jobs/||-||getReservations/getConfidentalReservations||list()||
 ||how to create a new job||POST /jobs/||dict()||makeReservation||-||
 ||how to get the representation of a given job||GET /jobs/id||id||getReservation||dict()||
-||how to edit information about a given job||PUT /jobs/id||"id|| dict()"||get/delete/makeReservation||dict()||
+||how to edit information about a given job||PUT /jobs/id||id, dict()||get/delete/makeReservation||dict()||
 ||how to cancel the reservation of a given job||DELETE /jobs/id||id||deleteReservation||-||
 ||how get the list of jobs from the current user||GET /users/id/jobs/||-||getReservation||-||
 ||Node||
