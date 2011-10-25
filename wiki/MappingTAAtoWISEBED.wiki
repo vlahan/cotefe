@@ -1,4 +1,4 @@
-||Description||URL (Testbed Adaptation API)||Input||WISEBED (Testbed Native API)||Output||
+||*Description*||*URL (Testbed Adaptation API)*||*Input*||*WISEBED (Testbed Native API)*||*Output*||
 ||Testbed||
 ||how to get the information about the testbed||GET /||-||||dict()||
 ||User||

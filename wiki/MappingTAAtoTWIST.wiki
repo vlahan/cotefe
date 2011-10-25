@@ -1,4 +1,4 @@
-||Description||Content-Type||TAA Req Methods||TAA Req URI||XML-RPC Input||XML-RPC API (twist_xmlprc_api.py)||XML-RPC Output||TWIST (user.py)||TWIST (store.py)||
+||*Description*||*Content-Type*||*TAA Req Methods*||*TAA Req URI*||*XML-RPC Input*||*XML-RPC API (twist_xmlprc_api.py)*||*XML-RPC Output*||*TWIST (user.py)*||*TWIST (store.py)*||
 ||how to get the information about the testbed||application/json||GET||/||
 ||how to get a list of all images||application/json||GET||/images/||
 ||how to upload (not burn) a new image||application/x-www-form-urlencoded||POST||/images/||
