@@ -1,0 +1,86 @@
+CONET Review - July 19-20, 2011
+Demo Walk-Though
+
+User opens the browser and types the CTF server URL (Unauthenticated view of the CTF homepage)
+User can expore/play with this view (public information i.e. statistics, jobs, announcements, etc.)
+
+Authentication
+
+The user signs on with their credentials
+The user get the authenticated version of the homepage (dashboard)
+User creates now projects with name “CONET Review”
+User creates a new experiment “Demo 1”
+
+Experiment Specification
+
+Experiment specification (3 groups of nodes: gateway/subscriber, passive nodes/publishers, interference nodes)
+TMote Sky (1 node for subscriber)
+n-1-m publishers
+m interferers OPTIONAL (NOT FOR THE TU DELFT) movable interferer
+number of nodes CHECK HOW MANY NODES DELFT HAVE
+n = 100, m = 5, platform TMote Sky
+3 property sets
+User uploads 3 different Images
+Virtual Node Groups - User creates 3 VNG according to the PropertySets
+Virtual Tasks
+install image 1 to the virtual node group 1
+install image 2 to the virtual node group 2
+install image 3 to the virtual node group 3
+(delay 30 secs)
+inject following message to virtual node 1 (subscriber/sinks)
+(start tracing)
+(delay some time to establish)
+inject interference pattern command which influences the communication in the network and reduces the goodput and this should be observed in the base station somehow (reduce goodput)
+(delay 120 sec)
+another injection = stop interfering
+will observe better goodput
+OPTIONAL WITH MOVABLE NODE we supply a movement pattern
+(stop tracing)
+
+Resource Reservation
+
+Information about timing (days, hours, months)
+User must be able to say “as soon as possible”
+OPTIONAL: repeatable jobs (every week, every day, etc.)
+Select 2 testbeds (TWIST and TU Delft) at the same time
+Experiment Execution
+
+Testbed independent real time control
+
+
+Operation	Request to TFA	Request to TAA
+Unauthenticated view (index.html)	GET /
+GET /projects/
+GET /experiments/
+GET /testbeds/
+GET /platforms/
+GET /jobs/	
+
+
+GET /
+GET /platforms/
+GET /jobs/
+The user signs on with their credentials	[oauth_token]	[oauth_token]
+Authenticated view (dashboard.html)	GET /users/id
+GET /users/id/projects/
+GET /users/id/experiments/
+GET /users/id/jobs/	
+
+
+GET /users/id/jobs/
+User creates project “CONET Review”	POST /projects/	-
+User creates experiment “Demo 1”	POST /experiments/	-
+User creates property set 1	POST /property-sets/	-
+User creates property set 2	POST /property-sets/	-
+User creates property set 3	POST /property-sets/	-
+User uploads image 1	POST /images/	-
+User uploads image 2	POST /images/	-
+User uploads image 3	POST /images/	-
+User creates virtual node group 1	POST /virtual-node-groups/	-
+User creates virtual node group 2	POST /virtual-node-groups/	-
+User creates virtual node group 3	POST /virtual-node-groups/	-
+Burn image 1 to virtual node group 1	PUT /virtual-node-groups/id	-
+Burn image 2 to virtual node group 2	PUT /virtual-node-groups/id	-
+Burn image 3 to virtual node group 3	PUT /virtual-node-groups/id	-
+Get current jobs	GET /jobs/	GET /jobs/
+Create a new job	POST /jobs/	POST /jobs/
