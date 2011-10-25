@@ -46,3 +46,42 @@ All testbed resources are accessed and manipulated in a similar way. Resources a
 || `HTTP POST [resource URL]` || Create a new resource according to the representation provided in the request ||
 || `HTTP PUT [resource URL]` || Updates the resource at the given URL by providing a new representation ||
 || `HTTP DELETE [resource URL]` || Updates the resource at the given URL by providing a new representation ||
+
+Since all member testbeds have been built and evolved autonomously and independently and differ in infrastructure, capabilities and services they provide. After a survey and analysis of the federation membership, a set of features has been selected and we believe it being a common ground of requirements in order for a testbed to be part of the federation. The selected representation format for resources and collections of resources is JSON.
+
+The following example uses cURL to simply access the TA API
+
+{{{$ curl https://api.cotefe.net/jobs/}}}
+
+==Authentication==
+
+By mean of a simple tool like cURL it is possible to access public resources in read-only mode (only HTTP GET is allowed). Public resources include, testbed resources in terms of available infrastructure, public jobs and statistics. Any access to private information related to a given user requires authentication and authorization - the user needs to delegate access to their private resources and this is achieves by means of the OAuth 2.0 protocol.
+OAuth is an authorization protocol that aims to solve the problem of granting third-party  application access to private resources by issuing credentials which can be revoked at any time and limited to a desired resource and/or time domain.
+
+|| Authorization Endpoint (authorization code) || `https://www.example.org/oauth2/auth` ||
+|| Token Endpoint (access token) || `https://www.example.org/oauth2/token` ||
+|| Redirection URI || `https://www.example.org/oauth2/callback` ||
+
+Example:
+
+{{{$ curl https://api.example.org/oauth2/auth?response_type=code&redirect_uri=https://api-cotefe.net.appspot.com/oauth-callback}}}
+
+==Resources==
+
+Following the REST constrain known as Hypermedia As The Engine Of Application State (HATEOAS) the entire resource tree structure can be explored starting from / (which represents the testbed resource) and then following the link attributes provided by each resource representation. Each interaction (HTTP request) with the TA API is stateless, there is no awareness about clients on the server and only the client is responsible of keeping the application state.
+
+===User===
+
+The user resource represents the user as main actor of the TAA. It contains all the information realted to the user of the system such as name, organization, contact information and a unique identifier (OpenID identifier). All the user information
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Testbed===
+
+The Testbed represents the whole testbed infrastructure made of hardware, software resources, scheduled jobs and users. It is the root resource, i.e. the starting point for self discovery/search of any sort of resource by navigation of iterated exploration of URL links, similarly to the web browser model.
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
