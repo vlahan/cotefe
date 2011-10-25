@@ -1,0 +1,33 @@
+||Description||URL (Testbed Adaptation API)||Input||WISEBED (Testbed Native API)||Output||
+||Testbed||
+||how to get the information about the testbed||GET /||-||||dict()||
+||User||
+||get the list of the users||GET /users/||-||N/A||list()||
+||get the representation of a given user||GET /users/id||-||N/A||dict()||
+||Platform||
+||how to get the list of all platforms supported by a testbed||GET /platforms/||-||N/A||list()||
+||how to get information about a give platform||GET /platforms/id||id||N/A||dict()||
+||Job||
+||how to get a list of all reserved jobs by all users||GET /jobs/||-||getReservations/getConfidentalReservations||list()||
+||how to create a new job||POST /jobs/||dict()||makeReservation||-||
+||how to get the representation of a given job||GET /jobs/id||id||getReservation||dict()||
+||how to edit information about a given job||PUT /jobs/id||"id|| dict()"||get/delete/makeReservation||dict()||
+||how to cancel the reservation of a given job||DELETE /jobs/id||id||deleteReservation||-||
+||how get the list of jobs from the current user||GET /users/id/jobs/||-||getReservation||-||
+||Node||
+||how to get all nodes of the testbed||GET /nodes/||-||getNetwork||list()||
+||how to get all nodes of a give platform||GET /nodes/?platform=id||id||getNetwork||list()||
+||how to get the representation of a given node||GET /nodes/id||id||getNetwork||dict()||
+||how to get the list of nodes related to a give job||GET /jobs/id/nodes/||-||getReservation||list()||
+||NodeGroups||
+||how to get the list of nodesgroups involved in the job||GET /jobs/id/nodegroups/||-||N/A||list()||
+||Image||||||||Image||
+||how to get a list of all images from a user||GET /users/id/images/||-||N/A||list()||
+||how to upload a new image||POST /users/id/images/||dict()||N/A||-||
+||get a given image from the current user||GET /users/id/images/id||id||N/A||dict()||
+||Trace||
+||how to get the list of traces related to a given job||GET /jobs/id/traces/||-||N/A||list()||
+||how to get the list of traces related to a given job||GET /jobs/id/traces/id||id||N/A||dict()||
+||Log||
+||how to get the list of logs related to a given job||GET /jobs/id/logs/||-||N/A||list()||
+||how to get the representation of a log||GET /jobs/id/logs/id||id||N/A||dict()||
