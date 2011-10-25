@@ -1,0 +1,240 @@
+=Overview=
+
+The purpose of this document is to support both the implementation and use of the Testbed Abstraction API (TAA), an interface that aims to expose the capabilities of a cooperating object testbed as a service. The TAA was conceived in the context of the European Network of Excellence project CONET as part of the CONET Testbed Federation (CTF), where it represents a uniform interface across all member testbeds. It allows the developers for building applications (standalone, client-side web applications, server-side web applications, mash-ups) accessing the services offered by a given testbed. A prototype of the TAA has been implemented on top of TWIST, the TU Berlin Wireless Indoor Sensor Network, as a prove of concept of research for review and evaluation within the same project.
+
+The TAA has been designed according to the REST architectural style. REST introduces design constraints with the promise to fully leverage the potential of the Web and its worldwide distributed infrastructure, in order to achieve scalability, reliability, extensibility of the service and interoperability with other Web Services.
+
+After an introductory description of the core design aspects we provide a detailed specification of resources involved and we will show how to perform typical testbed operations in terms of manipulation of such resources, according to the REST architectural style.
+Then, we provide a series of guidelines for the integration of the TAA with the legacy native interface provided by a given existing testbed for cooperating objects. We will show to install and extend the TAA software that we developed in order to adapt to any specific testbed. Finally, a detailed tutorial will show how to execute a sample experiment using the TAA.
+
+=System Architecture=
+
+The architecture of the TAA is shown in the picture here below. According to the  the testbed-independent and the testbed-specific parts] The implementation of the TAA can be divided in front-end and back-end. The front-end is the testbed independent part and thus can be reused across different testbeds. We provide a prototype of the TAA front-end implemented in Django. The back-end is the testbed specific part and must be provided by the testbed administrator. The bridge between the front-end and back-end is in charge for translating common HTTP requests into specific testbed commands, according to the specific testbed native API.
+
+The Testbed Abstraction API aims to expose a Cooperating Object testbed as a service. In the context of the Testbed Federation, it represents a uniform interface across all member testbeds. It is built according to the REST architectural style. REST introduces design constraints with the promise to achieve scalability, extensibility and reliability.
+
+The implementation of the TAA can be divided in front-end and back-end. The front-end is the testbed independent part and thus can be reused across different testbeds. We provide a prototype of the TAA front-end implemented in Django. The back-end is the testbed specific part and must be provided by the testbed administrator. The bridge between the front-end and back-end is in charge for translating common HTTP requests into specific testbed commands, according to the specific testbed native API.
+
+=Services=
+
+During the design phase of the TAA we leveraged the mature usage experience of our testbed (TWIST) in order to identify the need and the key steps of a typical experiment with cooperating objects. Testbeds play and important role in the design, development and test of protocols and applications as they provide controlled execution of experiments in a realistic environment, where functional and non-functional behaviors can be tracked and stored for further analysis and evaluation.
+
+==Resource Discovery==
+
+==Resource Reservation==
+
+==Experiment Execution==
+
+===Interactive Mode===
+
+===Batch Mode===
+
+==Experiment Results and Debug Data==
+
+=Documentation=
+
+==Introduction==
+
+All testbed resources are accessed and manipulated in a similar way. Resources are identified by URLs and accessed by a common interface (HTTP methods). A list of resources is usually available through `/[resource name]`, while a single specific resource through `/[resource name]/[resource id]` and related subresources (i.e. a user's jobs) through `/[resource name]/[resource id]/[subresource name]`. It exposes testbed resources as REST resources, which can be accessed and manipulated through a uniform interface.
+
+|| `HTTP GET [resource URL]` || Gets a representation of a given resource indicated by the URL ||
+|| `HTTP POST [resource URL]` || Create a new resource according to the representation provided in the request ||
+|| `HTTP PUT [resource URL]` || Updates the resource at the given URL by providing a new representation ||
+|| `HTTP DELETE [resource URL]` || Updates the resource at the given URL by providing a new representation ||
+
+Since all member testbeds have been built and evolved autonomously and independently and differ in infrastructure, capabilities and services they provide. After a survey and analysis of the federation membership, a set of features has been selected and we believe it being a common ground of requirements in order for a testbed to be part of the federation. The selected representation format for resources and collections of resources is JSON.
+
+The following example uses cURL to simply access the TA API
+
+{{{$ curl https://api.cotefe.net/jobs/}}}
+
+==Authentication==
+
+By mean of a simple tool like cURL it is possible to access public resources in read-only mode (only HTTP GET is allowed). Public resources include, testbed resources in terms of available infrastructure, public jobs and statistics. Any access to private information related to a given user requires authentication and authorization - the user needs to delegate access to their private resources and this is achieves by means of the OAuth 2.0 protocol.
+OAuth is an authorization protocol that aims to solve the problem of granting third-party  application access to private resources by issuing credentials which can be revoked at any time and limited to a desired resource and/or time domain.
+
+|| Authorization Endpoint (authorization code) || `https://www.example.org/oauth2/auth` ||
+|| Token Endpoint (access token) || `https://www.example.org/oauth2/token` ||
+|| Redirection URI || `https://www.example.org/oauth2/callback` ||
+
+Example:
+
+{{{$ curl https://api.example.org/oauth2/auth?response_type=code&redirect_uri=https://api-cotefe.net.appspot.com/oauth-callback}}}
+
+==Resources==
+
+Following the REST constrain known as Hypermedia As The Engine Of Application State (HATEOAS) the entire resource tree structure can be explored starting from / (which represents the testbed resource) and then following the link attributes provided by each resource representation. Each interaction (HTTP request) with the TA API is stateless, there is no awareness about clients on the server and only the client is responsible of keeping the application state.
+
+===User===
+
+The user resource represents the user as main actor of the TAA. It contains all the information realted to the user of the system such as name, organization, contact information and a unique identifier (OpenID identifier). All the user information
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Federation===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Experiment===
+
+The Experiment resource enables testbed-independent experiment description in terms of required resources (expressed in Property Sets) and list of operations (expressed in Virtual Tasks) to be executed in order to complete a given experiment. The Experiment resource can be created, deleted and modified, and easily shared with other users of the federation.
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===PropertySet===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===VirtualNode===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===VirtualNodeGroup===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Image===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===VirtualTask===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Testbed===
+
+The Testbed represents the whole testbed infrastructure made of hardware, software resources, scheduled jobs and users. It is the root resource, i.e. the starting point for self discovery/search of any sort of resource by navigation of iterated exploration of URL links, similarly to the web browser model.
+The testbed resource represents the testbed itself and contains all informations about characteristics, assets and capabilities. It is the starting point for all REST resources to be explored and discovered.
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Node===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===NodeGroup===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Socket===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Job===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Task===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Trace===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Log===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Status===
+
+The status resource is an auxiliary resource that we introduced to provide some information about the status of an asynchronous request
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Platform===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Sensor===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Actuator===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Interface===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+=Code=
+
+We developed
+
+=Tutorial=
+
+In the following table we provide a list of all typical operations a member testbed exposes in terms of application of HTTP methods to resources. As mentioned above, all resources are represented by default in JSON format. It means that for method GET, a JSON representation of the specified resource (or list of resources) is provided while for methods PUT and POST, representation of the updated or to-be-created resource must be included in the HTTP request body.
+
+Authentication
+
+Job Reservation
+
+getting the testbed resource
+getting the list of provided node platforms...
+getting all available testbed nodes
+getting the list of nodes with platform TmoteSky
+getting the list of all jobs between date X and date Y
+creating a new job
+getting the created job
+checking the created job and its subresources
+
+Job Execution
+
+getting the created job
+getting all nodes in the job
+creating a nodegroup for all nodes in the job
+getting N nodes for nodegroup A
+getting N nodes for nodegroup B
+getting N nodes for nodegroup C
+creating nodegroup A
+creating nodegroup B
+creating nodegroup C
+uploading image A
+uploading image B
+uploading image C
+deploying image A to nodegroup A
+deploying image B to nodegroup B
+deploying image C to nodegroup C
