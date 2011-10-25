@@ -1,8 +1,3 @@
-#summary Testbed Abstraction API
-#labels CONET,REST,testbed,federation,WSN,API
-#sidebar TableOfContents
-
-
 =Overview=
 
 The purpose of this document is to support both the implementation and use of the Testbed Abstraction API (TAA), an interface that aims to expose the capabilities of a cooperating object testbed as a service. The TAA was conceived in the context of the European Network of Excellence project CONET as part of the CONET Testbed Federation (CTF), where it represents a uniform interface across all member testbeds. It allows the developers for building applications (standalone, client-side web applications, server-side web applications, mash-ups) accessing the services offered by a given testbed. A prototype of the TAA has been implemented on top of TWIST, the TU Berlin Wireless Indoor Sensor Network, as a prove of concept of research for review and evaluation within the same project.
@@ -78,10 +73,168 @@ The user resource represents the user as main actor of the TAA. It contains all 
 || `name` || An arbitrary given name for this resource ||
 || `media-type` || `application/json` ||
 
-===Testbed===
-
-The Testbed represents the whole testbed infrastructure made of hardware, software resources, scheduled jobs and users. It is the root resource, i.e. the starting point for self discovery/search of any sort of resource by navigation of iterated exploration of URL links, similarly to the web browser model.
+===Federation===
 
 || `URI` || A GET against this URI refreshes the representation of this resource` ||
 || `name` || An arbitrary given name for this resource ||
 || `media-type` || `application/json` ||
+
+===Experiment===
+
+The Experiment resource enables testbed-independent experiment description in terms of required resources (expressed in Property Sets) and list of operations (expressed in Virtual Tasks) to be executed in order to complete a given experiment. The Experiment resource can be created, deleted and modified, and easily shared with other users of the federation.
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===PropertySet===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===VirtualNode===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===VirtualNodeGroup===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Image===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===VirtualTask===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Testbed===
+
+The Testbed represents the whole testbed infrastructure made of hardware, software resources, scheduled jobs and users. It is the root resource, i.e. the starting point for self discovery/search of any sort of resource by navigation of iterated exploration of URL links, similarly to the web browser model.
+The testbed resource represents the testbed itself and contains all informations about characteristics, assets and capabilities. It is the starting point for all REST resources to be explored and discovered.
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Node===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===NodeGroup===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Socket===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Job===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Task===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Trace===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Log===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Status===
+
+The status resource is an auxiliary resource that we introduced to provide some information about the status of an asynchronous request
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Platform===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Sensor===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Actuator===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+===Interface===
+
+|| `URI` || A GET against this URI refreshes the representation of this resource` ||
+|| `name` || An arbitrary given name for this resource ||
+|| `media-type` || `application/json` ||
+
+=Code=
+
+We developed
+
+=Tutorial=
+
+In the following table we provide a list of all typical operations a member testbed exposes in terms of application of HTTP methods to resources. As mentioned above, all resources are represented by default in JSON format. It means that for method GET, a JSON representation of the specified resource (or list of resources) is provided while for methods PUT and POST, representation of the updated or to-be-created resource must be included in the HTTP request body.
+
+Authentication
+
+Job Reservation
+
+getting the testbed resource
+getting the list of provided node platforms...
+getting all available testbed nodes
+getting the list of nodes with platform TmoteSky
+getting the list of all jobs between date X and date Y
+creating a new job
+getting the created job
+checking the created job and its subresources
+
+Job Execution
+
+getting the created job
+getting all nodes in the job
+creating a nodegroup for all nodes in the job
+getting N nodes for nodegroup A
+getting N nodes for nodegroup B
+getting N nodes for nodegroup C
+creating nodegroup A
+creating nodegroup B
+creating nodegroup C
+uploading image A
+uploading image B
+uploading image C
+deploying image A to nodegroup A
+deploying image B to nodegroup B
+deploying image C to nodegroup C
