@@ -12,10 +12,6 @@ The TAA has been designed according to the REST architectural style. REST introd
 After an introductory description of the core design aspects we provide a detailed specification of resources involved and we will show how to perform typical testbed operations in terms of manipulation of such resources, according to the REST architectural style.
 Then, we provide a series of guidelines for the integration of the TAA with the legacy native interface provided by a given existing testbed for cooperating objects. We will show to install and extend the TAA software that we developed in order to adapt to any specific testbed. Finally, a detailed tutorial will show how to execute a sample experiment using the TAA.
 
-The following example uses cURL to simply access the TA API
-
-{{{$ curl https://api.cotefe.net/jobs/}}}
-
 =System Architecture=
 
 The architecture of the TAA is shown in the picture here below. According to the  the testbed-independent and the testbed-specific parts] The implementation of the TAA can be divided in front-end and back-end. The front-end is the testbed independent part and thus can be reused across different testbeds. We provide a prototype of the TAA front-end implemented in Django. The back-end is the testbed specific part and must be provided by the testbed administrator. The bridge between the front-end and back-end is in charge for translating common HTTP requests into specific testbed commands, according to the specific testbed native API.
