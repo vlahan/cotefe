@@ -37,12 +37,13 @@ A discovery query issued to the CTFS may be split in resource discovery and avai
 This discovery request contains information about the searching parameters that could appear as HTTP GET query parameters or be uploaded (HTTP POST) as a document de- scribing the experiment to be performed including the needed resources.
 An example list of parameters follows here:
 
-* platform type
-* radio technology
-* amount of nodes per node type • duration of experiment
-* mobile node required
-* sensors
-* actuators
+    * platform type
+    * radio technology
+    * amount of nodes per node type
+    * duration of experiment
+    * mobile node required
+    * sensors
+    * actuators
 
 ==Resource Reservation==
 

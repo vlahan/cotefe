@@ -11,13 +11,13 @@ Dowload the python scripts and the images from
 {{{{https://svn.tkn.tu-berlin.de/svn/conet-testbed-federation/y3_demo/}}}
 
 folder structure
-* `README` (a txt version of this tutorial)
-* `images/` (software images to be burned into node groups respectively)
-* `scripts/` (python scripts execunting this demo)
-  * `demo_TFA_0_experiment_definition.py` (creates an experiment)
-  * `demo_TFA_1_job_reservation.py` (creates a job on twist)
-  * `demo_TFA_2A_job_deployment.py` (installation of publishers and subscriber)
-  * `demo_TFA_2B_job_execution.py` (installation of interferes + erase of interferers)
+    * `README` (a txt version of this tutorial)
+    * `images/` (software images to be burned into node groups respectively)
+    * `scripts/` (python scripts execunting this demo)
+        * `demo_TFA_0_experiment_definition.py` (creates an experiment)
+        * `demo_TFA_1_job_reservation.py` (creates a job on twist)
+        * `demo_TFA_2A_job_deployment.py` (installation of publishers and subscriber)
+        * `demo_TFA_2B_job_execution.py` (installation of interferes + erase of interferers)
 
 Download the GUI from
 
@@ -93,29 +93,29 @@ In the following table we provide a list of all typical operations a member test
 
 ==Job Reservation==
 
-* getting the testbed resource
-* getting the list of provided node platforms...
-* getting all available testbed nodes
-* getting the list of nodes with platform TmoteSky
-* getting the list of all jobs between date X and date Y
-* creating a new job
-* getting the created job
-* checking the created job and its subresources
+    * getting the testbed resource
+    * getting the list of provided node platforms...
+    * getting all available testbed nodes
+    * getting the list of nodes with platform TmoteSky
+    * getting the list of all jobs between date X and date Y
+    * creating a new job
+    * getting the created job
+    * checking the created job and its subresources
 
 ==Job Execution==
 
-* getting the created job
-* getting all nodes in the job
-* creating a nodegroup for all nodes in the job
-* getting N nodes for nodegroup A
-* getting N nodes for nodegroup B
-* getting N nodes for nodegroup C
-* creating nodegroup A
-* creating nodegroup B
-* creating nodegroup C
-* uploading image A
-* uploading image B
-* uploading image C
-* deploying image A to nodegroup A
-* deploying image B to nodegroup B
-* deploying image C to nodegroup C
+    * getting the created job
+    * getting all nodes in the job
+    * creating a nodegroup for all nodes in the job
+    * getting N nodes for nodegroup A
+    * getting N nodes for nodegroup B
+    * getting N nodes for nodegroup C
+    * creating nodegroup A
+    * creating nodegroup B
+    * creating nodegroup C
+    * uploading image A
+    * uploading image B
+    * uploading image C
+    * deploying image A to nodegroup A
+    * deploying image B to nodegroup B
+    * deploying image C to nodegroup C
