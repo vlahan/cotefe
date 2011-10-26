@@ -13,7 +13,7 @@ This experiments aims to study the behavior of different WSN routing protocols i
 ==Job Reservation==
 
     * getting the testbed resource
-    * getting the list of provided node platforms...
+    * getting the list of provided node platforms
     * getting all available testbed nodes
     * getting the list of nodes with platform TmoteSky
     * getting the list of all jobs between date X and date Y
@@ -43,7 +43,7 @@ Code
 
 Dowload the python scripts and the images from
 
-{{{{https://svn.tkn.tu-berlin.de/svn/conet-testbed-federation/y3_demo/}}}
+{{{https://svn.tkn.tu-berlin.de/svn/conet-testbed-federation/y3_demo/}}}
 
 folder structure
     * `README` (a txt version of this tutorial)
@@ -96,11 +96,11 @@ to get position
 
 with body
 
-{{{{
+{{{ {
     "location_x" : 1.0,
     "location_y" : 1.0,
     "location_z" : 1.0
-}}}}
+}}} }
 
 to set position
 
