@@ -1,9 +1,44 @@
 =Introduction=
 
-This document is a tutorial of the Y3 Review Demo of the CONET Testbed Federation (CTF). The demo shows how to use the CTF APIs for specification and execution of a Cooperating Object experiment. A stand-alone Java application is used for visualization of the network topology at the different steps of the experiment.
-Description of the experiment
+This document is a support to the CONET Y3 Review Demo of the CONET Testbed Federation (CTF). The demo shows how to use the CTF APIs for specification and execution of a Cooperating Object testbed-independent experiment. A first prototypical implementation of the two core APIs behind the CTF have been developed and deployed for testing. In particular, a prototype of the Testbed Federation API has been implemented and deployed on Google App Engine, while an example of the Testbed Abstraction API is currently attached to [https://www.tkn.tu-berlin.de:8000 TWIST] and available [https://www.tkn.tu-berlin.de:8001 here]. The first prototype currently includes experiment specification and execution whereas the visualization of results is only partially supported. I nthis demo, a stand-alone Java application has been developer is used for visualization of the network topology at the different steps of the experiment.
 
-This experiments aims to demonstrate the effect of interference...
+==Description of the experiment==
+
+This experiments aims to study the behavior of different WSN routing protocols in the presence of interference. In particular it is possible to visualize the the effects of interference on the routing topology and the ability of the protocols to recover when the interference is turned off.
+
+
+
+==Authentication==
+
+==Job Reservation==
+
+    * getting the testbed resource
+    * getting the list of provided node platforms...
+    * getting all available testbed nodes
+    * getting the list of nodes with platform TmoteSky
+    * getting the list of all jobs between date X and date Y
+    * creating a new job
+    * getting the created job
+    * checking the created job and its subresources
+
+==Job Execution==
+
+    * getting the created job
+    * getting all nodes in the job
+    * creating a nodegroup for all nodes in the job
+    * getting N nodes for nodegroup A
+    * getting N nodes for nodegroup B
+    * getting N nodes for nodegroup C
+    * creating nodegroup A
+    * creating nodegroup B
+    * creating nodegroup C
+    * uploading image A
+    * uploading image B
+    * uploading image C
+    * deploying image A to nodegroup A
+    * deploying image B to nodegroup B
+    * deploying image C to nodegroup C
+ 
 Code
 
 Dowload the python scripts and the images from
@@ -87,35 +122,3 @@ CTF Web Fronted
 
 =Tutorial=
 
-In the following table we provide a list of all typical operations a member testbed exposes in terms of application of HTTP methods to resources. As mentioned above, all resources are represented by default in JSON format. It means that for method GET, a JSON representation of the specified resource (or list of resources) is provided while for methods PUT and POST, representation of the updated or to-be-created resource must be included in the HTTP request body.
-
-==Authentication==
-
-==Job Reservation==
-
-    * getting the testbed resource
-    * getting the list of provided node platforms...
-    * getting all available testbed nodes
-    * getting the list of nodes with platform TmoteSky
-    * getting the list of all jobs between date X and date Y
-    * creating a new job
-    * getting the created job
-    * checking the created job and its subresources
-
-==Job Execution==
-
-    * getting the created job
-    * getting all nodes in the job
-    * creating a nodegroup for all nodes in the job
-    * getting N nodes for nodegroup A
-    * getting N nodes for nodegroup B
-    * getting N nodes for nodegroup C
-    * creating nodegroup A
-    * creating nodegroup B
-    * creating nodegroup C
-    * uploading image A
-    * uploading image B
-    * uploading image C
-    * deploying image A to nodegroup A
-    * deploying image B to nodegroup B
-    * deploying image C to nodegroup C
