@@ -9,7 +9,6 @@ body {
 	background-color: #e6e6e6;
 }
 #container {
-	background-color: #cccccc;
 	padding: 0px;
 	margin: auto;
 	width: 900px;
@@ -44,30 +43,45 @@ body {
 	font-weight: normal;
 }
 #menubar {
+    min-height: 60px;
+    height: 60px;
+    background-color: #ffcc66;
     margin: 0px;
     padding: 0px;
 }
 #welcome {
+	margin-left: 10px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	margin-top: 10px;
 	float: left;
 	font-size: 12px;
-	margin: 0px;
-	padding: 10px;
+	padding: 0px;
 }
 #user-menu {
+	margin-left: 10px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	margin-top: 10px;
 	float: right;
 	font-size: 12px;
-	margin: 0px;
-	padding: 10px;
+	padding: 0px;
 }
 #explore-menu {
+	margin-left: 10px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	margin-top: 0px;
 	float: left;
-	margin: 0px;
-	padding: 10px;
+	padding: 0px;
 }
 #cotefe-menu {
+	margin-left: 10px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	margin-top: 0px;
 	float: right;
-	margin: 0px;
-	padding: 10px;
+	padding: 0px;
 }
 #content {
 	min-height: 400px;

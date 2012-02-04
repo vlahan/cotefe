@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}My Applications{% endblock %}
+{% block title %}My OAuth2 Client Applications{% endblock %}
 
 {% block content %}
 
@@ -36,7 +36,7 @@
             <td>
                 <form method="post">
                     <input type="hidden" name="application_id" value="{{ application.key().id() }}" />
-                    <input type="submit" name="submit" value="Delete" />
+                    <input type="submit" name="submit" value="Remove" />
                 </form>
             </td>
         </tr>
