@@ -2,7 +2,7 @@ from handlers import *
 
 routes = [
 
-    (r'^/init$', DatastoreInitialization),
+    # (r'^/init$', DatastoreInitialization),
     
     # (r'^/login$', Login),
     
@@ -18,8 +18,9 @@ routes = [
     (r'^/identities', Identities),
     (r'^/sessions', Sessions),
     (r'^/applications', Applications),
-    (r'^/docs$', Docs),
     (r'^/logout$', Logout),
+    
+    (r'^/docs', Docs),
     
     (r'^/explore/users$', Users),
     (r'^/explore/testbeds$', Testbeds),

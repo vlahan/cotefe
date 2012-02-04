@@ -549,25 +549,6 @@ class Applications(BaseHandler):
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
-class Docs(BaseHandler):
-    
-    def get(self):
-        
-        if self.session.get('username'):
-            username = self.session.get('username')
-            user_list = User.all().filter('username =', username).fetch(1)
-            user = user_list[0]
-            context = {
-                'user': user,
-            }
-            self.render_response('docs.html', **context)
-            
-        else:
-            params = {
-                'next': self.request.uri,
-            }
-            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
-            
 class Logout(BaseHandler):
     
     def get(self):
@@ -578,6 +559,19 @@ class Logout(BaseHandler):
             pass
         self.redirect(self.request.referer or '/account')
         
+class Docs(BaseHandler):
+
+    def get(self):
+
+        try:
+            user = User.all().filter('username =', self.session.get('username')).fetch(1)[0]
+            context = {
+                'user': user,
+            }
+        except:
+            context = {}
+        
+        self.render_response('docs.html', **context)        
         
 class Users(BaseHandler):
 

@@ -18,21 +18,43 @@
     
     </div>
     
-    {% if user %}
+    
     
     <div id="menubar">
+    
+        {% if user %}
     
         <div id="welcome">
     
             You're connected as <b>{{ user.first }} {{ user.last }}</b> {% if user.admin %}(admin){% endif %}
     
         </div>
+        
+        {% endif %}
     
         <div id="user-menu">
+        
+            {% if user %}
     
-            <a href="/account">Account</a> | <a href="/identities">Connected Identities</a> | <a href="/sessions">Authorized Applications</a> | <a href="/applications">My Applications</a> | <a href="/docs">Documentation</a> | <a href="/logout">Logout</a>
+            <a href="/account">Account</a> | <a href="/identities">Connected Identities</a> | <a href="/sessions">Authorized Applications</a> | <a href="/applications">My Apps</a> |
+            
+            {% endif %}
+            
+            <a href="/docs">Documentation</a> | <a href="#">Help</a>
+            
+            {% if user %}
     
+            | <a href="/logout">Logout</a>
+            
+            {% else %}
+            
+            | <a href="/openid/login">Login</a>
+            
+            {% endif %}
+            
         </div>
+        
+        {% if user %}
         
         <div id="explore-menu">
     
