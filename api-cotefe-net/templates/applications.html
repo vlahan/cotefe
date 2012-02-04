@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}My Applications{% endblock %}
+
+{% block content %}
+
+    <form method="post">
+       <table>
+           <tr>
+               <td>Name<br /><input type="text" name="name" value="" /></td>
+               <td>Redirect URI<br /><input type="text" name="redirect_uri" value="http://" /></td>
+                <td><input type="submit" name="submit" value="Add" /></td>
+        </tr>
+    </table>
+   </form>
+   
+   {% if applications %}
+  
+   <table>
+   
+   <tr>
+            <th>Name</th>
+            <th>Client ID</th>
+            <th>Client Secret</th>
+            <th>Redirect URI</th>
+            <th>Manage</th>
+   </tr>
+   
+   {% for application in applications %}
+   
+        <tr>
+            <td>{{ application.name }}</td>
+            <td>{{ application.client_id }}</td>
+            <td>{{ application.client_secret }}</td>
+            <td>{{ application.redirect_uri }}</td>
+            <td>
+                <form method="post">
+                    <input type="hidden" name="application_id" value="{{ application.key().id() }}" />
+                    <input type="submit" name="submit" value="Delete" />
+                </form>
+            </td>
+        </tr>
+   
+   {% endfor %}
+   
+   </table>
+   
+   {% else %}
+   
+   <p>There are currently no applications.</p>
+   
+   {% endif %}
+   
+
+{% endblock %}

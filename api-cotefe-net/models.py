@@ -14,6 +14,7 @@ class User(db.Model):
     last = db.StringProperty()
     email = db.StringProperty()
     organization = db.StringProperty()
+    admin = db.BooleanProperty()
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
@@ -125,7 +126,7 @@ class Testbed(Resource):
 class Project(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
-    created_by = db.ReferenceProperty(User)
+    owner = db.ReferenceProperty(User)
     members = db.ListProperty(db.Key)
 
     datetime_created = db.DateTimeProperty(auto_now_add=True)
@@ -144,7 +145,7 @@ class Project(Resource):
         r['name'] = self.name
         if not head_only:
             r['description'] = self.description
-            r['created_by'] = self.created_by.to_dict(head_only = True)
+            r['owner'] = self.owner.to_dict(head_only = True)
             r['members'] = [ User.get_by_id(user_key.id()).to_dict(head_only = True) for user_key in self.members ]
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
@@ -153,8 +154,8 @@ class Project(Resource):
 class Experiment(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
-    
     project = db.ReferenceProperty(Project)
+    owner = db.ReferenceProperty(User)
 
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)

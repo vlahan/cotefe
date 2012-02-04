@@ -25,14 +25,15 @@ class DatastoreInitialization(webapp2.RequestHandler):
     def get(self):
         
         # cleaning the datastore
-        # for user in User.all(): user.delete()   
-        # for identity in OpenIDIdentity.all(): identity.delete()  
-        # for application in Application.all(): application.delete()
-        # for session in OAuth2Session.all(): session.delete()
+        for user in User.all(): user.delete()   
+        for identity in OpenIDIdentity.all(): identity.delete()  
+        for application in Application.all(): application.delete()
+        for session in OAuth2Session.all(): session.delete()
         for federation in Federation.all(): federation.delete()
         for testbed in Testbed.all(): testbed.delete()
         for platform in Platform.all(): platform.delete()
-        # for project in Project.all(): project.delete()
+        for project in Project.all(): project.delete()
+        for experiment in Experiment.all(): experiment.delete()
         
         Federation(
             name = config.FEDERATION_NAME,
@@ -217,6 +218,7 @@ class OpenIDNew(BaseHandler):
         else:
             user = User()
             user.username = username
+            user.admin = False
             user.put()
             identity = OpenIDIdentity()
             identity.user = user
@@ -492,10 +494,12 @@ class Applications(BaseHandler):
     def get(self):
 
         if self.session.get('username'):
+            
             username = self.session.get('username')
-            user_list = User.all().filter('username =', username).fetch(1)
-            user = user_list[0]
-            applications = Application.all().filter('owner =', user).fetch(10)
+            user = User.all().filter('username =', username).fetch(1)[0]
+            
+            applications = Application.all().filter('owner =', user).fetch(100)
+            
             context = {
                 'user': user,
                 'applications': applications,
@@ -573,6 +577,217 @@ class Logout(BaseHandler):
         except:
             pass
         self.redirect(self.request.referer or '/account')
+        
+        
+class Users(BaseHandler):
+
+    def get(self):
+
+        if self.session.get('username'):
+
+            username = self.session.get('username')
+            user = User.all().filter('username =', username).fetch(1)[0]
+
+            users = User.all()
+            
+            context = {
+                'user': user,
+                'users': users,
+            }
+            self.render_response('explore/users.html', **context)
+            
+        else:
+            
+            params = {
+                'next': self.request.uri,
+            }
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
+            
+    def post(self):
+
+        if self.session.get('username'):
+            
+            user_id = self.request.get('user_id')
+            User.get_by_id(int(user_id)).delete()
+            self.redirect(self.request.referer)
+            
+        else:
+            
+            params = {
+                'next': self.request.uri,
+            }
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
+        
+        
+class Testbeds(BaseHandler):
+
+    def get(self):
+
+        if self.session.get('username'):
+            
+            username = self.session.get('username')
+            user_list = User.all().filter('username =', username).fetch(1)
+            user = user_list[0]
+            
+            testbeds = Testbed.all()
+            context = {
+                'user': user,
+                'testbeds': testbeds,
+            }
+            self.render_response('explore/testbeds.html', **context)
+        else:
+            params = {
+                'next': self.request.uri,
+            }
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
+
+            
+class Platforms(BaseHandler):
+
+    def get(self):
+
+        if self.session.get('username'):
+
+            username = self.session.get('username')
+            user_list = User.all().filter('username =', username).fetch(1)
+            user = user_list[0]
+
+            platforms = Platform.all()
+            context = {
+                'user': user,
+                'platforms': platforms,
+            }
+            self.render_response('explore/platforms.html', **context)
+        else:
+            params = {
+                'next': self.request.uri,
+            }
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
+            
+class Projects(BaseHandler):
+
+    def get(self):
+
+        if self.session.get('username'):
+            
+            username = self.session.get('username')
+            user_list = User.all().filter('username =', username).fetch(1)
+            user = user_list[0]
+            
+            projects = Project.all().filter('owner =', user).fetch(100)
+            
+            context = {
+                'user': user,
+                'projects': projects,
+            }
+            self.render_response('cotefe/projects.html', **context)
+        
+        else:
+            
+            params = {
+                'next': self.request.uri,
+            }
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
+
+    def post(self):
+
+        if self.session.get('username'):
+
+            if self.request.get('submit') == 'Create':
+
+                username = self.session.get('username')
+                user_list = User.all().filter('username =', username).fetch(1)
+                user = user_list[0]
+
+                name = self.request.get('name')
+                description = self.request.get('description')
+
+                project = Project()
+                project.name = name
+                project.description = description
+                project.owner = user
+                project.put()
+
+                self.redirect(self.request.referer)
+
+            elif self.request.get('submit') == 'Delete':
+
+                project_id = self.request.get('project_id')
+                Project.get_by_id(int(project_id)).delete()
+                
+                self.redirect(self.request.referer)
+
+        else:
+
+            params = {
+                'next': self.request.uri,
+            }
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
+            
+class Experiments(BaseHandler):
+
+    def get(self):
+
+        if self.session.get('username'):
+
+            username = self.session.get('username')
+            user_list = User.all().filter('username =', username).fetch(1)
+            user = user_list[0]
+
+            projects = Project.all().filter('owner =', user).fetch(100)
+            experiments = Experiment.all().filter('owner =', user).fetch(100)
+
+            context = {
+                'user': user,
+                'projects': projects,
+                'experiments': experiments,
+            }
+            self.render_response('cotefe/experiments.html', **context)
+
+        else:
+
+            params = {
+                'next': self.request.uri,
+            }
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
+
+    def post(self):
+
+        if self.session.get('username'):
+
+            if self.request.get('submit') == 'Create':
+
+                username = self.session.get('username')
+                user = User.all().filter('username =', username).fetch(1)[0]
+                
+                project_id = self.request.get('project_id')
+                project = Project.get_by_id(int(project_id))
+
+                name = self.request.get('name')
+                description = self.request.get('description')
+
+                experiment = Experiment()
+                experiment.name = name
+                experiment.description = description
+                experiment.project = project
+                experiment.owner = user
+                experiment.put()
+
+                self.redirect(self.request.referer)
+
+            elif self.request.get('submit') == 'Delete':
+
+                experiment_id = self.request.get('experiment_id')
+                Experiment.get_by_id(int(experiment_id)).delete()
+
+                self.redirect(self.request.referer)
+
+        else:
+
+            params = {
+                'next': self.request.uri,
+            }
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
 
 
 class OAuth2RESTJSONHandler(webapp2.RequestHandler):
@@ -684,7 +899,7 @@ class ProjectCollectionHandler(OAuth2RESTJSONHandler):
     def get(self):
         
         project_list = list()
-        for project in Project.all().filter('created_by = ', self.user):
+        for project in Project.all().filter('owner = ', self.user):
             project_list.append(project.to_dict(head_only = True))
         self.response.out.write(serialize(project_list))
             
@@ -694,7 +909,7 @@ class ProjectCollectionHandler(OAuth2RESTJSONHandler):
         project = Project()
         project.name = project_dict['name']
         project.description = project_dict['description']
-        project.created_by = self.user
+        project.owner = self.user
         project.members.append(self.user.key())
         project.put()
         self.response.status = '201'

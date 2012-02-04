@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}My Projects{% endblock %}
+
+{% block content %}
+
+    <form method="post">
+
+               <p>Name<br /><input type="text" name="name" /></p>
+               <p>Description<br /><textarea name="description" rows="10" cols="40"></textarea></p>
+               <p><input type="submit" name="submit" value="Create" /></p>
+
+   </form>
+   
+   {% if projects %}
+  
+   <table>
+   
+   <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Manage</th>
+   </tr>
+   
+   {% for project in projects %}
+   
+        <tr>
+            <td>{{ project.name }}</td>
+            <td>{{ project.description }}</td>
+            <td>
+                <form method="post">
+                    <input type="hidden" name="project_id" value="{{ project.key().id() }}" />
+                    <input type="submit" name="submit" value="Delete" />
+                </form>
+            </td>
+        </tr>
+   
+   {% endfor %}
+   
+   </table>
+   
+   {% else %}
+   
+   <p>You have no projects.</p>
+   
+   {% endif %}
+   
+
+{% endblock %}

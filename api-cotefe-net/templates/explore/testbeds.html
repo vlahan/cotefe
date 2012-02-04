@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Testbeds{% endblock %}
+
+{% block content %}
+   
+   {% if testbeds %}
+  
+   <table>
+   
+   <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Organization</th>
+   </tr>
+   
+   {% for testbed in testbeds %}
+   
+        <tr>
+            <td>{{ testbed.name }}</td>
+            <td>{{ testbed.description }}</td>
+            <td>{{ testbed.organization }}</td>
+        </tr>
+   
+   {% endfor %}
+   
+   </table>
+   
+   {% else %}
+   
+   <p>There are currently no testbeds.</p>
+   
+   {% endif %}
+   
+
+{% endblock %}

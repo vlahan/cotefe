@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href='http://fonts.googleapis.com/css?family=Asap:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="/css/cotefe.css">
     {% block script %}{% endblock %}
     <title>COTEFE - {% block title %}{% endblock %}</title>    
@@ -13,7 +14,7 @@
     <div id="header">
 
         <h1>COTEFE</h1>
-        <h2>Design experiments in a testbed-indepent way. Run your experiments and cross-validate your results across multiple testbeds.<br />All in your Web browser.</h2>
+        <h2>Design experiments in a testbed-indepent way. Run your experiments and cross-validate your results across multiple testbeds. All in your Web browser.</h2>
     
     </div>
     
@@ -23,7 +24,7 @@
     
         <div id="welcome">
     
-            You're connected as <b>{{ user.first }} {{ user.last }}</b>
+            You're connected as <b>{{ user.first }} {{ user.last }}</b> {% if user.admin %}(admin){% endif %}
     
         </div>
     
@@ -35,13 +36,13 @@
         
         <div id="explore-menu">
     
-            <a href="/testbeds">Testbeds</a> | <a href="/platforms">Platforms</a> | <a href="/sensors">Sensors</a> | <a href="/actuators">Actuators</a> | <a href="/interfaces">Interfaces</a>
+            {% if user.admin %}<a href="/explore/users">Users</a> | {% endif %}<a href="/explore/testbeds">Testbeds</a> | <a href="/explore/platforms">Platforms</a> | <a href="#">Sensors</a> | <a href="#">Actuators</a>
     
         </div>
     
         <div id="cotefe-menu">
     
-            <a href="/dashboard">Dashboard</a> | <a href="/projects">Projects</a> | <a href="/experiments">Experiments</a> | <a href="/images">Images</a> | <a href="/jobs">Jobs</a>
+            <a href="#">Dashboard</a> | <a href="/cotefe/projects">Projects</a> | <a href="/cotefe/experiments">Experiments</a> | <a href="#">Images</a> | <a href="#">Jobs</a>
     
         </div>
     

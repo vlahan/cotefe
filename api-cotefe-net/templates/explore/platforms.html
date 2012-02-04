@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Platforms{% endblock %}
+
+{% block content %}
+   
+   {% if platforms %}
+  
+   <table>
+   
+   <tr>
+            <th>Name</th>
+            <th>Description</th>
+
+   </tr>
+   
+   {% for platform in platforms %}
+   
+        <tr>
+            <td>{{ platform.name }}</td>
+            <td>{{ platform.description }}</td>
+        </tr>
+   
+   {% endfor %}
+   
+   </table>
+   
+   {% else %}
+   
+   <p>There are currently no platforms.</p>
+   
+   {% endif %}
+   
+
+{% endblock %}

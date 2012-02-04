@@ -21,6 +21,13 @@ routes = [
     (r'^/docs$', Docs),
     (r'^/logout$', Logout),
     
+    (r'^/explore/users$', Users),
+    (r'^/explore/testbeds$', Testbeds),
+    (r'^/explore/platforms$', Platforms),
+    
+    (r'^/cotefe/projects$', Projects),
+    (r'^/cotefe/experiments$', Experiments),
+    
     (r'^/me$', MeHandler),
     
     (r'^/users/$', UserCollectionHandler),

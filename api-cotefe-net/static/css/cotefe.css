@@ -1,10 +1,10 @@
 body, h1, h2, h3, h4, h5, h6, p, td, th, form, input {
+	font-size: 13px;
 	color: #191919;
-	font-family: sans-serif;
+	font-family: Asap, sans-serif;
 	padding: 0px;
 	margin: 0px;
 }
-
 body {
 	background-color: #e6e6e6;
 }
@@ -22,10 +22,10 @@ body {
 	background-color: white;
 }
 #header h1 {
-    margin-left: 0px;
+	margin-left: 10px;
 	margin-bottom: 0px;
-	margin-top: 10px;
-	margin-right: 30px;
+	margin-right: 40px;
+	margin-top: 0px;
 	float: left;
 	padding: 0px;
 	color: #ff8000;
@@ -35,8 +35,8 @@ body {
 #header h2 {
 	margin-left: 0px;
 	margin-bottom: 0px;
-	margin-right: 0px;
-	margin-top: 20px;
+	margin-right: 10px;
+	margin-top: 25px;
 	padding: 0px;
 	font-style: normal;
 	color: #999999;
@@ -61,13 +61,11 @@ body {
 }
 #explore-menu {
 	float: left;
-	font-size: 15px;
 	margin: 0px;
 	padding: 10px;
 }
 #cotefe-menu {
 	float: right;
-	font-size: 15px;
 	margin: 0px;
 	padding: 10px;
 }
@@ -123,7 +121,6 @@ body {
 	margin-left: 0px;
 	margin-bottom: 0px;
 	margin-top: 20px;
-	font-size: 15px;
 }
 #content table {
 	border-collapse: collapse;
@@ -136,31 +133,65 @@ body {
 	margin-bottom: 0px;
 	margin-top: 20px;
 }
-#content tr, th, td {
+#content tr {
 	border-width: 0px;
-	border-style: none;
-	text-align: left;
-	font-size: 12px;
+	margin: 0px;
+	padding: 0px;
+}
+#content th {
+	border-color: #cccccc;
+	border-width: 1px;
+	border-style: solid;
+	color: white;
+	background-color: #cccccc;
 	margin: 0px;
 	padding: 10px;
 }
 #content td {
-	font-family: monospace;
+	border-color: #cccccc;
+	border-width: 1px;
+	border-style: solid;
+	text-align: left;
+	margin: 0px;
+	padding: 10px;
+}
+#content form table tr td {
+	border-width: 0px;
+	border-color: #cccccc;
+	border-style: solid;
+	text-align: left;
+	margin: 0px;
+	padding: 10px;
 }
 #content form {
 	padding: 0px;
 	margin: 0px;
 }
-#content input[type=text], #content input[type=password] {
+#content input[type=text], #content input[type=password], #content textarea {
+	border-bottom-color: #cccccc;
+	border-left-style: none;
+	border-bottom-style: dotted;
+	border-right-style: none;
+	border-top-style: none;
+	border-right-width: 0px;
+	border-left-width: 0px;
+	border-bottom-width: 2px;
+	border-top-width: 0px;
 	background-color: white;
 	font-family: monospace;
+	font-size: 12px;
+	padding: 5px;
+	margin: 0px;
+}
+#content textarea {
 	border-color: #cccccc;
 	border-width: 2px;
 	border-style: dotted;
+	background-color: white;
+	font-family: monospace;
 	font-size: 12px;
 	padding: 5px;
-	margin: 10px;
-	width: 200px;
+	margin: 0px;
 }
 #content input[type=submit] {
 	padding: 0px;
@@ -168,7 +199,7 @@ body {
 }
 #content img.logo {
 	float: right;
-	width: 50px;
+	width: 80px;
 }
 #footer {
 	text-align: center;
