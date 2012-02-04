@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Authorization{% endblock %}
+
+{% block content %}
+
+    <img class="logo" src="/images/oauth2-logo.png" />
+    
+    <p>Do you really want to grant {{ application.name }} access to your private information on COTEFE API?</p>
+
+    <form method="post">
+        
+        <p><input name="authorize" type="radio" value="yes" /> Yes, sure! <input name="authorize" type="radio" value="no" /> Hell, No!</p>
+        
+        <p><input name="submit" type="submit" value="Submit" /></p>
+        
+        <input type="hidden" name="client_id" value="{{ client_id }}" />
+        <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}" />
+        <input type="hidden" name="response_type" value="{{ response_type }}" />
+    </form>
+        
+{% endblock %}

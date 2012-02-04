@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="/css/cotefe.css">
+    {% block script %}{% endblock %}
+    <title>COTEFE - {% block title %}{% endblock %}</title>    
+</head>
+<body>
+
+<div id="container">
+
+    <div id="header">
+
+        <h1>COTEFE</h1>
+        <h2>Design experiments in a testbed-indepent way. Run your experiments and cross-validate your results across multiple testbeds.<br />All in your Web browser.</h2>
+    
+    </div>
+    
+    {% if user %}
+    
+    <div id="welcome">
+    
+        You're connected as <b>{{ user.first }} {{ user.last }}</b>
+    
+    </div>
+    
+    <div id="menu">
+    
+        <a href="/account">Account</a> | <a href="/identities">Connected Identities</a> | <a href="/sessions">Authorized Applications</a> | <a href="/docs">Documentation</a> | <a href="/logout">Logout</a>
+    
+    </div>
+    
+    {% endif %}
+    
+    <div id="content">
+    
+        <h1>{{ self.title() }}</h1>
+    
+        {% block content %}{% endblock %}
+    
+    </div>
+    
+    <div id="footer">
+  
+        <p>&copy; 2012 CONET - Cooperating Objects Network of Excellence</p>
+        
+    </div>
+    
+</div>
+        
+</body>
+</html>

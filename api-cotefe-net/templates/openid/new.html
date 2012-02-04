@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}OpenID Create User{% endblock %}
+
+
+{% block content %}
+
+
+    <img class="logo" src="/images/openid-logo.png" />
+    
+    <p>Your provider is: <b>{{ provider }}</b></p>
+    <p>Your identifier is: <b>{{ identifier }}</b></p>
+
+    <form method="post">
+        
+        <p>Pick up a username <input name="username" type="text" value="" /> <i>{{ message }}</i></p>
+        
+        <p><input name="submit" type="submit" value="Create" /></p>
+        
+        <input type="hidden" name="next" value="{{ next }}" />
+        <input type="hidden" name="provider" value="{{ provider }}" />
+        <input type="hidden" name="identifier" value="{{ identifier }}" />
+    </form>
+
+{% endblock %}

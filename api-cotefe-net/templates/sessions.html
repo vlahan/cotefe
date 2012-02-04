@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}OAuth2 Sessions{% endblock %}
+
+{% block content %}
+
+<img class="logo" src="/images/oauth2-logo.png" />
+   
+   {% if sessions %}
+  
+   
+   <table>
+   
+   <tr>
+            <th>Application</th>
+            <th>Access Token</th>
+            <th>Last Modified</th>
+            <th>Manage</th>
+   </tr>
+   
+   {% for session in sessions %}
+   
+        <tr>
+            <td>{{ session.application.name }}</td>
+            <td>{{ session.access_token }}</td>
+            <td>{{ session.datetime_modified }}</td>
+            <td>
+                <form method="post">
+                    <input type="hidden" name="session_id" value="{{ session.key().id() }}" />
+                    <input type="submit" name="submit" value="Revoke" />
+                </form>
+            </td>
+        </tr>
+   
+   {% endfor %}
+   
+   {% else %}
+   
+   <p>There are currently no active OAuth2 sessions.</p>
+   
+   {% endif %}
+   
+   </table>
+
+{% endblock %}

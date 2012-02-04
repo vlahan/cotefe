@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+    <p><a href="/openid/login">Login with OpenID</a> or with traditional username and password</p>
+    
+    <form method="post">
+    
+        <table>
+            <tr>
+                <td>Username</td>
+                <td><input name="username" type="text" /></td>
+            </tr>
+            <tr>
+                <td>Password</td>
+                <td><input name="password" type="password" /></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td><input name="submit" type="submit" value="Login" /></td>
+            </tr>
+        </table>
+        
+        <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+
+{% endblock %}

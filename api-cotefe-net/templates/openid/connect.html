@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}OpenID Connect{% endblock %}
+
+
+{% block content %}
+
+    <img class="logo" src="/images/openid-logo.png" />
+    
+    <p>Your provider is: <b>{{ provider }}</b></p>
+    <p>Your identifier is: <b>{{ identifier }}</b></p>
+    
+    <p>Do you really want to connect your OpenID identifier to your COTEFE account?</p>
+
+    <form method="post">
+        
+        <p><input name="connect" type="radio" value="yes" /> Yes, sure! <input name="connect" type="radio" value="no" /> Hell, No!</p>
+        
+        <p><input name="submit" type="submit" value="Submit" /></p>
+        
+        <input type="hidden" name="next" value="{{ next }}" />
+        <input type="hidden" name="provider" value="{{ provider }}" />
+        <input type="hidden" name="identifier" value="{{ identifier }}" />
+    </form>
+
+{% endblock %}
