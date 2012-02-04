@@ -1,36 +1,29 @@
 <html>
 	<head>
-		<title>Cotefe</title>
-		<script type="text/javascript" src="../scripts/cotefescripts.js"></script>
+		<title>Getting Data</title>
+		<script type="text/javascript" src="../scripts/jsuri-1.1.1.js"></script>
+		<script type="text/javascript" src="../scripts/config.js"></script>
+		<script>
+			var address=document.location.href;
+			var access_token=new Uri(address).getQueryParamValue('access_token');
+			if(access_token === undefined || access_token === "" || access_token === null)
+			{
+				document.location.href=cotefe.mainUri;
+			}
+			else
+			{
+				cotefe.token= access_token;
+				cotefe.ajax_request(cotefe.application.getUserInfo(cotefe.token,cotefe.me));
+			}
+		</script>
 	</head>
 	<body>
-		
-		<script>
-			//crawl link and get all info
-			this.document.write("Fetching your Data! Please wait!!!!<br>");
-			this.document.write('<image src="../images/ajax-loader.gif" />');
-			var retrievedObject = JSON.parse(localStorage.getItem('cotefeSessionObj'));
-			
-			ajaxFunction("GET",makeLink("me"),retrievedObject.access_token,null,callback);
-			ajaxFunction("GET",makeLink("testbeds/"),retrievedObject.access_token,null,callback);
-			ajaxFunction("GET",makeLink("platforms/"),retrievedObject.access_token,null,callback);
-
-			function callback(uri,data)
-			{
-				switch(uri)
-				{
-					case (apiuri+"me")			:localStorage.setItem("cotefeMe",data);break;
-					case (apiuri+"testbeds/")	:localStorage.setItem("cotefeTestbeds",data);break;
-					case (apiuri+"platforms/")	:localStorage.setItem("cotefePlatforms",data);break;
-				}
-				var res=document.getElementById("result");
-				res.innerHTML+=data;
+			<div>
+				<span>Fetching Data , Please Wait ..thankYou</span><br>
+				<img src="../images/ajax-loader.gif" alt="loading" >
+			</div>
+			<div id="result">
 				
-			}
-			getProjectList();
-		</script>
-		<p id="result"></p>
-		<a href="../dashboard" >Goto DashBoard</a>
+			</div>
 	</body>
-	
 </html>

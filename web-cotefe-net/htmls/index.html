@@ -3,8 +3,6 @@
 	<head>
 		<title>COTEFE</title>
 		<link href="../css/stylesheet.css" rel="stylesheet" type="text/css" media="screen">
-		<script type="text/javascript" src="../scripts/jsuri-1.1.1.js"></script>
-		<script type="text/javascript" src="../scripts/login.js"></script>
 	</head>
 	<body>
 		<!-- main DIV starts -->
@@ -14,15 +12,10 @@
 					<div id="logo">
 						<img src="../images/logo.png"   alt="COTEFE LOGO" />
 					</div>
-					<nav>
-						<a href="../htmls/index.html" class="current-link"><span>Home</span></a> |  
-						<a href="/html5/"><span>Documents</span></a> |
-						<a href="/css/"><span>Contact</span></a> |
-						<a href="/htmls/dashboard.html"><span>Help</span></a> |
-						<a href="https://api.cotefe.net/oauth2/auth?client_id=661b6d2134744642baae57f7aa535802&redirect_uri=https://localhost:8080/htmls/index.html&response_type=token"><span>Sign In</span></a>
+					<nav id="topnavi">
+						<a href="../htmls/index.html" class="current-link"><span>Your javascript is Not working!!</span></a> |  
+						
 					</nav>
-					
-					
 				</div>
 				
 		</div>
@@ -40,22 +33,20 @@
 				<article>
 				<h3>COTEFE a Collective Platform</h3>
 				<p>
-					The development of a common Integrated Testbed to be used within the 
-					community is one of the most important issues of CONET. Although most 
-					partners already have individual testbeds in their own labs, there is 
-					no single physical environment that can be used for Cooperating Objects. 
-					This gap will be closed by the CONET Testbed and the Testbed Integration activities.</br></br>
-
-					Thus, the main objective of the task, lead by AICIA, is to develop a 
-					common testbed for cooperating objects. The following main elements 
-					are involved in the IT: 5 autonomous robotic systems and a set of 
-					static and mobile WSN nodes. All these cooperating objects have diverse 
-					sensing, computation and wireless communication capabilities. 
-					The robots also have sensor nodes, being mobile nodes of the network. 
-					This testbed will make possible the research, development, testing, 
-					validation and comparison of different techniques, algorithms and +
-					applications regarding cooperative objects. The CONET Integrated Testbed, 
-					in operation since September 2009, is located in AICIA premises in Seville, Spain.
+					Testbeds provide convenient middle ground between simulation and full deployment on 
+					the realism axes. They allow for rigorous and controlled experimentation 
+					with the System Under Test (SUT). But similarly to full deployments, 
+					they lock the evaluation to one particular environment making it hard 
+					to differentiate between the intrinsic properties of the SUT and the 
+					effect of the specific features and external influences present at a given testbed site.
+					<br /><br /> 
+					One way of decoupling these influences is to cross-validate the functional 
+					and non-functional behavior of the SUT under various conditions as provided 
+					by different testbeds. Unfortunately, preforming such studies is currently 
+					accompanied by significant overheads in configuring the experiments and 
+					collecting the results on the individual testbeds, since easy experiment 
+					migration is hindered by a lack of common management, experiment specification 
+					and control infrastructure.
 				</p>
 				</article>
 				<div style="clear:both;">
@@ -89,12 +80,27 @@
 			
 		</div>
 		<div class="spacer"></div>
-		<div>
-				
+		<div>				
 		</div>
 		<div class="float-clear" style="margin-bottom:20px;display:block;">
 			<p style="text-align:center;">COTEFE Community</p>
 		</div>
+		<script type="text/javascript" src="../scripts/config.js"></script>
+		<script type="text/javascript" src="../scripts/ejs.js"></script>
+		<script type="text/javascript">		
+			var data={
+				homeLink		: "../htmls/index.html",
+				documentsLink	: "#",
+				contactLink		: "#",
+				helpLink		: "#",
+				signInLink		: (cotefe.oauth+"&redirect_uri="+cotefe.redirect)
+			};		
+			menu = new EJS({url: '../templates/headerMenu.ejs'}).render(data);
+			var navi=document.getElementById("topnavi");
+  			navi.innerHTML=menu;
+  			cotefe.log(cotefe.link(cotefe.projects));
+		</script>
 		
 	</body>
+		
 </html>
