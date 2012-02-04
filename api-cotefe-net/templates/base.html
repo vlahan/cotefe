@@ -19,15 +19,31 @@
     
     {% if user %}
     
-    <div id="welcome">
+    <div id="menubar">
     
-        You're connected as <b>{{ user.first }} {{ user.last }}</b>
+        <div id="welcome">
     
-    </div>
+            You're connected as <b>{{ user.first }} {{ user.last }}</b>
     
-    <div id="menu">
+        </div>
     
-        <a href="/account">Account</a> | <a href="/identities">Connected Identities</a> | <a href="/sessions">Authorized Applications</a> | <a href="/docs">Documentation</a> | <a href="/logout">Logout</a>
+        <div id="user-menu">
+    
+            <a href="/account">Account</a> | <a href="/identities">Connected Identities</a> | <a href="/sessions">Authorized Applications</a> | <a href="/applications">My Applications</a> | <a href="/docs">Documentation</a> | <a href="/logout">Logout</a>
+    
+        </div>
+        
+        <div id="explore-menu">
+    
+            <a href="/testbeds">Testbeds</a> | <a href="/platforms">Platforms</a> | <a href="/sensors">Sensors</a> | <a href="/actuators">Actuators</a> | <a href="/interfaces">Interfaces</a>
+    
+        </div>
+    
+        <div id="cotefe-menu">
+    
+            <a href="/dashboard">Dashboard</a> | <a href="/projects">Projects</a> | <a href="/experiments">Experiments</a> | <a href="/images">Images</a> | <a href="/jobs">Jobs</a>
+    
+        </div>
     
     </div>
     

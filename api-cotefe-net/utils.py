@@ -11,7 +11,7 @@ def build_url(server_url = config.FEDERATION_SERVER_URL, path = '/'):
 def serialize(dict_or_list, format = 'json'):
     if format == 'json':
         return json.dumps(dict_or_list, ensure_ascii = config.JSON_ENSURE_ASCII, indent = config.JSON_INDENT)
-    else:
+    elif format == 'xml':
         pass
    
 def deserialize(string, format = 'json'):

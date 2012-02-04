@@ -32,6 +32,8 @@ CHARSET = 'utf8'
 
 FMT_DT_TO_STR = '%Y-%m-%dT%H:%M:%S+0000'
 
+# initialization data
+
 FEDERATION_NAME = 'COTEFE'
 FEDERATION_DESCRIPTION = 'The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities.'
 

@@ -5,10 +5,7 @@ import config
 from routes import routes
 
 session_config = {}
-session_config['webapp2_extras.sessions'] = {
-    'secret_key': 'cotefe',
-}
-
+session_config['webapp2_extras.sessions'] = { 'secret_key': 'cotefe' }
 
 app = webapp2.WSGIApplication(routes, debug=config.DEBUG, config=session_config)
 

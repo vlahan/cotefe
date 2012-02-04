@@ -17,6 +17,7 @@ routes = [
     (r'^/account$', Account),
     (r'^/identities', Identities),
     (r'^/sessions', Sessions),
+    (r'^/applications', Applications),
     (r'^/docs$', Docs),
     (r'^/logout$', Logout),
     

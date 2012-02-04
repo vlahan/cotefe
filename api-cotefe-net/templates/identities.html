@@ -48,7 +48,6 @@
    <tr>
             <th>Provider</th>
             <th>OpenID Identifier</th>
-            <th>Last Modified</th>
             <th>Manage</th>
    </tr>
    
@@ -57,7 +56,6 @@
         <tr>
             <td>{{ identity.provider }}</td>
             <td>{{ identity.identifier }}</td>
-            <td>{{ identity.datetime_modified }}</td>
             <td>
                 <form method="post">
                     <input type="hidden" name="identity_id" value="{{ identity.key().id() }}" />
@@ -68,12 +66,14 @@
    
    {% endfor %}
    
+    </table>
+   
    {% else %}
    
    <p>There are currently no connected OpenID identities.</p>
    
    {% endif %}
    
-   </table>
+
 
 {% endblock %}

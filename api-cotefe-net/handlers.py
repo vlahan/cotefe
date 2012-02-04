@@ -29,23 +29,10 @@ class DatastoreInitialization(webapp2.RequestHandler):
         # for identity in OpenIDIdentity.all(): identity.delete()  
         # for application in Application.all(): application.delete()
         # for session in OAuth2Session.all(): session.delete()
-        # for federation in Federation.all(): federation.delete()
-        # for testbed in Testbed.all(): testbed.delete()
-        # for platform in Platform.all(): platform.delete()
+        for federation in Federation.all(): federation.delete()
+        for testbed in Testbed.all(): testbed.delete()
+        for platform in Platform.all(): platform.delete()
         # for project in Project.all(): project.delete()
-                
-        # initial data
-#        User(username = 'demo', password = encrypt('demo')).put()
-#        User(username = 'vlado', password = encrypt('conet')).put()
-#        User(username = 'claudio', password = encrypt('conet')).put()
-#        User(username = 'sanjeet', password = encrypt('conet')).put()
-        
-        Application(
-            name = 'COTEFE Web Client',
-            client_id = '661b6d2134744642baae57f7aa535802',
-            client_secret = '1b2ccad4f2604db6b9b70f728254d3cd',
-            redirect_uri = 'http://web.cotefe.net/',
-        ).put()
         
         Federation(
             name = config.FEDERATION_NAME,
@@ -449,7 +436,7 @@ class Identities(BaseHandler):
             params = {
                 'next': self.request.uri,
             }
-            self.redirect('%s?%s' % ('/login', urllib.urlencode(params)))
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
     def post(self):
         
@@ -494,6 +481,65 @@ class Sessions(BaseHandler):
             OAuth2Session.get_by_id(int(session_id)).delete()
             self.redirect(self.request.referer)
         else:
+            params = {
+                'next': self.request.uri,
+            }
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
+            
+            
+class Applications(BaseHandler):
+
+    def get(self):
+
+        if self.session.get('username'):
+            username = self.session.get('username')
+            user_list = User.all().filter('username =', username).fetch(1)
+            user = user_list[0]
+            applications = Application.all().filter('owner =', user).fetch(10)
+            context = {
+                'user': user,
+                'applications': applications,
+            }
+            self.render_response('applications.html', **context)
+        else:
+            params = {
+                'next': self.request.uri,
+            }
+            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
+
+    def post(self):
+
+        if self.session.get('username'):
+            
+            if self.request.get('submit') == 'Add':
+                
+                username = self.session.get('username')
+                user_list = User.all().filter('username =', username).fetch(1)
+                user = user_list[0]
+                
+                name = self.request.get('name')
+                redirect_uri = self.request.get('redirect_uri')
+                client_id = generate_hash()
+                client_secret = generate_hash()
+                
+                application = Application()
+                application.name = name
+                application.redirect_uri = redirect_uri
+                application.client_id = client_id
+                application.client_secret = client_secret
+                application.owner = user
+                application.put()
+                
+                self.redirect(self.request.referer)
+                
+            elif self.request.get('submit') == 'Delete':
+                
+                application_id = self.request.get('application_id')
+                Application.get_by_id(int(application_id)).delete()
+                self.redirect(self.request.referer)
+                
+        else:
+            
             params = {
                 'next': self.request.uri,
             }

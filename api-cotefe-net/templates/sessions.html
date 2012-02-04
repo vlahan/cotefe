@@ -14,7 +14,6 @@
    <tr>
             <th>Application</th>
             <th>Access Token</th>
-            <th>Last Modified</th>
             <th>Manage</th>
    </tr>
    
@@ -23,7 +22,6 @@
         <tr>
             <td>{{ session.application.name }}</td>
             <td>{{ session.access_token }}</td>
-            <td>{{ session.datetime_modified }}</td>
             <td>
                 <form method="post">
                     <input type="hidden" name="session_id" value="{{ session.key().id() }}" />
@@ -34,12 +32,12 @@
    
    {% endfor %}
    
+   </table>
+   
    {% else %}
    
    <p>There are currently no active OAuth2 sessions.</p>
    
    {% endif %}
-   
-   </table>
 
 {% endblock %}

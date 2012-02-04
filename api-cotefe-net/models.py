@@ -49,6 +49,7 @@ class Application(db.Model):
     client_id = db.StringProperty()
     client_secret = db.StringProperty()
     redirect_uri = db.LinkProperty()
+    owner = db.ReferenceProperty(User)
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
 
