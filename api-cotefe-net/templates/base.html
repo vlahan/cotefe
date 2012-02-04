@@ -32,11 +32,13 @@
         
         {% endif %}
     
-        <div id="user-menu">
+        <div id="menu">
+        
+            <a href="/home">Home</a> | 
         
             {% if user %}
     
-            <a href="/account">Account</a> | <a href="/identities">Connected Identities</a> | <a href="/sessions">Authorized Applications</a> | <a href="/applications">My Apps</a> |
+            <a href="/account">Account</a> | <a href="/identities">My Identities</a> | <a href="/sessions">Authorized Apps</a> | <a href="/applications">My Apps</a> |
             
             {% endif %}
             
@@ -54,23 +56,56 @@
             
         </div>
         
+        </div>
+        
         {% if user %}
         
-        <div id="explore-menu">
+        <div id="cotefe">
     
-            {% if user.admin %}<a href="/explore/users">Users</a> | {% endif %}<a href="/explore/testbeds">Testbeds</a> | <a href="/explore/platforms">Platforms</a> | <a href="#">Sensors</a> | <a href="#">Actuators</a>
-    
-        </div>
-    
-        <div id="cotefe-menu">
-    
-            <a href="#">Dashboard</a> | <a href="/cotefe/projects">Projects</a> | <a href="/cotefe/experiments">Experiments</a> | <a href="#">Images</a> | <a href="#">Jobs</a>
-    
-        </div>
-    
+        
+        
+        <ul>
+            <li><b>Home</b></li>
+            <li>Dashboard</li>
+            <li><a href="/cotefe/projects">Projects</a></li>
+            <li><a href="/cotefe/experiments">Experiments</a></li>
+            <li>Jobs</li>
+        </ul>
+        
+        <ul>
+            <li><b>Explore</b></li>
+            <li>{% if user.admin %}<a href="/explore/users">Users</a>{% endif %}</li>
+            <li><a href="/explore/testbeds">Testbeds</a></li>
+            <li><a href="/explore/platforms">Platforms</a></li>
+            <li>Sensors</li>
+            <li>Actuators</li>
+        </ul>
+        
+        <ul>
+            <li><b>Experiment</b></li>
+            <li>Property Sets</li>
+            <li>Virtual Nodes</li>
+            <li>Virtual Node Groups</li>
+            <li>Virtual Tasks</li>
+            <li>Images</li>
+        </ul>
+        
+        <ul>
+            <li><b>Job</b></li>
+            <li>Nodes</li>
+            <li>Node Groups</li>
+            <li>Tasks</li>
+            <li>Traces</li>
+            <li>Logs</li>
+        </ul>
+        
     </div>
+        
+        {% endif %}
     
-    {% endif %}
+    
+    
+    
     
     <div id="content">
     
@@ -80,7 +115,9 @@
     
     </div>
     
-    <div id="footer">
+    
+    
+    <div id="copyright">
   
         <p>&copy; 2012 CONET - Cooperating Objects Network of Excellence</p>
         
