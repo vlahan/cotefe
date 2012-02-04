@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>COTEFE</title>
+		<link href="../css/stylesheet.css" rel="stylesheet" type="text/css" media="screen">
+		<script type="text/javascript" src="../scripts/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="../scripts/cotefescripts.js"></script>
+		<script type="text/javascript" src="../scripts/scripts.js"></script>
+		
+		
+	</head>
+	<body>
+		<!-- main DIV starts -->
+		
+		<div class="head-wrapper">
+				<div id="header" class="page-width auto-margin">
+					<div id="logo">
+						<img src="../images/logo.png"  alt="COTEFE LOGO" />
+					</div>
+					<nav>
+						<a href="../htmls/index.html"><span>Home</span></a> |  
+						<a href="/html5/"><span>Documents</span></a> |
+						<a href="/css/"><span>Contact</span></a> |
+						<a href="/css3/"><span>Help</span></a> |
+						<a href="#" class="current-link" onclick="signOut()"><span>Sign Out</span></a>
+					</nav>
+					
+					
+				</div>
+				
+		</div>
+		<div class="top-nav" >
+				<div class="top-border">
+					<div><h3>Hello, <span id="currentUser"></span> Welcome to COTEFE</h3></div>				
+				</div>
+		</div>
+		
+		
+		<div class="page-width auto-margin content-dashboard">
+				
+			<div id="sidebar" >
+				<ul id="nav">
+					<li><a href="#" id="dashboard"><span>DashBoard</span></a>
+						<div class="sub-menu">
+							<ul class="sub-menu-nav">
+								<li><a href="../htmls/dashboard.html" id="homescreen"><span>Home Screen</span></a></li>
+								<li><a href="#" id="myaccount"><span>My Account</span></a></li>
+								<li><a href="#" id="settings"><span>Settings</span></a></li>
+								<li><a href="#" id="signout"><span>Sign Out</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#" id="projects"><span>Projects</span></a>
+						<div class="sub-menu">
+							<ul class="sub-menu-nav">
+								<li><a href="../htmls/projectsnew.html" id="addP"><span>Add Project</span></a></li>
+								<li><a href="../htmls/projectslist.html" id="listP"><span>List Projects</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#" id="experiments"><span>Experiments</span></a>
+						<div class="sub-menu">
+							<ul class="sub-menu-nav">
+								<li><a href="../htmls/experimentsnew.html" id="addE"><span>Add Experiment</span></a></li>
+								<li><a href="../htmls/experimentslist.html" id="listE"><span>List Experiments</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#" id="jobs"><span>Jobs</span></a>
+						<div class="sub-menu">
+							<ul class="sub-menu-nav">
+								<li><a href="#" id="addJ"><span>Add Job</span></a></li>
+								<li><a href="#" id="listJ"><span>List Jobs</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#" id="images"><span>Images</span></a>
+						<div class="sub-menu">
+							<ul class="sub-menu-nav">
+								<li><a href="../htmls/imagesnew.html" id="uploadIm"><span>Upload Image</span></a></li>
+								<li><a href="../htmls/imageslist.html" id="listIm"><span>List Images</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>Tasks</span></a></li>
+					<li><a href="#"><span>Logs</span></a></li>
+				</ul>
+				<br />
+				
+			</div>
+			
+			
+			<div id="content">
+					
+			</div>
+			
+		</div>
+		
+		<div class="spacer"></div>
+		<div>
+				
+		</div>
+		<div class="float-clear" style="margin-bottom:20px;display:block;">
+			<p style="text-align:center;">COTEFE Community</p>
+		</div>
+		
+	</body>
+</html>

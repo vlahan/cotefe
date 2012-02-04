@@ -1,0 +1,35 @@
+application: web-cotefe-net
+version: 1
+runtime: python
+api_version: 1
+threadsafe: true
+
+handlers: 
+
+- url: /css
+  static_dir: css
+
+- url: /
+  static_files: htmls/index.html
+  upload: htmls/.*
+
+- url: /dashboard
+  static_files: htmls/dashboard.html
+  upload: htmls/.*
+  
+- url: /favicon.ico
+  static_files: favicon.ico
+  upload: /favicon.ico
+  
+- url: /htmls
+  static_dir: htmls
+
+- url: /images/(.*)
+  static_files: images/\1
+  upload: images/.*
+
+- url: /scripts
+  static_dir: scripts
+  
+- url: /io
+  script: pythonModule/io.py

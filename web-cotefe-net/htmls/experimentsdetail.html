@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>COTEFE</title>
+		<link href="../css/stylesheet.css" rel="stylesheet" type="text/css" media="screen">
+		<script type="text/javascript" src="../scripts/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="../scripts/scripts.js"></script>
+	</head>
+	<body>
+		<!-- main DIV starts -->
+		
+		<div class="head-wrapper">
+				<div id="header" class="page-width auto-margin">
+					<div id="logo">
+						<img src="../images/logo.png"   alt="COTEFE LOGO" />
+					</div>
+					<nav>
+						<a href="../htmls/index.html"><span>Home</span></a> |  
+						<a href="/html5/"><span>Documents</span></a> |
+						<a href="/css/"><span>Contact</span></a> |
+						<a href="/css3/"><span>Help</span></a> |
+						<a href="../htmls/dashboard.html" class="current-link"><span>Sign Out</span></a>
+					</nav>
+					
+					
+				</div>
+				
+		</div>
+		<div class="top-nav" >
+				<div class="top-border"></div>
+		</div>
+		
+		
+		<div class="page-width auto-margin content-dashboard">
+				
+			<div id="sidebar" >
+				<ul id="nav">
+					<li><a href="#"><span>DashBoard</span></a>
+						<div class="sub-menu">
+							<ul class="sub-menu-nav">
+								<li><a href="../htmls/dashboard.html"><span>Home Screen</span></a></li>
+								<li><a href="#"><span>My Account</span></a></li>
+								<li><a href="#"><span>Settings</span></a></li>
+								<li><a href="../htmls/index.html"><span>Sign Out</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>Projects</span></a>
+						<div class="sub-menu">
+							<ul class="sub-menu-nav">
+								<li><a href="../htmls/projectsnew.html"><span>Add Project</span></a></li>
+								<li><a href="../htmls/projectslist.html"><span>List Projects</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>Experiments</span></a>
+						<div class="sub-menu">
+							<ul class="sub-menu-nav">
+								<li><a href="../htmls/experimentsnew.html"><span>Add Experiment</span></a></li>
+								<li><a href="../htmls/experimentslist.html"><span>List Experiments</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>Jobs</span></a>
+						<div class="sub-menu">
+							<ul class="sub-menu-nav">
+								<li><a href="#"><span>Add Job</span></a></li>
+								<li><a href="#"><span>List Jobs</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>Images</span></a>
+						<div class="sub-menu">
+							<ul class="sub-menu-nav">
+								<li><a href="../htmls/imagesnew.html"><span>Upload Image</span></a></li>
+								<li><a href="../htmls/imageslist.html"><span>List Images</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>Tasks</span></a></li>
+					<li><a href="#"><span>Logs</span></a></li>
+				</ul>
+				<br />
+				
+			</div>
+			
+			
+			<div id="content">
+				<div class="wrap">
+					<div class="headings">
+						<h1>
+							<span>Experiment : </span><span>
+								<select name="selectboxexp" id="selectbox" title="Select Experiment for detail" >
+                                    <option value="1" selected >Exp1</option>
+                                    <option value="2">Exp2</option>
+                                    <option value="3">Exp3</option>
+                                    <option value="4">Exp4</option>
+                                    <option value="4">Exp5</option>
+                                    <option value="4">Exp6</option>
+                                    <option value="4">Exp7</option>
+                                    <option value="4">Exp8</option>
+                                    <option value="4">Exp9</option>
+                                    <option value="4">Exp10</option>
+                            	</select>
+                            </span>
+						</h1>
+						<a href="../htmls/experimentsnew.html"><img src="../images/add.png" alt="Add New Project" title="create new experiment"/></a>
+					</div>				
+					<div id="list-tabs">
+						
+								<ul class="tabs">
+								    <li><a href="#tab1">Property Set</a></li>
+								    <li><a href="#tab2">Virtual Node Group</a></li>
+								    <li><a href="#tab3">Images</a></li>
+								    <li><a href="#tab4">Virtual Tasks</a></li>
+								</ul>
+								
+								<div class="tab_container" >
+								    <div id="tab1" class="tab_content" >
+								    	<div>
+								    		<details class="exp-set">
+								    		<summary><div class="headings"><h1><span>New PropertySet</span></h1></div></summary>		
+											<form action="#" >
+													<input type="hidden" value="New" name="formFun" />
+												 <p>
+						                            <label for="name">PropertySet Name</label>
+						                            <input class="input-small" type="text" value="" name="name" id="name" placeholder="PropertySet Name"/>
+						                        </p>
+						                        <p>
+						                            <label for="selectboxplat">Platforms </label>
+						                            <select name="selectboxplat" id="selectboxplat" >
+						                                    
+						                                    	<option value="Roomba">Roomba</option>
+						                                    	<option value="TelosA">Telos (Rev A 2004-04-27)</option>
+						                                    	<option value="TelosB">Telos (Rev B 2004-xx-xx)</option>
+						                                    	<option value="TmoteSky" selected="">Moteiv Tmote Sky</option>
+						                                    	<option value="eyesIFXv20">eyesIFX WSN node v2.0</option>
+						                                    	<option value="eyesIFXv21">eyesIFX WSN node v2.1</option>
+						                            </select>
+						                        </p>
+						                        <div>
+						                            <span class="main-label" >Sensor(s):</span>						                            
+						                            <table  summary="sensors">						                           
+						                            <tr><td><input type="checkbox" name="sensors" id="Temperature"><label for="Temperature">Temperature</label>
+						                            </td><td><input type="checkbox" name="sensors" id="Humidity"><label for="Humidity">Humidity</label>
+						                            </td></tr>
+						                            <tr><td><input type="checkbox" name="sensors" id="Visible-light"><label for="Visible-light">Visible light</label>
+						                            </td><td><input type="checkbox" name="sensors" id="IR-light"><label for="IR-light">IR light</label>
+						                            </td></tr>
+						                            <tr><td><input type="checkbox" name="sensors" id="Sound"><label for="Sound">Sound</label>
+						                            </td><td><input type="checkbox" name="sensors" id="Ultrasound"><label for="Ultrasound">Ultrasound</label>
+						                            </td></tr>
+						                            <tr><td><input type="checkbox" name="sensors" id="Cameras"><label for="Cameras">Cameras</label>
+						                            </td><td><input type="checkbox" name="sensors" id="GPS"><label for="GPS">GPS</label>
+						                            </td></tr>
+						                            </table>
+						                        </div>
+						                        <div>
+						                            <span class="main-label" >Actuator(s):</span>						                            
+						                            <table  summary="Actuators">
+						                            <tr><td><input type="checkbox" name="actuators" id="window"><label for="window">Window</label>
+						                            </td><td><input type="checkbox" name="actuators" id="LED"><label for="LED">LED</label>
+						                            </td></tr>
+						                            <tr><td><input type="checkbox" name="actuators" id="UltrasoundA"><label for="UltrasoundA">Ultrasound</label>
+						                            </td><td><input type="checkbox" name="actuators" id="Position"><label for="Position">Position</label>
+						                            </td></tr>
+						                            </table>
+						                        </div>
+						                        <p>
+						                            <label for="nodes">No of Nodes: <span id="rangeValue1">0</span></label>
+						                            <input id="slider1" name="nodes" type="range" min="0" max="200" value="0" onchange="printValue('slider1','rangeValue1')">
+						                        </p>
+												 <p>
+						                            <input class="button shadow-dark" name="submit" type="submit" value="Submit"/>
+						                        </p>
+											</form>	
+											</details>		
+								    	</div>
+								    	
+								    	
+								    	
+								        <table  class="shadow-dark">
+								        	<tr><th>PropertySet Name</th><th>Date</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
+    										<tr><td>PropertySet1</td><td><time>2011-04-07</time></td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>PropertySet2</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>PropertySet3</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>PropertySet4</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>PropertySet5</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>PropertySet6</td><td>Date</td><td>Edit</td><td>Delete</td></tr>								    
+								        </table>
+								    </div>
+								    <!-- -->
+								    <div id="tab2" class="tab_content">
+								       
+								       <div>
+								    		<details class="exp-set">
+								    		<summary><div class="headings"><h1><span>New VirtualNodeGroup</span></h1></div></summary>		
+											<form action="#" >
+													<input type="hidden" value="New" name="formFun" />
+												 <p>
+						                            <label for="name">VirtualNodeGroup Name</label>
+						                            <input class="input-small" type="text" value="" name="name" id="name" placeholder="VirtualNodegroup Name"/>
+						                        </p>
+						                        <p>
+						                            <label for="description">VirtualNodeGroupent Description</label>
+						                            <textarea name="description" id="description" cols="60" rows="15" placeholder="VirtualNodegroup Description"></textarea>
+						                        </p>
+						                        
+						                        
+						                        
+												 <p>
+						                            <input class="button shadow-dark" name="submit" type="submit" value="Submit"/>
+						                        </p>
+											</form>	
+											</details>		
+								    	</div>
+								       
+								       
+								       <table  class="shadow-dark">
+								        	<tr><th>Title</th><th>No. Node</th><th>Date</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
+    										<tr><td>NodeGroup1</td><td>80</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>NodeGroup2</td><td>10</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>NodeGroup3</td><td>40</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>NodeGroup4</td><td>50</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>NodeGroup5</td><td>20</td><td>Date</td><td>Edit</td><td>Delete</td></tr>								    
+								        </table>
+								    </div>
+								    <div id="tab3" class="tab_content">
+								       <div>
+								    		<details class="exp-set">
+								    		<summary><div class="headings"><h1><span>Install Image</span></h1></div></summary>		
+											<form action="#" >
+													<input type="hidden" value="New" name="formFun" />
+												<p>
+						                            <label for="selectboxplat">Images </label>
+						                            <select name="selectboxplat" id="selectboxplat" >
+																<option value="Image1">Image1</option>
+						                                    	<option value="Image2">Image2</option>
+						                                    	<option value="Image3">Image3</option>
+						                                    	<option value="Image4" selected="">Image4</option>
+						                                    	<option value="Image5">Image5</option>
+						                                    	<option value="Image6">Image6</option>
+						                            </select>
+						                        </p>
+						                        <p>
+						                            <input class="button shadow-dark" name="submit" type="submit" value="Install"/>
+						                        </p>
+											</form>	
+											</details>		
+								    	</div>
+								    </div>
+								    <div id="tab4" class="tab_content">
+								       <table  class="shadow-dark">
+								        	<tr><th>Title</th><th>Date</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
+    										<tr><td>Task1</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>Task2</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>Task3</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>Task4</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>Task5</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
+    										<tr><td>Task6</td><td>Date</td><td>Edit</td><td>Delete</td></tr>								    
+								        </table>
+								    </div>
+								</div>
+						
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		
+		<div class="spacer"></div>
+		<div>
+				
+		</div>
+		<div class="float-clear" style="margin-bottom:20px;display:block;">
+			<p style="text-align:center;">COTEFE Community</p>
+		</div>
+		
+	</body>
+</html>

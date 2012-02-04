@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<title>Cotefe</title>
+		<script type="text/javascript" src="../scripts/cotefescripts.js"></script>
+	</head>
+	<body>
+		
+		<script>
+			//crawl link and get all info
+			this.document.write("Fetching your Data! Please wait!!!!<br>");
+			this.document.write('<image src="../images/ajax-loader.gif" />');
+			var retrievedObject = JSON.parse(localStorage.getItem('cotefeSessionObj'));
+			
+			ajaxFunction("GET",makeLink("me"),retrievedObject.access_token,null,callback);
+			ajaxFunction("GET",makeLink("testbeds/"),retrievedObject.access_token,null,callback);
+			ajaxFunction("GET",makeLink("platforms/"),retrievedObject.access_token,null,callback);
+
+			function callback(uri,data)
+			{
+				switch(uri)
+				{
+					case (apiuri+"me")			:localStorage.setItem("cotefeMe",data);break;
+					case (apiuri+"testbeds/")	:localStorage.setItem("cotefeTestbeds",data);break;
+					case (apiuri+"platforms/")	:localStorage.setItem("cotefePlatforms",data);break;
+				}
+				var res=document.getElementById("result");
+				res.innerHTML+=data;
+				
+			}
+			getProjectList();
+		</script>
+		<p id="result"></p>
+		<a href="../dashboard" >Goto DashBoard</a>
+	</body>
+	
+</html>

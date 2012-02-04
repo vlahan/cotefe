@@ -1,0 +1,9 @@
+/*
+ * configuration file
+ */
+
+(
+    var cotefe={
+        
+    }
+)
