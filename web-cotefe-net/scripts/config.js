@@ -2,7 +2,7 @@
  * configuration file
  */
  var cotefe = {
-        mainUri             : "http://web.cotefe.net",
+        mainUri             : "http://localhost:8080",
         apiUri              : "http://api.cotefe.net",
         version             : 1.0,
         projects            : "projects/",
@@ -12,7 +12,7 @@
         testbeds            : "testbeds/",
         oauth               : "http://api.cotefe.net/oauth2/auth?client_id=4e0e8af627594856a726b81c5c9f68f2&redirect",
         me                  : "me",
-        redirect            : "http://web.cotefe.net/htmls/getdata.html&response_type=token",
+        redirect            : "http://localhost:8080/htmls/getdata.html&response_type=token",
         dashboard           : "/dashboard",        
         comment             : "JS configuration ",
         localUser           : "_cotefeUser",
