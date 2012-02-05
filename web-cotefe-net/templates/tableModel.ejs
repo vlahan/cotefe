@@ -1,0 +1,32 @@
+<table class="shadow-dark">
+	<tr>
+	<% for(i=0; i<headings.length; i++) {%>
+			<th><%= headings[i] %></th>
+	<% } %>
+	</tr>
+	<% if(objects.length>0)
+		{
+				if(len===0)
+				{
+					len=objects.length;
+				}
+				else
+				{
+					len=(objects.length>len?len:objects.length);
+				}
+				
+				for(i=0; i<len; i++) {%>
+					<tr>
+						<td><%= objects[i].name %></td>
+						<td><%= objects[i].datetime_created %></td>
+						<td>Edit</td>
+						<td>Delete</td>
+					</tr>
+			<% }
+		}
+		else
+		{
+			%><tr><td>You have No Items Yet in the list</td></tr> <%
+		}
+	 %>    
+</table>

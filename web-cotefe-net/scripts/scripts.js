@@ -16,8 +16,8 @@ function init()
 	/*
 	 * set current user name
 	 */
-	if(currentUser()!=null)
-		$("#currentUser").html(currentUser());
+	//if(currentUser()!=null)
+		//$("#currentUser").html(currentUser());
 	
 	/*
 	 * left menu events
@@ -137,20 +137,7 @@ function leftMenuActionHandler(selector)
 }
 
 
-function initDashBoard()
-{
-	ajaxFunction("GET","../htmls/dashboard_tpl.html",null,null,function(uri,data){$("#content").empty().append(data);dispProject(5,0);addEvent();}); 
-}
 
-function listProject()
-{
-	ajaxFunction("GET","../htmls/projectList_tpl.html",null,null,function(uri,data){$("#content").empty().append(data);dispProject(0,1);addEvent();}); 
-}
-
-function addProject()
-{
-	ajaxFunction("GET","../htmls/projectsNew_tpl.html",null,null,function(uri,data){$("#content").empty().append(data);addEvent();submitEventonLoad();}); 
-}
 
 function addEvent()
 {
@@ -168,7 +155,7 @@ function updateProject(val)
 		$('input[name=uri]').val(obj.uri);
 		$('input[name=name]').val(obj.name);
 		$('textarea[name=description]').val(obj.description);
-		submitEventonLoad();
+		//submitEventonLoad();
 	}); 
 }
 

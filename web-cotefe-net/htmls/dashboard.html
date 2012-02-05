@@ -3,9 +3,7 @@
 	<head>
 		<title>COTEFE</title>
 		<link href="../css/stylesheet.css" rel="stylesheet" type="text/css" media="screen">
-		<script type="text/javascript" src="../scripts/jquery-1.6.2.min.js"></script>
-		<script type="text/javascript" src="../scripts/cotefescripts.js"></script>
-		<script type="text/javascript" src="../scripts/scripts.js"></script>
+
 		
 		
 	</head>
@@ -22,7 +20,7 @@
 						<a href="/html5/"><span>Documents</span></a> |
 						<a href="/css/"><span>Contact</span></a> |
 						<a href="/css3/"><span>Help</span></a> |
-						<a href="#" class="current-link" onclick="signOut()"><span>Sign Out</span></a>
+						<a href="#" class="current-link" id="signout"><span>Sign Out</span></a>
 					</nav>
 					
 					
@@ -30,8 +28,8 @@
 				
 		</div>
 		<div class="top-nav" >
-				<div class="top-border">
-					<div><h3>Hello, <span id="currentUser"></span> Welcome to COTEFE</h3></div>				
+				<div class="top-border" id="userWelcomeText">
+					
 				</div>
 		</div>
 		
@@ -103,6 +101,9 @@
 		<div class="float-clear" style="margin-bottom:20px;display:block;">
 			<p style="text-align:center;">COTEFE Community</p>
 		</div>
-		
+		<script type="text/javascript" src="../scripts/config.js"></script>
+		<script type="text/javascript" src="../scripts/ejs.js"></script>
+		<script type="text/javascript" src="../scripts/jquery-1.6.2.min.js"></script>		
+		<script type="text/javascript" src="../scripts/webScript.js"></script>
 	</body>
 </html>

@@ -10,27 +10,32 @@
         jobs                : "jobs/",
         platforms           : "platforms/",
         testbeds            : "testbeds/",
-        oauth               : ("http://api.cotefe.net/oauth2/auth?client_id=4e0e8af627594856a726b81c5c9f68f2&redirect"),
+        oauth               : "http://api.cotefe.net/oauth2/auth?client_id=4e0e8af627594856a726b81c5c9f68f2&redirect",
         me                  : "me",
-        redirect            : "http://localhost:8080/htmls/getdata.html&response_type=token",        
+        redirect            : "http://localhost:8080/htmls/getdata.html&response_type=token",
+        dashboard           : "/dashboard",        
         comment             : "JS configuration ",
         localUser           : "_cotefeUser",
-        localUserProject    : "_coetfeProject",
+        localUserProject    : "_cotefeProject",
         localUserExperiment : "_cotefeExperiments",
         localUserJobs       : "_cotefeJobs",
         localUserPlatform   : "_cotefePlatforms",
         localUserTestBeds   : "_cotefeTestBeds",        
         link                : function(path){return this.apiUri+"/"+path+"";},
+        link2               : function(path,token){return (path+"?access_token="+token);},
         linkTok             : function(path,token){return (this.link(path)+"?access_token="+token);},
         log                 : function(value){console.log(value);},
-        token               :"",
+        token               : "",
+        signOut             : function(){cotefe.session.clearAll();window.location.href=this.mainUri;},
+        debug               : false,
     };
 
 
 /*
  * ajax events and response handlers
  */
-cotefe.newRequest =function()
+
+cotefe.newRequest               = function()
 {
     var factories = [function() { return new ActiveXObject("Msxml2.XMLHTTP"); },function() { return new XMLHttpRequest(); },function() { return new ActiveXObject("Microsoft.XMLHTTP"); }];
         for(var i = 0; i < factories.length; i++) {
@@ -41,28 +46,36 @@ cotefe.newRequest =function()
             catch(e) { continue;}
         }
 }
-cotefe.ajax_request = function(params){
+cotefe.ajaxCounter              = {counter:0,up:function(){this.counter++;},down:function(){this.counter--;},getCount:function(){return this.counter;}}
+cotefe.ajax_request             = function(params){
         params.method = ( params.method ? params.method : 'GET');
         params.payload= ( params.payload ? params.payload: null);
         var request = new cotefe.newRequest();
+        cotefe.ajaxCounter.up(); //increase coming connection number
         request.onreadystatechange = function(){
             if(request.readyState == 4){
+                cotefe.ajaxCounter.down();//decrease connection number
                 if(request.status == 200){
                     params.onComplete(request)
                 }else
                 {
                     params.onComplete(request)
                 }
+                
+            }
+            else
+            {
+                
             }
         }
         request.open(params.method, params.url);
         request.send(params.payload);
     }
-cotefe.getAjaxResponse = function(params)
+cotefe.getAjaxResponse          = function(params)
 {
     return params.responseText;
 }
-cotefe.getAjaxStatus = function(params)
+cotefe.getAjaxStatus            = function(params)
 {
     return params.status;
 }
@@ -70,8 +83,8 @@ cotefe.getAjaxStatus = function(params)
 /*
  * session storage handler
  */
-cotefe.session=function(){};
-cotefe.session.create=function(){
+cotefe.session                  = {};
+cotefe.session.create           = function(){
     
     if(sessionStorage.setItem(cotefe.localUser,"") === null)
     {
@@ -87,7 +100,7 @@ cotefe.session.create=function(){
         return true;
     }
 }
-cotefe.session.write=function(key,value)
+cotefe.session.write            = function(key,value)
     {
         if(sessionStorage.setItem(key,value))
         {
@@ -98,9 +111,34 @@ cotefe.session.write=function(key,value)
             return false;
         }
     }
-
-
-
+cotefe.session.clearAll         = function(){
+                                    sessionStorage.removeItem(cotefe.localUser);
+                                    sessionStorage.removeItem(cotefe.localUserProject);
+                                    sessionStorage.removeItem(cotefe.localUserExperiment);
+                                    sessionStorage.removeItem(cotefe.localUserJobs);
+                                    sessionStorage.removeItem(cotefe.localUserPlatform);
+                                    sessionStorage.removeItem(cotefe.localUserTestBeds);
+                                  },
+/*
+ * get,post,put,delete
+ */
+cotefe.method                   = {};
+cotefe.method.binder            = function(data){
+                                      this.status=cotefe.getAjaxStatus(data);
+                                      this.data=cotefe.getAjaxResponse(data); 
+                                      };
+cotefe.method.getResource       = function(token,type,success){
+                        return {method:"GET",url:(cotefe.linkTok(type,token)),onComplete:function(result){success(token,type,new cotefe.method.binder(result))}};                                     
+                  };
+cotefe.method.postResource      = function(token,type,success){
+                        return {method:"POST",url:(cotefe.linkTok(type,token)),onComplete:function(result){success(token,type,new cotefe.method.binder(result))}};                                     
+                  };
+cotefe.method.putResource       = function(token,type,success){
+                        return {method:"PUT",url:(cotefe.linkTok(type,token)),onComplete:function(result){success(token,type,new cotefe.method.binder(result))}};                                     
+                  };
+cotefe.method.deleteResource    = function(token,type,success){
+                        return {method:"DELETE",url:(cotefe.linkTok(type,token)),onComplete:function(result){success(token,type,new cotefe.method.binder(result))}};                                     
+                  };
 
 /*
  * on first load get all data and save to session
@@ -112,30 +150,39 @@ cotefe.session.write=function(key,value)
  * 7. once done send user to his dash-board
  */
 
-cotefe.application={};
-cotefe.application.generator={token:cotefe.token};
+cotefe.application             = {};
 /*
  * 1 getting user me
  */
-cotefe.application.getUserInfo=function(token,type)
+cotefe.application.getUserInfo = function(token,type,success)
                                 {
-                                      return {method:"GET",url:(cotefe.linkTok(type,token)),onComplete:function(result){cotefe.application.onMeDone(token,type,result)}};                                       
+                                        return cotefe.method.getResource(token,type,success);
                                 };
 /*
- * 2 set user in storage
+ * 2 set user in storage and call rest of resources
  */
-cotefe.application.onMeDone=function(token,type,data)
+cotefe.application.onMeDone    = function(token,type,data)
                             {                               
-                                if(cotefe.getAjaxStatus(data) == 200)
+                                
+                                if(data.status === 200)
                                 {
-                                    var obj=JSON.parse(cotefe.getAjaxResponse(data));
-                                    cotefe.log(obj);
-                                    obj.session=access_token;
-                                    var jsonA=JSON.stringify(obj);
-                                    if(cotefe.session.create())
+                                    var obj=JSON.parse(data.data);
+                                    obj.session=access_token; //add session attribute
+                                    var jsonA=JSON.stringify(obj); 
+                                    if(cotefe.session.create()) //create empty session variables
                                     {
                                         cotefe.session.write(cotefe.localUser,jsonA);
-                                        cotefe.log("User Written");                                                                            
+                                        cotefe.log("User Written");
+                                        //get projects
+                                        cotefe.ajax_request(cotefe.application.getUserInfo(token,cotefe.projects,cotefe.application.onMeRestDone));
+                                        //get experiments
+                                        //cotefe.ajax_request(cotefe.application.getUserInfo(token,cotefe.experiments,cotefe.application.onMeRestDone));
+                                        //get jobs
+                                        //cotefe.ajax_request(cotefe.application.getUserInfo(token,cotefe.jobs,cotefe.application.onMeRestDone));
+                                        //get platforms
+                                        cotefe.ajax_request(cotefe.application.getUserInfo(token,cotefe.platforms,cotefe.application.onMeRestDone));   
+                                        //get test-beds
+                                        cotefe.ajax_request(cotefe.application.getUserInfo(token,cotefe.testbeds,cotefe.application.onMeRestDone));                                                                         
                                     }
                                     else
                                     {
@@ -148,8 +195,72 @@ cotefe.application.onMeDone=function(token,type,data)
                                     document.location.href=cotefe.mainUri;
                                 }                                
                             };           
+/*
+ * rest of resource saved in session 
+ * checks connection left, once connection are 0 tell user to change page : dash-board
+ */
+cotefe.application.onMeRestDone= function(token,type,data)
+                                {
+                                    
+                                    switch(type)
+                                    {
+                                        case cotefe.platforms   :cotefe.session.write(cotefe.localUserPlatform,data.data);cotefe.application.onAllDone();break; 
+                                        case cotefe.projects    :   cotefe.application.list({token:token,json:data.data,sessionId:cotefe.localUserProject});
+                                                                    break;
+                                        case cotefe.experiments :console.log(data.data);break;
+                                        case cotefe.jobs        :console.log(data.data);break;
+                                        case cotefe.testbeds    :cotefe.session.write(cotefe.localUserTestBeds,data.data);cotefe.application.onAllDone();break;
+                                    }
+                                    
+                                }               
 
 /*
- * 3 get project called 
+ * check number of connection and redirect
  */
-                
+cotefe.application.onAllDone   = function()
+                                 {
+                                     if(cotefe.ajaxCounter.getCount()===0)
+                                     {
+                                         window.location.href=cotefe.dashboard;
+                                     }
+                                 }
+
+/*
+ * get user info as object
+ */
+cotefe.application.user        = JSON.parse(sessionStorage.getItem(cotefe.localUser));
+
+/*
+ * j-son to object array
+ * 
+ */
+cotefe.application.dumbObj=[];
+//creates list of inner object and saves in given session Variable
+cotefe.application.list        = function(params)
+                                    {
+                                      cotefe.application.dumbObj=[];
+                                      objLi=JSON.parse(params.json);
+                                      if(objLi === null || objLi.length === 0)
+                                      {
+                                          return null;
+                                      }
+                                      else
+                                      {
+                                          
+                                          for(i=0;i<objLi.length;i++)
+                                          {
+                                              cotefe.ajax_request({method:"GET",url:(objLi[0].uri+"?access_token="+params.token),onComplete:function(data){
+                                                                                                                                            cotefe.application.addToDumbArray(data);
+                                                                                                                                            cotefe.session.write(params.sessionId,JSON.stringify(cotefe.application.dumbObj));
+                                                                                                                                            cotefe.application.onAllDone();
+
+                                                                                                                                            }});
+                                          }
+                                      }  
+                                      
+                                    };
+cotefe.application.addToDumbArray=function(val)
+{
+    data=cotefe.getAjaxResponse(val);
+    cotefe.application.dumbObj.push(data);
+}
