@@ -2,7 +2,7 @@
  * configuration file
  */
  var cotefe = {
-        mainUri             : "http://localhost:8080",
+        mainUri             : "http://web.cotefe.net",
         apiUri              : "http://api.cotefe.net",
         version             : 1.0,
         projects            : "projects/",
@@ -12,7 +12,7 @@
         testbeds            : "testbeds/",
         oauth               : "http://api.cotefe.net/oauth2/auth?client_id=4e0e8af627594856a726b81c5c9f68f2&redirect",
         me                  : "me",
-        redirect            : "http://localhost:8080/htmls/getdata.html&response_type=token",
+        redirect            : "http://web.cotefe.net/htmls/getdata.html&response_type=token",
         dashboard           : "/dashboard",        
         comment             : "JS configuration ",
         localUser           : "_cotefeUser",
@@ -31,6 +31,7 @@
     };
 
 
+ 
 /*
  * ajax events and response handlers
  */
@@ -49,6 +50,7 @@ cotefe.newRequest               = function()
 cotefe.ajaxCounter              = {counter:0,up:function(){this.counter++;},down:function(){this.counter--;},getCount:function(){return this.counter;}}
 cotefe.ajax_request             = function(params){
         params.method = ( params.method ? params.method : 'GET');
+        
         params.payload= ( params.payload ? params.payload: null);
         var request = new cotefe.newRequest();
         cotefe.ajaxCounter.up(); //increase coming connection number
@@ -132,7 +134,31 @@ cotefe.session.FindItemByUri    = function(type,uri){
                                         }
                                         return null;
                                     };
-/*
+cotefe.session.writeResource	= function(data)
+									{
+										
+										
+										if((data.url===cotefe.projects || 
+											data.url===cotefe.experiments ||
+											data.url===cotefe.jobs
+											) && (data.method==="POST"))
+										{
+											
+											/*
+											 * post new resource and update session
+											 */
+											var params=cotefe.method.postResource((cotefe.application.user).session,data.url,cotefe.application.updateSuccess);
+											
+											cotefe.ajax_request(params);
+										}
+										else
+										{
+											cotefe.log("here !!");
+										}
+										
+										
+									}
+                                    /*
  * get,post,put,delete
  */
 cotefe.method                   = {};
@@ -277,4 +303,18 @@ cotefe.application.addToDumbArray = function(val)
 {
     data=cotefe.getAjaxResponse(val);
     cotefe.application.dumbObj.push(data);
+}
+
+/*
+ * add to server and to current session
+ */
+cotefe.application.update		= function(params)
+								 {
+									
+									cotefe.session.writeResource(params);
+								 }
+
+cotefe.application.updateSuccess     = function(token,type,data)
+{
+	cotefe.log(data);
 }

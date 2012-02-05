@@ -90,7 +90,6 @@ function tabsEvent()
     });
 }
 
-
 /*
  * user info
  */
@@ -108,7 +107,7 @@ function capitalize (text) {
 
 function initDashboard()
 {
-            numberOfItems=5;
+            rows=5
             /*
              * image menu
              */
@@ -129,7 +128,7 @@ function initDashboard()
                     headings:['Project Name','Date','Edit','Delete'],
                     objects :cotefe.application.dumbObj,
                     type:cotefe.localUserProject,
-                    len:numberOfItems
+                    row:rows
                  };
             table= new EJS({url: '../templates/tableModel.ejs'}).render(data);
             
@@ -155,6 +154,19 @@ function dashboardEvents()
     tabsEvent();
     editDelEvent();
     picEvent();
+    addNewItemImgEvent();
+}
+function addNewItemImgEvent()
+{
+	$(".newIm").bind("click",function(event){var element=$(this).attr("href");
+			switch(element)
+			{
+			 case "projects"     : addProject(null); break;
+		     case "experiments"  : break;
+		     case "jobs"         : break;
+		     case "images"       : break;
+			}
+	});
 }
 function picEvent()
 {
@@ -162,7 +174,7 @@ function picEvent()
         var typ=$(this).attr("href");
         switch(typ)
         {
-            case "projects"     :addProject(null); break;
+            case "projects"     : addProject(null); break;
             case "experiments"  : break;
             case "jobs"         : break;
             case "images"       : break;
@@ -188,14 +200,16 @@ function addProject(val)
 {
     if(val!=null)
     {
-        data={uri:val.uri,type:"update",name:val.name,description:val.description};
+        data={uri:val.uri,type:"PUT",sessionvar:cotefe.localUserProject,name:val.name,description:val.description};
     }
     else
-    {data={ uri:"",type:"new",name:"",description:""}; }
+    {data={ uri:cotefe.projects,type:"POST",sessionvar:cotefe.localUserProject,name:"",description:""}; }
     
     completepage = new EJS({url: '../templates/projectNew.ejs'}).render(data);
     var navi=document.getElementById("content");
     navi.innerHTML=completepage;
+    submitEventHandler();
+    
 }
 function getItemFromStore(type,uri){
         switch(type)
@@ -207,16 +221,18 @@ function displayProjectList()
          {
             cotefe.application.dumbObj=[];
             var arr=JSON.parse(sessionStorage.getItem(cotefe.localUserProject));
+           
             for(i=0;i<arr.length;i++)
             {
                 obj=JSON.parse(arr[i]);
                 cotefe.application.dumbObj.push(obj)
             };
+            row=arr.length;
             data={
                     headings:['Project Name','Date','Edit','Delete'],
                     objects :cotefe.application.dumbObj,
                     type:cotefe.localUserProject,
-                    len:arr.length
+                    row:row
                  };
             table= new EJS({url: '../templates/tableModel.ejs'}).render(data);
             
@@ -226,3 +242,42 @@ function displayProjectList()
             navi.innerHTML=projlist;
             $(document).bind("load",dashboardEvents());      
          }
+
+function submitEventHandler(form)
+{
+	$("input[type=submit]").bind("click",function()
+			{	
+				var link="";
+				cotefe.application.dumbObj=[];
+				
+		 		$(":input").each(
+		 			function(){
+		 				if($(this).attr("name")=="uri" 	||
+		 				 $(this).attr("name")=="submit" ||
+		 				 $(this).attr("name")=="type"	||
+		 				 $(this).attr("name")=="session")
+		 				{
+		
+		 				}
+		 				else
+		 				{     				
+		 					var key=$(this).attr("name");var value=$(this).val();
+		 					
+		 					cotefe.application.dumbObj.push(('"'+key+'":"'+value+'"'));
+						}
+		 			});
+		 			payload=("{"+cotefe.application.dumbObj.join(",")+"}");
+		 			
+		 			sendForResourceModify($("input[name=uri]").val(),$("input[name=type]").val(),$("input[name=session]").val(),payload);	
+		 		
+			});
+}
+
+/*
+ * sends to update localData and server
+ */
+function sendForResourceModify(url,type,session,json)
+{
+	var bundle={url:url,method:type,session:session,payload:json};
+	cotefe.application.update(bundle);
+}
