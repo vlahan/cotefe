@@ -7,7 +7,6 @@ jQuery(document).ready(function(){
 
 function init(){
         initSignOut();//add sign off event
-        
         leftMenu();//initialize left-menu
         tabsEvent();//initialize tabs
         disableanchors();//disable all anchors to follow
@@ -50,13 +49,13 @@ function leftMenuActionHandler(selector)
     switch(selector)
     {
         case "dashboard"    :break;
-        case "homescreen"   :initDashBoard();break;
+        case "homescreen"   :initDashboard();break;
         case "myaccount"    :break;
         case "settings"     :break;
         case "signout"      :signOut();break;
         case "projects"     :break;
         case "addP"         :addProject(null);break;
-        case "listP"        :listProject();break;
+        case "listP"        :displayProjectList();break;
         case "experiments"  :break;
         case "addE"         :break;
         case "listeE"       :break;
@@ -123,12 +122,13 @@ function initDashboard()
             var arr=JSON.parse(sessionStorage.getItem(cotefe.localUserProject));
             for(i=0;i<arr.length;i++)
             {
-                obj=JSON.parse(arr[0]);
+                obj=JSON.parse(arr[i]);
                 cotefe.application.dumbObj.push(obj)
             };
             data={
                     headings:['Project Name','Date','Edit','Delete'],
                     objects :cotefe.application.dumbObj,
+                    type:cotefe.localUserProject,
                     len:numberOfItems
                  };
             table= new EJS({url: '../templates/tableModel.ejs'}).render(data);
@@ -147,6 +147,82 @@ function initDashboard()
             /*
              * render images
              */
-            $(document).on("load",tabsEvent());
+            $(document).bind("load",dashboardEvents());
                  
+};
+function dashboardEvents()
+{
+    tabsEvent();
+    editDelEvent();
+    picEvent();
 }
+function picEvent()
+{
+    $("#pic-button a").bind("click",function(event){
+        var typ=$(this).attr("href");
+        switch(typ)
+        {
+            case "projects"     :addProject(null); break;
+            case "experiments"  : break;
+            case "jobs"         : break;
+            case "images"       : break;
+        }
+        
+    });
+}
+function editDelEvent()
+{
+    $(".edit,.delete").bind("click",function(event)
+                                        {
+                                            var href=$(this).attr("href");
+                                            var classr=$(this).attr("class");
+                                            var type=$(this).attr("title");
+                                            switch(classr)
+                                            {
+                                                case "edit"     : addProject(getItemFromStore(type,href));break;
+                                                case "delete"   : break;
+                                            }
+                                        });
+}
+function addProject(val)
+{
+    if(val!=null)
+    {
+        data={uri:val.uri,type:"update",name:val.name,description:val.description};
+    }
+    else
+    {data={ uri:"",type:"new",name:"",description:""}; }
+    
+    completepage = new EJS({url: '../templates/projectNew.ejs'}).render(data);
+    var navi=document.getElementById("content");
+    navi.innerHTML=completepage;
+}
+function getItemFromStore(type,uri){
+        switch(type)
+        {
+            case cotefe.localUserProject:return cotefe.session.FindItemByUri(type,uri);break;
+        }
+};
+function displayProjectList()
+         {
+            cotefe.application.dumbObj=[];
+            var arr=JSON.parse(sessionStorage.getItem(cotefe.localUserProject));
+            for(i=0;i<arr.length;i++)
+            {
+                obj=JSON.parse(arr[i]);
+                cotefe.application.dumbObj.push(obj)
+            };
+            data={
+                    headings:['Project Name','Date','Edit','Delete'],
+                    objects :cotefe.application.dumbObj,
+                    type:cotefe.localUserProject,
+                    len:arr.length
+                 };
+            table= new EJS({url: '../templates/tableModel.ejs'}).render(data);
+            
+            data={tablecontent:table};
+            projlist= new EJS({url: '../templates/projectList.ejs'}).render(data);
+            var navi=document.getElementById("content");
+            navi.innerHTML=projlist;
+            $(document).bind("load",dashboardEvents());      
+         }

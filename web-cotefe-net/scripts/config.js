@@ -119,6 +119,19 @@ cotefe.session.clearAll         = function(){
                                     sessionStorage.removeItem(cotefe.localUserPlatform);
                                     sessionStorage.removeItem(cotefe.localUserTestBeds);
                                   },
+cotefe.session.FindItemByUri    = function(type,uri){
+                                        var obj=JSON.parse(sessionStorage.getItem(type));
+                                        for(i=0;i<obj.length;i++)
+                                        {
+                                            singleObj=JSON.parse(obj[i]);
+                                            if(singleObj.uri===uri)
+                                            {
+                                                return singleObj;
+                                            }
+                                         
+                                        }
+                                        return null;
+                                    };
 /*
  * get,post,put,delete
  */
@@ -150,18 +163,18 @@ cotefe.method.deleteResource    = function(token,type,success){
  * 7. once done send user to his dash-board
  */
 
-cotefe.application             = {};
+cotefe.application              = {};
 /*
  * 1 getting user me
  */
-cotefe.application.getUserInfo = function(token,type,success)
+cotefe.application.getUserInfo  = function(token,type,success)
                                 {
                                         return cotefe.method.getResource(token,type,success);
                                 };
 /*
  * 2 set user in storage and call rest of resources
  */
-cotefe.application.onMeDone    = function(token,type,data)
+cotefe.application.onMeDone     = function(token,type,data)
                             {                               
                                 
                                 if(data.status === 200)
@@ -199,7 +212,7 @@ cotefe.application.onMeDone    = function(token,type,data)
  * rest of resource saved in session 
  * checks connection left, once connection are 0 tell user to change page : dash-board
  */
-cotefe.application.onMeRestDone= function(token,type,data)
+cotefe.application.onMeRestDone = function(token,type,data)
                                 {
                                     
                                     switch(type)
@@ -217,7 +230,7 @@ cotefe.application.onMeRestDone= function(token,type,data)
 /*
  * check number of connection and redirect
  */
-cotefe.application.onAllDone   = function()
+cotefe.application.onAllDone    = function()
                                  {
                                      if(cotefe.ajaxCounter.getCount()===0)
                                      {
@@ -228,15 +241,15 @@ cotefe.application.onAllDone   = function()
 /*
  * get user info as object
  */
-cotefe.application.user        = JSON.parse(sessionStorage.getItem(cotefe.localUser));
+cotefe.application.user         = JSON.parse(sessionStorage.getItem(cotefe.localUser));
 
 /*
  * j-son to object array
  * 
  */
-cotefe.application.dumbObj=[];
+cotefe.application.dumbObj      = [];
 //creates list of inner object and saves in given session Variable
-cotefe.application.list        = function(params)
+cotefe.application.list         = function(params)
                                     {
                                       cotefe.application.dumbObj=[];
                                       objLi=JSON.parse(params.json);
@@ -249,7 +262,8 @@ cotefe.application.list        = function(params)
                                           
                                           for(i=0;i<objLi.length;i++)
                                           {
-                                              cotefe.ajax_request({method:"GET",url:(objLi[0].uri+"?access_token="+params.token),onComplete:function(data){
+                                              
+                                              cotefe.ajax_request({method:"GET",url:(objLi[i].uri+"?access_token="+params.token),onComplete:function(data){
                                                                                                                                             cotefe.application.addToDumbArray(data);
                                                                                                                                             cotefe.session.write(params.sessionId,JSON.stringify(cotefe.application.dumbObj));
                                                                                                                                             cotefe.application.onAllDone();
@@ -259,7 +273,7 @@ cotefe.application.list        = function(params)
                                       }  
                                       
                                     };
-cotefe.application.addToDumbArray=function(val)
+cotefe.application.addToDumbArray = function(val)
 {
     data=cotefe.getAjaxResponse(val);
     cotefe.application.dumbObj.push(data);

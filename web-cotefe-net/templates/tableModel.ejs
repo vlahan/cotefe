@@ -6,21 +6,15 @@
 	</tr>
 	<% if(objects.length>0)
 		{
-				if(len===0)
-				{
-					len=objects.length;
-				}
-				else
-				{
-					len=(objects.length>len?len:objects.length);
-				}
+				len=(objects.length>numberOfItems?numberOfItems:objects.length);
+				
 				
 				for(i=0; i<len; i++) {%>
 					<tr>
 						<td><%= objects[i].name %></td>
 						<td><%= objects[i].datetime_created %></td>
-						<td>Edit</td>
-						<td>Delete</td>
+						<td><a href="<%= objects[i].uri %>" class="edit" title="<%= type %>" >Edit</a></td>
+						<td><a href="<%= objects[i].uri %>" class="delete" title="<%= type %>" >Delete</a></td>
 					</tr>
 			<% }
 		}
