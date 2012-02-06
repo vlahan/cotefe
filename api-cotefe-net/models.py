@@ -7,7 +7,14 @@ from google.appengine.ext.db import polymodel
 import config
 from utils import build_url, convert_datetime_to_string
 
-class User(db.Model):
+# class Resource(polymodel.PolyModel):
+class Resource(db.Model):
+    pass
+
+class Relationship(db.Model):
+    pass
+
+class User(Resource):
     username = db.StringProperty()
     # password = db.StringProperty()
     first = db.StringProperty()
@@ -63,9 +70,6 @@ class OAuth2Session(db.Model):
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
-    
-class Resource(polymodel.PolyModel):
-    pass
 
 class Federation(Resource):
     name = db.StringProperty()
@@ -97,6 +101,10 @@ class Testbed(Resource):
     
     organization = db.StringProperty()
     server_url = db.LinkProperty()
+    node_count = db.IntegerProperty()
+    background_image = db.LinkProperty()
+    coordinates_mapping_function_x = db.StringProperty()
+    coordinates_mapping_function_x = db.StringProperty()
     
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
@@ -126,8 +134,7 @@ class Testbed(Resource):
 class Project(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
-    owner = db.ReferenceProperty(User)
-    members = db.ListProperty(db.Key)
+    owner = db.ReferenceProperty(User, collection_name='projects')
 
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
@@ -150,13 +157,17 @@ class Project(Resource):
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
+    
+class ProjectMembership():
+    member = db.ReferenceProperty(User, collection_name='projects')
+    project = db.ReferenceProperty(User, collection_name='members')
         
 class Experiment(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
-    project = db.ReferenceProperty(Project)
-    owner = db.ReferenceProperty(User)
-
+    owner = db.ReferenceProperty(User, collection_name='experiments')
+    project = db.ReferenceProperty(Project, collection_name='experiments')
+    
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
 

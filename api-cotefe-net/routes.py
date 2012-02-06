@@ -45,6 +45,9 @@ routes = [
     (r'^/projects/$', ProjectCollectionHandler),
     (r'^/projects/(\w*)$', ProjectResourceHandler),
     
+    (r'^/experiments/$', ExperimentCollectionHandler),
+    (r'^/experiments/(\w*)$', ExperimentResourceHandler),
+    
     
     # ('/tasks/', TasksHandler),
     # ('/tasks/456', TaskHandler),

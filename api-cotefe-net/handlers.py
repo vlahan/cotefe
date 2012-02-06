@@ -26,10 +26,10 @@ class DatastoreInitialization(webapp2.RequestHandler):
     def get(self):
         
         # cleaning the datastore
-        for user in User.all(): user.delete()   
-        for identity in OpenIDIdentity.all(): identity.delete()  
-        for application in Application.all(): application.delete()
-        for session in OAuth2Session.all(): session.delete()
+        # for user in User.all(): user.delete()   
+        # for identity in OpenIDIdentity.all(): identity.delete()  
+        # for application in Application.all(): application.delete()
+        # for session in OAuth2Session.all(): session.delete()
         for federation in Federation.all(): federation.delete()
         for testbed in Testbed.all(): testbed.delete()
         for platform in Platform.all(): platform.delete()
@@ -145,11 +145,11 @@ class OpenIDLogin(BaseHandler):
     def get(self):
         
         if self.session.get('username'):
-            self.redirect(str(self.request.get('next')) or '/account')
+            self.redirect(str(urllib.unquote(self.request.get('next'))) or '/account')
         else:
             context = {
                 'server_url': config.FEDERATION_SERVER_URL,
-                'next': urllib.quote(self.request.get('next'), '') or '/account',
+                'next': self.request.get('next') or '/account',
             }
             self.render_response('openid/login.html', **context)
            
@@ -298,7 +298,7 @@ class OAuth2Authorize(BaseHandler):
                 self.render_response('oauth2/auth.html', **context)              
         else:
             params = {
-                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
+                'next': urllib.quote('%s%s' % (config.FEDERATION_SERVER_URL, self.request.path_qs), ''),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -537,10 +537,11 @@ class Applications(BaseHandler):
                 
                 self.redirect(self.request.referer)
                 
-            elif self.request.get('submit') == 'Delete':
+            elif self.request.get('submit') == 'Remove':
                 
                 application_id = self.request.get('application_id')
                 Application.get_by_id(int(application_id)).delete()
+                
                 self.redirect(self.request.referer)
                 
         else:
@@ -717,7 +718,9 @@ class Projects(BaseHandler):
                     for experiment in Experiment.all().filter('project =', project):
                         experiment.delete()
                         
-                db.run_in_transaction(delete_project, project_id)
+                # db.run_in_transaction(delete_project, project_id)
+                
+                delete_project(project_id)
                 
                 self.redirect(self.request.referer)
 
