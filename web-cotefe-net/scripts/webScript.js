@@ -278,6 +278,7 @@ function submitEventHandler(form)
  */
 function sendForResourceModify(url,type,session,json)
 {
-	var bundle={url:url,method:type,session:session,payload:json};
+	obj=JSON.stringify(JSON.parse(json));
+	bundle={url:url,method:type,session:session,payload:obj};
 	cotefe.application.update(bundle);
 }

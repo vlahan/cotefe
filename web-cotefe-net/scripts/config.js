@@ -3,14 +3,14 @@
  */
  var cotefe = {
         mainUri             : "http://localhost:8080",
-        apiUri              : "http://api.cotefe.net",
+        apiUri              : "https://api.cotefe.net",
         version             : 1.0,
         projects            : "projects/",
         experiments         : "experiments/",
         jobs                : "jobs/",
         platforms           : "platforms/",
         testbeds            : "testbeds/",
-        oauth               : "http://api.cotefe.net/oauth2/auth?client_id=4e0e8af627594856a726b81c5c9f68f2&redirect",
+        oauth               : "https://api.cotefe.net/oauth2/auth?client_id=4e6b4b547b344429a52b4ce0d020f941",
         me                  : "me",
         redirect            : "http://localhost:8080/htmls/getdata.html&response_type=token",
         dashboard           : "/dashboard",        
@@ -49,6 +49,7 @@ cotefe.newRequest               = function()
 }
 cotefe.ajaxCounter              = {counter:0,up:function(){this.counter++;},down:function(){this.counter--;},getCount:function(){return this.counter;}}
 cotefe.ajax_request             = function(params){
+        
         params.method = ( params.method ? params.method : 'GET');
         
         params.payload= ( params.payload ? params.payload: null);
@@ -70,7 +71,7 @@ cotefe.ajax_request             = function(params){
                 
             }
         }
-        request.open(params.method, params.url);
+        request.open(params.method , params.url);
         request.send(params.payload);
     }
 cotefe.getAjaxResponse          = function(params)
@@ -142,12 +143,11 @@ cotefe.session.writeResource	= function(data)
 											data.url===cotefe.experiments ||
 											data.url===cotefe.jobs
 											) && (data.method==="POST"))
-										{
-											
+										{											
 											/*
 											 * post new resource and update session
 											 */
-											var params=cotefe.method.postResource((cotefe.application.user).session,data.url,cotefe.application.updateSuccess);
+											var params=cotefe.method.postResource((cotefe.application.user).session,data.url,data.payload,cotefe.application.updateSuccess);
 											
 											cotefe.ajax_request(params);
 										}
@@ -169,11 +169,11 @@ cotefe.method.binder            = function(data){
 cotefe.method.getResource       = function(token,type,success){
                         return {method:"GET",url:(cotefe.linkTok(type,token)),onComplete:function(result){success(token,type,new cotefe.method.binder(result))}};                                     
                   };
-cotefe.method.postResource      = function(token,type,success){
-                        return {method:"POST",url:(cotefe.linkTok(type,token)),onComplete:function(result){success(token,type,new cotefe.method.binder(result))}};                                     
+cotefe.method.postResource      = function(token,type,payloads,success){
+                        return {method:"POST",url:(cotefe.linkTok(type,token)),payload:payloads,onComplete:function(result){success(token,type,new cotefe.method.binder(result))}};                                     
                   };
-cotefe.method.putResource       = function(token,type,success){
-                        return {method:"PUT",url:(cotefe.linkTok(type,token)),onComplete:function(result){success(token,type,new cotefe.method.binder(result))}};                                     
+cotefe.method.putResource       = function(token,type,payloads,success){
+                        return {method:"PUT",url:(cotefe.linkTok(type,token)),payload:payloads,onComplete:function(result){success(token,type,new cotefe.method.binder(result))}};                                     
                   };
 cotefe.method.deleteResource    = function(token,type,success){
                         return {method:"DELETE",url:(cotefe.linkTok(type,token)),onComplete:function(result){success(token,type,new cotefe.method.binder(result))}};                                     
@@ -231,7 +231,7 @@ cotefe.application.onMeDone     = function(token,type,data)
                                 else
                                 {
                                     alert("There was some problem by Login.Please try again later!!"+cotefe.getAjaxStatus(data));
-                                    document.location.href=cotefe.mainUri;
+                                    //document.location.href=cotefe.mainUri;
                                 }                                
                             };           
 /*
@@ -310,11 +310,12 @@ cotefe.application.addToDumbArray = function(val)
  */
 cotefe.application.update		= function(params)
 								 {
-									
+									cotefe.log(params);
 									cotefe.session.writeResource(params);
 								 }
 
 cotefe.application.updateSuccess     = function(token,type,data)
 {
 	cotefe.log(data);
+	cotefe.log("Alarm");
 }
