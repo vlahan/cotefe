@@ -15,7 +15,7 @@ if DEBUG:
     TESTBED_SERVER_URL_1 = 'http://locahost:8001'
     TESTBED_SERVER_URL_2 = 'http://locahost:8002'
 else:
-    FEDERATION_SERVER_URL = 'http://api.cotefe.net'
+    FEDERATION_SERVER_URL = 'https://api.cotefe.net'
     TESTBED_SERVER_URL_1 = 'https://www.twist.tu-berlin.de:8001'
     TESTBED_SERVER_URL_2 = 'http://example.org'
 

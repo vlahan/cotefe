@@ -2,7 +2,7 @@ from handlers import *
 
 routes = [
 
-    # (r'^/init$', DatastoreInitialization),
+    (r'^/admin/init$', DatastoreInitialization),
     
     # (r'^/login$', Login),
     

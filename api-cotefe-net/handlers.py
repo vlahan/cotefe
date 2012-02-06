@@ -13,6 +13,7 @@ import os
 # jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 from google.appengine.api import urlfetch
+from google.appengine.ext import db
 
 import config
 from utils import serialize, encrypt, generate_hash
@@ -147,7 +148,7 @@ class OpenIDLogin(BaseHandler):
             self.redirect(str(self.request.get('next')) or '/account')
         else:
             context = {
-                'server_url' : self.request.host_url,
+                'server_url': config.FEDERATION_SERVER_URL,
                 'next': urllib.quote(self.request.get('next'), '') or '/account',
             }
             self.render_response('openid/login.html', **context)
@@ -247,7 +248,7 @@ class OpenIDConnect(BaseHandler):
             }
             self.render_response('openid/connect.html', **context)
         else:
-            self.redirect('/openid/login?next=%s' % urllib.quote(self.request.uri, ''))
+            self.redirect('/openid/login?next=%s' % urllib.quote('%s%s' % (config.FEDERATION_SERVER_URL, self.request.path), ''))
             
     def post(self):
         
@@ -265,7 +266,7 @@ class OpenIDConnect(BaseHandler):
             identity.put()
             self.redirect(str('%s' % (next, )))
         else:
-            self.redirect(str('/openid/login?next=%s' % urllib.quote(self.request.uri, '')))
+            self.redirect(str('/openid/login?next=%s' % urllib.quote('%s%s' % (config.FEDERATION_SERVER_URL, self.request.path), '')))
             
 class OAuth2Authorize(BaseHandler):
     def get(self):
@@ -297,7 +298,7 @@ class OAuth2Authorize(BaseHandler):
                 self.render_response('oauth2/auth.html', **context)              
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -351,7 +352,7 @@ class OAuth2Authorize(BaseHandler):
                 self.response.out.write(serialize(error))
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -390,7 +391,7 @@ class Account(BaseHandler):
             self.render_response('account.html', **context)
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -409,7 +410,7 @@ class Account(BaseHandler):
         
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -430,13 +431,13 @@ class Identities(BaseHandler):
                 'user': user,
                 'identities': identities,
                 'server_url' : self.request.host_url,
-                'next': urllib.quote(self.request.uri, ''),
+                'next': urllib.quote('%s%s' % (config.FEDERATION_SERVER_URL, self.request.path), ''),
             }
             self.render_response('identities.html', **context)
         
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -452,7 +453,7 @@ class Identities(BaseHandler):
         
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/login', urllib.urlencode(params)))
                         
@@ -472,7 +473,7 @@ class Sessions(BaseHandler):
             self.render_response('sessions.html', **context)
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -484,7 +485,7 @@ class Sessions(BaseHandler):
             self.redirect(self.request.referer)
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -507,7 +508,7 @@ class Applications(BaseHandler):
             self.render_response('applications.html', **context)
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
 
@@ -545,7 +546,7 @@ class Applications(BaseHandler):
         else:
             
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -593,7 +594,7 @@ class Users(BaseHandler):
         else:
             
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -608,7 +609,7 @@ class Users(BaseHandler):
         else:
             
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
         
@@ -631,7 +632,7 @@ class Testbeds(BaseHandler):
             self.render_response('explore/testbeds.html', **context)
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
 
@@ -654,7 +655,7 @@ class Platforms(BaseHandler):
             self.render_response('explore/platforms.html', **context)
         else:
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -679,7 +680,7 @@ class Projects(BaseHandler):
         else:
             
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
 
@@ -705,16 +706,25 @@ class Projects(BaseHandler):
                 self.redirect(self.request.referer)
 
             elif self.request.get('submit') == 'Delete':
-
+                
                 project_id = self.request.get('project_id')
-                Project.get_by_id(int(project_id)).delete()
+                
+                def delete_project(project_id):
+                    
+                    project = Project.get_by_id(int(project_id))
+                    project.delete()
+                    
+                    for experiment in Experiment.all().filter('project =', project):
+                        experiment.delete()
+                        
+                db.run_in_transaction(delete_project, project_id)
                 
                 self.redirect(self.request.referer)
 
         else:
 
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
             
@@ -741,7 +751,7 @@ class Experiments(BaseHandler):
         else:
 
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
 
@@ -779,7 +789,7 @@ class Experiments(BaseHandler):
         else:
 
             params = {
-                'next': self.request.uri,
+                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
             }
             self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
 
@@ -789,6 +799,17 @@ class OAuth2RESTJSONHandler(webapp2.RequestHandler):
     def add_headers(self):
         self.response.headers['Content-Type'] = '%s; charset=%s' % (config.CONTENT_TYPE, config.CHARSET)
         self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Cache-Control, Pragma, Referer, User-Agent'
+        self.response.headers['Access-Control-Allow-Credentials'] = 'True'
+        self.response.headers['Access-Control-Max-Age'] = '60'
+        
+    def options(self, allowed_methods):
+        self.add_headers()
+        
+        self.response.status = '204'
+        self.response.headers['Allow'] = ', '.join(allowed_methods)
+        
     
     def dispatch(self):
         
@@ -799,6 +820,7 @@ class OAuth2RESTJSONHandler(webapp2.RequestHandler):
             if len(oauth2session_list) > 0:
                 oauth2session = oauth2session_list[0]
                 self.user = oauth2session.user
+
                 webapp2.RequestHandler.dispatch(self)
             else:
                 error = {
@@ -817,15 +839,24 @@ class OAuth2RESTJSONHandler(webapp2.RequestHandler):
             
 # ME (current user)
 
-class MeHandler(OAuth2RESTJSONHandler):   
+class MeHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
 
     def get(self):
         
-        self.response.out.write(serialize(self.user.to_dict()))
+        self.response.out.write(serialize(self.user.to_dict()))        
+        
         
 # USER
             
 class UserCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
         
     def get(self):
         
@@ -836,6 +867,10 @@ class UserCollectionHandler(OAuth2RESTJSONHandler):
 
 class UserResourceHandler(OAuth2RESTJSONHandler):
     
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
     def get(self, user_id):
         
         user = User.get_by_id(int(user_id))
@@ -845,6 +880,10 @@ class UserResourceHandler(OAuth2RESTJSONHandler):
             
 class FederationResourceHandler(OAuth2RESTJSONHandler):
     
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
     def get(self):
             
         federation = Federation.all().get()
@@ -853,6 +892,10 @@ class FederationResourceHandler(OAuth2RESTJSONHandler):
 # TESTBED
             
 class TestbedCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
         
     def get(self):
         
@@ -863,6 +906,10 @@ class TestbedCollectionHandler(OAuth2RESTJSONHandler):
 
 class TestbedResourceHandler(OAuth2RESTJSONHandler):
     
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
     def get(self, testbed_id):
         
         testbed = Testbed.get_by_id(int(testbed_id))
@@ -871,6 +918,10 @@ class TestbedResourceHandler(OAuth2RESTJSONHandler):
 # PLATFORM
             
 class PlatformCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self):
         
@@ -881,6 +932,10 @@ class PlatformCollectionHandler(OAuth2RESTJSONHandler):
                 
 class PlatformResourceHandler(OAuth2RESTJSONHandler):
     
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
     def get(self, platform_id):
         
         platform = Platform.get_by_id(int(platform_id))
@@ -889,6 +944,10 @@ class PlatformResourceHandler(OAuth2RESTJSONHandler):
 # PROJECT
 
 class ProjectCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET', 'POST']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self):
         
@@ -911,6 +970,10 @@ class ProjectCollectionHandler(OAuth2RESTJSONHandler):
         self.response.headers['Content-Location'] = '%s' % (project.uri())
             
 class ProjectResourceHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET', 'PUT', 'DELETE']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, project_id):
         

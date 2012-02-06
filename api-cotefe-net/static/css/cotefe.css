@@ -60,12 +60,32 @@ body {
 	font-size: 12px;
 	padding: 0px;
 }
+#cotefe {
+	clear: both;
+	background-color: #cccccc;
+	font-size: 13px;
+	padding: 10px;
+	margin: 0px;
+	overflow: auto;
+}
 #content {
 	min-height: 400px;
 	clear: both;
 	margin: 0px;
 	padding: 20px;
 	background-color: white;
+	overflow: auto;
+}
+#cotefe ul {
+	margin: 0px;
+	float: left;
+	width: 220px;
+	padding: 0px;
+}
+#cotefe li {
+	list-style-type: none;
+	padding: 5px;
+	margin: 0px;
 }
 #content h1 {
 	padding-left: 0px;
@@ -191,24 +211,6 @@ body {
 #content img.logo {
 	float: right;
 	width: 80px;
-}
-#cotefe {
-	background-color: #cccccc;
-	font-size: 13px;
-	height: 160px;
-	padding: 10px;
-	margin: 0px;
-}
-#cotefe ul {
-	margin: 0px;
-	float: left;
-	width: 220px;
-	padding: 0px;
-}
-#cotefe li {
-	list-style-type: none;
-	padding: 5px;
-	margin: 0px;
 }
 #copyright {
 	clear: both;

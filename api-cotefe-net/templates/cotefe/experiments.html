@@ -4,6 +4,8 @@
 
 {% block content %}
 
+{% if not projects %}<p>You need to create a Project first.</p>{% else %}
+
     <form method="post">
 
                <p>Name<br /><input type="text" name="name" /></p>
@@ -33,7 +35,7 @@
         <tr>
             <td>{{ experiment.name }}</td>
             <td>{{ experiment.description }}</td>
-            <td>{{ experiment.project.name }}</td>
+            <td>{% if experiment.project %}{{ experiment.project.name }}{% else %}--{% endif %}</td>
             <td>
                 <form method="post">
                     <input type="hidden" name="experiment_id" value="{{ experiment.key().id() }}" />
@@ -51,6 +53,8 @@
    <p>You have no experiments.</p>
    
    {% endif %}
+   
+{% endif %}
    
 
 {% endblock %}
