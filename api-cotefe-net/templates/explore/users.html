@@ -12,8 +12,7 @@
             <th>Last Name</th>
             <th>E-mail</th>
             <th>Organization</th>
-            <th>Role</th>
-            <th>Manage</th>
+            {% if user.admin %}<th>Role</th><th>Manage</th>{% endif %}
    </tr>
    
    {% for user in users %}
@@ -24,6 +23,7 @@
             <td>{{ user.last }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.organization }}</td>
+            {% if user.admin %}
             <td>{% if user.admin %}Admin{% else %}User{% endif %}</td>
             <td>
                 <form method="post">
@@ -31,6 +31,7 @@
                     <input type="submit" name="submit" value="Delete" />
                 </form>
             </td>
+            {% endif %}
         </tr>
    
    {% endfor %}
