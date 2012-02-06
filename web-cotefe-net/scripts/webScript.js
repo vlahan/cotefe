@@ -95,8 +95,7 @@ function tabsEvent()
  */
 function greetUser()
 {
-    var data=cotefe.application.user;
-    
+            var data=cotefe.session.getValueFromKey(cotefe.user.session);
             menu = new EJS({url: '../templates/greetTemplate.ejs'}).render(data);
             var navi=document.getElementById("userWelcomeText");
             navi.innerHTML=menu;
@@ -117,7 +116,7 @@ function initDashboard()
             /*
              * render project
              */
-            cotefe.application.dumbObj=[];
+            /*cotefe.application.dumbObj=[];
             var arr=JSON.parse(sessionStorage.getItem(cotefe.localUserProject));
             for(i=0;i<arr.length;i++)
             {
