@@ -1,4 +1,4 @@
-<table class="shadow-dark">
+<table class="shadow-dark" id="<%= type %>" >
 	<tr>
 	<% for(i=0; i<headings.length; i++) {%>
 			<th><%= headings[i] %></th>
@@ -14,8 +14,8 @@
 					<tr>
 						<td><%= objects[i].name %></td>
 						<td><%= objects[i].datetime_created %></td>
-						<td><a href="<%= objects[i].uri %>" class="edit" title="<%= type %>" >Edit</a></td>
-						<td><a href="<%= objects[i].uri %>" class="delete" title="<%= type %>" >Delete</a></td>
+						<td><a href="<%= objects[i].uri %>" class="edit"  >Edit</a></td>
+						<td><a href="<%= objects[i].uri %>" class="delete"  >Delete</a></td>
 					</tr>
 			<% }
 		}
