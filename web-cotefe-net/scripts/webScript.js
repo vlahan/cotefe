@@ -205,8 +205,7 @@ ui.make.dashboard		=function(){
     data={ imagedata:menu,projecttable:table};
     
     completepage = new EJS({url: '../templates/dashboard.ejs'}).render(data);
-    var navi=document.getElementById("content");
-    navi.innerHTML=completepage;                     
+    $("#content").hide().html(completepage).fadeIn("slow");           
     /*
      * render experiments
      */
@@ -216,6 +215,7 @@ ui.make.dashboard		=function(){
     /*
      * render images
      */
+    
     $(document).bind("load",ui.events.dashboard());
 	
 };
