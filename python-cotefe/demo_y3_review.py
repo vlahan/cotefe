@@ -8,6 +8,7 @@ from cotefe.client import COTEFEAPI
 CLIENT_ID = 'd1f30fcc322843fa9cb36d60342fbe3b'
 CLIENT_SECRET = '0845a200325a4eee99d4739babd4cb4b'
 REDIRECT_URI = 'http://localhost:8090'
+
 access_token = '099a3319f71a489c96e737c4c61532ff'
 
 # EXPERIMENT CONFIGURATION
@@ -23,6 +24,13 @@ IMAGE_URL_P = 'http://'
 IMAGE_URL_I = 'http://'
 
 NUM_NODES_ALL = NUM_NODES_S + NUM_NODES_P + NUM_NODES_I
+
+logging.basicConfig(
+        level=logging.INFO,
+        # filename='%s.log' % __file__, filemode='w',
+        format='%(asctime)s %(message)s',
+        datefmt='[%Y-%m-%d %H:%M:%S %z]',
+    )
 
 if not access_token:
     
@@ -55,9 +63,7 @@ my_project = api.create_project(
     name = DEFAULT_NAME,
     description = DEFAULT_DESCRIPTION)
 
-logging.info('my_project = %s' % my_project)
-
-exit()
+logging.info('My Project = %s' % my_project)
 
 # CREATE A NEW EXPERIMENT
 
@@ -66,9 +72,7 @@ my_experiment = api.create_experiment(
     description = DEFAULT_DESCRIPTION,
     project = my_project)
 
-logging.info('my_experiment = %s' % my_experiment)
-
-
+logging.info('My Experiment = %s' % my_experiment)
 
 # SEARCH PLATFORM BY NAME
 
@@ -76,6 +80,10 @@ platform_result = api.search_platform(
     name = PLAFORM_NAME)
 
 my_platform = platform_result[0]
+
+logging.info('My Platform = %s' % my_experiment)
+
+exit()
 
 # CREATE A NEW PROPERTY SET
 

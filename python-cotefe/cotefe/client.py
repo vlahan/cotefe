@@ -16,9 +16,11 @@ class COTEFEAPI(object):
         self.access_token = access_token
         self.http = httplib2.Http()
         
-    def build_url(self, path = '/'):
+    def build_url(self, path = '/', params=dict()):
         base = path if path.startswith('http') else '%s%s' % (SERVER_URL, path)
-        return '%s?access_token=%s' % (base, self.access_token) if self.access_token else base
+        if self.access_token:
+            params.update(access_token = self.access_token)
+        return '%s?%s' % (base, urllib.urlencode(params))
         
     # hits the url /oauth2/auth
     def get_authorize_url(self):
@@ -30,7 +32,7 @@ class COTEFEAPI(object):
           'response_type': 'code'
         }
         
-        return '%s?%s' % (self.build_url(path = '/oauth2/auth'), urllib.urlencode(params))
+        return self.build_url('/oauth2/auth', params)
     
     # hits the url /oauth2/token
     def exchange_code_for_access_token(self, code):
@@ -44,9 +46,10 @@ class COTEFEAPI(object):
         }
         
         data = urllib.urlencode(params)
-        response, content = self.http.request(self.build_url(path = '/oauth2/token'), method='POST', body=data)
+        response, content = self.http.request(self.build_url('/oauth2/token'), method='POST', body=data)
         return json.loads(content)['access_token']
     
+    # returns the current user (linked to oauth access_token
     def get_current_user(self):
         
         response, content = self.http.request(
@@ -56,26 +59,73 @@ class COTEFEAPI(object):
         assert response.status == 200
         return User(json.loads(content))
         
-    # create a new project
+    # creates and returns a new project
     def create_project(self, name, description):
         
         project_dict = {
             'name': name,
             'description': description,
         }
-        response, content = self.http.request(
-            uri = self.build_url(path = '/projects/'),
-            method='POST',
-            body = json.dumps(project_dict),
-            headers = {'Content-type': 'application/json'}
-        )   
+        
+        uri = self.build_url(path = '/projects/')
+        method = 'POST'
+        headers = {'Content-type': 'application/json'}
+        body = json.dumps(project_dict)
+        response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
         assert response.status == 201
-        project_uri = response['content-location']
-
-        response, content = self.http.request(
-            uri = self.build_url(path = response['content-location']),
-            method='GET',
-        )
+        
+        uri = self.build_url(path = response['content-location'])
+        method = 'GET'
+        response, content = self.http.request(uri=uri, method=method)
         assert response.status == 200
+        
         return Project(json.loads(content))
+    
+    # creates and returns a new project
+    def create_experiment(self, name, description, project):
+        
+        experiment_dict = {
+            'name': name,
+            'description': description,
+            'project_id': project.id
+        }
+        
+        uri = self.build_url(path = '/experiments/')
+        method = 'POST'
+        headers = {'Content-type': 'application/json'}
+        body = json.dumps(experiment_dict)
+        response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
+        assert response.status == 201
+
+        uri = self.build_url(path = response['content-location'])
+        method = 'GET'
+        response, content = self.http.request(uri=uri, method=method)
+        assert response.status == 200
+        
+        return Experiment(json.loads(content), project)
+    
+    # returns a list of platforms matching the specified name
+    def search_platform(self, name):
+        
+        uri = self.build_url(path = '/platforms/', params = { 'name': name })
+        method = 'GET'
+        response, content = self.http.request(uri=uri, method=method)
+        assert response.status == 200
+        
+        platform_list = json.loads(content)
+        
+        platforms = list()
+        
+        for platform_dict in platform_list:
+            
+            uri = self.build_url(path = platform_dict['uri'])
+            method = 'GET'
+            response, content = self.http.request(uri=uri, method=method)
+            assert response.status == 200
+            
+            platform_dict = json.loads(content)
+            
+            platforms.append(Platform(platform_dict))
+            
+        return platforms
         

@@ -22,6 +22,16 @@ class Federation(Resource):
 class Testbed(Resource):
     pass
 
+class Platform(Resource):
+    def __init__(self, d):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
+        
+    def __str__(self):
+        return self.name
+
 class Project(Resource):
     def __init__(self, d):
         self.id = d['id']
@@ -33,10 +43,15 @@ class Project(Resource):
         return self.name
         
 class Experiment(Resource):
-    pass
-
-class Platform(Resource):
-    pass
+    def __init__(self, d, project):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
+        self.project = project
+    
+    def __str__(self):
+        return self.name
 
 class PropertySet(Resource):
     pass
