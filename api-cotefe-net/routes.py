@@ -48,6 +48,20 @@ routes = [
     (r'^/experiments/$', ExperimentCollectionHandler),
     (r'^/experiments/(\w*)$', ExperimentResourceHandler),
     
+#    (r'^/experiments/(\w*)/images/$', ImageCollectionHandler),
+#    (r'^/experiments/(\d*)/images/(\w*)$', ImageResourceHandler),
+#    
+#    (r'^/experiments/(\d*)/property-sets/$', PropertySetCollectionHandler),
+#    (r'^/experiments/(\d*)/property-sets/(\w*)$', PropertySetResourceHandler),
+#    
+#    (r'^/experiments/(\d*)/virtual-nodes/$', PropertySetCollectionHandler),
+#    (r'^/experiments/(\d*)/virtual-nodes/(\w*)$', PropertySetResourceHandler),
+#    
+#    (r'^/experiments/(\d*)/virtual-nodes/property-sets/$', PropertySetCollectionHandler),
+#    (r'^/experiments/(\d*)/virtual-nodes/(\w*)$', PropertySetResourceHandler),
+#    
+#    (r'^/experiments/(\d*)/virtual-nodes/$', PropertySetCollectionHandler),
+#    (r'^/experiments/(\d*)/virtual-nodes/(\d*)$', PropertySetResourceHandler),
     
     # ('/tasks/', TasksHandler),
     # ('/tasks/456', TaskHandler),

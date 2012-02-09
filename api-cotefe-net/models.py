@@ -26,16 +26,17 @@ class User(Resource):
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
     def id(self):
-        return str(self.key().id())
+        return self.key().id()
         
     def uri(self):
-        return build_url(path = '/users/' + self.id())
+        return build_url(path = '/users/' + str(self.id()))
     
     def to_dict(self, head_only = False):
         r = OrderedDict()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
-        r['name'] = self.username
+        r['username'] = self.username
+        r['id'] = self.id()
         if not head_only:
             r['first'] = self.first
             r['last'] = self.last
@@ -150,10 +151,11 @@ class Project(Resource):
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
+        r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
             r['owner'] = self.owner.to_dict(head_only = True)
-            r['members'] = [ User.get_by_id(user_key.id()).to_dict(head_only = True) for user_key in self.members ]
+            # r['members'] = [ User.get_by_id(user_key.id()).to_dict(head_only = True) for user_key in self.members ]
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
@@ -182,6 +184,7 @@ class Experiment(Resource):
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
+        r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
@@ -206,6 +209,7 @@ class Platform(Resource):
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
+        r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)

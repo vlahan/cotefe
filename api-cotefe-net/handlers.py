@@ -366,13 +366,13 @@ class OAuth2Token(BaseHandler):
         oauth2session_list = OAuth2Session.all().filter('code =', code).fetch(1)
         oauth2session = oauth2session_list[0]
         oauth2session.access_token = generate_hash()
-        oauth2session.refres_token = generate_hash()
+        oauth2session.refresh_token = generate_hash()
         oauth2session.put()
         params = {
             'access_token': oauth2session.access_token,
             'token_type': 'Bearer',
             'expires_in': 3600,
-            'refresh_token' : oauth2session.refres_token,
+            'refresh_token' : oauth2session.refresh_token,
         }
         self.response.headers['Content-Type'] = '%s; charset=%s' % (config.CONTENT_TYPE, config.CHARSET)
         self.response.out.write(serialize(params))
@@ -929,7 +929,10 @@ class PlatformCollectionHandler(OAuth2RESTJSONHandler):
     def get(self):
         
         platform_list = list()
-        for platform in Platform.all():
+        query = Platform.all()
+        if self.request.get('name'):
+            query = query.filter('name =', self.request.get('name'))
+        for platform in query:
             platform_list.append(platform.to_dict(head_only = True))
         self.response.out.write(serialize(platform_list))
                 
@@ -955,7 +958,7 @@ class ProjectCollectionHandler(OAuth2RESTJSONHandler):
     def get(self):
         
         project_list = list()
-        for project in Project.all().filter('owner = ', self.user):
+        for project in Project.all().filter('owner =', self.user):
             project_list.append(project.to_dict(head_only = True))
         self.response.out.write(serialize(project_list))
             
@@ -966,7 +969,6 @@ class ProjectCollectionHandler(OAuth2RESTJSONHandler):
         project.name = project_dict['name']
         project.description = project_dict['description']
         project.owner = self.user
-        project.members.append(self.user.key())
         project.put()
         self.response.status = '201'
         self.response.headers['Location'] = '%s' % (project.uri())
@@ -996,7 +998,58 @@ class ProjectResourceHandler(OAuth2RESTJSONHandler):
         
         project = Project.get_by_id(int(project_id))
         project.delete()
-        self.response.status = '204'
-
-
         
+# EXPERIMENT
+
+class ExperimentCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET', 'POST']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self):
+        
+        experiment_list = list()
+        for experiment in Experiment.all().filter('owner =', self.user):
+            experiment_list.append(experiment.to_dict(head_only = True))
+        self.response.out.write(serialize(experiment_list))
+            
+    def post(self):
+        
+        experiment_dict = json.loads(self.request.body)
+        experiment = Experiment()
+        experiment.name = experiment_dict['name']
+        experiment.description = experiment_dict['description']
+        experiment.owner = self.user
+        experiment.project = Project.get_by_id(int(experiment_dict['project_id']))
+        experiment.put()
+        self.response.status = '201'
+        self.response.headers['Location'] = '%s' % (experiment.uri())
+        self.response.headers['Content-Location'] = '%s' % (experiment.uri())
+            
+class ExperimentResourceHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET', 'PUT', 'DELETE']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, experiment_id):
+        
+        experiment = Experiment.get_by_id(int(experiment_id))
+        self.response.out.write(serialize(experiment.to_dict()))
+                
+    def put(self, experiment_id):
+        
+        experiment_dict = json.loads(self.request.body)
+        experiment = Experiment.get_by_id(int(experiment_id))
+        experiment.name = experiment_dict['name']
+        experiment.description = experiment_dict['description']
+        experiment.project = Project.get_by_id(int(experiment_dict['project']))
+        experiment.put()
+        self.response.out.write(serialize(experiment.to_dict()))
+            
+    def delete(self, experiment_id):
+        
+        experiment = Experiment.get_by_id(int(experiment_id))
+        experiment.delete()
+        self.response.status = '204'
