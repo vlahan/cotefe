@@ -7,7 +7,7 @@ jQuery(document).ready(function(){
 
 
 ui							={
-		projects:{id:"projects",template:"projectNew.ejs", templateVars:{uri:"",type:cotefe.projects.uri,name:"",description:""}},
+		projects:{id:"projects",template:"projectNew.ejs", templateVars:{uri:"",type:cotefe.projects.name,name:"",description:""}},
 		
 };
 ui.init						=function(){
@@ -278,7 +278,32 @@ ui.make.editNewDeleteItem		=function(params)
 };
 ui.make.createUpdateResource=function(params,json)
 {
+	
 	cotefe.application.createUpdateResource({head:params,data:json});
 }
+
+ui.make.customAlert = function(data){
+    
+    if(data.res==="success")
+    {
+         var datar={classname:"alertSuccess",message:data.data};    
+    }
+    else if(data.res==="fail")
+    {
+        
+         var datar={classname:"alertFail",message:data.data};    
+    }
+   
+    alert = new EJS({url: '../templates/alert.ejs'}).render(datar);
+    $("#content").append(alert).fadeIn("slow",function(){$("#alert").delay(2000).fadeOut("slow");});  
+};
+
+
+
+
+
+
+
+
 
 

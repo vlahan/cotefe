@@ -11,7 +11,7 @@ details[open] summary:before {content: "-";}
 
 
 .shadow{-moz-box-shadow: 0 0 6px #ffffff;-webkit-box-shadow: 0 0 6px #ffffff;} /**whiteshadow**/
-.shadow-dark,.top-nav{-moz-box-shadow: 0 0 6px #A4A4A4;-webkit-box-shadow: 0 0 6px #A4A4A4;} /**darkshadow**/
+.shadow-dark,.alertSuccess,.alertFail,.top-nav{-moz-box-shadow: 0 0 6px #A4A4A4;-webkit-box-shadow: 0 0 6px #A4A4A4;} /**darkshadow**/
 .top-border{height:inherit;border-top:1px solid #eaeaea;}
 .background-color{background-color:#A4A4A4;}
 .page-height{height:100%;}
@@ -31,10 +31,21 @@ article h3,#header nav a{color:#dc7621;}
 .head-wrapper{height:160px;background-color:#eaeaea;}
 
 .top-nav{height:40px;background-color:#dc7621;border-bottom: 1px solid #ccc;padding-top:1px;}/**border: 1px solid #2D2D2D;*/
+
 .top-border div h3{ margin-top:8px;padding-left:200px;color:#eaeaea;font-weight:normal;font-size:20px;}	
 .top-border div h3 span{text-transform : capitalize;color:#203b5c;}
 .exp-set{padding-bottom:20px;}
 
+
+.roundBr,.alertSuccess,.alertFail{-moz-border-radius-bottomright: 10px;
+border-bottom-right-radius: 10px;}
+.roundBl,.alertSuccess,.alertFail{
+	-moz-border-radius-bottomleft: 10px;
+border-bottom-left-radius: 10px;
+}
+.alertFail{position:absolute;top:0px;left:300px;display:block;background-color:#ff0000;}
+.alertSuccess{position:absolute;top:0px;left:300px;display:block;background-color:#00ff00;}
+.alertSuccess span,.alertFail{display:block;padding:10px;}
 
 #header{position:relative;}
 #header #logo{position:absolute; top:40px;}
@@ -43,9 +54,12 @@ article h3,#header nav a{color:#dc7621;}
 
 
 /***dash-board **/
+
+
+
 .float-left,#sidebar,#content, #pic-button a{float:left}
 #sidebar{padding-top: 30px;width: 200px;height:100%;}
-#content{padding-top: 30px;width:824px;}
+#content{padding-top: 30px;width:824px;position:relative;}
 #content .wrap{padding-left:30px;padding-right:0px;padding-bottom:30px;overflow:hidden;}
 #content .wrap .headings{width:100%;border-bottom:1px solid #ccc;position:relative;}
 #content .wrap h1{margin-top:0px;font-size: 20px;font-weight:normal;width:90%;}
