@@ -1,5 +1,6 @@
 /*
  * configuration file
+ * "https://web.cotefe.net"
  */
  var cotefe = {
         mainUri             : "http://localhost:8080",
@@ -86,7 +87,7 @@ cotefe.ajax.onAllAjaxDone           = function()
                                  {
                                      if(cotefe.ajax.ajaxCounter.getCount()===0)
                                      {
-                                         window.location.href=cotefe.dashboard;
+                                        // window.location.href=cotefe.dashboard;
                                      }
                                  }
 
@@ -276,21 +277,29 @@ cotefe.application.getResourceOfType   		= function(params)
 cotefe.application.onGetResourceSuccess		= function(data)
 {
     //cotefe.log(data);
+   
     if(data.status===200)
     {
         switch(data.request.params.type)
         {
             case cotefe.projects.uri    :  
             								data.session=cotefe.projects.session;
+            								data.list=new Array();
                                             cotefe.application.operations.digLinks(data);
                                             cotefe.ajax.onAllAjaxDone();break;
-            case cotefe.experiments.uri : cotefe.session.write(cotefe.experiments.session,data.data);cotefe.ajax.onAllAjaxDone();break;
-            case cotefe.jobs.uri        : cotefe.session.write(cotefe.jobs.session,data.data);cotefe.ajax.onAllAjaxDone();break;
-            case cotefe.platforms.uri   : 	//data.session=cotefe.platforms.session;
-									        //cotefe.application.operations.digLinks(data);
-									        //cotefe.ajax.onAllAjaxDone();break;
-            								cotefe.session.write(cotefe.platforms.session,data.data);cotefe.ajax.onAllAjaxDone();break;
-            case cotefe.testbeds.uri    : cotefe.session.write(cotefe.testbeds.session,data.data);cotefe.ajax.onAllAjaxDone();break;
+            case cotefe.experiments.uri :   cotefe.session.write(cotefe.experiments.session,data.data);cotefe.ajax.onAllAjaxDone();break;
+            case cotefe.jobs.uri        :   cotefe.session.write(cotefe.jobs.session,data.data);cotefe.ajax.onAllAjaxDone();break;
+            case cotefe.platforms.uri   : 	data.session=cotefe.platforms.session;
+                                            data.list=new Array();
+									        cotefe.application.operations.digLinks(data);
+									        cotefe.ajax.onAllAjaxDone();break;
+            								//cotefe.session.write(cotefe.platforms.session,data.data);cotefe.ajax.onAllAjaxDone();break;
+            case cotefe.testbeds.uri    :   data.session=cotefe.testbeds.session;
+                                            data.list=new Array();
+                                            cotefe.application.operations.digLinks(data);
+                                            cotefe.ajax.onAllAjaxDone();
+                                            break;
+                                            //cotefe.session.write(cotefe.testbeds.session,data.data);cotefe.ajax.onAllAjaxDone();break;
         }
     }
 }
@@ -311,22 +320,25 @@ cotefe.application.operations				= {};
 cotefe.application.operations.dumbList  	= []; //dummy list
 cotefe.application.operations.addToDumbList = function(params)
 {
+    cotefe.log(params);
     cotefe.application.operations.dumbList.push(params.data);
 }
 
 cotefe.application.operations.digLinks   	= function(params)
 {
+       
        obj=JSON.parse(params.data);
-       //cotefe.log(params);
+       
        for(i=0;i<obj.length;i++)
            {
+    	   		arr=params.list;
     	   		objv={method:"GET",
     	   			  uri:cotefe.link2(obj[i].uri,
     	   			  params.request.params.token),
     	   			  onComplete:function(result)
-    	   			  	{
-    	   				  cotefe.application.operations.addToDumbList(result);
-                          cotefe.session.write(params.session,JSON.stringify(cotefe.application.operations.dumbList));
+    	   			  	{    
+                          arr.push(result.data);
+                          cotefe.session.write(params.session,JSON.stringify(arr));
                           cotefe.ajax.onAllAjaxDone();
     	   			  	},
     	   			 params:params}
@@ -336,10 +348,15 @@ cotefe.application.operations.digLinks   	= function(params)
 
 
 
-
-
-
-
-
-
-
+cotefe.test= function() {
+    li=[];
+    addIn=function(obj)
+    {
+        
+        this.li.push(obj);
+    };
+    getStr=function()
+    {
+        return JSON.stringify(this.li);
+    }
+};
