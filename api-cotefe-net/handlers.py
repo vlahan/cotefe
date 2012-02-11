@@ -46,6 +46,9 @@ class DatastoreInitialization(webapp2.RequestHandler):
             description = config.TESTBED_DESCRIPTION_1,
             organization = config.TESTBED_ORGANIZATION_1,
             server_url = config.TESTBED_SERVER_URL_1,
+            background_image_url = config.TESTBED_BACKGROUND_IMAGE,
+            coordinates_mapping_function_x = config.TESTBED_COORD_X,
+            coordinates_mapping_function_y = config.TESTBED_COORD_Y,
         ).put()
         
         Testbed(
@@ -1052,4 +1055,55 @@ class ExperimentResourceHandler(OAuth2RESTJSONHandler):
         
         experiment = Experiment.get_by_id(int(experiment_id))
         experiment.delete()
+        self.response.status = '204'
+        
+# PROPERTY SET
+
+class PropertySetCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET', 'POST']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, experiment_id):
+        
+        experiment = Experiment.get_by_id(int(experiment_id))
+        
+        property_set_list = list()
+        for property_set in PropertySet.all().filter('owner =', self.user).filter('experiment =', experiment):
+            property_set_list.append(property_set.to_dict(head_only = True))
+        self.response.out.write(serialize(property_set_list))
+            
+    def post(self, experiment_id):
+        
+        property_set_dict = json.loads(self.request.body)
+        property_set = PropertySet()
+        property_set.name = property_set_dict['name']
+        property_set.description = property_set_dict['description']
+        property_set.owner = self.user
+        property_set.experiment = Experiment.get_by_id(int(experiment_id))
+        property_set.platform = Platform.get_by_id(int(property_set_dict['platform_id']))
+        property_set.num_nodes = property_set_dict['num_nodes']
+        property_set.put()
+        self.response.status = '201'
+        self.response.headers['Location'] = '%s' % (property_set.uri())
+        self.response.headers['Content-Location'] = '%s' % (property_set.uri())
+            
+class PropertySetResourceHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET', 'DELETE']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, experiment_id, property_set_id):
+        
+        experiment = Experiment.get_by_id(int(experiment_id))
+        
+        property_set = PropertySet.get_by_id(int(property_set_id))
+        self.response.out.write(serialize(property_set.to_dict()))
+            
+    def delete(self, experiment_id, property_set_id):
+        
+        property_set = PropertySet.get_by_id(int(property_set_id))
+        property_set.delete()
         self.response.status = '204'

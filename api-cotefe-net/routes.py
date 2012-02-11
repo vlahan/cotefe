@@ -1,6 +1,6 @@
 from handlers import *
 
-routes = [
+routes = [    
 
     (r'^/admin/init$', DatastoreInitialization),
     
@@ -32,51 +32,35 @@ routes = [
     (r'^/me$', MeHandler),
     
     (r'^/users/$', UserCollectionHandler),
-    (r'^/users/(\w*)$', UserResourceHandler),
+    (r'^/users/(\d+)$', UserResourceHandler),
 
     (r'^/$', FederationResourceHandler),
     
     (r'^/testbeds/$', TestbedCollectionHandler),
-    (r'^/testbeds/(\w*)$', TestbedResourceHandler),
+    (r'^/testbeds/(\d+)$', TestbedResourceHandler),
     
     (r'^/platforms/$', PlatformCollectionHandler),
-    (r'^/platforms/(\w*)$', PlatformResourceHandler),
+    (r'^/platforms/(\d+)$', PlatformResourceHandler),
     
     (r'^/projects/$', ProjectCollectionHandler),
-    (r'^/projects/(\w*)$', ProjectResourceHandler),
+    (r'^/projects/(\d+)$', ProjectResourceHandler),
     
     (r'^/experiments/$', ExperimentCollectionHandler),
-    (r'^/experiments/(\w*)$', ExperimentResourceHandler),
+    (r'^/experiments/(\d+)$', ExperimentResourceHandler),
     
 #    (r'^/experiments/(\w*)/images/$', ImageCollectionHandler),
 #    (r'^/experiments/(\d*)/images/(\w*)$', ImageResourceHandler),
 #    
-#    (r'^/experiments/(\d*)/property-sets/$', PropertySetCollectionHandler),
-#    (r'^/experiments/(\d*)/property-sets/(\w*)$', PropertySetResourceHandler),
+    (r'^/experiments/(\d+)/property-sets/$', PropertySetCollectionHandler),
+    (r'^/experiments/(\d+)/property-sets/(\d+)$', PropertySetResourceHandler),
 #    
-#    (r'^/experiments/(\d*)/virtual-nodes/$', PropertySetCollectionHandler),
-#    (r'^/experiments/(\d*)/virtual-nodes/(\w*)$', PropertySetResourceHandler),
+#    (r'^/experiments/(\d+)/virtual-nodes/$', VirtualNodeSetCollectionHandler),
+#    (r'^/experiments/(\d+)/virtual-nodes/(\d+)$', VirtualNodeResourceHandler),
 #    
-#    (r'^/experiments/(\d*)/virtual-nodes/property-sets/$', PropertySetCollectionHandler),
-#    (r'^/experiments/(\d*)/virtual-nodes/(\w*)$', PropertySetResourceHandler),
+#    (r'^/experiments/(\d+)/virtual-node-groups/$', VirtualNodeGroupCollectionHandler),
+#    (r'^/experiments/(\d+)/virtual-node-groups/(\d+)$', VirtualNodeGroupResourceHandler),
 #    
-#    (r'^/experiments/(\d*)/virtual-nodes/$', PropertySetCollectionHandler),
-#    (r'^/experiments/(\d*)/virtual-nodes/(\d*)$', PropertySetResourceHandler),
-    
-    # ('/tasks/', TasksHandler),
-    # ('/tasks/456', TaskHandler),
-    # ('/reflector', Reflector),
-    
-    
-    # (r'^/testbeds/(.*)$', TestbedHandler),
-    # (r'^/jobs/$', JobHandler),
-    # (r'^/jobs/(.*)$', JobHandler),
-    # (r'^/api/platforms/$', PlatformHandler),
-    # (r'^/api/platforms/(.*)$', PlatformHandler),
-    # (r'^/applications/$', ApplicationCollectionHandler),
-    # (r'^/applications/(\w+)$', ApplicationResourceHandler),
-    # 
-    # (r'^/oauth2/auth', OAuth2AuthorizeHandler),
-    # (r'^/oauth2/token', OAuth2AccessTokenHandler),
+#    (r'^/experiments/(\d+)/virtual-tasks/$', VirtualTaskCollectionHandler),
+#    (r'^/experiments/(\d+)/virtual-nodes/(\d+)$', VirtualTaskResourceHandler),
 
 ]

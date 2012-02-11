@@ -29,7 +29,7 @@ class User(Resource):
         return self.key().id()
         
     def uri(self):
-        return build_url(path = '/users/' + str(self.id()))
+        return build_url(path = '/users/%s' % self.id())
     
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -42,6 +42,9 @@ class User(Resource):
             r['last'] = self.last
             r['email'] = self.email
             r['organization'] = self.organization
+            r['projects'] = [ p.to_dict(head_only = True) for p in self.projects ]
+            r['experiments'] = [ e.to_dict(head_only = True) for e in self.experiments ]
+            r['jobs'] = [ j.to_dict(head_only = True) for j in self.jobs ]
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
@@ -79,21 +82,20 @@ class Federation(Resource):
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
-    def to_dict(self, head_only = False):
+    def to_dict(self):
         r = OrderedDict()
         r['uri'] = build_url()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
-        if not head_only:
-            r['description'] = self.description
-            r['testbeds'] = build_url(path = '/testbeds/')
-            r['platforms'] = build_url(path = '/platforms/')
-            r['projects'] = build_url(path = '/projects/')
-            r['experiments'] = build_url(path = '/experiments/')
-            r['jobs'] = build_url(path = '/jobs/')
-            r['users'] = build_url(path = '/users/')
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+        r['description'] = self.description
+        r['testbeds'] = build_url(path = '/testbeds/')
+        r['platforms'] = build_url(path = '/platforms/')
+        r['projects'] = build_url(path = '/projects/')
+        r['experiments'] = build_url(path = '/experiments/')
+        r['jobs'] = build_url(path = '/jobs/')
+        r['users'] = build_url(path = '/users/')
+        r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
+        r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
         
 class Testbed(Resource):
@@ -103,31 +105,64 @@ class Testbed(Resource):
     organization = db.StringProperty()
     server_url = db.LinkProperty()
     node_count = db.IntegerProperty()
-    background_image = db.LinkProperty()
+    
+    background_image_url = db.LinkProperty()
     coordinates_mapping_function_x = db.StringProperty()
-    coordinates_mapping_function_x = db.StringProperty()
+    coordinates_mapping_function_y = db.StringProperty()
     
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
     def id(self):
-        return str(self.key().id())
+        return self.key().id()
         
     def uri(self):
-        return build_url(path = '/testbeds/' + self.id())
+        return build_url(path = '/testbeds/%s' % self.id())
     
     def to_dict(self, head_only = False):
         r = OrderedDict()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
+        r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
             r['organization'] = self.organization
             r['server_url'] = self.server_url
             r['platforms'] = build_url(path = '/platforms/')
             r['nodes'] = build_url(path = '/nodes/')
+            r['node_count'] = self.node_count
             r['jobs'] = build_url(path = '/jobs/')
+            
+            r['background_image_url'] = self.background_image_url
+            r['coordinates_mapping_function_x'] = self.coordinates_mapping_function_x
+            r['coordinates_mapping_function_y'] = self.coordinates_mapping_function_y
+            
+            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+        return r
+    
+class Platform(Resource):
+    name = db.StringProperty()
+    description = db.TextProperty()
+    
+    datetime_created = db.DateTimeProperty(auto_now_add=True)
+    datetime_modified = db.DateTimeProperty(auto_now=True)
+    
+    def id(self):
+        return self.key().id()
+        
+    def uri(self):
+        return build_url(path = '/platforms/%s' % self.id())
+
+    def to_dict(self, head_only = False):
+        r = OrderedDict()
+        r['uri'] = self.uri()
+        r['media_type'] = config.MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id()
+        if not head_only:
+            r['description'] = self.description
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
@@ -135,16 +170,17 @@ class Testbed(Resource):
 class Project(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
+    
     owner = db.ReferenceProperty(User, collection_name='projects')
 
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
 
     def id(self):
-        return str(self.key().id())
+        return self.key().id()
         
     def uri(self):
-        return build_url(path = '/projects/' + self.id())
+        return build_url(path = '/projects/%s' % self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -155,18 +191,21 @@ class Project(Resource):
         if not head_only:
             r['description'] = self.description
             r['owner'] = self.owner.to_dict(head_only = True)
+            r['experiments'] = [ e.to_dict(head_only = True) for e in self.experiments ]
+            r['experiment_count'] = len(r['experiments'])
             # r['members'] = [ User.get_by_id(user_key.id()).to_dict(head_only = True) for user_key in self.members ]
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
     
-class ProjectMembership():
-    member = db.ReferenceProperty(User, collection_name='projects')
-    project = db.ReferenceProperty(User, collection_name='members')
+#class ProjectMembership(Relationship):
+#    member = db.ReferenceProperty(User, collection_name='projects')
+#    project = db.ReferenceProperty(Project, collection_name='members')
         
 class Experiment(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
+    
     owner = db.ReferenceProperty(User, collection_name='experiments')
     project = db.ReferenceProperty(Project, collection_name='experiments')
     
@@ -174,10 +213,10 @@ class Experiment(Resource):
     datetime_modified = db.DateTimeProperty(auto_now=True)
 
     def id(self):
-        return str(self.key().id())
+        return self.key().id()
         
     def uri(self):
-        return build_url(path = '/experiments/' + self.id())
+        return build_url(path = '/experiments/%s' % self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -187,69 +226,19 @@ class Experiment(Resource):
         r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
+            r['project'] = self.project.to_dict(head_only = True)
+            r['images'] = [ i.to_dict(head_only = True) for i in self.images ]
+            r['property_sets'] = [ ps.to_dict(head_only = True) for ps in self.property_sets ]
+            r['virtual_nodes'] = [ vn.to_dict(head_only = True) for vn in self.virtual_nodes ]
+            r['virtual_node_count'] = len(r['virtual_nodes'])
+            r['virtual_node_groups'] = [ vng.to_dict(head_only = True) for vng in self.virtual_node_groups ]
+            r['virtual_tasks'] = [ vt.to_dict(head_only = True) for vt in self.virtual_tasks ]
+            r['jobs'] = [ j.to_dict(head_only = True) for j in self.jobs ]
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
-        
-class Platform(Resource):
-    name = db.StringProperty()
-    description = db.TextProperty()
     
-    datetime_created = db.DateTimeProperty(auto_now_add=True)
-    datetime_modified = db.DateTimeProperty(auto_now=True)
     
-    def id(self):
-        return str(self.key().id())
-        
-    def uri(self):
-        return build_url(path = '/platforms/' + self.id())
-
-    def to_dict(self, head_only = False):
-        r = OrderedDict()
-        r['uri'] = self.uri()
-        r['media_type'] = config.MEDIA_TYPE
-        r['name'] = self.name
-        r['id'] = self.id()
-        if not head_only:
-            r['description'] = self.description
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
-        return r
-
-class PropertySet(Resource):
-    name = db.StringProperty()
-    description = db.TextProperty()
-    
-    platform = db.ReferenceProperty(Platform)
-    # sensors = db.ListProperty(db.Key)
-    # actuators = db.ListProperty(db.Key)
-    virtual_node_count = db.IntegerProperty()
-    
-    experiment = db.ReferenceProperty(Experiment)
-
-    datetime_created = db.DateTimeProperty(auto_now_add=True)
-    datetime_modified = db.DateTimeProperty(auto_now=True)
-
-    def id(self):
-        return str(self.key().id())
-    
-    def uri(self):
-        return build_url(path = '/property-sets/' + self.id())
-
-    def to_dict(self, head_only = False):
-        r = OrderedDict()
-        r['uri'] = self.uri()
-        r['media_type'] = config.MEDIA_TYPE
-        r['name'] = self.name
-        if not head_only:
-            r['description'] = self.description
-            r['experiment'] = self.experiment.uri()
-            r['virtual_node_count'] = self.virtual_node_count
-            r['platform'] = self.platform.uri()
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
-        return r
-        
 class Image(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
@@ -262,10 +251,10 @@ class Image(Resource):
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
     def id(self):
-        return str(self.key().id())
+        return self.key().id()
     
     def uri(self):
-        return build_url(path = '/images/' + self.id())
+        return build_url(path = '/images/' + str(self.id()))
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -279,23 +268,61 @@ class Image(Resource):
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
             
-class VirtualNode(Resource):
+
+class PropertySet(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
     
     platform = db.ReferenceProperty(Platform)
+    # sensors = db.ListProperty(db.Key)
+    # actuators = db.ListProperty(db.Key)
+    num_nodes = db.IntegerProperty()
+    
     experiment = db.ReferenceProperty(Experiment)
-    property_set = db.ReferenceProperty(PropertySet)
-    image = db.ReferenceProperty(Image)
+
+    datetime_created = db.DateTimeProperty(auto_now_add=True)
+    datetime_modified = db.DateTimeProperty(auto_now=True)
+
+    def id(self):
+        return self.key().id()
+    
+    def uri(self):
+        return build_url(path = '/experiments/%s/property-sets/%s' % (self.experiment.id(), self.id()))
+
+    def to_dict(self, head_only = False):
+        r = OrderedDict()
+        r['uri'] = self.uri()
+        r['media_type'] = config.MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id()
+        if not head_only:
+            r['description'] = self.description
+            r['experiment'] = self.experiment.to_dict(head_only = True)
+            # r['project'] = self.experiment.project.to_dict(head_only = True)
+            r['platform'] = self.platform.to_dict(head_only = True)
+            r['num_nodes'] = self.num_nodes
+            r['virtual_nodes'] = self.virtual_nodes
+            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+        return r
+            
+class VirtualNode(Resource):
+    name = db.StringProperty()
+    description = db.TextProperty()
+    
+    platform = db.ReferenceProperty(Platform, collection_name='virtual_nodes')
+    experiment = db.ReferenceProperty(Experiment, collection_name='virtual_nodes')
+    property_set = db.ReferenceProperty(PropertySet, collection_name='virtual_nodes')
+    image = db.ReferenceProperty(Image, collection_name='virtual_nodes')
     
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
     def id(self):
-        return str(self.key().id())
+        return self.key().id()
     
     def uri(self):
-        return build_url(path = '/virtual-nodes/' + self.id())
+        return build_url(path = '/experiments/%s/virtual-nodes/%s' % (self.experiment.id(), self.id()))
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -304,32 +331,31 @@ class VirtualNode(Resource):
         r['name'] = self.name
         if not head_only:
             r['description'] = self.description
-            r['platform'] = self.platform.uri()
-            r['experiment'] = self.experiment.uri()
-            r['property_set'] = self.property_set.uri()
-            r['image'] = self.image.uri() if self.image else None
+            r['platform'] = self.platform.to_dict(head_only = True)
+            r['experiment'] = self.experiment.to_dict(head_only = True)
+            r['property_set'] = self.property_set.to_dict(head_only = True)
+            try:
+                r['image'] = self.image.uri()
+            except:
+                r['image'] = None
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
             
 class VirtualNodeGroup(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
-    
-    virtual_nodes = db.ListProperty(db.Key)
-    
-    virtual_node_count = db.IntegerProperty()
 
-    experiment = db.ReferenceProperty(Experiment)
-    image = db.ReferenceProperty(Image)
+    experiment = db.ReferenceProperty(Experiment, collection_name='virtual_node_groups')
+    image = db.ReferenceProperty(Image, collection_name='virtual_node_groups')
     
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
     def id(self):
-        return str(self.key().id())
+        return self.key().id()
 
     def uri(self):
-        return build_url(path = '/virtual-nodegroups/' + self.id())
+        return build_url(path = '/virtual-nodegroups/' + str(self.id()))
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -338,10 +364,11 @@ class VirtualNodeGroup(Resource):
         r['name'] = self.name
         if not head_only:
             r['description'] = self.description
-            r['virtual_nodes'] = [ VirtualNode.get(key).to_dict(head_only = True) for key in self.virtual_nodes]
-            r['virtual_node_count'] = self.virtual_node_count
-            r['experiment'] = self.experiment.uri()
-            r['image'] = self.image.uri() if self.image else None
+            r['experiment'] = self.experiment.to_dict(head_only = True)
+            try:
+                r['image'] = self.image.uri()
+            except:
+                r['image'] = None
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
             
@@ -358,10 +385,10 @@ class VirtualTask(Resource):
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
     def id(self):
-        return str(self.key().id())
+        return self.key().id()
 
     def uri(self):
-        return build_url(path = '/virtual-tasks/' + self.id())
+        return build_url(path = '/virtual-tasks/' + str(self.id()))
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -385,6 +412,7 @@ class Job(Resource):
     datetime_from = db.DateTimeProperty()
     datetime_to = db.DateTimeProperty()
     
+    owner = db.ReferenceProperty(User, collection_name='jobs')
     testbed = db.ReferenceProperty(Testbed)
     experiment = db.ReferenceProperty(Experiment)
     
@@ -392,10 +420,10 @@ class Job(Resource):
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
     def id(self):
-        return str(self.key().id())
+        return self.key().id()
 
     def uri(self):
-        return build_url(path = '/jobs/' + self.id())
+        return build_url(path = '/jobs/' + str(self.id()))
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -426,10 +454,10 @@ class Task(Resource):
     datetime_modified = db.DateTimeProperty(auto_now=True)
 
     def id(self):
-        return str(self.key().id())
+        return self.key().id()
 
     def uri(self):
-        return build_url(path = '/tasks/' + self.id())
+        return build_url(path = '/tasks/' + str(self.id()))
 
     def to_dict(self, head_only = False):
         r = OrderedDict()

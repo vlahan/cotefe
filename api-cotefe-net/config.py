@@ -40,6 +40,9 @@ FEDERATION_DESCRIPTION = 'The goal of the CONET Testbed Federation (CTF) Task is
 TESTBED_NAME_1 = 'TWIST'
 TESTBED_DESCRIPTION_1 = 'The TKN Wireless Indoor Sensor network Testbed (TWIST), developed by the Telecommunication Networks Group (TKN) at the Technische Universitaet Berlin, is a scalable and flexible testbed architecture for experimenting with wireless sensor network applications in an indoor setting.'
 TESTBED_ORGANIZATION_1 = 'TU Berlin'
+TESTBED_BACKGROUND_IMAGE = 'https://www.twist.tu-berlin.de:8001/uploads/testbed/background.jpg'
+TESTBED_COORD_X = '-5.5+x*46.9+y+16.6'
+TESTBED_COORD_Y = '1517-y*16.9-z*78.3'
 
 TESTBED_NAME_2 = 'WISEBED'
 TESTBED_DESCRIPTION_2 = 'The WISEBED project is a joint effort of nine academic and research institutes across Europe.'
