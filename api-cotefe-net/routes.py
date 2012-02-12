@@ -48,19 +48,19 @@ routes = [
     (r'^/experiments/$', ExperimentCollectionHandler),
     (r'^/experiments/(\d+)$', ExperimentResourceHandler),
     
-#    (r'^/experiments/(\w*)/images/$', ImageCollectionHandler),
-#    (r'^/experiments/(\d*)/images/(\w*)$', ImageResourceHandler),
-#    
+    (r'^/experiments/(\d+)/images/$', ImageCollectionHandler),
+    (r'^/experiments/(\d+)/images/(\d+)$', ImageResourceHandler),
+    
     (r'^/experiments/(\d+)/property-sets/$', PropertySetCollectionHandler),
     (r'^/experiments/(\d+)/property-sets/(\d+)$', PropertySetResourceHandler),
-#    
-#    (r'^/experiments/(\d+)/virtual-nodes/$', VirtualNodeSetCollectionHandler),
-#    (r'^/experiments/(\d+)/virtual-nodes/(\d+)$', VirtualNodeResourceHandler),
-#    
-#    (r'^/experiments/(\d+)/virtual-node-groups/$', VirtualNodeGroupCollectionHandler),
-#    (r'^/experiments/(\d+)/virtual-node-groups/(\d+)$', VirtualNodeGroupResourceHandler),
-#    
-#    (r'^/experiments/(\d+)/virtual-tasks/$', VirtualTaskCollectionHandler),
-#    (r'^/experiments/(\d+)/virtual-nodes/(\d+)$', VirtualTaskResourceHandler),
+    
+    (r'^/experiments/(\d+)/virtual-nodes/$', VirtualNodeSetCollectionHandler),
+    (r'^/experiments/(\d+)/virtual-nodes/(\d+)$', VirtualNodeResourceHandler),
+    
+    (r'^/experiments/(\d+)/virtual-node-groups/$', VirtualNodeGroupCollectionHandler),
+    (r'^/experiments/(\d+)/virtual-node-groups/(\d+)$', VirtualNodeGroupResourceHandler),
+    
+    (r'^/experiments/(\d+)/virtual-tasks/$', VirtualTaskCollectionHandler),
+    (r'^/experiments/(\d+)/virtual-nodes/(\d+)$', VirtualTaskResourceHandler),
 
 ]

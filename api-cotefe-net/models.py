@@ -355,7 +355,7 @@ class VirtualNodeGroup(Resource):
         return self.key().id()
 
     def uri(self):
-        return build_url(path = '/virtual-nodegroups/' + str(self.id()))
+        return build_url(path = '/experiments/%s/virtual-node-groups/%s' % (self.experiment.id(), self.id()))
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -376,10 +376,12 @@ class VirtualTask(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
     
+    order = db.IntegerProperty()
+    
     method = db.StringProperty()
     target = db.LinkProperty()
     
-    experiment = db.ReferenceProperty(Experiment)
+    experiment = db.ReferenceProperty(Experiment, collection_name='virtual_tasks')
     
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
@@ -388,7 +390,7 @@ class VirtualTask(Resource):
         return self.key().id()
 
     def uri(self):
-        return build_url(path = '/virtual-tasks/' + str(self.id()))
+        return build_url(path = '/experiments/%s/virtual-tasks/%s' % (self.experiment.id(), self.id()))
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
