@@ -226,6 +226,7 @@ class Experiment(Resource):
         r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
+            r['owner'] = self.owner.to_dict(head_only = True)
             r['project'] = self.project.to_dict(head_only = True)
             r['images'] = [ i.to_dict(head_only = True) for i in self.images ]
             r['property_sets'] = [ ps.to_dict(head_only = True) for ps in self.property_sets ]

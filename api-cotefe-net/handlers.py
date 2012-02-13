@@ -26,20 +26,20 @@ class DatastoreInitialization(webapp2.RequestHandler):
     def get(self):
         
         # cleaning the datastore
-        for user in User.all(): user.delete()   
-        for identity in OpenIDIdentity.all(): identity.delete()  
-        for application in Application.all(): application.delete()
-        for session in OAuth2Session.all(): session.delete()
+        # for user in User.all(): user.delete()   
+        # for identity in OpenIDIdentity.all(): identity.delete()  
+        # for application in Application.all(): application.delete()
+        # for session in OAuth2Session.all(): session.delete()
         for federation in Federation.all(): federation.delete()
         for testbed in Testbed.all(): testbed.delete()
         for platform in Platform.all(): platform.delete()
         for project in Project.all(): project.delete()
         for experiment in Experiment.all(): experiment.delete()
+        for image in Image.all(): image.delete()
         for property_set in PropertySet.all(): property_set.delete()
         for virtual_node in VirtualNode.all(): virtual_node.delete()
         for virtual_node_group in VirtualNodeGroup.all(): virtual_node_group.delete()
         for virtual_task in VirtualTask.all(): virtual_task.delete()
-        for image in Image.all(): image.delete()
         
         Federation(
             name = config.FEDERATION_NAME,
