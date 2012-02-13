@@ -1,16 +1,17 @@
 import urllib
 import httplib2
 import json
+import urllib2
+from poster.encode import multipart_encode
+from poster.streaminghttp import register_openers
 
 from models import *
 
-#SERVER_URL = 'https://api.cotefe.net'
-SERVER_URL = 'http://localhost:8080'
-
 class COTEFEAPI(object):
     
-    def __init__(self, client_id=None, client_secret=None, redirect_uri=None, access_token=None):
+    def __init__(self, server_url='https://api.cotefe.net', client_id=None, client_secret=None, redirect_uri=None, access_token=None):
         
+        self.server_url = server_url
         self.client_id = client_id
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
@@ -18,7 +19,7 @@ class COTEFEAPI(object):
         self.http = httplib2.Http(disable_ssl_certificate_validation=True)
         
     def build_url(self, path = '/', params=dict()):
-        base = path if path.startswith('http') else '%s%s' % (SERVER_URL, path)
+        base = path if path.startswith('http') else '%s%s' % (self.server_url, path)
         if self.access_token:
             params.update(access_token = self.access_token)
         return '%s?%s' % (base, urllib.urlencode(params))
@@ -137,7 +138,6 @@ class COTEFEAPI(object):
             'name': name,
             'description': description,
             'platform_id': platform.id,
-            'experiment_id': experiment.id,
             'num_nodes': num_nodes
         }
         
@@ -185,7 +185,6 @@ class COTEFEAPI(object):
         vng_dict = {
             'name': name,
             'description': description,
-            'experiment_id': experiment.id,
             'virtual_nodes': [ vn.id for vn in virtual_nodes ]
         }
         
@@ -202,3 +201,31 @@ class COTEFEAPI(object):
         assert response.status == 200
         
         return VirtualNodeGroup(json.loads(content), virtual_nodes, experiment)
+        
+    def create_image(self, name, description, imagefile, experiment):
+        
+        image_dict = {
+            'name': name,
+            'description': description,
+        }
+        
+        uri = self.build_url(path = '/experiments/%s/images/' % experiment.id)
+        method = 'POST'
+        headers = {'Content-type': 'application/json'}
+        body = json.dumps(image_dict)
+        response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
+        assert response.status == 201
+
+        uri = self.build_url(path = response['content-location'])
+        method = 'GET'
+        response, content = self.http.request(uri=uri, method=method)
+        assert response.status == 200
+        
+        image_dict = json.loads(content)
+        
+        register_openers()
+        datagen, headers = multipart_encode({'imagefile': open(imagefile, 'rb')})
+        request = urllib2.Request(self.build_url(path = image_dict['upload']), datagen, headers)
+        urllib2.urlopen(request).read()
+        
+        return Image(image_dict, experiment)

@@ -47,6 +47,14 @@ class Experiment(Resource):
         self.name = d['name']
         self.description = d['description']
         self.project = project
+        
+class Image(Resource):
+    def __init__(self, d, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
+        self.experiment = experiment
 
 class PropertySet(Resource):
     def __init__(self, d, platform, experiment):
@@ -74,13 +82,6 @@ class VirtualNodeGroup(Resource):
         self.experiment = experiment
 
 class VirtualTask(Resource):
-    def __init__(self, d, platform, experiment):
-        self.id = d['id']
-        self.uri = d['uri']
-        self.name = d['name']
-        self.description = d['description']
-
-class Image(Resource):
     def __init__(self, d, platform, experiment):
         self.id = d['id']
         self.uri = d['uri']

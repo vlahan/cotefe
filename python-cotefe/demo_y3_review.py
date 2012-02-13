@@ -5,13 +5,17 @@ from cotefe.client import COTEFEAPI
 
 # OAUTH2 CONFIGURATIONS
 
+# SERVER_URL = 'https://api.cotefe.net'
+# CLIENT_ID = 'd770617a49f54c0cbb0dc12175a6cbae'
+# CLIENT_SECRET = '565af7fd385644de88c326dcb7c499f6'
+# REDIRECT_URI = 'http://localhost'
+# ACCESS_TOKEN = '4f1664a88ca0400eab78fa8a575cbfba'
+
+SERVER_URL = 'http://localhost:8080'
 CLIENT_ID = '600803dc3d2547f3bacded2fd90c61f7'
 CLIENT_SECRET = 'bfdca3017e324028a3ba992cc61dcfc8'
 REDIRECT_URI = 'http://localhost'
-
-#CLIENT_ID = '33079e1e8285471ca4d828450d0943c2'
-#CLIENT_SECRET = '9d4b031fafbe40f9aab486f08d2f03e1'
-#REDIRECT_URI = 'http://test'
+ACCESS_TOKEN = '7e49782bb6f244099026b5a264453c92'
 
 # EXPERIMENT CONFIGURATION
 
@@ -21,9 +25,9 @@ PLATFORM_NAME = 'TmoteSky'
 NUM_NODES_S = 1
 NUM_NODES_P = 93
 NUM_NODES_I = 2
-IMAGE_URL_S = 'http://'
-IMAGE_URL_P = 'http://'
-IMAGE_URL_I = 'http://'
+IMAGEFILE_S = 'images/demo_image_subscriber_ctp'
+IMAGEFILE_P = 'images/demo_image_publishers_ctp'
+IMAGEFILE_I = 'images/demo_image_interferers'
 
 NUM_NODES_ALL = NUM_NODES_S + NUM_NODES_P + NUM_NODES_I
 
@@ -36,15 +40,16 @@ logging.basicConfig(
 
 try:
     
-    access_token = 'f65a38ec48fa4855bb46e0c2dc6a95df'
+    access_token = ACCESS_TOKEN
     
-    api = COTEFEAPI(access_token=access_token)
+    api = COTEFEAPI(server_url = SERVER_URL, access_token=access_token)
     
     me = api.get_current_user()
     
 except:
     
     unauthorized_api = COTEFEAPI(
+        server_url = SERVER_URL,
         client_id = CLIENT_ID,
         client_secret = CLIENT_SECRET,
         redirect_uri = REDIRECT_URI)
@@ -59,14 +64,16 @@ except:
     
     access_token = unauthorized_api.exchange_code_for_access_token(code)
     
-    api = COTEFEAPI(access_token=access_token)
+    print 'access_token: %s' % access_token
+    
+    api = COTEFEAPI(server_url = SERVER_URL, access_token=access_token)
     
     me = api.get_current_user()
     
 
 logging.info('Your OAuth2 access_token is %s' % access_token)
 
-logging.info('Check your personal information at %s' % me)
+logging.info('Check your account information at %s' % me)
 
 
 # CREATE A NEW PROJECT
@@ -113,7 +120,7 @@ my_virtual_nodes = api.get_virtual_nodes(
 
 # CHECK NUMBER OF NODES
 
-logging.info('%s virtual nodes retrieved.' % len(my_virtual_nodes))
+logging.debug('%s virtual nodes retrieved.' % len(my_virtual_nodes))
 
 assert len(my_virtual_nodes) == NUM_NODES_ALL
 
@@ -125,11 +132,11 @@ my_virtual_nodes_I = my_virtual_nodes[NUM_NODES_P+1:]
 
 ## CHECK NUMBER OF NODES FOR EACH NODE GROUP
 
-logging.info('%s virtual nodes in group S.' % len(my_virtual_nodes_S))
+logging.debug('%s virtual nodes in group S.' % len(my_virtual_nodes_S))
 assert len(my_virtual_nodes_S) == NUM_NODES_S
-logging.info('%s virtual nodes in group P.' % len(my_virtual_nodes_P))
+logging.debug('%s virtual nodes in group P.' % len(my_virtual_nodes_P))
 assert len(my_virtual_nodes_P) == NUM_NODES_P
-logging.info('%s virtual nodes in group I.' % len(my_virtual_nodes_I))
+logging.debug('%s virtual nodes in group I.' % len(my_virtual_nodes_I))
 assert len(my_virtual_nodes_I) == NUM_NODES_I
 
 # CREATE A NEW VIRTUAL NODEGROUP WITH ALL NODES
@@ -180,31 +187,31 @@ assert len(my_virtual_nodegroup_S.virtual_nodes) == NUM_NODES_S
 
 logging.info('Check your virtual nodegroup I at %s' % my_virtual_nodegroup_I)
 
-exit()
-
 # CREATE A NEW IMAGE 1
 
-my_image_1 = api.create_image(
-    name = DEFAULT_NAME,
+my_image_S = api.create_image(
+    name = 'Image for Subscriber',
     description = DEFAULT_DESCRIPTION,
-    image_url = IMAGE_URL_S,
+    imagefile = IMAGEFILE_S,
     experiment = my_experiment)
 
 # CREATE A NEW IMAGE 2
 
-my_image_2 = api.create_image(
-    name = DEFAULT_NAME,
+my_image_P = api.create_image(
+    name = 'Image for Publisher',
     description = DEFAULT_DESCRIPTION,
-    image_url = IMAGE_URL_P,
+    imagefile = IMAGEFILE_P,
     experiment = my_experiment)
 
 # CREATE A NEW IMAGE 3
 
-my_image_3 = api.create_image(
-    name = DEFAULT_NAME,
+my_image_I = api.create_image(
+    name = 'Image for Interferer',
     description = DEFAULT_DESCRIPTION,
-    image_url = IMAGE_URL_I,
+    imagefile = IMAGEFILE_I,
     experiment = my_experiment)
+
+exit()
 
 # CREATE A NEW VIRTUAL TASK 0
 
