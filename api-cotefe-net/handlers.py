@@ -26,15 +26,20 @@ class DatastoreInitialization(webapp2.RequestHandler):
     def get(self):
         
         # cleaning the datastore
-        # for user in User.all(): user.delete()   
-        # for identity in OpenIDIdentity.all(): identity.delete()  
-        # for application in Application.all(): application.delete()
-        # for session in OAuth2Session.all(): session.delete()
+        for user in User.all(): user.delete()   
+        for identity in OpenIDIdentity.all(): identity.delete()  
+        for application in Application.all(): application.delete()
+        for session in OAuth2Session.all(): session.delete()
         for federation in Federation.all(): federation.delete()
         for testbed in Testbed.all(): testbed.delete()
         for platform in Platform.all(): platform.delete()
         for project in Project.all(): project.delete()
         for experiment in Experiment.all(): experiment.delete()
+        for property_set in PropertySet.all(): property_set.delete()
+        for virtual_node in VirtualNode.all(): virtual_node.delete()
+        for virtual_node_group in VirtualNodeGroup.all(): virtual_node_group.delete()
+        for virtual_task in VirtualTask.all(): virtual_task.delete()
+        for image in Image.all(): image.delete()
         
         Federation(
             name = config.FEDERATION_NAME,
@@ -836,12 +841,16 @@ class OAuth2RESTJSONHandler(webapp2.RequestHandler):
                 self.response.status = '401'
                 self.response.out.write(serialize(error))
         else:
-            error = {
-                'status': 401,
-                'message': "Ah, you need an access_token!"
-            }
-            self.response.status = '401'
-            self.response.out.write(serialize(error))
+            
+            if self.request.method == 'GET':
+                webapp2.RequestHandler.dispatch(self)
+            else:
+                error = {
+                    'status': 401,
+                    'message': "Ah, you need an access_token!"
+                }
+                self.response.status = '401'
+                self.response.out.write(serialize(error))
             
 # ME (current user)
 
@@ -961,7 +970,7 @@ class ProjectCollectionHandler(OAuth2RESTJSONHandler):
     def get(self):
         
         project_list = list()
-        for project in Project.all().filter('owner =', self.user):
+        for project in Project.all():
             project_list.append(project.to_dict(head_only = True))
         self.response.out.write(serialize(project_list))
             
@@ -1013,7 +1022,7 @@ class ExperimentCollectionHandler(OAuth2RESTJSONHandler):
     def get(self):
         
         experiment_list = list()
-        for experiment in Experiment.all().filter('owner =', self.user):
+        for experiment in Experiment.all():
             experiment_list.append(experiment.to_dict(head_only = True))
         self.response.out.write(serialize(experiment_list))
             
@@ -1055,7 +1064,14 @@ class ExperimentResourceHandler(OAuth2RESTJSONHandler):
         
         experiment = Experiment.get_by_id(int(experiment_id))
         experiment.delete()
-        self.response.status = '204'
+
+# IMAGE
+
+class ImageCollectionHandler(OAuth2RESTJSONHandler):
+    pass
+
+class ImageResourceHandler(OAuth2RESTJSONHandler):
+    pass
         
 # PROPERTY SET
 
@@ -1070,21 +1086,38 @@ class PropertySetCollectionHandler(OAuth2RESTJSONHandler):
         experiment = Experiment.get_by_id(int(experiment_id))
         
         property_set_list = list()
-        for property_set in PropertySet.all().filter('owner =', self.user).filter('experiment =', experiment):
+        query = PropertySet.all().filter('experiment =', experiment)
+        for property_set in query:
             property_set_list.append(property_set.to_dict(head_only = True))
         self.response.out.write(serialize(property_set_list))
             
     def post(self, experiment_id):
         
+        experiment = Experiment.get_by_id(int(experiment_id))
+        
         property_set_dict = json.loads(self.request.body)
+        
+        platform = Platform.get_by_id(int(property_set_dict['platform_id']))
+        
         property_set = PropertySet()
         property_set.name = property_set_dict['name']
         property_set.description = property_set_dict['description']
         property_set.owner = self.user
-        property_set.experiment = Experiment.get_by_id(int(experiment_id))
-        property_set.platform = Platform.get_by_id(int(property_set_dict['platform_id']))
+        property_set.experiment = experiment
+        property_set.platform = platform
         property_set.num_nodes = property_set_dict['num_nodes']
         property_set.put()
+        
+        # now generate virtual nodes!
+        
+        for k in range(1, property_set.num_nodes + 1):
+            vn = VirtualNode()
+            vn.name = 'virtual node #%s' % k
+            vn.experiment = property_set.experiment
+            vn.platform = property_set.platform
+            vn.property_set = property_set
+            vn.owner = self.user
+            vn.put()
         self.response.status = '201'
         self.response.headers['Location'] = '%s' % (property_set.uri())
         self.response.headers['Content-Location'] = '%s' % (property_set.uri())
@@ -1097,8 +1130,6 @@ class PropertySetResourceHandler(OAuth2RESTJSONHandler):
     
     def get(self, experiment_id, property_set_id):
         
-        experiment = Experiment.get_by_id(int(experiment_id))
-        
         property_set = PropertySet.get_by_id(int(property_set_id))
         self.response.out.write(serialize(property_set.to_dict()))
             
@@ -1106,4 +1137,104 @@ class PropertySetResourceHandler(OAuth2RESTJSONHandler):
         
         property_set = PropertySet.get_by_id(int(property_set_id))
         property_set.delete()
-        self.response.status = '204'
+        
+# VIRTUAL NODE
+        
+class VirtualNodeCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, experiment_id):
+        
+        experiment = Experiment.get_by_id(int(experiment_id))
+        
+        virtual_node_list = list()
+        query = VirtualNode.all().filter('experiment =', experiment)
+        for virtual_node in query:
+            virtual_node_list.append(virtual_node.to_dict(head_only = True))
+        self.response.out.write(serialize(virtual_node_list))
+
+class VirtualNodeResourceHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, experiment_id, virtual_node_id):
+        
+        virtual_node = VirtualNode.get_by_id(int(virtual_node_id))
+        self.response.out.write(serialize(virtual_node.to_dict()))
+        
+# VIRTUAL NODE GROUP
+
+class VirtualNodeGroupCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET', 'POST']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, experiment_id):
+        
+        experiment = Experiment.get_by_id(int(experiment_id))
+        
+        virtual_nodegroup_list = list()
+        query = VirtualNodeGroup.all().filter('experiment =', experiment)
+        for virtual_nodegroup in query:
+            virtual_nodegroup_list.append(virtual_nodegroup.to_dict(head_only = True))
+        self.response.out.write(serialize(virtual_nodegroup_list))
+            
+    def post(self, experiment_id):
+        
+        experiment = Experiment.get_by_id(int(experiment_id))
+        
+        vng_dict = json.loads(self.request.body)
+        
+        vng = VirtualNodeGroup()
+        vng.name = vng_dict['name']
+        vng.description = vng_dict['description']
+        vng.owner = self.user
+        vng.experiment = experiment
+        vng.put()
+        
+        # TODO: now create connection which each of the virtual nodes
+
+        for vn_id in vng_dict['virtual_nodes']:
+            VirtualNodeGroup2VirtualNode(vng = vng, vn = VirtualNode.get_by_id(int(vn_id))).put()
+        
+        self.response.status = '201'
+        self.response.headers['Location'] = '%s' % (vng.uri())
+        self.response.headers['Content-Location'] = '%s' % (vng.uri())
+
+class VirtualNodeGroupResourceHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['GET', 'DELETE']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, experiment_id, virtual_nodegroup_id):
+        
+        virtual_nodegroup = VirtualNodeGroup.get_by_id(int(virtual_nodegroup_id))
+        self.response.out.write(serialize(virtual_nodegroup.to_dict()))
+            
+    def delete(self, experiment_id, virtual_nodegroup_id):
+        
+        virtual_nodegroup = VirtualNodeGroup.get_by_id(int(virtual_nodegroup_id))
+        virtual_nodegroup.delete()
+    
+# VIRTUAL TASK
+
+class VirtualTaskCollectionHandler(OAuth2RESTJSONHandler):
+    pass
+
+class VirtualTaskResourceHandler(OAuth2RESTJSONHandler):
+    pass
+    
+# JOB
+
+class JobCollectionHandler(OAuth2RESTJSONHandler):
+    pass
+
+class JobResourceHandler(OAuth2RESTJSONHandler):
+    pass

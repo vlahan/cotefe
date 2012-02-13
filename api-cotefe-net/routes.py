@@ -54,13 +54,16 @@ routes = [
     (r'^/experiments/(\d+)/property-sets/$', PropertySetCollectionHandler),
     (r'^/experiments/(\d+)/property-sets/(\d+)$', PropertySetResourceHandler),
     
-    (r'^/experiments/(\d+)/virtual-nodes/$', VirtualNodeSetCollectionHandler),
+    (r'^/experiments/(\d+)/virtual-nodes/$', VirtualNodeCollectionHandler),
     (r'^/experiments/(\d+)/virtual-nodes/(\d+)$', VirtualNodeResourceHandler),
     
-    (r'^/experiments/(\d+)/virtual-node-groups/$', VirtualNodeGroupCollectionHandler),
-    (r'^/experiments/(\d+)/virtual-node-groups/(\d+)$', VirtualNodeGroupResourceHandler),
+    (r'^/experiments/(\d+)/virtual-nodegroups/$', VirtualNodeGroupCollectionHandler),
+    (r'^/experiments/(\d+)/virtual-nodegroups/(\d+)$', VirtualNodeGroupResourceHandler),
     
     (r'^/experiments/(\d+)/virtual-tasks/$', VirtualTaskCollectionHandler),
-    (r'^/experiments/(\d+)/virtual-nodes/(\d+)$', VirtualTaskResourceHandler),
+    (r'^/experiments/(\d+)/virtual-tasks/(\d+)$', VirtualTaskResourceHandler),
+    
+    (r'^/experiments/(\d+)/jobs/$', VirtualTaskCollectionHandler),
+    (r'^/experiments/(\d+)/jobs/(\d+)$', VirtualTaskResourceHandler),
 
 ]
