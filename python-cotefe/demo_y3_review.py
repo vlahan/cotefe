@@ -5,17 +5,19 @@ from cotefe.client import COTEFEAPI
 
 # OAUTH2 CONFIGURATIONS
 
-CLIENT_ID = 'd1f30fcc322843fa9cb36d60342fbe3b'
-CLIENT_SECRET = '0845a200325a4eee99d4739babd4cb4b'
-REDIRECT_URI = 'http://localhost:8090'
+CLIENT_ID = '600803dc3d2547f3bacded2fd90c61f7'
+CLIENT_SECRET = 'bfdca3017e324028a3ba992cc61dcfc8'
+REDIRECT_URI = 'http://localhost'
 
-access_token = '099a3319f71a489c96e737c4c61532ff'
+#CLIENT_ID = '33079e1e8285471ca4d828450d0943c2'
+#CLIENT_SECRET = '9d4b031fafbe40f9aab486f08d2f03e1'
+#REDIRECT_URI = 'http://test'
 
 # EXPERIMENT CONFIGURATION
 
 DEFAULT_NAME = 'DEMO'
 DEFAULT_DESCRIPTION = 'COTEFE API DEMO - PLEASE DO NOT DELETE!'
-PLAFORM_NAME = 'TmoteSky'
+PLATFORM_NAME = 'TmoteSky'
 NUM_NODES_S = 1
 NUM_NODES_P = 93
 NUM_NODES_I = 2
@@ -32,7 +34,15 @@ logging.basicConfig(
         datefmt='[%Y-%m-%d %H:%M:%S %z]',
     )
 
-if not access_token:
+try:
+    
+    access_token = 'f65a38ec48fa4855bb46e0c2dc6a95df'
+    
+    api = COTEFEAPI(access_token=access_token)
+    
+    me = api.get_current_user()
+    
+except:
     
     unauthorized_api = COTEFEAPI(
         client_id = CLIENT_ID,
@@ -49,13 +59,15 @@ if not access_token:
     
     access_token = unauthorized_api.exchange_code_for_access_token(code)
     
-    print "access_token: ", access_token
+    api = COTEFEAPI(access_token=access_token)
+    
+    me = api.get_current_user()
+    
 
-api = COTEFEAPI(access_token=access_token)
+logging.info('Your OAuth2 access_token is %s' % access_token)
 
-me = api.get_current_user()
+logging.info('Check your personal information at %s' % me)
 
-logging.info('me = %s' % me)
 
 # CREATE A NEW PROJECT
 
@@ -63,7 +75,7 @@ my_project = api.create_project(
     name = DEFAULT_NAME,
     description = DEFAULT_DESCRIPTION)
 
-logging.info('My Project = %s' % my_project)
+logging.info('Check your project at %s' % my_project)
 
 # CREATE A NEW EXPERIMENT
 
@@ -72,18 +84,16 @@ my_experiment = api.create_experiment(
     description = DEFAULT_DESCRIPTION,
     project = my_project)
 
-logging.info('My Experiment = %s' % my_experiment)
+logging.info('Check your experiment at %s' % my_experiment)
 
 # SEARCH PLATFORM BY NAME
 
 platform_result = api.search_platform(
-    name = PLAFORM_NAME)
+    name = PLATFORM_NAME)
 
 my_platform = platform_result[0]
 
-logging.info('My Platform = %s' % my_experiment)
-
-exit()
+logging.info('Check the platform "%s" at %s' % (PLATFORM_NAME, my_platform))
 
 # CREATE A NEW PROPERTY SET
 
@@ -94,65 +104,90 @@ my_property_set = api.create_property_set(
     num_nodes = NUM_NODES_ALL,
     experiment = my_experiment)
 
+logging.info('Check your property set at %s' % my_property_set)
+
 # GET VIRTUAL NODES
 
 my_virtual_nodes = api.get_virtual_nodes(
-    experiment = my_experiment)
+   experiment = my_experiment)
 
 # CHECK NUMBER OF NODES
 
+logging.info('%s virtual nodes retrieved.' % len(my_virtual_nodes))
+
 assert len(my_virtual_nodes) == NUM_NODES_ALL
 
-# SPLIT VIRTUAL NODES IN 3 GROUPS
+## SPLIT VIRTUAL NODES IN 3 GROUPS
 
-my_virtual_nodes_1 = my_virtual_nodes[0:CONFIG['NUM_NODES_1']]
-my_virtual_nodes_2 = my_virtual_nodes[CONFIG['NUM_NODES_1']:CONFIG['NUM_NODES_2']+1]
-my_virtual_nodes_3 = my_virtual_nodes[CONFIG['NUM_NODES_2']+1:]
+my_virtual_nodes_S = my_virtual_nodes[0:NUM_NODES_S]
+my_virtual_nodes_P = my_virtual_nodes[NUM_NODES_S:NUM_NODES_P+1]
+my_virtual_nodes_I = my_virtual_nodes[NUM_NODES_P+1:]
 
-# CHECK NUMBER OF NODES FOR EACH NODE GROUP
+## CHECK NUMBER OF NODES FOR EACH NODE GROUP
 
-assert len(my_virtual_nodes_1) == CONFIG['NUM_NODES_1']
-assert len(my_virtual_nodes_2) == CONFIG['NUM_NODES_2']
-assert len(my_virtual_nodes_3) == CONFIG['NUM_NODES_3']
+logging.info('%s virtual nodes in group S.' % len(my_virtual_nodes_S))
+assert len(my_virtual_nodes_S) == NUM_NODES_S
+logging.info('%s virtual nodes in group P.' % len(my_virtual_nodes_P))
+assert len(my_virtual_nodes_P) == NUM_NODES_P
+logging.info('%s virtual nodes in group I.' % len(my_virtual_nodes_I))
+assert len(my_virtual_nodes_I) == NUM_NODES_I
 
 # CREATE A NEW VIRTUAL NODEGROUP WITH ALL NODES
 
-my_virtual_nodegroup_all = api.create_virtual_nodegroup(
-    name = DEFAULT_NAME,
+my_virtual_nodegroup_ALL = api.create_virtual_nodegroup(
+    name = 'All Nodes',
     description = DEFAULT_DESCRIPTION,
     virtual_nodes = my_virtual_nodes,
     experiment = my_experiment)
+   
+assert len(my_virtual_nodegroup_ALL.virtual_nodes) == NUM_NODES_ALL
 
-# CREATE A NEW VIRTUAL NODEGROUP 1
+logging.info('Check your virtual nodegroup ALL at %s' % my_virtual_nodegroup_ALL)
 
-my_virtual_nodegroup_1 = api.create_virtual_nodegroup(
-    name = DEFAULT_NAME,
+# CREATE A NEW VIRTUAL NODEGROUP S
+
+my_virtual_nodegroup_S = api.create_virtual_nodegroup(
+    name = 'Subscriber',
     description = DEFAULT_DESCRIPTION,
-    virtual_nodes = my_virtual_nodes_1,
+    virtual_nodes = my_virtual_nodes_S,
     experiment = my_experiment)
+   
+assert len(my_virtual_nodegroup_S.virtual_nodes) == NUM_NODES_S
+
+logging.info('Check your virtual nodegroup S at %s' % my_virtual_nodegroup_S)
 
 # CREATE A NEW VIRTUAL NODEGROUP 2
 
-my_virtual_nodegroup_2 = api.create_virtual_nodegroup(
-    name = DEFAULT_NAME,
+my_virtual_nodegroup_P = api.create_virtual_nodegroup(
+    name = 'Publishers',
     description = DEFAULT_DESCRIPTION,
-    virtual_nodes = my_virtual_nodes_2,
+    virtual_nodes = my_virtual_nodes_P,
     experiment = my_experiment)
+   
+assert len(my_virtual_nodegroup_S.virtual_nodes) == NUM_NODES_S
+
+logging.info('Check your virtual nodegroup P at %s' % my_virtual_nodegroup_P)
 
 # CREATE A NEW VIRTUAL NODEGROUP 3
 
-my_virtual_nodegroup_3 = api.create_virtual_nodegroup(
-    name = DEFAULT_NAME,
+my_virtual_nodegroup_I = api.create_virtual_nodegroup(
+    name = 'Interferers',
     description = DEFAULT_DESCRIPTION,
-    virtual_nodes = my_virtual_nodes_3,
+    virtual_nodes = my_virtual_nodes_I,
     experiment = my_experiment)
+   
+assert len(my_virtual_nodegroup_S.virtual_nodes) == NUM_NODES_S
+
+logging.info('Check your virtual nodegroup I at %s' % my_virtual_nodegroup_I)
+
+exit()
 
 # CREATE A NEW IMAGE 1
 
 my_image_1 = api.create_image(
     name = DEFAULT_NAME,
     description = DEFAULT_DESCRIPTION,
-    image_url = CONFIG['IMAGE_URL_1'],
+    image_url = IMAGE_URL_S,
     experiment = my_experiment)
 
 # CREATE A NEW IMAGE 2
@@ -160,7 +195,7 @@ my_image_1 = api.create_image(
 my_image_2 = api.create_image(
     name = DEFAULT_NAME,
     description = DEFAULT_DESCRIPTION,
-    image_url = CONFIG['IMAGE_URL_2'],
+    image_url = IMAGE_URL_P,
     experiment = my_experiment)
 
 # CREATE A NEW IMAGE 3
@@ -168,7 +203,7 @@ my_image_2 = api.create_image(
 my_image_3 = api.create_image(
     name = DEFAULT_NAME,
     description = DEFAULT_DESCRIPTION,
-    image_url = CONFIG['IMAGE_URL_3'],
+    image_url = IMAGE_URL_I,
     experiment = my_experiment)
 
 # CREATE A NEW VIRTUAL TASK 0
@@ -209,7 +244,7 @@ my_virtual_task_3 = api.create_virtual_task(
     virtual_nodegroup = my_virtual_nodegroup_3,
     image = my_image_3,
     experiment = my_experiment)
-    
+   
 # CREATE A NEW VIRTUAL TASK 4
 
 my_virtual_task_4 = api.create_virtual_task(

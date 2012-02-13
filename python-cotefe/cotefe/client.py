@@ -4,6 +4,7 @@ import json
 
 from models import *
 
+#SERVER_URL = 'https://api.cotefe.net'
 SERVER_URL = 'http://localhost:8080'
 
 class COTEFEAPI(object):
@@ -14,7 +15,7 @@ class COTEFEAPI(object):
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
         self.access_token = access_token
-        self.http = httplib2.Http()
+        self.http = httplib2.Http(disable_ssl_certificate_validation=True)
         
     def build_url(self, path = '/', params=dict()):
         base = path if path.startswith('http') else '%s%s' % (SERVER_URL, path)
@@ -81,7 +82,7 @@ class COTEFEAPI(object):
         
         return Project(json.loads(content))
     
-    # creates and returns a new project
+    # creates and returns a new experiment
     def create_experiment(self, name, description, project):
         
         experiment_dict = {
@@ -128,4 +129,76 @@ class COTEFEAPI(object):
             platforms.append(Platform(platform_dict))
             
         return platforms
+    
+    # creates and returns a new property set
+    def create_property_set(self, name, description, platform, num_nodes, experiment):
         
+        property_set_dict = {
+            'name': name,
+            'description': description,
+            'platform_id': platform.id,
+            'experiment_id': experiment.id,
+            'num_nodes': num_nodes
+        }
+        
+        uri = self.build_url(path = '/experiments/%s/property-sets/' % experiment.id)
+        method = 'POST'
+        headers = {'Content-type': 'application/json'}
+        body = json.dumps(property_set_dict)
+        response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
+        assert response.status == 201
+
+        uri = self.build_url(path = response['content-location'])
+        method = 'GET'
+        response, content = self.http.request(uri=uri, method=method)
+        assert response.status == 200
+        
+        return PropertySet(json.loads(content), platform, experiment)
+        
+    # getting the virtual nodes for a given experiment
+    def get_virtual_nodes(self, experiment):
+        
+        uri = self.build_url(path = '/experiments/%s/virtual-nodes/' % experiment.id)
+        method = 'GET'
+        response, content = self.http.request(uri=uri, method=method)
+        assert response.status == 200
+        
+        virtual_node_list = json.loads(content)
+        
+        virtual_nodes = list()
+        
+        for virtual_node_dict in virtual_node_list:
+            
+            uri = self.build_url(path = virtual_node_dict['uri'])
+            method = 'GET'
+            response, content = self.http.request(uri=uri, method=method)
+            assert response.status == 200
+            
+            virtual_node_dict = json.loads(content)
+            
+            virtual_nodes.append(VirtualNode(virtual_node_dict, experiment))
+            
+        return virtual_nodes
+        
+    def create_virtual_nodegroup(self, name, description, virtual_nodes, experiment):
+        
+        vng_dict = {
+            'name': name,
+            'description': description,
+            'experiment_id': experiment.id,
+            'virtual_nodes': [ vn.id for vn in virtual_nodes ]
+        }
+        
+        uri = self.build_url(path = '/experiments/%s/virtual-nodegroups/' % experiment.id)
+        method = 'POST'
+        headers = {'Content-type': 'application/json'}
+        body = json.dumps(vng_dict)
+        response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
+        assert response.status == 201
+
+        uri = self.build_url(path = response['content-location'])
+        method = 'GET'
+        response, content = self.http.request(uri=uri, method=method)
+        assert response.status == 200
+        
+        return VirtualNodeGroup(json.loads(content), virtual_nodes, experiment)

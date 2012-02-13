@@ -1,5 +1,8 @@
 class Resource(object):
-    pass
+    
+    def __str__(self):
+        
+        return self.uri
     
 class User(Resource):
     def __init__(self, d):
@@ -10,9 +13,6 @@ class User(Resource):
         self.last = d['last']
         self.email = d['email']
         self.organization = d['organization']
-        
-    def __str__(self):
-        return '%s %s' % (self.first, self.last)
 
 class Federation(Resource):
     def __init__(self, d):
@@ -20,7 +20,11 @@ class Federation(Resource):
         self.name = d['name']
 
 class Testbed(Resource):
-    pass
+     def __init__(self, d):
+        self.uri = d['uri']
+        self.name = d['name']
+        self.organization = d['organization']
+        self.id
 
 class Platform(Resource):
     def __init__(self, d):
@@ -28,9 +32,6 @@ class Platform(Resource):
         self.uri = d['uri']
         self.name = d['name']
         self.description = d['description']
-        
-    def __str__(self):
-        return self.name
 
 class Project(Resource):
     def __init__(self, d):
@@ -38,9 +39,6 @@ class Project(Resource):
         self.uri = d['uri']
         self.name = d['name']
         self.description = d['description']
-    
-    def __str__(self):
-        return self.name
         
 class Experiment(Resource):
     def __init__(self, d, project):
@@ -49,42 +47,91 @@ class Experiment(Resource):
         self.name = d['name']
         self.description = d['description']
         self.project = project
-    
-    def __str__(self):
-        return self.name
 
 class PropertySet(Resource):
-    pass
+    def __init__(self, d, platform, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
+        self.platform = platform
+        self.experiment = experiment
 
 class VirtualNode(Resource):
-    pass
+    def __init__(self, d, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.experiment = experiment
 
 class VirtualNodeGroup(Resource):
-    pass
+    def __init__(self, d, virtual_nodes, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
+        self.virtual_nodes = virtual_nodes
+        self.experiment = experiment
 
 class VirtualTask(Resource):
-    pass
+    def __init__(self, d, platform, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
 
 class Image(Resource):
-    pass
+    def __init__(self, d, platform, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
 
 class Job(Resource):
-    pass
+    def __init__(self, d, platform, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
 
 class Node(Resource):
-    pass
+    def __init__(self, d, platform, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
 
 class NodeGroup(Resource):
-    pass
+    def __init__(self, d, platform, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
 
 class Task(Resource):
-    pass
+    def __init__(self, d, platform, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
 
 class Trace(Resource):
-    pass
+    def __init__(self, d, platform, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
 
 class Log(Resource):
-    pass
+    def __init__(self, d, platform, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
 
 class Status(Resource):
-    pass
+    def __init__(self, d, platform, experiment):
+        self.id = d['id']
+        self.uri = d['uri']
+        self.name = d['name']
+        self.description = d['description']
