@@ -983,8 +983,8 @@ class ProjectCollectionHandler(OAuth2RESTJSONHandler):
         project.owner = self.user
         project.put()
         self.response.status = '201'
-        self.response.headers['Location'] = '%s' % (project.uri())
-        self.response.headers['Content-Location'] = '%s' % (project.uri())
+        self.response.headers['Location'] = '%s' % project.uri()
+        self.response.headers['Content-Location'] = '%s' % project.uri()
             
 class ProjectResourceHandler(OAuth2RESTJSONHandler):
     
@@ -1036,8 +1036,8 @@ class ExperimentCollectionHandler(OAuth2RESTJSONHandler):
         experiment.project = Project.get_by_id(int(experiment_dict['project_id']))
         experiment.put()
         self.response.status = '201'
-        self.response.headers['Location'] = '%s' % (experiment.uri())
-        self.response.headers['Content-Location'] = '%s' % (experiment.uri())
+        self.response.headers['Location'] = '%s' % experiment.uri()
+        self.response.headers['Content-Location'] = '%s' % experiment.uri()
             
 class ExperimentResourceHandler(OAuth2RESTJSONHandler):
     
@@ -1068,11 +1068,93 @@ class ExperimentResourceHandler(OAuth2RESTJSONHandler):
 # IMAGE
 
 class ImageCollectionHandler(OAuth2RESTJSONHandler):
-    pass
+    
+    def options(self):
+        allowed_methods = ['GET', 'POST']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, experiment_id):
+        
+        experiment = Experiment.get_by_id(int(experiment_id))
+        
+        image_list = list()
+        query = Image.all().filter('experiment =', experiment)
+        for image in query:
+            image_list.append(image.to_dict(head_only = True))
+        self.response.out.write(serialize(image_list))
+        
+    def post(self, experiment_id):
+
+        experiment = Experiment.get_by_id(int(experiment_id))
+
+        image_dict = json.loads(self.request.body)
+
+        image = Image()
+        image.name = image_dict['name']
+        image.description = image_dict['description']
+        image.owner = self.user
+        image.experiment = experiment
+        image.put()
+
+        self.response.status = '201'
+        self.response.headers['Location'] = '%s' % image.uri()
+        self.response.headers['Content-Location'] = '%s' % image.uri()
 
 class ImageResourceHandler(OAuth2RESTJSONHandler):
-    pass
+    
+    def options(self):
+        allowed_methods = ['GET', 'PUT', 'DELETE']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, experiment_id, image_id):
         
+        image = Image.get_by_id(int(image_id))
+        self.response.out.write(serialize(image.to_dict()))
+                
+    def put(self, experiment_id, image_id):
+        
+        image_dict = json.loads(self.request.body)
+        image = Image.get_by_id(int(image_id))
+        image.name = experiment_dict['name']
+        image.description = experiment_dict['description']
+        image.put()
+        self.response.out.write(serialize(image.to_dict()))
+            
+    def delete(self, experiment_id):
+        
+        image = Image.get_by_id(int(image_id))
+        image.delete()
+
+class ImageUploadHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        allowed_methods = ['POST']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+        
+    def post(self, experiment_id, image_id):
+        
+        imagefile = self.request.get('imagefile')
+        
+        image = Image.get_by_id(int(image_id))
+        
+        image.imagefile = imagefile
+        image.put()
+        
+        self.response.out.write(serialize(image.to_dict()))
+        
+class ImageDownloadHandler(OAuth2RESTJSONHandler):
+
+    def options(self):
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+
+    def get(self, experiment_id, image_id):
+        
+        image = Image.get_by_id(int(image_id))
+        
+        self.response.headers['Content-Type'] = 'application/octet-stream'
+        self.response.out.write(image.imagefile)
+
 # PROPERTY SET
 
 class PropertySetCollectionHandler(OAuth2RESTJSONHandler):
@@ -1119,8 +1201,8 @@ class PropertySetCollectionHandler(OAuth2RESTJSONHandler):
             vn.owner = self.user
             vn.put()
         self.response.status = '201'
-        self.response.headers['Location'] = '%s' % (property_set.uri())
-        self.response.headers['Content-Location'] = '%s' % (property_set.uri())
+        self.response.headers['Location'] = '%s' % property_set.uri()
+        self.response.headers['Content-Location'] = '%s' % property_set.uri()
             
 class PropertySetResourceHandler(OAuth2RESTJSONHandler):
     
@@ -1204,8 +1286,8 @@ class VirtualNodeGroupCollectionHandler(OAuth2RESTJSONHandler):
             VirtualNodeGroup2VirtualNode(vng = vng, vn = VirtualNode.get_by_id(int(vn_id))).put()
         
         self.response.status = '201'
-        self.response.headers['Location'] = '%s' % (vng.uri())
-        self.response.headers['Content-Location'] = '%s' % (vng.uri())
+        self.response.headers['Location'] = '%s' % vng.uri()
+        self.response.headers['Content-Location'] = '%s' % vng.uri()
 
 class VirtualNodeGroupResourceHandler(OAuth2RESTJSONHandler):
     

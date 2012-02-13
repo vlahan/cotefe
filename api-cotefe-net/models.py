@@ -92,7 +92,7 @@ class Federation(Resource):
         r['platforms'] = build_url(path = '/platforms/')
         r['projects'] = build_url(path = '/projects/')
         r['experiments'] = build_url(path = '/experiments/')
-        r['jobs'] = build_url(path = '/jobs/')
+        # r['jobs'] = build_url(path = '/jobs/')
         r['users'] = build_url(path = '/users/')
         r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
         r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
@@ -243,7 +243,7 @@ class Image(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
     
-    image_url = db.LinkProperty()
+    imagefile = db.BlobProperty()
     
     owner = db.ReferenceProperty(User, collection_name='images')
     experiment = db.ReferenceProperty(Experiment, collection_name='images')
@@ -262,12 +262,16 @@ class Image(Resource):
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
+        r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
-            r['image_url'] = self.image_url
+            if self.imagefile:
+                r['download'] = '%s/download' % self.uri()
+            r['upload'] = '%s/upload' % self.uri()
             r['experiment'] = self.experiment.uri()
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+        return r
             
 
 class PropertySet(Resource):
@@ -380,7 +384,6 @@ class VirtualNodeGroup(Resource):
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
         
-        
 class VirtualNodeGroup2VirtualNode(Relationship):
    vng = db.ReferenceProperty(VirtualNodeGroup, collection_name='virtual_nodes')
    vn = db.ReferenceProperty(VirtualNode, collection_name='virtual_nodegroups')
@@ -410,6 +413,7 @@ class VirtualTask(Resource):
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
+        r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
             r['method'] = self.method
@@ -439,13 +443,14 @@ class Job(Resource):
         return self.key().id()
 
     def uri(self):
-        return build_url(path = '/experiments/%s/jobs/%s' % (self.experiment.id(), self.id()))
+        return build_url(path = '/jobs/%s' % (self.experiment.id(), self.id()))
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
+        r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
             r['datetime_from'] = convert_datetime_to_string(self.datetime_from)

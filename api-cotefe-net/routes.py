@@ -50,6 +50,8 @@ routes = [
     
     (r'^/experiments/(\d+)/images/$', ImageCollectionHandler),
     (r'^/experiments/(\d+)/images/(\d+)$', ImageResourceHandler),
+    (r'^/experiments/(\d+)/images/(\d+)/upload$', ImageUploadHandler),
+    (r'^/experiments/(\d+)/images/(\d+)/download$', ImageDownloadHandler),
     
     (r'^/experiments/(\d+)/property-sets/$', PropertySetCollectionHandler),
     (r'^/experiments/(\d+)/property-sets/(\d+)$', PropertySetResourceHandler),
