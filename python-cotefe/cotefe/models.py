@@ -82,11 +82,19 @@ class VirtualNodeGroup(Resource):
         self.experiment = experiment
 
 class VirtualTask(Resource):
-    def __init__(self, d, platform, experiment):
+    
+    def __init__(self, d, experiment):
         self.id = d['id']
         self.uri = d['uri']
         self.name = d['name']
         self.description = d['description']
+        action = {
+            'PUT': 'install',
+            'DELETE': 'erase'
+        }
+        self.action = action[d['method']]
+        self.target = d['target']
+        self.experiment = experiment
 
 class Job(Resource):
     def __init__(self, d, platform, experiment):

@@ -229,3 +229,36 @@ class COTEFEAPI(object):
         urllib2.urlopen(request).read()
         
         return Image(image_dict, experiment)
+        
+    def create_virtual_task(self, name, description, action, virtual_nodegroup, image, experiment):
+        
+        method = {
+            'install': 'PUT',
+            'erase': 'DELETE'
+        }
+        
+        vt_dict = {
+            'name': name,
+            'description': description,
+            'method': method[action]
+        }
+        
+        if image:
+            vt_dict['target'] = self.build_url(path = '%s/image/%s' % (virtual_nodegroup.id, image.id))
+        else:
+            vt_dict['target'] = self.build_url(path = '%s/image' % virtual_nodegroup.id)
+        
+        uri = self.build_url(path = '/experiments/%s/virtual-tasks/' % experiment.id)
+        method = 'POST'
+        headers = {'Content-type': 'application/json'}
+        body = json.dumps(vt_dict)
+        response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
+        assert response.status == 201
+
+        uri = self.build_url(path = response['content-location'])
+        method = 'GET'
+        response, content = self.http.request(uri=uri, method=method)
+        assert response.status == 200
+        
+        return VirtualTask(json.loads(content), experiment)
+        

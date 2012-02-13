@@ -22,8 +22,11 @@ ACCESS_TOKEN = '7e49782bb6f244099026b5a264453c92'
 DEFAULT_NAME = 'DEMO'
 DEFAULT_DESCRIPTION = 'COTEFE API DEMO - PLEASE DO NOT DELETE!'
 PLATFORM_NAME = 'TmoteSky'
+# NUM_NODES_S = 1
+# NUM_NODES_P = 93
+# NUM_NODES_I = 2
 NUM_NODES_S = 1
-NUM_NODES_P = 93
+NUM_NODES_P = 3
 NUM_NODES_I = 2
 IMAGEFILE_S = 'images/demo_image_subscriber_ctp'
 IMAGEFILE_P = 'images/demo_image_publishers_ctp'
@@ -194,6 +197,8 @@ my_image_S = api.create_image(
     description = DEFAULT_DESCRIPTION,
     imagefile = IMAGEFILE_S,
     experiment = my_experiment)
+    
+logging.info('Check your image S at %s' % my_image_S)
 
 # CREATE A NEW IMAGE 2
 
@@ -202,6 +207,8 @@ my_image_P = api.create_image(
     description = DEFAULT_DESCRIPTION,
     imagefile = IMAGEFILE_P,
     experiment = my_experiment)
+    
+logging.info('Check your image P at %s' % my_image_P)
 
 # CREATE A NEW IMAGE 3
 
@@ -210,53 +217,67 @@ my_image_I = api.create_image(
     description = DEFAULT_DESCRIPTION,
     imagefile = IMAGEFILE_I,
     experiment = my_experiment)
-
-exit()
+    
+logging.info('Check your image I at %s' % my_image_I)
 
 # CREATE A NEW VIRTUAL TASK 0
 
 my_virtual_task_0 = api.create_virtual_task(
-    name = DEFAULT_NAME,
+    name = 'Erase all nodes',
     description = DEFAULT_DESCRIPTION,
     action = 'erase',
-    virtual_nodegroup = my_virtual_nodegroup_all,
+    virtual_nodegroup = my_virtual_nodegroup_ALL,
+    image = None,
     experiment = my_experiment)
+    
+logging.info('Check your virtual task 0 at %s' % my_virtual_task_0)
 
 # CREATE A NEW VIRTUAL TASK 1
 
 my_virtual_task_1 = api.create_virtual_task(
-    name = DEFAULT_NAME,
+    name = 'Install image on Subscriber node',
     description = DEFAULT_DESCRIPTION,
     action = 'install',
-    virtual_nodegroup = my_virtual_nodegroup_1,
-    image = my_image_1,
+    virtual_nodegroup = my_virtual_nodegroup_S,
+    image = my_image_S,
     experiment = my_experiment)
+    
+logging.info('Check your virtual task 1 at %s' % my_virtual_task_1)
 
 # CREATE A NEW VIRTUAL TASK 2
 
 my_virtual_task_2 = api.create_virtual_task(
-    name = DEFAULT_NAME,
+    name = 'Install image on Publisher nodes',
     description = DEFAULT_DESCRIPTION,
     action = 'install',
-    virtual_nodegroup = my_virtual_nodegroup_2,
-    image = my_image_2,
+    virtual_nodegroup = my_virtual_nodegroup_P,
+    image = my_image_P,
     experiment = my_experiment)
+
+logging.info('Check your virtual task 2 at %s' % my_virtual_task_2)
 
 # CREATE A NEW VIRTUAL TASK 3
 
 my_virtual_task_3 = api.create_virtual_task(
-    name = DEFAULT_NAME,
+    name = 'Install image on Interferer nodes',
     description = DEFAULT_DESCRIPTION,
     action = 'install',
-    virtual_nodegroup = my_virtual_nodegroup_3,
-    image = my_image_3,
+    virtual_nodegroup = my_virtual_nodegroup_I,
+    image = my_image_I,
     experiment = my_experiment)
+    
+logging.info('Check your virtual task 3 at %s' % my_virtual_task_3)
    
 # CREATE A NEW VIRTUAL TASK 4
 
 my_virtual_task_4 = api.create_virtual_task(
-    name = DEFAULT_NAME,
+    name = 'Erase Interferer nodes',
     description = DEFAULT_DESCRIPTION,
     action = 'erase',
-    virtual_nodegroup = my_virtual_nodegroup_3,
+    virtual_nodegroup = my_virtual_nodegroup_I,
+    image = None,
     experiment = my_experiment)
+
+logging.info('Check your virtual task 4 at %s' % my_virtual_task_4)
+
+logging.info('Now check your experiment again at %s' % my_experiment)
