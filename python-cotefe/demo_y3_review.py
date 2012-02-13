@@ -5,17 +5,17 @@ from cotefe.client import COTEFEAPI
 
 # OAUTH2 CONFIGURATIONS
 
-# SERVER_URL = 'https://api.cotefe.net'
-# CLIENT_ID = 'd770617a49f54c0cbb0dc12175a6cbae'
-# CLIENT_SECRET = '565af7fd385644de88c326dcb7c499f6'
-# REDIRECT_URI = 'http://localhost'
-# ACCESS_TOKEN = '4f1664a88ca0400eab78fa8a575cbfba'
-
-SERVER_URL = 'http://localhost:8080'
-CLIENT_ID = '600803dc3d2547f3bacded2fd90c61f7'
-CLIENT_SECRET = 'bfdca3017e324028a3ba992cc61dcfc8'
+SERVER_URL = 'https://api.cotefe.net'
+CLIENT_ID = 'f400c488ed604889bd441abc9720baa0'
+CLIENT_SECRET = '94aee7111ab54808ba0e09fbfd37e505'
 REDIRECT_URI = 'http://localhost'
-ACCESS_TOKEN = '7e49782bb6f244099026b5a264453c92'
+ACCESS_TOKEN = '30319469252541df9d6678054a058581'
+
+# SERVER_URL = 'http://localhost:8080'
+# CLIENT_ID = '600803dc3d2547f3bacded2fd90c61f7'
+# CLIENT_SECRET = 'bfdca3017e324028a3ba992cc61dcfc8'
+# REDIRECT_URI = 'http://localhost'
+# ACCESS_TOKEN = '7e49782bb6f244099026b5a264453c92'
 
 # EXPERIMENT CONFIGURATION
 
