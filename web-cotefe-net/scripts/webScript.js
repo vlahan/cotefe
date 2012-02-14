@@ -1,6 +1,10 @@
 /*
  * web scripts for events uses jquery engine
  */
+
+
+
+/*******************************************/
 jQuery(document).ready(function(){  
     ui.init();
 });
@@ -8,6 +12,7 @@ jQuery(document).ready(function(){
 
 ui							={
 		projects:{id:"projects",template:"projectNew.ejs", templateVars:{uri:"",type:cotefe.projects.name,name:"",description:""}},
+		experiments:{id:"experiments",template:"experimentNew.ejs", templateVars:{uri:"",type:cotefe.experiments.name,projects:cotefe.session.getValueFromKey(cotefe.projects.session),name:"",description:""}},
 		
 };
 ui.init						=function(){
@@ -63,7 +68,7 @@ ui.events.pic				=function(){
         switch(typ)
         {
             case "projects"     :ui.make.editNewDeleteItem(ui.projects); break;
-            case "experiments"  : break;
+            case "experiments"  :ui.make.editNewDeleteItem(ui.experiments); break;
             case "jobs"         : break;
             case "images"       : break;
         }
@@ -76,7 +81,7 @@ ui.events.addNewItemImgEvent=function()
                         switch(element)
                         {
                          case "projects"     : ui.make.editNewDeleteItem(ui.projects); break;
-	                     case "experiments"  : break;
+	                     case "experiments"  : ui.make.editNewDeleteItem(ui.experiments); break;
 	                     case "jobs"         : break;
 	                     case "images"       : break;
                         }
@@ -127,6 +132,8 @@ ui.events.submit			=function(){
 			 		}
 			 		
 			 }
+		 cotefe.log(params);
+		 cotefe.log(json)	 
 		 //pass to update and create
 		 ui.make.createUpdateResource(params,JSON.stringify(json));
 	 });
@@ -149,7 +156,7 @@ ui.handler.leftMenu=function(selector)
 	        case "addP"         :ui.make.editNewDeleteItem(ui.projects);break;
 	        case "listP"        :ui.make.displayProjectList();break;
 	        case "experiments"  :break;
-	        case "addE"         :break;
+	        case "addE"         :ui.make.editNewDeleteItem(ui.experiments);break;
 	        case "listeE"       :break;
 	        case "jobs"         :break;
 	        case "addJ"         :break;
@@ -297,8 +304,6 @@ ui.make.customAlert = function(data){
     alert = new EJS({url: '../templates/alert.ejs'}).render(datar);
     $("#content").append(alert).fadeIn("slow",function(){$("#alert").delay(2000).fadeOut("slow");});  
 };
-
-
 
 
 

@@ -3,7 +3,7 @@
  * "https://web.cotefe.net"
  */
  var cotefe = {
-        mainUri             : "http://localhost:8080",
+        mainUri             : "https://web.cotefe.net",
         apiUri              : "https://api.cotefe.net",
         version             : 1.0,
         projects            : {uri:"projects/",         session:"_cotefeProject",       message:"Project",      name:"projects"},
@@ -12,8 +12,8 @@
         platforms           : {uri:"platforms/",        session:"_cotefePlatforms"},
         testbeds            : {uri:"testbeds/",         session:"_cotefeTestbeds"},
         user                : {uri:"me",                session:"_cotefeUser"},
-        oauth               : "https://api.cotefe.net/oauth2/auth?client_id=4e6b4b547b344429a52b4ce0d020f941",       
-        redirect            : "http://localhost:8080/htmls/getdata.html&response_type=token",
+        oauth               : "https://api.cotefe.net/oauth2/auth?client_id=fcfd2594ba794a8cadb516697d51d7b0",       
+        redirect            : "https://web.cotefe.net/htmls/getdata.html&response_type=token",
         dashboard           : "/dashboard",        
         comment             : "JS configuration ",
         link                : function(path){return this.apiUri+"/"+path+"";},

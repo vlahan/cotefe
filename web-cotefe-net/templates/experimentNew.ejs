@@ -1,5 +1,5 @@
 <div class="wrap">					
-	<div class="headings"><h1><span>New Project</span></h1></div>
+	<div class="headings"><h1><span>New Experiment</span></h1></div>
 					
 	<form action="" id="experimentform">
 		<input type="hidden" value="<%= uri %>" name="uri" id="uri"/>
@@ -12,9 +12,13 @@
                             <label for="selectbox">Project </label>
                             <select name="project" id="selectbox" >
                                     <option value="">Choose a Project</option>
-                                    for(i=0; i<5; i++) {%>
-                                    	<option value="1"><%= i %></option>
+                                    <% if(projects != null){
+                                    	for(i=0; i<projects.length; i++) { 
+                                    		items=JSON.parse(projects[i]);
+                                    	%>
+                                    	<option value="<%= items.id %> "><%= items.name %></option>
                                     <% }
+                                    } %>
                                     
                             </select>
         </p>
