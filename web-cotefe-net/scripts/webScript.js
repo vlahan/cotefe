@@ -157,7 +157,7 @@ ui.handler.leftMenu=function(selector)
 	        case "listP"        :ui.make.displayProjectList();break;
 	        case "experiments"  :break;
 	        case "addE"         :ui.make.editNewDeleteItem(ui.experiments);break;
-	        case "listeE"       :break;
+	        case "listE"        :ui.make.displayExpList();break;
 	        case "jobs"         :break;
 	        case "addJ"         :break;
 	        case "listJ"        :break;     
@@ -209,19 +209,40 @@ ui.make.dashboard		=function(){
          };
     table= new EJS({url: '../templates/tableModel.ejs'}).render(data);
     
-    data={ imagedata:menu,projecttable:table};
-    
-    completepage = new EJS({url: '../templates/dashboard.ejs'}).render(data);
-    $("#content").hide().html(completepage).fadeIn("slow");           
     /*
      * render experiments
      */
+    
+    cotefe.application.operations.dumbList=[];
+    var arr=JSON.parse(sessionStorage.getItem(cotefe.experiments.session));
+    for(i=0;i<arr.length;i++)
+    {
+        obj=JSON.parse(arr[i]);
+        cotefe.application.operations.dumbList.push(obj)
+    };
+    data={
+            headings:['Experiment Name','Project','Date','Edit','Delete'],
+            objects :cotefe.application.operations.dumbList,
+            type:"experiments",
+            row:ui.make.numberOfItem
+         };
+    tableexp= new EJS({url: '../templates/tableModel.ejs'}).render(data);
+    
+    
+    
+    
+    data={ imagedata:menu,projecttable:table,exptable:tableexp};
+    
+          
+    
     /*
      * render jobs
      */
     /*
      * render images
      */
+    completepage = new EJS({url: '../templates/dashboard.ejs'}).render(data);
+    $("#content").hide().html(completepage).fadeIn("slow");     
     
     $(document).bind("load",ui.events.dashboard());
 	
@@ -245,11 +266,41 @@ ui.make.displayProjectList=function()
          };
     table= new EJS({url: '../templates/tableModel.ejs'}).render(data);
     
-    data={tablecontent:table};
+    data={tablecontent:table,imlink:"projects"};
     projlist= new EJS({url: '../templates/projectList.ejs'}).render(data);
     $("#content").hide().html(projlist).fadeIn("slow");
     $(document).bind("load",ui.events.dashboard());
 }
+
+ui.make.displayExpList=function()
+{
+    cotefe.application.operations.dumbList=[];
+    var arr=JSON.parse(sessionStorage.getItem(cotefe.experiments.session));
+   
+    for(i=0;i<arr.length;i++)
+    {
+        obj=JSON.parse(arr[i]);
+        cotefe.application.operations.dumbList.push(obj)
+    };
+    row=arr.length;
+    data={
+            headings:['Experiment Name','Project','Date','Edit','Delete'],
+            objects :cotefe.application.operations.dumbList,
+            type:"experiments",
+            
+            row:row
+         };
+    table= new EJS({url: '../templates/tableModel.ejs'}).render(data);
+    
+    data={tablecontent:table,imlink:"experiments"};
+    projlist= new EJS({url: '../templates/projectList.ejs'}).render(data);
+    $("#content").hide().html(projlist).fadeIn("slow");
+    $(document).bind("load",ui.events.dashboard());
+};
+
+
+
+
 ui.make.editNewDeleteItem		=function(params)
 {
 	if(params.method===undefined)

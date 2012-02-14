@@ -281,7 +281,7 @@ cotefe.application.onUserSuccess    = function(data){
                						 
             	   					 cotefe.session.write(cotefe.user.session,JSON.stringify(obj));
                                      cotefe.application.getResourceOfType({token:data.request.params.token,type:cotefe.projects.uri});
-                                     //cotefe.application.getResourceOfType({token:data.request.params.token,type:cotefe.experiments.uri});
+                                     cotefe.application.getResourceOfType({token:data.request.params.token,type:cotefe.experiments.uri});
                                      //cotefe.application.getResourceOfType({token:data.request.params.token,type:cotefe.jobs.uri});
                                      cotefe.application.getResourceOfType({token:data.request.params.token,type:cotefe.platforms.uri});
                                      cotefe.application.getResourceOfType({token:data.request.params.token,type:cotefe.testbeds.uri});
@@ -307,7 +307,10 @@ cotefe.application.onGetResourceSuccess		= function(data)
                                             cotefe.application.operations.digLinks(data);
                                             cotefe.ajax.onAllAjaxDone();
                                             break;
-            case cotefe.experiments.uri :   cotefe.session.write(cotefe.experiments.session,data.data);cotefe.ajax.onAllAjaxDone();break;
+            case cotefe.experiments.uri :   data.session=cotefe.experiments.session;
+                                            cotefe.application.operations.digLinks(data);
+                                            cotefe.ajax.onAllAjaxDone();break;
+                                            //cotefe.session.write(cotefe.experiments.session,data.data);cotefe.ajax.onAllAjaxDone();break;
             case cotefe.jobs.uri        :   cotefe.session.write(cotefe.jobs.session,data.data);cotefe.ajax.onAllAjaxDone();break;
             case cotefe.platforms.uri   : 	data.session=cotefe.platforms.session;                                            
 									        cotefe.application.operations.digLinks(data);
