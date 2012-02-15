@@ -3,7 +3,7 @@
  * "https://web.cotefe.net"
  */
  var cotefe = {
-        mainUri             : "http://localhost:8080",
+        mainUri             : "https://web.cotefe.net",
         apiUri              : "https://api.cotefe.net",
         version             : 1.0,
         projects            : {uri:"projects/",         session:"_cotefeProject",       message:"Project",      name:"projects"},
@@ -13,7 +13,7 @@
         testbeds            : {uri:"testbeds/",         session:"_cotefeTestbeds"},
         user                : {uri:"me",                session:"_cotefeUser"},
         oauth               : "https://api.cotefe.net/oauth2/auth?client_id=a9a91a3852a04a6bbbb49db88fff14ee",       
-        redirect            : "http://localhost:8080/htmls/getdata.html&response_type=token",
+        redirect            : "https://web.cotefe.net/htmls/getdata.html&response_type=token",
         dashboard           : "/dashboard",        
         comment             : "JS configuration ",
         link                : function(path){return this.apiUri+"/"+path+"";},
@@ -376,7 +376,8 @@ cotefe.application.createUpdateResourceSuccess=function(params)
     else if(params.status===200)
     {
         cotefe.ajax.forward=function(){cotefe.alerts.success({custom:true,data:(resource.name+" "+method)})};
-        oo={token:params.request.params.token,type:params.request.params.type};
+        link=params.request.params.rname+"/"
+        oo={token:params.request.params.token,type:link};
         sessionStorage.setItem(resource.session,"[]");
         cotefe.application.getResourceOfType(oo);
         
