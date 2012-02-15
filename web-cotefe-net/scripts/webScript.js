@@ -109,33 +109,17 @@ ui.events.dashboard			=function(){
 ui.events.submit			=function(){
 	 $("input[name=submit]").bind("click",function() {
 		 formobj=($('form').serializeArray());
-		 params={}
+		
 		 var json = { };
 		 for(index=0;index<formobj.length;index++)
 			 {
-			 	if(formobj[index].name==="uri" && formobj[index].value==="")
-			 		{
-			 			params.method="POST";
-			 			params.type=formobj[index+1].value;
-			 			index=index+1;
-			 				
-			 		}
-			 	else if(formobj[index].name==="uri" && formobj[index].value!="")
-			 		{
-				 		params.method="PUT";
-			 			params.type=formobj[index].value;
-			 			index=index+1;
-			 		}			 		
-			 	else
-			 		{
-			 			json[formobj[index].name] = formobj[index].value;
-			 		}
-			 		
+			 	json[formobj[index].name] = formobj[index].value;
+			 	
 			 }
-		 cotefe.log(params);
-		 cotefe.log(json)	 
+		
 		 //pass to update and create
-		 ui.make.createUpdateResource(params,JSON.stringify(json));
+		 
+		 ui.make.createUpdateResource(JSON.stringify(json));
 	 });
 };
 
@@ -334,10 +318,10 @@ ui.make.editNewDeleteItem		=function(params)
 		cotefe.application.createUpdateResource(params);
 	}
 };
-ui.make.createUpdateResource=function(params,json)
+ui.make.createUpdateResource=function(json)
 {
 	
-	cotefe.application.createUpdateResource({head:params,data:json});
+	cotefe.application.createUpdateResource({data:json});
 }
 
 ui.make.customAlert = function(data){

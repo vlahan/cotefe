@@ -3,7 +3,7 @@
  * "https://web.cotefe.net"
  */
  var cotefe = {
-        mainUri             : "https://web.cotefe.net",
+        mainUri             : "http://localhost:8080",
         apiUri              : "https://api.cotefe.net",
         version             : 1.0,
         projects            : {uri:"projects/",         session:"_cotefeProject",       message:"Project",      name:"projects"},
@@ -12,8 +12,8 @@
         platforms           : {uri:"platforms/",        session:"_cotefePlatforms"},
         testbeds            : {uri:"testbeds/",         session:"_cotefeTestbeds"},
         user                : {uri:"me",                session:"_cotefeUser"},
-        oauth               : "https://api.cotefe.net/oauth2/auth?client_id=d61924040d0c40b6a02fd67f728a2f85",       
-        redirect            : "https://web.cotefe.net/htmls/getdata.html&response_type=token",
+        oauth               : "https://api.cotefe.net/oauth2/auth?client_id=a9a91a3852a04a6bbbb49db88fff14ee",       
+        redirect            : "http://localhost:8080/htmls/getdata.html&response_type=token",
         dashboard           : "/dashboard",        
         comment             : "JS configuration ",
         link                : function(path){return this.apiUri+"/"+path+"";},
@@ -329,23 +329,51 @@ cotefe.application.onGetResourceSuccess		= function(data)
 cotefe.application.createUpdateResource=function(params)
 {
 	token=(JSON.parse(sessionStorage.getItem(cotefe.user.session))).session
-    resourcetype=params.head.type;
-	// params.head.type=params.head.type+"/";
-	switch(params.head.method)
-	{
-		case "POST"		:params.head.type=params.head.type+"/"; cotefe.method.post({rname:resourcetype,type:params.head.type,token:token,payload:params.data,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});break;
-		case "PUT"		:cotefe.method.put({rname:resourcetype,uri:params.head.type,token:token,payload:params.data,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});break;
-		case "DELETE"	:cotefe.method.del({rname:resourcetype,uri:params.head.uri,token:token,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});break;
-	}
+	
+	data=params.data;
+	
+	arr=JSON.parse(data);
+    resourcetype=arr.type;
+    resourceuri=arr.uri;
+    delete arr.type;
+    delete arr.uri;
+    json=JSON.stringify(arr);
+    if(resourceuri!="")
+    {
+        //PUT
+        cotefe.method.put({rname:resourcetype,uri:resourceuri,token:token,payload:json,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});
+    }
+    else if(resourceuri==="" && resourcetype!="")
+    {
+        //POST
+        resourc=resourcetype+"/"
+        cotefe.method.post({rname:resourcetype,type:resourc,token:token,payload:json,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});
+    }
+    else if(resourceuri==="delete")
+    {
+        //delete
+    }
+	
+	
 }
 cotefe.application.createUpdateResourceSuccess=function(params)
 {
     
-    message="";
-    eval("resource=cotefe."+params.request.params.rname);
     
+    message="";
+    
+    eval("resource=cotefe."+(params.request.params.rname));
+    cotefe.log(params);
     method= (params.request.method==="POST")?"created":(params.request.method==="PUT")?"updated":(params.request.method==="DELETE")?"deleted":"";
     if(params.status===201)
+    {
+        cotefe.ajax.forward=function(){cotefe.alerts.success({custom:true,data:(resource.name+" "+method)})};
+        oo={token:params.request.params.token,type:params.request.params.type};
+        sessionStorage.setItem(resource.session,"[]");
+        cotefe.application.getResourceOfType(oo);
+        
+    }
+    else if(params.status===200)
     {
         cotefe.ajax.forward=function(){cotefe.alerts.success({custom:true,data:(resource.name+" "+method)})};
         oo={token:params.request.params.token,type:params.request.params.type};
