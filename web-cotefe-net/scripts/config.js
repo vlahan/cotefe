@@ -330,10 +330,10 @@ cotefe.application.createUpdateResource=function(params)
 {
 	token=(JSON.parse(sessionStorage.getItem(cotefe.user.session))).session
     resourcetype=params.head.type;
-	params.head.type=params.head.type+"/";
+	// params.head.type=params.head.type+"/";
 	switch(params.head.method)
 	{
-		case "POST"		:cotefe.method.post({rname:resourcetype,type:params.head.type,token:token,payload:params.data,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});break;
+		case "POST"		:params.head.type=params.head.type+"/"; cotefe.method.post({rname:resourcetype,type:params.head.type,token:token,payload:params.data,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});break;
 		case "PUT"		:cotefe.method.put({rname:resourcetype,uri:params.head.type,token:token,payload:params.data,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});break;
 		case "DELETE"	:cotefe.method.del({rname:resourcetype,uri:params.head.uri,token:token,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});break;
 	}

@@ -6,13 +6,12 @@ threadsafe: true
 
 handlers:
 
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
 - url: /css
   static_dir: css
-  secure: always
-
-- url: /
-  static_files: htmls/index.html
-  upload: htmls/.*
   secure: always
 
 - url: /dashboard
@@ -20,9 +19,9 @@ handlers:
   upload: htmls/.*
   secure: always
   
-- url: /favicon.ico
-  static_files: favicon.ico
-  upload: /favicon.ico
+- url: /
+  static_files: htmls/index.html
+  upload: htmls/.*
   secure: always
   
 - url: /htmls
