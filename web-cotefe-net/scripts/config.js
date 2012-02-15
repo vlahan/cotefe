@@ -12,7 +12,7 @@
         platforms           : {uri:"platforms/",        session:"_cotefePlatforms"},
         testbeds            : {uri:"testbeds/",         session:"_cotefeTestbeds"},
         user                : {uri:"me",                session:"_cotefeUser"},
-        oauth               : "https://api.cotefe.net/oauth2/auth?client_id=fcfd2594ba794a8cadb516697d51d7b0",       
+        oauth               : "https://api.cotefe.net/oauth2/auth?client_id=d61924040d0c40b6a02fd67f728a2f85",       
         redirect            : "https://web.cotefe.net/htmls/getdata.html&response_type=token",
         dashboard           : "/dashboard",        
         comment             : "JS configuration ",
