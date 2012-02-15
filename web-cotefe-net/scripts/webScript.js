@@ -326,9 +326,15 @@ ui.make.createUpdateResource=function(json)
 
 ui.make.customAlert = function(data){
     
+    
     if(data.res==="success")
     {
-         var datar={classname:"alertSuccess",message:data.data};    
+         var datar={classname:"alertSuccess",message:data.data};
+         if(data.params.remove!=undefined)
+         {
+             $("a[href='"+data.params.remove+"']").parent().parent().remove();
+         }
+         
     }
     else if(data.res==="fail")
     {

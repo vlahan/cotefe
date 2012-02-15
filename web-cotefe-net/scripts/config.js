@@ -182,7 +182,7 @@ cotefe.alerts.success               = function(params){
     }
     else
     {
-        ui.make.customAlert({res:"success",data:params.data});
+        ui.make.customAlert({res:"success",data:params.data,params:params});
     }
 }
 cotefe.alerts.warning               = function(params){
@@ -330,6 +330,15 @@ cotefe.application.createUpdateResource=function(params)
 {
 	token=(JSON.parse(sessionStorage.getItem(cotefe.user.session))).session
 	
+	if(params.method==="delete")
+	{
+	    //delete
+	    cotefe.method.del({rname:params.id,uri:params.uri,token:token,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});
+	    return null;
+	}
+	
+	
+	
 	data=params.data;
 	
 	arr=JSON.parse(data);
@@ -349,10 +358,8 @@ cotefe.application.createUpdateResource=function(params)
         resourc=resourcetype+"/"
         cotefe.method.post({rname:resourcetype,type:resourc,token:token,payload:json,onComplete:function(data){cotefe.application.createUpdateResourceSuccess(data)}});
     }
-    else if(resourceuri==="delete")
-    {
-        //delete
-    }
+   
+   
 	
 	
 }
@@ -363,7 +370,7 @@ cotefe.application.createUpdateResourceSuccess=function(params)
     message="";
     
     eval("resource=cotefe."+(params.request.params.rname));
-    cotefe.log(params);
+    
     method= (params.request.method==="POST")?"created":(params.request.method==="PUT")?"updated":(params.request.method==="DELETE")?"deleted":"";
     if(params.status===201)
     {
@@ -372,14 +379,25 @@ cotefe.application.createUpdateResourceSuccess=function(params)
         sessionStorage.setItem(resource.session,"[]");
         cotefe.application.getResourceOfType(oo);
         
+        
     }
     else if(params.status===200)
     {
-        cotefe.ajax.forward=function(){cotefe.alerts.success({custom:true,data:(resource.name+" "+method)})};
+        
+        if(params.request.method==="DELETE")
+        {
+            cotefe.ajax.forward=function(){cotefe.alerts.success({custom:true,data:(resource.name+" "+method),remove:params.request.params.uri})};
+        }
+        else
+        {
+            cotefe.ajax.forward=function(){cotefe.alerts.success({custom:true,data:(resource.name+" "+method)})};
+        }
+        
         link=params.request.params.rname+"/"
         oo={token:params.request.params.token,type:link};
         sessionStorage.setItem(resource.session,"[]");
         cotefe.application.getResourceOfType(oo);
+        
         
     }
     else if(params.status === 0)
