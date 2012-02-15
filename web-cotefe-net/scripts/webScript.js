@@ -332,7 +332,7 @@ ui.make.customAlert = function(data){
          var datar={classname:"alertSuccess",message:data.data};
          if(data.params.remove!=undefined)
          {
-             $("a[href='"+data.params.remove+"']").parent().parent().remove();
+             $("a[href='"+data.params.remove+"']").parent().parent().fadeOut(500, function() { $(this).remove(); });
          }
          
     }
