@@ -310,6 +310,20 @@ ui.make.editNewDeleteItem		=function(params)
 							 	ui.projects.templateVars.name="";
 							 	ui.projects.templateVars.description="";
 							 	break;
+			case ui.experiments.id:
+			                    ui.experiments.templateVars.uri=params.uri;
+                                temp=(cotefe.session.FindItemByUri(cotefe.experiments.session,params.uri));
+                                ui.experiments.templateVars.name=temp.name;
+                                ui.experiments.templateVars.description=temp.description;
+                                ui.experiments.templateVars.projects=cotefe.session.getValueFromKey(cotefe.projects.session);
+                                data= ui.experiments.templateVars;
+                                completepage = new EJS({url: ('../templates/'+ui.experiments.template)}).render(data);
+                                $("#content").hide().html(completepage).fadeIn("slow",function(){ui.events.submit();});
+                                
+                                ui.experiments.templateVars.uri="";                                
+                                ui.experiments.templateVars.name="";
+                                ui.experiments.templateVars.description="";
+                                break;
 		}
 	}
 	else if(params.method==="delete")
