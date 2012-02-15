@@ -289,7 +289,13 @@ ui.make.editNewDeleteItem		=function(params)
 {
 	if(params.method===undefined)
 	{
+	    if(params.templateVars.projects!=undefined)
+	    {
+	        params.templateVars.projects=cotefe.session.getValueFromKey(cotefe.projects.session);
+	    }
+		
 		data=params.templateVars;
+		
 		completepage = new EJS({url: ('../templates/'+params.template)}).render(data);
 		$("#content").hide().html(completepage).fadeIn("slow",function(){ui.events.submit();});
 		
@@ -315,8 +321,11 @@ ui.make.editNewDeleteItem		=function(params)
                                 temp=(cotefe.session.FindItemByUri(cotefe.experiments.session,params.uri));
                                 ui.experiments.templateVars.name=temp.name;
                                 ui.experiments.templateVars.description=temp.description;
-                                ui.experiments.templateVars.projects=cotefe.session.getValueFromKey(cotefe.projects.session);
-                                data= ui.experiments.templateVars;
+                                
+                                tem=ui.experiments.templateVars;
+                                tem.projects=cotefe.session.getValueFromKey(cotefe.projects.session);
+                                
+                                data= tem;
                                 completepage = new EJS({url: ('../templates/'+ui.experiments.template)}).render(data);
                                 $("#content").hide().html(completepage).fadeIn("slow",function(){ui.events.submit();});
                                 
