@@ -15,8 +15,19 @@
                                     <% if(projects != null){
                                     	for(i=0; i<projects.length; i++) { 
                                     		items=JSON.parse(projects[i]);
+                                    		
                                     	%>
-                                    	<option value="<%= items.id %> "><%= items.name %></option>
+                                    	<option value="<%= items.id %> " <% 
+                                    	if(selected != undefined || selected !=null)
+                                    	{
+                                    		
+                                    		if(selected.id===items.id)
+                                    		{
+                                    			%> selected <%
+                                    		}
+                                    	}
+                                    	                                    	
+                                    	 %>  ><%= items.name %></option>
                                     <% }
                                     } %>
                                     

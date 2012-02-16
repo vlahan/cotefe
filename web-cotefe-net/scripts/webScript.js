@@ -67,8 +67,8 @@ ui.events.pic				=function(){
         var typ=$(this).attr("href");
         switch(typ)
         {
-            case "projects"     :ui.make.editNewDeleteItem(ui.projects); break;
-            case "experiments"  :ui.make.editNewDeleteItem(ui.experiments); break;
+            case "projects"     : ui.make.editNewDeleteItem(ui.projects); break;
+            case "experiments"  : ui.make.editNewDeleteItem(ui.experiments); break;
             case "jobs"         : break;
             case "images"       : break;
         }
@@ -287,14 +287,15 @@ ui.make.displayExpList=function()
 
 ui.make.editNewDeleteItem		=function(params)
 {
+	
 	if(params.method===undefined)
 	{
-	    if(params.templateVars.projects!=undefined)
-	    {
-	        params.templateVars.projects=cotefe.session.getValueFromKey(cotefe.projects.session);
-	    }
 		
 		data=params.templateVars;
+		if(params.id==="experiments")
+			{
+				data.projects=JSON.parse(sessionStorage.getItem(cotefe.projects.session));
+			}
 		
 		completepage = new EJS({url: ('../templates/'+params.template)}).render(data);
 		$("#content").hide().html(completepage).fadeIn("slow",function(){ui.events.submit();});
@@ -321,11 +322,10 @@ ui.make.editNewDeleteItem		=function(params)
                                 temp=(cotefe.session.FindItemByUri(cotefe.experiments.session,params.uri));
                                 ui.experiments.templateVars.name=temp.name;
                                 ui.experiments.templateVars.description=temp.description;
-                                
-                                tem=ui.experiments.templateVars;
-                                tem.projects=cotefe.session.getValueFromKey(cotefe.projects.session);
-                                
-                                data= tem;
+                                data= ui.experiments.templateVars;
+                                data.projects=JSON.parse(sessionStorage.getItem(cotefe.projects.session));
+                                data.selected=temp.project;
+                               
                                 completepage = new EJS({url: ('../templates/'+ui.experiments.template)}).render(data);
                                 $("#content").hide().html(completepage).fadeIn("slow",function(){ui.events.submit();});
                                 
