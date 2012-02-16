@@ -105,6 +105,7 @@ ui.events.dashboard			=function(){
 	ui.events.pic();
 	ui.events.addNewItemImgEvent();
 	ui.events.addEditDelete();
+	ui.events.expdigin();
 }
 
 ui.events.detail	= function(session,tmpl)
@@ -123,6 +124,35 @@ ui.events.detail	= function(session,tmpl)
 		
 	});
 }
+
+
+ui.events.expdigin	= function()
+{
+	$(".experimentResource").unbind("click");
+	$(".experimentResource").bind("click",function(event){
+		uri=$(this).attr('href');
+		
+		//draw complete experiment info template
+		ui.make.experimentRes();
+		
+	});
+}
+
+ui.events.experimentRes	= function()
+{
+	$("summary").bind("click",function(event){
+		element=$(this).parent();
+		var open=$(element).attr("open");
+		if(open==="open")
+			{
+				$(element).removeAttr("open")
+			}
+		else
+			{
+				$(element).attr("open","open")
+			}
+	});
+};
 
 
 ui.events.submit			=function(){
@@ -231,7 +261,7 @@ ui.make.dashboard		=function(){
             type:"experiments",
             row:ui.make.numberOfItem
          };
-    tableexp= new EJS({url: '../templates/tableModel.ejs'}).render(data);
+    tableexp= new EJS({url: '../templates/tableModelex.ejs'}).render(data);
     
     
     
@@ -295,12 +325,13 @@ ui.make.displayExpList=function()
             
             row:row
          };
-    table= new EJS({url: '../templates/tableModel.ejs'}).render(data);
+    table= new EJS({url: '../templates/tableModelex.ejs'}).render(data);
     
     data={tablecontent:table,imlink:"experiments"};
     projlist= new EJS({url: '../templates/projectList.ejs'}).render(data);
     $("#content").hide().html(projlist).fadeIn("slow");
     $(document).bind("load",ui.events.dashboard());
+    $(document).bind("load",ui.events.expdigin());
 };
 
 
@@ -403,7 +434,7 @@ ui.make.testbed=function(){
     
 	
 };
- ui.make.platforms=function()
+ui.make.platforms=function()
  {
 	 data={objects:JSON.parse(sessionStorage.getItem(cotefe.platforms.session)),head:"Platforms"};
 		
@@ -413,7 +444,11 @@ ui.make.testbed=function(){
 	    $(document).bind("load",ui.events.detail(cotefe.platforms.session,"platformsdetails.ejs"));
  };
 
-
-
-
-
+ui.make.experimentRes=function()
+{
+	data={exps:(sessionStorage.getItem(cotefe.experiments.session))};
+    exprimentres= new EJS({url: '../templates/experimentres.ejs'}).render(data);
+    $("#content").hide().html(exprimentres).fadeIn("slow");
+    $(document).bind("load",ui.events.dashboard());
+    $(document).bind("load",ui.events.experimentRes());
+};
