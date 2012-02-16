@@ -1,0 +1,27 @@
+<div class="wrap">					
+	<div class="headings"><h1><span>TestBeds</span></h1></div>
+	<div class="detaildiv">
+		<table class="shadow-dark" id="testbed" >
+				<tr>
+					<td width="25%" valign="top">
+						<ul id="tablesubnav">
+							<% if(objects != undefined || objects != null)
+								for(i=0;i<objects.length;i++)
+									{
+										arr=JSON.parse(objects[i]);
+										%><li><a href="<%= arr.uri %>"><span><%= arr.name %></span></a></li><%
+									}
+							%>
+							
+						</ul>
+					</td>
+						
+					<td valign="top">
+						<div id="detail">
+							
+						</div>
+					</td>
+				</tr>
+		</table>
+	</div>
+</div>

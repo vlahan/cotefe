@@ -80,7 +80,7 @@ border-bottom-left-radius: 10px;
 
 
 
-#nav,#nav li ul, #list-tabs #tabs ul,ul.tabs{list-style-type:none;margin:0px;padding:0px;}
+#nav,#nav li ul, #list-tabs #tabs ul,ul.tabs,.detaildiv ul{list-style-type:none;margin:0px;padding:0px;}
 #nav a{display:block;width:inherit;height:35px;border-bottom:1px solid #ccc;}
 #nav a span{padding-top:10px;padding-left:20px;font-size:15px;color:#203b5c;}
 #nav a:hover{background-color:#dc7621;}
@@ -110,9 +110,9 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { background: #fff;	bord
 
 .tab_no_container{border-top: none;overflow: hidden;clear: both;float: left; width: 99%;	background: #fff;}
 .tab_container {border: 1px solid #999;	border-top: none;overflow: hidden;clear: both;float: left; width: 99%;	background: #fff;}
-.tab_content {padding-left: 20px;padding-top: 20px;padding-bottom: 20px;padding-right: 20px;}
-.tab_content table {width:100%;margin:auto;border-collapse: collapse}
-.tab_content table {width:100%;}
+.tab_content, .detaildiv {padding-left: 20px;padding-top: 20px;padding-bottom: 20px;padding-right: 20px;}
+.tab_content table, .detaildiv table {width:100%;margin:auto;border-collapse: collapse}
+.tab_content table, .detaildiv table {width:100%;}
 .tab_content table tr{height:30px;}
 .tab_content table tr:nth-child(odd) {background: #EAEAEA;}
 .tab_content table tr:hover {background: #ccc;}
@@ -122,3 +122,7 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { background: #fff;	bord
 .tab_content table tr td a{color:#DC7621;}
 .tab_content table tr td a:hover{text-decoration:underline;}
 
+.detaildiv table tr td{padding-top:20px;padding-bottom:20px;}
+#tablesubnav li a{width:200px;display:block;height:30px;color:#203B5C;}
+#tablesubnav li a:hover{background-color:#dc7621;background-image:url(../images/arrow.jpg);background-repeat:no-repeat;background-position: 185px 0px;color:#203B5C;}
+#tablesubnav li a span{margin-left:20px;line-height:30px;}

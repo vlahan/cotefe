@@ -12,7 +12,7 @@ jQuery(document).ready(function(){
 
 ui							={
 		projects:{id:"projects",template:"projectNew.ejs", templateVars:{uri:"",type:cotefe.projects.name,name:"",description:""}},
-		experiments:{id:"experiments",template:"experimentNew.ejs", templateVars:{uri:"",type:cotefe.experiments.name,projects:cotefe.session.getValueFromKey(cotefe.projects.session),name:"",description:""}},
+		experiments:{id:"experiments",template:"experimentNew.ejs", templateVars:{uri:"",type:cotefe.experiments.name,selected:null,projects:cotefe.session.getValueFromKey(cotefe.projects.session),name:"",description:""}},
 		
 };
 ui.init						=function(){
@@ -106,6 +106,25 @@ ui.events.dashboard			=function(){
 	ui.events.addNewItemImgEvent();
 	ui.events.addEditDelete();
 }
+
+ui.events.detail	= function(session,tmpl)
+{
+	$("#tablesubnav li a").bind("click",function(event){
+		
+		//get new obj from hrefs
+		uri=$(this).attr('href');
+		obj=cotefe.session.FindItemByUri(session,uri);
+		cotefe.log(obj);
+		
+		disp = new EJS({url: '../templates/'+tmpl}).render(obj);
+		
+		 $("#detail").hide().html(disp).fadeIn("slow");    
+		
+		
+	});
+}
+
+
 ui.events.submit			=function(){
 	 $("input[name=submit]").bind("click",function() {
 		 formobj=($('form').serializeArray());
@@ -148,6 +167,8 @@ ui.handler.leftMenu=function(selector)
 	        case "images"       :break;
 	        case "uploadIm"     :break;
 	        case "listIm"       :break;
+	        case "testbeds"		:ui.make.testbed();break;
+	        case "platforms"	:ui.make.platforms();break;
 	    }
 }
 
@@ -371,6 +392,26 @@ ui.make.customAlert = function(data){
 
 
 
+ui.make.testbed=function(){
+	
+	data={objects:JSON.parse(sessionStorage.getItem(cotefe.testbeds.session))};
+	
+    testbedlist= new EJS({url: '../templates/tableExplore.ejs'}).render(data);
+    $("#content").hide().html(testbedlist).fadeIn("slow");
+    $(document).bind("load",ui.events.dashboard());
+    $(document).bind("load",ui.events.detail(cotefe.testbeds.session,"testbedsdetails.ejs"));
+    
+	
+};
+ ui.make.platforms=function()
+ {
+	 data={objects:JSON.parse(sessionStorage.getItem(cotefe.platforms.session))};
+		
+	    testbedlist= new EJS({url: '../templates/tableExplore.ejs'}).render(data);
+	    $("#content").hide().html(testbedlist).fadeIn("slow");
+	    $(document).bind("load",ui.events.dashboard());
+	    $(document).bind("load",ui.events.detail(cotefe.platforms.session,"platformsdetails.ejs"));
+ };
 
 
 
