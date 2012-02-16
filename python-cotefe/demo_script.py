@@ -2,20 +2,21 @@
 import webbrowser
 import logging
 from cotefe.client import COTEFEAPI
+from datetime import date, datetime, timedelta
 
 # OAUTH2 CONFIGURATIONS
 
 SERVER_URL = 'https://api.cotefe.net'
-CLIENT_ID = 'f400c488ed604889bd441abc9720baa0'
-CLIENT_SECRET = '94aee7111ab54808ba0e09fbfd37e505'
+CLIENT_ID = 'e78507fb71e54a8281b3c676076e9158'
+CLIENT_SECRET = '7ebc2f5e50904cef9df39926a50c2bec'
 REDIRECT_URI = 'http://localhost'
-ACCESS_TOKEN = '30319469252541df9d6678054a058581'
+ACCESS_TOKEN = '1e0f0a6c64c6461c8261ba6d57b940f5'
 
 # SERVER_URL = 'http://localhost:8080'
-# CLIENT_ID = '600803dc3d2547f3bacded2fd90c61f7'
-# CLIENT_SECRET = 'bfdca3017e324028a3ba992cc61dcfc8'
+# CLIENT_ID = '04e04ed1db97451497fa1e4ee14db358'
+# CLIENT_SECRET = '7bf0545237c04509b15deca0612b3bb6'
 # REDIRECT_URI = 'http://localhost'
-# ACCESS_TOKEN = '7e49782bb6f244099026b5a264453c92'
+# ACCESS_TOKEN = '406d80f0c88c4ebe927f1d595ec63db0'
 
 # EXPERIMENT CONFIGURATION
 
@@ -34,6 +35,10 @@ IMAGEFILE_I = 'images/demo_image_interferers'
 
 NUM_NODES_ALL = NUM_NODES_S + NUM_NODES_P + NUM_NODES_I
 
+CALENDAR_SPAN_DAYS = 7
+START_JOB_IN_MINUTES = 1
+END_JOB_IN_MINUTES = 61
+
 logging.basicConfig(
         level=logging.INFO,
         # filename='%s.log' % __file__, filemode='w',
@@ -44,10 +49,6 @@ logging.basicConfig(
 try:
     
     access_token = ACCESS_TOKEN
-    
-    api = COTEFEAPI(server_url = SERVER_URL, access_token=access_token)
-    
-    me = api.get_current_user()
     
 except:
     
@@ -67,14 +68,11 @@ except:
     
     access_token = unauthorized_api.exchange_code_for_access_token(code)
     
-    print 'access_token: %s' % access_token
-    
-    api = COTEFEAPI(server_url = SERVER_URL, access_token=access_token)
-    
-    me = api.get_current_user()
-    
+api = COTEFEAPI(server_url = SERVER_URL, access_token = access_token)    
 
 logging.info('Your OAuth2 access_token is %s' % access_token)
+
+me = api.get_current_user()
 
 logging.info('Check your account information at %s' % me)
 
@@ -123,7 +121,7 @@ my_virtual_nodes = api.get_virtual_nodes(
 
 # CHECK NUMBER OF NODES
 
-logging.debug('%s virtual nodes retrieved.' % len(my_virtual_nodes))
+logging.info('%s virtual nodes retrieved.' % len(my_virtual_nodes))
 
 assert len(my_virtual_nodes) == NUM_NODES_ALL
 
@@ -136,10 +134,14 @@ my_virtual_nodes_I = my_virtual_nodes[NUM_NODES_P+1:]
 ## CHECK NUMBER OF NODES FOR EACH NODE GROUP
 
 logging.debug('%s virtual nodes in group S.' % len(my_virtual_nodes_S))
+
 assert len(my_virtual_nodes_S) == NUM_NODES_S
+
 logging.debug('%s virtual nodes in group P.' % len(my_virtual_nodes_P))
 assert len(my_virtual_nodes_P) == NUM_NODES_P
+
 logging.debug('%s virtual nodes in group I.' % len(my_virtual_nodes_I))
+
 assert len(my_virtual_nodes_I) == NUM_NODES_I
 
 # CREATE A NEW VIRTUAL NODEGROUP WITH ALL NODES
@@ -281,3 +283,40 @@ my_virtual_task_4 = api.create_virtual_task(
 logging.info('Check your virtual task 4 at %s' % my_virtual_task_4)
 
 logging.info('Now check your experiment again at %s' % my_experiment)
+
+exit()
+
+# FIND TESTBEDS SUPPORTING THE EXPERIMENT
+
+my_testbeds = api.search_testbed(
+    support_experiment = my_experiment)
+
+my_testbed = my_testbeds[0]
+
+# FIND JOB CONFLICTING WITH THE CURRENT JOB IN THE SELECTED TESTBED
+
+date_from = date.today()
+date_to = date_from + timedelta(days = CALENDAR_SPAN_DAYS)
+
+
+conflicting_jobs = api.search_job(
+    for_experiment = my_experiment,
+    testbed = my_testbed,
+    date_from = date_from,
+    date_to = date_to)
+
+# try to schedule a job
+
+my_job = api.create_job(
+    name = DEFAULT_NAME,
+    description = DEFAULT_DESCRIPTION,
+    datetime_from = datetime.utcnow() + timedelta(minutes = START_JOB_IN_MINUTES),
+    datetime_to = datetime.utcnow() + timedelta(minutes = END_JOB_IN_MINUTES),
+    experiment = my_experiment,
+    testbed = my_testbed)
+
+logging.info('Check your job at %s' % my_job)
+
+# execute the job
+
+api.execute_job(my_job)

@@ -18,11 +18,21 @@ class COTEFEAPI(object):
         self.access_token = access_token
         self.http = httplib2.Http(disable_ssl_certificate_validation=True)
         
-    def build_url(self, path = '/', params=dict()):
-        base = path if path.startswith('http') else '%s%s' % (self.server_url, path)
-        if self.access_token:
-            params.update(access_token = self.access_token)
-        return '%s?%s' % (base, urllib.urlencode(params))
+    def build_uri(self, path = '/', params=dict()):
+        base_uri = path if path.startswith('http') else '%s%s' % (self.server_url, path)
+        # if self.access_token:
+        #     params.update(access_token = self.access_token)
+        if len(params) > 0:
+            return '%s?%s' % (base_uri, urllib.urlencode(params))
+        else:
+            return base_uri
+    
+    def build_headers(self):
+        headers = {
+            'Content-type': 'application/json',
+            'Authorization': 'OAuth %s' % self.access_token
+        }
+        return headers
         
     # hits the url /oauth2/auth
     def get_authorize_url(self):
@@ -34,7 +44,7 @@ class COTEFEAPI(object):
           'response_type': 'code'
         }
         
-        return self.build_url('/oauth2/auth', params)
+        return self.build_uri('/oauth2/auth', params)
     
     # hits the url /oauth2/token
     def exchange_code_for_access_token(self, code):
@@ -48,16 +58,16 @@ class COTEFEAPI(object):
         }
         
         data = urllib.urlencode(params)
-        response, content = self.http.request(self.build_url('/oauth2/token'), method='POST', body=data)
+        response, content = self.http.request(self.build_uri('/oauth2/token'), method='POST', body=data)
         return json.loads(content)['access_token']
     
     # returns the current user (linked to oauth access_token
     def get_current_user(self):
         
-        response, content = self.http.request(
-            uri = self.build_url(path = '/me'),
-            method='GET',
-        )
+        uri = self.build_uri(path = '/me')
+        method = 'GET'
+        headers = self.build_headers()
+        response, content = self.http.request(uri=uri, method=method, headers=headers)
         assert response.status == 200
         return User(json.loads(content))
         
@@ -69,16 +79,17 @@ class COTEFEAPI(object):
             'description': description,
         }
         
-        uri = self.build_url(path = '/projects/')
+        uri = self.build_uri(path = '/projects/')
         method = 'POST'
-        headers = {'Content-type': 'application/json'}
+        headers = self.build_headers()
         body = json.dumps(project_dict)
         response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
         assert response.status == 201
         
-        uri = self.build_url(path = response['content-location'])
+        uri = self.build_uri(path = response['content-location'])
         method = 'GET'
-        response, content = self.http.request(uri=uri, method=method)
+        headers = self.build_headers()
+        response, content = self.http.request(uri=uri, method=method, headers=headers)
         assert response.status == 200
         
         return Project(json.loads(content))
@@ -92,16 +103,17 @@ class COTEFEAPI(object):
             'project_id': project.id
         }
         
-        uri = self.build_url(path = '/experiments/')
+        uri = self.build_uri(path = '/experiments/')
         method = 'POST'
-        headers = {'Content-type': 'application/json'}
+        headers = self.build_headers()
         body = json.dumps(experiment_dict)
         response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
         assert response.status == 201
 
-        uri = self.build_url(path = response['content-location'])
+        uri = self.build_uri(path = response['content-location'])
         method = 'GET'
-        response, content = self.http.request(uri=uri, method=method)
+        headers = self.build_headers()
+        response, content = self.http.request(uri=uri, method=method, headers=headers)
         assert response.status == 200
         
         return Experiment(json.loads(content), project)
@@ -109,9 +121,10 @@ class COTEFEAPI(object):
     # returns a list of platforms matching the specified name
     def search_platform(self, name):
         
-        uri = self.build_url(path = '/platforms/', params = { 'name': name })
+        uri = self.build_uri(path = '/platforms/', params = { 'name': name })
         method = 'GET'
-        response, content = self.http.request(uri=uri, method=method)
+        headers = self.build_headers()
+        response, content = self.http.request(uri=uri, method=method, headers=headers)
         assert response.status == 200
         
         platform_list = json.loads(content)
@@ -120,9 +133,10 @@ class COTEFEAPI(object):
         
         for platform_dict in platform_list:
             
-            uri = self.build_url(path = platform_dict['uri'])
+            uri = self.build_uri(path = platform_dict['uri'])
             method = 'GET'
-            response, content = self.http.request(uri=uri, method=method)
+            headers = self.build_headers()
+            response, content = self.http.request(uri=uri, method=method, headers=headers)
             assert response.status == 200
             
             platform_dict = json.loads(content)
@@ -141,16 +155,17 @@ class COTEFEAPI(object):
             'num_nodes': num_nodes
         }
         
-        uri = self.build_url(path = '/experiments/%s/property-sets/' % experiment.id)
+        uri = self.build_uri(path = '/experiments/%s/property-sets/' % experiment.id)
         method = 'POST'
-        headers = {'Content-type': 'application/json'}
+        headers = self.build_headers()
         body = json.dumps(property_set_dict)
         response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
         assert response.status == 201
 
-        uri = self.build_url(path = response['content-location'])
+        uri = self.build_uri(path = response['content-location'])
         method = 'GET'
-        response, content = self.http.request(uri=uri, method=method)
+        headers = self.build_headers()
+        response, content = self.http.request(uri=uri, method=method, headers=headers)
         assert response.status == 200
         
         return PropertySet(json.loads(content), platform, experiment)
@@ -158,9 +173,10 @@ class COTEFEAPI(object):
     # getting the virtual nodes for a given experiment
     def get_virtual_nodes(self, experiment):
         
-        uri = self.build_url(path = '/experiments/%s/virtual-nodes/' % experiment.id)
+        uri = self.build_uri(path = '/experiments/%s/virtual-nodes/' % experiment.id)
         method = 'GET'
-        response, content = self.http.request(uri=uri, method=method)
+        headers = self.build_headers()
+        response, content = self.http.request(uri=uri, method=method, headers=headers)
         assert response.status == 200
         
         virtual_node_list = json.loads(content)
@@ -169,9 +185,10 @@ class COTEFEAPI(object):
         
         for virtual_node_dict in virtual_node_list:
             
-            uri = self.build_url(path = virtual_node_dict['uri'])
+            uri = self.build_uri(path = virtual_node_dict['uri'])
             method = 'GET'
-            response, content = self.http.request(uri=uri, method=method)
+            headers = self.build_headers()
+            response, content = self.http.request(uri=uri, method=method, headers=headers)
             assert response.status == 200
             
             virtual_node_dict = json.loads(content)
@@ -188,16 +205,17 @@ class COTEFEAPI(object):
             'virtual_nodes': [ vn.id for vn in virtual_nodes ]
         }
         
-        uri = self.build_url(path = '/experiments/%s/virtual-nodegroups/' % experiment.id)
+        uri = self.build_uri(path = '/experiments/%s/virtual-nodegroups/' % experiment.id)
         method = 'POST'
-        headers = {'Content-type': 'application/json'}
+        headers = self.build_headers()
         body = json.dumps(vng_dict)
         response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
         assert response.status == 201
 
-        uri = self.build_url(path = response['content-location'])
+        uri = self.build_uri(path = response['content-location'])
         method = 'GET'
-        response, content = self.http.request(uri=uri, method=method)
+        headers = self.build_headers()
+        response, content = self.http.request(uri=uri, method=method, headers=headers)
         assert response.status == 200
         
         return VirtualNodeGroup(json.loads(content), virtual_nodes, experiment)
@@ -209,23 +227,26 @@ class COTEFEAPI(object):
             'description': description,
         }
         
-        uri = self.build_url(path = '/experiments/%s/images/' % experiment.id)
+        uri = self.build_uri(path = '/experiments/%s/images/' % experiment.id)
         method = 'POST'
-        headers = {'Content-type': 'application/json'}
+        headers = self.build_headers()
         body = json.dumps(image_dict)
         response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
         assert response.status == 201
 
-        uri = self.build_url(path = response['content-location'])
+        uri = self.build_uri(path = response['content-location'])
         method = 'GET'
-        response, content = self.http.request(uri=uri, method=method)
+        headers = self.build_headers()
+        response, content = self.http.request(uri=uri, method=method, headers=headers)
         assert response.status == 200
         
         image_dict = json.loads(content)
         
         register_openers()
         datagen, headers = multipart_encode({'imagefile': open(imagefile, 'rb')})
-        request = urllib2.Request(self.build_url(path = image_dict['upload']), datagen, headers)
+        uri = self.build_uri(path = image_dict['upload'])
+        headers.update({'Authorization': 'OAuth %s' % self.access_token})
+        request = urllib2.Request(uri, datagen, headers)
         urllib2.urlopen(request).read()
         
         return Image(image_dict, experiment)
@@ -244,20 +265,21 @@ class COTEFEAPI(object):
         }
         
         if image:
-            vt_dict['target'] = self.build_url(path = '%s/image/%s' % (virtual_nodegroup.id, image.id))
+            vt_dict['target'] = self.build_uri(path = '%s/image/%s' % (virtual_nodegroup.uri, image.id))
         else:
-            vt_dict['target'] = self.build_url(path = '%s/image' % virtual_nodegroup.id)
+            vt_dict['target'] = self.build_uri(path = '%s/image' % virtual_nodegroup.uri)
         
-        uri = self.build_url(path = '/experiments/%s/virtual-tasks/' % experiment.id)
+        uri = self.build_uri(path = '/experiments/%s/virtual-tasks/' % experiment.id)
         method = 'POST'
-        headers = {'Content-type': 'application/json'}
+        headers = self.build_headers()
         body = json.dumps(vt_dict)
         response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
         assert response.status == 201
 
-        uri = self.build_url(path = response['content-location'])
+        uri = self.build_uri(path = response['content-location'])
         method = 'GET'
-        response, content = self.http.request(uri=uri, method=method)
+        headers = self.build_headers()
+        response, content = self.http.request(uri=uri, method=method, headers=headers)
         assert response.status == 200
         
         return VirtualTask(json.loads(content), experiment)
