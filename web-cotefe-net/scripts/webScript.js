@@ -394,7 +394,7 @@ ui.make.customAlert = function(data){
 
 ui.make.testbed=function(){
 	
-	data={objects:JSON.parse(sessionStorage.getItem(cotefe.testbeds.session))};
+	data={objects:JSON.parse(sessionStorage.getItem(cotefe.testbeds.session)),head:"TestBeds"};
 	
     testbedlist= new EJS({url: '../templates/tableExplore.ejs'}).render(data);
     $("#content").hide().html(testbedlist).fadeIn("slow");
@@ -405,7 +405,7 @@ ui.make.testbed=function(){
 };
  ui.make.platforms=function()
  {
-	 data={objects:JSON.parse(sessionStorage.getItem(cotefe.platforms.session))};
+	 data={objects:JSON.parse(sessionStorage.getItem(cotefe.platforms.session)),head:"Platforms"};
 		
 	    testbedlist= new EJS({url: '../templates/tableExplore.ejs'}).render(data);
 	    $("#content").hide().html(testbedlist).fadeIn("slow");
