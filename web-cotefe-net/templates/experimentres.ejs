@@ -10,7 +10,14 @@
                                     	for(i=0;i<objs.length;i++)
                                     	{
                                     		info=JSON.parse(objs[i]);
-                                    		%><option value="<%=info.id%>"><%=info.name%></option><%
+                                    		if(called_uri===info.uri)
+                                    		{
+                                    			%><option value="<%=info.id%>" selected><%=info.name%></option><%
+                                    		}
+                                    		else
+                                    		{
+                                    			%><option value="<%=info.id%>"><%=info.name%></option><%
+                                    		}
                                     	}
                                     %>
                             	</select>

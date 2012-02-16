@@ -133,7 +133,7 @@ ui.events.expdigin	= function()
 		uri=$(this).attr('href');
 		
 		//draw complete experiment info template
-		ui.make.experimentRes();
+		ui.make.experimentRes(uri);
 		
 	});
 }
@@ -444,9 +444,9 @@ ui.make.platforms=function()
 	    $(document).bind("load",ui.events.detail(cotefe.platforms.session,"platformsdetails.ejs"));
  };
 
-ui.make.experimentRes=function()
+ui.make.experimentRes=function(uri)
 {
-	data={exps:(sessionStorage.getItem(cotefe.experiments.session))};
+	data={exps:(sessionStorage.getItem(cotefe.experiments.session)),called_uri:uri};
     exprimentres= new EJS({url: '../templates/experimentres.ejs'}).render(data);
     $("#content").hide().html(exprimentres).fadeIn("slow");
     $(document).bind("load",ui.events.dashboard());
