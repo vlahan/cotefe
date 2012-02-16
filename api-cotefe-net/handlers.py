@@ -33,13 +33,13 @@ class DatastoreInitialization(webapp2.RequestHandler):
         for federation in Federation.all(): federation.delete()
         for testbed in Testbed.all(): testbed.delete()
         for platform in Platform.all(): platform.delete()
-        for project in Project.all(): project.delete()
-        for experiment in Experiment.all(): experiment.delete()
-        for image in Image.all(): image.delete()
-        for property_set in PropertySet.all(): property_set.delete()
-        for virtual_node in VirtualNode.all(): virtual_node.delete()
-        for virtual_node_group in VirtualNodeGroup.all(): virtual_node_group.delete()
-        for virtual_task in VirtualTask.all(): virtual_task.delete()
+#        for project in Project.all(): project.delete()
+#        for experiment in Experiment.all(): experiment.delete()
+#        for image in Image.all(): image.delete()
+#        for property_set in PropertySet.all(): property_set.delete()
+#        for virtual_node in VirtualNode.all(): virtual_node.delete()
+#        for virtual_node_group in VirtualNodeGroup.all(): virtual_node_group.delete()
+#        for virtual_task in VirtualTask.all(): virtual_task.delete()
         
         Federation(
             name = config.FEDERATION_NAME,
@@ -50,6 +50,7 @@ class DatastoreInitialization(webapp2.RequestHandler):
             name = config.TESTBED_NAME_1,
             description = config.TESTBED_DESCRIPTION_1,
             organization = config.TESTBED_ORGANIZATION_1,
+            homepage = config.TESTBED_HOMEPAGE_1,
             server_url = config.TESTBED_SERVER_URL_1,
             background_image_url = config.TESTBED_BACKGROUND_IMAGE,
             coordinates_mapping_function_x = config.TESTBED_COORD_X,
@@ -135,9 +136,7 @@ class Login(BaseHandler):
             
     def post(self):
         username = self.request.get('username')
-        password = self.request.get('password')
-        password_hash = encrypt(password)
-        user_list = User.all().filter('username =', username).filter('password =', password_hash).fetch(1)
+        user_list = User.all().filter('username =', username).fetch(1)
         if len(user_list) > 0:
             user = user_list[0]
             self.session['username'] = user.username
@@ -438,7 +437,7 @@ class Identities(BaseHandler):
             context = {
                 'user': user,
                 'identities': identities,
-                'server_url' : self.request.host_url,
+                'server_url' : config.FEDERATION_SERVER_URL,
                 'next': urllib.quote('%s%s' % (config.FEDERATION_SERVER_URL, self.request.path), ''),
             }
             self.render_response('identities.html', **context)
@@ -826,9 +825,14 @@ class OAuth2RESTJSONHandler(webapp2.RequestHandler):
         
         self.add_headers()
         
-        if self.request.get('access_token'):
-            oauth2session_list = OAuth2Session.all().filter('access_token =', self.request.get('access_token')).fetch(1)
-            if len(oauth2session_list) > 0:
+        try:
+            access_token = self.request.get('access_token') or self.request.headers['Authorization'].split(' ')[1]
+        except:
+            access_token = ''
+        
+        if access_token:
+            oauth2session_list = OAuth2Session.all().filter('access_token =', access_token).fetch(1)
+            if len(oauth2session_list) == 1:
                 oauth2session = oauth2session_list[0]
                 self.user = oauth2session.user
 
@@ -862,9 +866,11 @@ class MeHandler(OAuth2RESTJSONHandler):
 
     def get(self):
         
-        self.response.out.write(serialize(self.user.to_dict()))        
+        try:
+            self.response.out.write(serialize(self.user.to_dict()))        
         
-        
+        except:
+            self.response.status = '404'
 # USER
             
 class UserCollectionHandler(OAuth2RESTJSONHandler):
@@ -888,9 +894,13 @@ class UserResourceHandler(OAuth2RESTJSONHandler):
     
     def get(self, user_id):
         
-        user = User.get_by_id(int(user_id))
+        try:
+            user = User.get_by_id(int(user_id))        
+        except:
+            self.response.status = '404'
+            
         self.response.out.write(serialize(user.to_dict()))
-        
+            
 # FEDERATION
             
 class FederationResourceHandler(OAuth2RESTJSONHandler):
@@ -901,7 +911,11 @@ class FederationResourceHandler(OAuth2RESTJSONHandler):
     
     def get(self):
             
-        federation = Federation.all().get()
+        try:
+            federation = Federation.all().get()
+        except:
+            self.response.status = '404'
+            
         self.response.out.write(serialize(federation.to_dict()))
             
 # TESTBED
@@ -927,7 +941,11 @@ class TestbedResourceHandler(OAuth2RESTJSONHandler):
     
     def get(self, testbed_id):
         
-        testbed = Testbed.get_by_id(int(testbed_id))
+        try:
+            testbed = Testbed.get_by_id(int(testbed_id))        
+        except:
+            self.response.status = '404'
+            
         self.response.out.write(serialize(testbed.to_dict()))
         
 # PLATFORM
@@ -950,13 +968,17 @@ class PlatformCollectionHandler(OAuth2RESTJSONHandler):
                 
 class PlatformResourceHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, platform_id=None):
         allowed_methods = ['GET']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, platform_id):
         
-        platform = Platform.get_by_id(int(platform_id))
+        try:
+            platform = Platform.get_by_id(int(platform_id))        
+        except:
+            self.response.status = '404'
+            
         self.response.out.write(serialize(platform.to_dict()))
 
 # PROJECT
@@ -970,7 +992,13 @@ class ProjectCollectionHandler(OAuth2RESTJSONHandler):
     def get(self):
         
         project_list = list()
-        for project in Project.all():
+        
+        try:
+            query = Project.all().filter('owner =', self.user)
+        except:
+            query = Project.all()
+            
+        for project in query:
             project_list.append(project.to_dict(head_only = True))
         self.response.out.write(serialize(project_list))
             
@@ -988,28 +1016,44 @@ class ProjectCollectionHandler(OAuth2RESTJSONHandler):
             
 class ProjectResourceHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, project_id=None):
         allowed_methods = ['GET', 'PUT', 'DELETE']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, project_id):
         
-        project = Project.get_by_id(int(project_id))
+        try:
+            project = Project.get_by_id(int(project_id))            
+        except:
+            self.response.status = '404'
+            
         self.response.out.write(serialize(project.to_dict()))
                 
     def put(self, project_id):
         
         project_dict = json.loads(self.request.body)
-        project = Project.get_by_id(int(project_id))
+        
+        try:
+            project = Project.get_by_id(int(project_id))
+        except:
+            self.response.status = '404'
+            
         project.name = project_dict['name']
         project.description = project_dict['description']
         project.put()
         self.response.out.write(serialize(project.to_dict()))
             
+        
+            
     def delete(self, project_id):
         
-        project = Project.get_by_id(int(project_id))
+        try:
+            project = Project.get_by_id(int(project_id))
+        except:
+            self.response.status = '404'
+        
         project.delete()
+        
         
 # EXPERIMENT
 
@@ -1022,54 +1066,79 @@ class ExperimentCollectionHandler(OAuth2RESTJSONHandler):
     def get(self):
         
         experiment_list = list()
-        for experiment in Experiment.all():
+        
+        try:
+            query = Experiment.all().filter('owner =', self.user)
+        except:
+            query = Experiment.all()
+            
+        for experiment in query:
             experiment_list.append(experiment.to_dict(head_only = True))
         self.response.out.write(serialize(experiment_list))
             
     def post(self):
         
         experiment_dict = json.loads(self.request.body)
+        
         experiment = Experiment()
+        
         experiment.name = experiment_dict['name']
         experiment.description = experiment_dict['description']
         experiment.owner = self.user
         experiment.project = Project.get_by_id(int(experiment_dict['project_id']))
         experiment.put()
+        
         self.response.status = '201'
         self.response.headers['Location'] = '%s' % experiment.uri()
         self.response.headers['Content-Location'] = '%s' % experiment.uri()
             
 class ExperimentResourceHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id):
         allowed_methods = ['GET', 'PUT', 'DELETE']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, experiment_id):
         
-        experiment = Experiment.get_by_id(int(experiment_id))
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))        
+        except:
+            self.response.status = '404'
+            
         self.response.out.write(serialize(experiment.to_dict()))
-                
+        
     def put(self, experiment_id):
         
         experiment_dict = json.loads(self.request.body)
-        experiment = Experiment.get_by_id(int(experiment_id))
+        
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))
+        except:
+            self.response.status = '404'
+
         experiment.name = experiment_dict['name']
         experiment.description = experiment_dict['description']
         experiment.project = Project.get_by_id(int(experiment_dict['project']))
         experiment.put()
+        
         self.response.out.write(serialize(experiment.to_dict()))
-            
+        
+        
     def delete(self, experiment_id):
         
-        experiment = Experiment.get_by_id(int(experiment_id))
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))
+        except:
+            self.response.status = '404'
+            
         experiment.delete()
+        
 
 # IMAGE
 
 class ImageCollectionHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id):
         allowed_methods = ['GET', 'POST']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
@@ -1084,21 +1153,25 @@ class ImageCollectionHandler(OAuth2RESTJSONHandler):
         self.response.out.write(serialize(image_list))
         
     def post(self, experiment_id):
+        
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))
 
-        experiment = Experiment.get_by_id(int(experiment_id))
+            image_dict = json.loads(self.request.body)
 
-        image_dict = json.loads(self.request.body)
+            image = Image()
+            image.name = image_dict['name']
+            image.description = image_dict['description']
+            image.owner = self.user
+            image.experiment = experiment
+            image.put()
 
-        image = Image()
-        image.name = image_dict['name']
-        image.description = image_dict['description']
-        image.owner = self.user
-        image.experiment = experiment
-        image.put()
-
-        self.response.status = '201'
-        self.response.headers['Location'] = '%s' % image.uri()
-        self.response.headers['Content-Location'] = '%s' % image.uri()
+            self.response.status = '201'
+            self.response.headers['Location'] = '%s' % image.uri()
+            self.response.headers['Content-Location'] = '%s' % image.uri()
+            
+        except:
+            self.response.status = '404'
 
 class ImageResourceHandler(OAuth2RESTJSONHandler):
     
@@ -1108,253 +1181,332 @@ class ImageResourceHandler(OAuth2RESTJSONHandler):
     
     def get(self, experiment_id, image_id):
         
-        image = Image.get_by_id(int(image_id))
-        self.response.out.write(serialize(image.to_dict()))
+        try:
+            image = Image.get_by_id(int(image_id))
+            self.response.out.write(serialize(image.to_dict()))
+        
+        except:
+            self.response.status = '404'
                 
     def put(self, experiment_id, image_id):
         
-        image_dict = json.loads(self.request.body)
-        image = Image.get_by_id(int(image_id))
-        image.name = experiment_dict['name']
-        image.description = experiment_dict['description']
-        image.put()
-        self.response.out.write(serialize(image.to_dict()))
+        try:
+            image = Image.get_by_id(int(image_id))
+            image_dict = json.loads(self.request.body)
+            image.name = image_dict['name']
+            image.description = image_dict['description']
+            image.put()
+            self.response.out.write(serialize(image.to_dict()))
             
-    def delete(self, experiment_id):
+        except:
+            self.response.status = '404'
+            
+    def delete(self, experiment_id, image_id):
         
-        image = Image.get_by_id(int(image_id))
-        image.delete()
+        try:
+            image = Image.get_by_id(int(image_id))
+            image.delete()
+            
+        except:
+            self.response.status = '404'
 
 class ImageUploadHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id, image_id):
         allowed_methods = ['POST']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
         
     def post(self, experiment_id, image_id):
         
-        imagefile = self.request.get('imagefile')
-        
-        image = Image.get_by_id(int(image_id))
-        
-        image.imagefile = imagefile
-        image.put()
-        
-        self.response.out.write(serialize(image.to_dict()))
-        
+        try:
+            image = Image.get_by_id(int(image_id))
+            imagefile = self.request.get('imagefile')
+            image.imagefile = imagefile
+            image.put()
+            self.response.out.write(serialize(image.to_dict()))
+            
+        except:
+            self.response.status = '404'
+
 class ImageDownloadHandler(OAuth2RESTJSONHandler):
 
-    def options(self):
+    def options(self, experiment_id, image_id):
         allowed_methods = ['GET']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
 
     def get(self, experiment_id, image_id):
         
-        image = Image.get_by_id(int(image_id))
+        try:
+            image = Image.get_by_id(int(image_id))
+            self.response.headers['Content-Type'] = 'application/octet-stream'
+            self.response.out.write(image.imagefile)
         
-        self.response.headers['Content-Type'] = 'application/octet-stream'
-        self.response.out.write(image.imagefile)
+        except:
+            self.response.status = '404'
 
 # PROPERTY SET
 
 class PropertySetCollectionHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id):
         allowed_methods = ['GET', 'POST']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, experiment_id):
         
-        experiment = Experiment.get_by_id(int(experiment_id))
-        
-        property_set_list = list()
-        query = PropertySet.all().filter('experiment =', experiment)
-        for property_set in query:
-            property_set_list.append(property_set.to_dict(head_only = True))
-        self.response.out.write(serialize(property_set_list))
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))
+            property_set_list = list()
+            query = PropertySet.all().filter('experiment =', experiment)
+            for property_set in query:
+                property_set_list.append(property_set.to_dict(head_only = True))
+            self.response.out.write(serialize(property_set_list))
+            
+        except:
+            self.response.status = '404'
             
     def post(self, experiment_id):
         
-        experiment = Experiment.get_by_id(int(experiment_id))
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))
         
-        property_set_dict = json.loads(self.request.body)
+            property_set_dict = json.loads(self.request.body)
         
-        platform = Platform.get_by_id(int(property_set_dict['platform_id']))
+            platform = Platform.get_by_id(int(property_set_dict['platform_id']))
         
-        property_set = PropertySet()
-        property_set.name = property_set_dict['name']
-        property_set.description = property_set_dict['description']
-        property_set.owner = self.user
-        property_set.experiment = experiment
-        property_set.platform = platform
-        property_set.num_nodes = property_set_dict['num_nodes']
-        property_set.put()
+            property_set = PropertySet()
+            property_set.name = property_set_dict['name']
+            property_set.description = property_set_dict['description']
+            property_set.owner = self.user
+            property_set.experiment = experiment
+            property_set.platform = platform
+            property_set.num_nodes = property_set_dict['num_nodes']
+            property_set.put()
         
-        # now generate virtual nodes!
+            # now generate virtual nodes!
+            
+            # generate a list of virtual nodes
+            
+            vn_list = list()
         
-        for k in range(1, property_set.num_nodes + 1):
-            vn = VirtualNode()
-            vn.name = 'virtual node #%s' % k
-            vn.experiment = property_set.experiment
-            vn.platform = property_set.platform
-            vn.property_set = property_set
-            vn.owner = self.user
-            vn.put()
-        self.response.status = '201'
-        self.response.headers['Location'] = '%s' % property_set.uri()
-        self.response.headers['Content-Location'] = '%s' % property_set.uri()
+            for k in range(1, property_set.num_nodes + 1):
+                vn = VirtualNode()
+                vn.name = 'virtual node #%s' % k
+                vn.experiment = property_set.experiment
+                vn.platform = property_set.platform
+                vn.property_set = property_set
+                vn.owner = self.user
+                # vn.put()
+                vn_list.append(vn)
+                
+            db.put(vn_list)
+            
+            self.response.status = '201'
+            self.response.headers['Location'] = '%s' % property_set.uri()
+            self.response.headers['Content-Location'] = '%s' % property_set.uri()
+            
+        except:
+            self.response.status = '404'
             
 class PropertySetResourceHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id, property_set_id):
         allowed_methods = ['GET', 'DELETE']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, experiment_id, property_set_id):
         
-        property_set = PropertySet.get_by_id(int(property_set_id))
-        self.response.out.write(serialize(property_set.to_dict()))
+        try:
+            property_set = PropertySet.get_by_id(int(property_set_id))
+            self.response.out.write(serialize(property_set.to_dict()))
+        
+        except:
+            self.response.status = '404'
             
     def delete(self, experiment_id, property_set_id):
         
-        property_set = PropertySet.get_by_id(int(property_set_id))
-        property_set.delete()
+        try:
+            property_set = PropertySet.get_by_id(int(property_set_id))
+            property_set.delete()
+            
+        except:
+            self.response.status = '404'
         
 # VIRTUAL NODE
         
 class VirtualNodeCollectionHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id):
         allowed_methods = ['GET']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, experiment_id):
         
-        experiment = Experiment.get_by_id(int(experiment_id))
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))
         
-        virtual_node_list = list()
-        query = VirtualNode.all().filter('experiment =', experiment)
-        for virtual_node in query:
-            virtual_node_list.append(virtual_node.to_dict(head_only = True))
-        self.response.out.write(serialize(virtual_node_list))
+            virtual_node_list = list()
+            query = VirtualNode.all().filter('experiment =', experiment)
+            for virtual_node in query:
+                virtual_node_list.append(virtual_node.to_dict(head_only = True))
+            self.response.out.write(serialize(virtual_node_list))
+            
+        except:
+            self.response.status = '404'
 
 class VirtualNodeResourceHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id, virtual_node_id):
         allowed_methods = ['GET']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, experiment_id, virtual_node_id):
         
-        virtual_node = VirtualNode.get_by_id(int(virtual_node_id))
-        self.response.out.write(serialize(virtual_node.to_dict()))
+        try:
+            virtual_node = VirtualNode.get_by_id(int(virtual_node_id))
+            self.response.out.write(serialize(virtual_node.to_dict()))
+            
+        except:
+            self.response.status = '404'
         
 # VIRTUAL NODE GROUP
 
 class VirtualNodeGroupCollectionHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id):
         allowed_methods = ['GET', 'POST']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, experiment_id):
         
-        experiment = Experiment.get_by_id(int(experiment_id))
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))
         
-        virtual_nodegroup_list = list()
-        query = VirtualNodeGroup.all().filter('experiment =', experiment)
-        for virtual_nodegroup in query:
-            virtual_nodegroup_list.append(virtual_nodegroup.to_dict(head_only = True))
-        self.response.out.write(serialize(virtual_nodegroup_list))
+            virtual_nodegroup_list = list()
+            query = VirtualNodeGroup.all().filter('experiment =', experiment)
+            for virtual_nodegroup in query:
+                virtual_nodegroup_list.append(virtual_nodegroup.to_dict(head_only = True))
+            self.response.out.write(serialize(virtual_nodegroup_list))
+            
+        except:
+            self.response.status = '404'
             
     def post(self, experiment_id):
         
-        experiment = Experiment.get_by_id(int(experiment_id))
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))
         
-        vng_dict = json.loads(self.request.body)
+            vng_dict = json.loads(self.request.body)
         
-        vng = VirtualNodeGroup()
-        vng.name = vng_dict['name']
-        vng.description = vng_dict['description']
-        vng.owner = self.user
-        vng.experiment = experiment
-        vng.put()
+            vng = VirtualNodeGroup()
+            vng.name = vng_dict['name']
+            vng.description = vng_dict['description']
+            vng.owner = self.user
+            vng.experiment = experiment
+            vng.put()
 
-        for vn_id in vng_dict['virtual_nodes']:
-            VirtualNodeGroup2VirtualNode(vng = vng, vn = VirtualNode.get_by_id(int(vn_id))).put()
+            for vn_id in vng_dict['virtual_nodes']:
+                VirtualNodeGroup2VirtualNode(vng = vng, vn = VirtualNode.get_by_id(int(vn_id))).put()
         
-        self.response.status = '201'
-        self.response.headers['Location'] = '%s' % vng.uri()
-        self.response.headers['Content-Location'] = '%s' % vng.uri()
+            self.response.status = '201'
+            self.response.headers['Location'] = '%s' % vng.uri()
+            self.response.headers['Content-Location'] = '%s' % vng.uri()
+            
+        except:
+            self.response.status = '404'
 
 class VirtualNodeGroupResourceHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id, virtual_nodegroup_id):
         allowed_methods = ['GET', 'DELETE']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, experiment_id, virtual_nodegroup_id):
         
-        virtual_nodegroup = VirtualNodeGroup.get_by_id(int(virtual_nodegroup_id))
-        self.response.out.write(serialize(virtual_nodegroup.to_dict()))
+        try:
+            virtual_nodegroup = VirtualNodeGroup.get_by_id(int(virtual_nodegroup_id))
+            self.response.out.write(serialize(virtual_nodegroup.to_dict()))
+            
+        except:
+            self.response.status = '404'
             
     def delete(self, experiment_id, virtual_nodegroup_id):
         
-        virtual_nodegroup = VirtualNodeGroup.get_by_id(int(virtual_nodegroup_id))
-        virtual_nodegroup.delete()
+        try:
+            virtual_nodegroup = VirtualNodeGroup.get_by_id(int(virtual_nodegroup_id))
+            virtual_nodegroup.delete()
+            
+        except:
+            self.response.status = '404'
     
 # VIRTUAL TASK
 
 class VirtualTaskCollectionHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id):
         allowed_methods = ['GET', 'POST']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, experiment_id):
         
-        experiment = Experiment.get_by_id(int(experiment_id))
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))
         
-        virtual_task_list = list()
-        query = VirtualTask.all().filter('experiment =', experiment)
-        for virtual_task in query:
-            virtual_task_list.append(virtual_task.to_dict(head_only = True))
-        self.response.out.write(serialize(virtual_task_list))
+            virtual_task_list = list()
+            query = VirtualTask.all().filter('experiment =', experiment)
+            for virtual_task in query:
+                virtual_task_list.append(virtual_task.to_dict(head_only = True))
+            self.response.out.write(serialize(virtual_task_list))
+            
+        except:
+            self.response.status = '404'
             
     def post(self, experiment_id):
         
-        experiment = Experiment.get_by_id(int(experiment_id))
-        
-        vt_dict = json.loads(self.request.body)
-        
-        vt = VirtualTask()
-        vt.name = vt_dict['name']
-        vt.description = vt_dict['description']
-        vt.method = vt_dict['method']
-        vt.target = vt_dict['target']
-        vt.owner = self.user
-        vt.experiment = experiment
-        vt.put()
-        
-        self.response.status = '201'
-        self.response.headers['Location'] = '%s' % vt.uri()
-        self.response.headers['Content-Location'] = '%s' % vt.uri()
+        try:
+            experiment = Experiment.get_by_id(int(experiment_id))
+            
+            vt_dict = json.loads(self.request.body)
+
+            vt = VirtualTask()
+            vt.name = vt_dict['name']
+            vt.description = vt_dict['description']
+            vt.method = vt_dict['method']
+            vt.target = vt_dict['target']
+            vt.owner = self.user
+            vt.experiment = experiment
+            vt.put()
+
+            self.response.status = '201'
+            self.response.headers['Location'] = '%s' % vt.uri()
+            self.response.headers['Content-Location'] = '%s' % vt.uri()
+            
+        except:
+            self.response.status = '404'
 
 class VirtualTaskResourceHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self, experiment_id, vt_id):
         allowed_methods = ['GET', 'DELETE']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self, experiment_id, vt_id):
         
-        vt = VirtualTask.get_by_id(int(vt_id))
-        self.response.out.write(serialize(vt.to_dict()))
-            
-    def delete(self, experiment_id, virtual_nodegroup_id):
+        try:
+            vt = VirtualTask.get_by_id(int(vt_id))
+            self.response.out.write(serialize(vt.to_dict()))
         
-        vt = VirtualTask.get_by_id(int(vt_id))
-        vt.delete()
+        except:
+            self.response.status = '404'
+            
+    def delete(self, experiment_id, vt_id):
+        
+        try:
+            vt = VirtualTask.get_by_id(int(vt_id))
+            vt.delete()
+        
+        except:
+            self.response.status = '404'
     
 # JOB
 

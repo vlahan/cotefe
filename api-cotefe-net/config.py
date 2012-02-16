@@ -5,10 +5,8 @@ APP_ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 SERVER_NAME = os.environ['SERVER_NAME']
 DEBUG = SERVER_NAME == 'localhost'
-logging.info("SERVER_NAME: %s" % os.environ['SERVER_NAME'])
-logging.info("Starting application in DEBUG mode: %s" % DEBUG)
-
-FEDERATION_SERVER_URL = 'http://api.cotefe.net'
+# logging.info("SERVER_NAME: %s" % os.environ['SERVER_NAME'])
+logging.info("DEBUG mode: %s" % DEBUG)
 
 if DEBUG:
     FEDERATION_SERVER_URL = 'http://localhost:8080'
@@ -40,6 +38,7 @@ FEDERATION_DESCRIPTION = 'The goal of the CONET Testbed Federation (CTF) Task is
 TESTBED_NAME_1 = 'TWIST'
 TESTBED_DESCRIPTION_1 = 'The TKN Wireless Indoor Sensor network Testbed (TWIST), developed by the Telecommunication Networks Group (TKN) at the Technische Universitaet Berlin, is a scalable and flexible testbed architecture for experimenting with wireless sensor network applications in an indoor setting.'
 TESTBED_ORGANIZATION_1 = 'TU Berlin'
+TESTBED_HOMEPAGE_1 = 'https://www.twist.tu-berlin.de:8000'
 TESTBED_BACKGROUND_IMAGE = 'https://www.twist.tu-berlin.de:8001/uploads/testbed/background.jpg'
 TESTBED_COORD_X = '-5.5+x*46.9+y+16.6'
 TESTBED_COORD_Y = '1517-y*16.9-z*78.3'

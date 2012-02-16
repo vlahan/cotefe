@@ -103,6 +103,7 @@ class Testbed(Resource):
     description = db.TextProperty()
     
     organization = db.StringProperty()
+    homepage = db.LinkProperty()
     server_url = db.LinkProperty()
     node_count = db.IntegerProperty()
     
@@ -226,8 +227,14 @@ class Experiment(Resource):
         r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
-            r['owner'] = self.owner.to_dict(head_only = True)
-            r['project'] = self.project.to_dict(head_only = True)
+            try:
+                r['owner'] = self.owner.to_dict(head_only = True)
+            except:
+                r['owner'] = None
+            try:
+                r['project'] = self.project.to_dict(head_only = True)
+            except:
+                r['project'] = None
             r['images'] = [ i.to_dict(head_only = True) for i in self.images ]
             r['property_sets'] = [ ps.to_dict(head_only = True) for ps in self.property_sets ]
             r['virtual_nodes'] = [ vn.to_dict(head_only = True) for vn in self.virtual_nodes ]
@@ -269,7 +276,10 @@ class Image(Resource):
             if self.imagefile:
                 r['download'] = '%s/download' % self.uri()
             r['upload'] = '%s/upload' % self.uri()
-            r['experiment'] = self.experiment.uri()
+            try:
+                r['experiment'] = self.experiment.to_dict(head_only = True)
+            except:
+                r['experiment'] = None
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
@@ -304,8 +314,14 @@ class PropertySet(Resource):
         r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
-            r['experiment'] = self.experiment.to_dict(head_only = True)
-            r['project'] = self.experiment.project.to_dict(head_only = True)
+            try:
+                r['experiment'] = self.experiment.to_dict(head_only = True)
+            except:
+                r['experiment'] = None
+            try:
+                r['project'] = self.project.to_dict(head_only = True)
+            except:
+                r['project'] = None
             r['platform'] = self.platform.to_dict(head_only = True)
             r['num_nodes'] = self.num_nodes
             r['virtual_nodes'] = [ vn.to_dict(head_only = True) for vn in self.virtual_nodes ]
@@ -339,8 +355,18 @@ class VirtualNode(Resource):
         r['id'] = self.id()
         if not head_only:
             r['platform'] = self.platform.to_dict(head_only = True)
-            r['experiment'] = self.experiment.to_dict(head_only = True)
-            r['property_set'] = self.property_set.to_dict(head_only = True)
+            try:
+                r['experiment'] = self.experiment.to_dict(head_only = True)
+            except:
+                r['experiment'] = None
+            try:
+                r['project'] = self.experiment.project.to_dict(head_only = True)
+            except:
+                r['project'] = None
+            try:
+                r['property_set'] = self.property_set.to_dict(head_only = True)
+            except:
+                r['property_set'] = None
             r['virtual_nodegroups'] = [ vng2vn.vng.to_dict(head_only = True) for vng2vn in self.virtual_nodegroups ]
             try:
                 r['image'] = self.image.to_dict(head_only = True)
@@ -374,7 +400,14 @@ class VirtualNodeGroup(Resource):
         r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
-            r['experiment'] = self.experiment.to_dict(head_only = True)
+            try:
+                r['experiment'] = self.experiment.to_dict(head_only = True)
+            except:
+                r['experiment'] = None
+            try:
+                r['project'] = self.experiment.project.to_dict(head_only = True)
+            except:
+                r['project'] = None
             r['virtual_nodes'] = [ vng2vn.vn.to_dict(head_only = True) for vng2vn in self.virtual_nodes ]
             r['virtual_node_count'] = len(r['virtual_nodes'])
             try:
@@ -419,9 +452,14 @@ class VirtualTask(Resource):
             r['description'] = self.description
             r['method'] = self.method
             r['target'] = self.target
-            
-            r['experiment'] = self.experiment.uri()
-            
+            try:
+                r['experiment'] = self.experiment.to_dict(head_only = True)
+            except:
+                r['experiment'] = None
+            try:
+                r['project'] = self.experiment.project.to_dict(head_only = True)
+            except:
+                r['project'] = None            
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
@@ -456,9 +494,20 @@ class Job(Resource):
             r['description'] = self.description
             r['datetime_from'] = convert_datetime_to_string(self.datetime_from)
             r['datetime_to'] = convert_datetime_to_string(self.datetime_to)
+            r['testbed'] = self.testbed.to_dict(head_only = True)
             
-            r['testbed'] = self.testbed.uri()
-            r['experiment'] = self.experiment.uri()
+            try:
+                r['experiment'] = self.experiment.to_dict(head_only = True)
+            except:
+                r['experiment'] = None
+            try:
+                r['project'] = self.experiment.project.to_dict(head_only = True)
+            except:
+                r['project'] = None
+            try:
+                r['property_set'] = self.property_set.to_dict(head_only = True)
+            except:
+                r['property_set'] = None
             
             r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)

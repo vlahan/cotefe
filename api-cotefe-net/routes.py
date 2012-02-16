@@ -2,9 +2,9 @@ from handlers import *
 
 routes = [    
 
-    (r'^/admin/init$', DatastoreInitialization),
+    # (r'^/admin/init$', DatastoreInitialization),
     
-    # (r'^/login$', Login),
+    (r'^/login$', Login),
     
     (r'^/openid/login$', OpenIDLogin),
     (r'^/openid/callback', OpenIDCallback),
