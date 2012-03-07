@@ -42,14 +42,14 @@ class DatastoreInitialization(webapp2.RequestHandler):
 #        for virtual_task in VirtualTask.all(): virtual_task.delete()
         
         Federation(
-            name = config.FEDERATION_NAME,
-            description = config.FEDERATION_DESCRIPTION,
+            name = 'COTEFE',
+            description = 'The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities.',
         ).put()
         
         Testbed(
-            name = config.TESTBED_NAME_1,
-            description = config.TESTBED_DESCRIPTION_1,
-            organization = config.TESTBED_ORGANIZATION_1,
+            name = 'TWIST',
+            description = 'The TKN Wireless Indoor Sensor network Testbed (TWIST), developed by the Telecommunication Networks Group (TKN) at the Technische Universitaet Berlin, is a scalable and flexible testbed architecture for experimenting with wireless sensor network applications in an indoor setting.',
+            organization = 'TU Berlin',
             homepage = config.TESTBED_HOMEPAGE_1,
             server_url = config.TESTBED_SERVER_URL_1,
             background_image_url = config.TESTBED_BACKGROUND_IMAGE,
@@ -506,7 +506,7 @@ class Applications(BaseHandler):
             username = self.session.get('username')
             user = User.all().filter('username =', username).fetch(1)[0]
             
-            applications = Application.all().filter('owner =', user).fetch(100)
+            applications = Application.all().filter('owner =', user).fetch(10)
             
             context = {
                 'user': user,
@@ -567,241 +567,6 @@ class Logout(BaseHandler):
         except:
             pass
         self.redirect(self.request.referer or '/account')
-        
-class Docs(BaseHandler):
-
-    def get(self):
-
-        try:
-            user = User.all().filter('username =', self.session.get('username')).fetch(1)[0]
-            context = {
-                'user': user,
-            }
-        except:
-            context = {}
-        
-        self.render_response('docs.html', **context)        
-        
-class Users(BaseHandler):
-
-    def get(self):
-
-        if self.session.get('username'):
-
-            username = self.session.get('username')
-            user = User.all().filter('username =', username).fetch(1)[0]
-
-            users = User.all()
-            
-            context = {
-                'user': user,
-                'users': users,
-            }
-            self.render_response('explore/users.html', **context)
-            
-        else:
-            
-            params = {
-                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
-            }
-            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
-            
-    def post(self):
-
-        if self.session.get('username'):
-            
-            user_id = self.request.get('user_id')
-            User.get_by_id(int(user_id)).delete()
-            self.redirect(self.request.referer)
-            
-        else:
-            
-            params = {
-                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
-            }
-            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
-        
-        
-class Testbeds(BaseHandler):
-
-    def get(self):
-
-        if self.session.get('username'):
-            
-            username = self.session.get('username')
-            user_list = User.all().filter('username =', username).fetch(1)
-            user = user_list[0]
-            
-            testbeds = Testbed.all()
-            context = {
-                'user': user,
-                'testbeds': testbeds,
-            }
-            self.render_response('explore/testbeds.html', **context)
-        else:
-            params = {
-                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
-            }
-            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
-
-            
-class Platforms(BaseHandler):
-
-    def get(self):
-
-        if self.session.get('username'):
-
-            username = self.session.get('username')
-            user_list = User.all().filter('username =', username).fetch(1)
-            user = user_list[0]
-
-            platforms = Platform.all()
-            context = {
-                'user': user,
-                'platforms': platforms,
-            }
-            self.render_response('explore/platforms.html', **context)
-        else:
-            params = {
-                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
-            }
-            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
-            
-class Projects(BaseHandler):
-
-    def get(self):
-
-        if self.session.get('username'):
-            
-            username = self.session.get('username')
-            user_list = User.all().filter('username =', username).fetch(1)
-            user = user_list[0]
-            
-            projects = Project.all().filter('owner =', user).fetch(100)
-            
-            context = {
-                'user': user,
-                'projects': projects,
-            }
-            self.render_response('cotefe/projects.html', **context)
-        
-        else:
-            
-            params = {
-                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
-            }
-            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
-
-    def post(self):
-
-        if self.session.get('username'):
-
-            if self.request.get('submit') == 'Create':
-
-                username = self.session.get('username')
-                user_list = User.all().filter('username =', username).fetch(1)
-                user = user_list[0]
-
-                name = self.request.get('name')
-                description = self.request.get('description')
-
-                project = Project()
-                project.name = name
-                project.description = description
-                project.owner = user
-                project.put()
-
-                self.redirect(self.request.referer)
-
-            elif self.request.get('submit') == 'Delete':
-                
-                project_id = self.request.get('project_id')
-                
-                def delete_project(project_id):
-                    
-                    project = Project.get_by_id(int(project_id))
-                    project.delete()
-                    
-                    for experiment in Experiment.all().filter('project =', project):
-                        experiment.delete()
-                        
-                # db.run_in_transaction(delete_project, project_id)
-                
-                delete_project(project_id)
-                
-                self.redirect(self.request.referer)
-
-        else:
-
-            params = {
-                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
-            }
-            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
-            
-class Experiments(BaseHandler):
-
-    def get(self):
-
-        if self.session.get('username'):
-
-            username = self.session.get('username')
-            user_list = User.all().filter('username =', username).fetch(1)
-            user = user_list[0]
-
-            projects = Project.all().filter('owner =', user).fetch(100)
-            experiments = Experiment.all().filter('owner =', user).fetch(100)
-
-            context = {
-                'user': user,
-                'projects': projects,
-                'experiments': experiments,
-            }
-            self.render_response('cotefe/experiments.html', **context)
-
-        else:
-
-            params = {
-                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
-            }
-            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
-
-    def post(self):
-
-        if self.session.get('username'):
-
-            if self.request.get('submit') == 'Create':
-
-                username = self.session.get('username')
-                user = User.all().filter('username =', username).fetch(1)[0]
-                
-                project_id = self.request.get('project_id')
-                project = Project.get_by_id(int(project_id))
-
-                name = self.request.get('name')
-                description = self.request.get('description')
-
-                experiment = Experiment()
-                experiment.name = name
-                experiment.description = description
-                experiment.project = project
-                experiment.owner = user
-                experiment.put()
-
-                self.redirect(self.request.referer)
-
-            elif self.request.get('submit') == 'Delete':
-
-                experiment_id = self.request.get('experiment_id')
-                Experiment.get_by_id(int(experiment_id)).delete()
-
-                self.redirect(self.request.referer)
-
-        else:
-
-            params = {
-                'next': '%s%s' % (config.FEDERATION_SERVER_URL, self.request.path),
-            }
-            self.redirect('%s?%s' % ('/openid/login', urllib.urlencode(params)))
 
 
 class OAuth2RESTJSONHandler(webapp2.RequestHandler):
