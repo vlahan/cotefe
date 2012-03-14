@@ -10,12 +10,8 @@ logging.info("DEBUG mode: %s" % DEBUG)
 
 if DEBUG:
     FEDERATION_SERVER_URL = 'http://localhost:8080'
-    TESTBED_SERVER_URL_1 = 'http://locahost:8001'
-    TESTBED_SERVER_URL_2 = 'http://locahost:8002'
 else:
     FEDERATION_SERVER_URL = 'https://api.cotefe.net'
-    TESTBED_SERVER_URL_1 = 'https://www.twist.tu-berlin.de:8001'
-    TESTBED_SERVER_URL_2 = 'http://example.org'
 
 MEDIA_TYPE = 'application/json'
 
@@ -29,38 +25,3 @@ CONTENT_TYPE = 'application/json'
 CHARSET = 'utf8'
 
 FMT_DT_TO_STR = '%Y-%m-%dT%H:%M:%S+0000'
-
-# initialization data
-
-FEDERATION_NAME = 'COTEFE'
-FEDERATION_DESCRIPTION = 'The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities.'
-
-TESTBED_NAME_1 = 'TWIST'
-TESTBED_DESCRIPTION_1 = 'The TKN Wireless Indoor Sensor network Testbed (TWIST), developed by the Telecommunication Networks Group (TKN) at the Technische Universitaet Berlin, is a scalable and flexible testbed architecture for experimenting with wireless sensor network applications in an indoor setting.'
-TESTBED_ORGANIZATION_1 = 'TU Berlin'
-TESTBED_HOMEPAGE_1 = 'https://www.twist.tu-berlin.de:8000'
-TESTBED_BACKGROUND_IMAGE = 'https://www.twist.tu-berlin.de:8001/uploads/testbed/background.jpg'
-TESTBED_COORD_X = '-5.5+x*46.9+y+16.6'
-TESTBED_COORD_Y = '1517-y*16.9-z*78.3'
-
-TESTBED_NAME_2 = 'WISEBED'
-TESTBED_DESCRIPTION_2 = 'The WISEBED project is a joint effort of nine academic and research institutes across Europe.'
-TESTBED_ORGANIZATION_2 = 'TU Delft'
-
-PLATFORM_NAME_1 = 'eyesIFXv20'
-PLATFORM_DESCRIPTION_1 = 'eyesIFXv20'
-
-PLATFORM_NAME_2 = 'eyesIFXv21'
-PLATFORM_DESCRIPTION_2 = 'eyesIFXv21'
-
-PLATFORM_NAME_3 = 'TmoteSky'
-PLATFORM_DESCRIPTION_3 = 'TmoteSky'
-
-PLATFORM_NAME_4 = 'TelosB'
-PLATFORM_DESCRIPTION_4 = 'TelosB'
-
-PLATFORM_NAME_5 = 'TelosA'
-PLATFORM_DESCRIPTION_5 = 'TelosA'
-
-PLATFORM_NAME_6 = 'Roomba'
-PLATFORM_DESCRIPTION_6 = 'Roomba'

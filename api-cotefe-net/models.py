@@ -1,4 +1,5 @@
 import logging
+import string
 from collections import OrderedDict
 
 from google.appengine.ext import db
@@ -7,7 +8,33 @@ from google.appengine.ext.db import polymodel
 import config
 from utils import build_url, convert_datetime_to_string
 
-# class Resource(polymodel.PolyModel):
+class ReadOnlyResouce(polymodel.PolyModel):
+    
+    name = db.StringProperty()
+    description = db.TextProperty()
+    
+    datetime_created = db.DateTimeProperty(auto_now_add=True)
+    datetime_modified = db.DateTimeProperty(auto_now=True)
+    
+    def id(self):
+        return self.key().name()
+        
+    def uri(self):
+        return build_url(path = '/%ss/%s' % (string.lower(self.__class__.__name__), self.id()))
+
+    def to_dict(self, head_only = False):
+        r = OrderedDict()
+        r['uri'] = self.uri()
+        r['media_type'] = config.MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.id()
+        if not head_only:
+            r['description'] = self.description
+            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+        return r
+    
+
 class Resource(db.Model):
     pass
 
@@ -143,105 +170,17 @@ class Testbed(Resource):
             r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
         return r
     
-class Platform(Resource):
-    name = db.StringProperty()
-    description = db.TextProperty()
-    
-    datetime_created = db.DateTimeProperty(auto_now_add=True)
-    datetime_modified = db.DateTimeProperty(auto_now=True)
-    
-    def id(self):
-        return self.key().id()
-        
-    def uri(self):
-        return build_url(path = '/platforms/%s' % self.id())
+class Platform(ReadOnlyResouce):
+    pass
 
-    def to_dict(self, head_only = False):
-        r = OrderedDict()
-        r['uri'] = self.uri()
-        r['media_type'] = config.MEDIA_TYPE
-        r['name'] = self.name
-        r['id'] = self.id()
-        if not head_only:
-            r['description'] = self.description
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
-        return r
-    
-class Interface(Resource):
-    name = db.StringProperty()
-    description = db.TextProperty()
-    
-    datetime_created = db.DateTimeProperty(auto_now_add=True)
-    datetime_modified = db.DateTimeProperty(auto_now=True)
-    
-    def id(self):
-        return self.key().id()
-        
-    def uri(self):
-        return build_url(path = '/interfaces/%s' % self.id())
+class Interface(ReadOnlyResouce):
+    pass
 
-    def to_dict(self, head_only = False):
-        r = OrderedDict()
-        r['uri'] = self.uri()
-        r['media_type'] = config.MEDIA_TYPE
-        r['name'] = self.name
-        r['id'] = self.id()
-        if not head_only:
-            r['description'] = self.description
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
-        return r
+class Sensor(ReadOnlyResouce):
+    pass
 
-class Sensor(Resource):
-    name = db.StringProperty()
-    description = db.TextProperty()
-    
-    datetime_created = db.DateTimeProperty(auto_now_add=True)
-    datetime_modified = db.DateTimeProperty(auto_now=True)
-    
-    def id(self):
-        return self.key().id()
-        
-    def uri(self):
-        return build_url(path = '/sensors/%s' % self.id())
-
-    def to_dict(self, head_only = False):
-        r = OrderedDict()
-        r['uri'] = self.uri()
-        r['media_type'] = config.MEDIA_TYPE
-        r['name'] = self.name
-        r['id'] = self.id()
-        if not head_only:
-            r['description'] = self.description
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
-        return r
-    
-class Actuator(Resource):
-    name = db.StringProperty()
-    description = db.TextProperty()
-    
-    datetime_created = db.DateTimeProperty(auto_now_add=True)
-    datetime_modified = db.DateTimeProperty(auto_now=True)
-    
-    def id(self):
-        return self.key().id()
-        
-    def uri(self):
-        return build_url(path = '/actuators/%s' % self.id())
-
-    def to_dict(self, head_only = False):
-        r = OrderedDict()
-        r['uri'] = self.uri()
-        r['media_type'] = config.MEDIA_TYPE
-        r['name'] = self.name
-        r['id'] = self.id()
-        if not head_only:
-            r['description'] = self.description
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
-        return r
+class Actuator(ReadOnlyResouce):
+    pass
 
 class Project(Resource):
     name = db.StringProperty()

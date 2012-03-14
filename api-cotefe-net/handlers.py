@@ -4,13 +4,9 @@ from webapp2_extras import sessions
 from webapp2_extras import jinja2
 import urllib
 import json
-
 import cgi
 import uuid
-
 import os
-
-# jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 from google.appengine.api import urlfetch
 from google.appengine.ext import db
@@ -26,20 +22,26 @@ class DatastoreInitialization(webapp2.RequestHandler):
     def get(self):
         
         # cleaning the datastore
-        # for user in User.all(): user.delete()   
-        # for identity in OpenIDIdentity.all(): identity.delete()  
-        # for application in Application.all(): application.delete()
-        # for session in OAuth2Session.all(): session.delete()
+        for user in User.all(): user.delete()
+        
+        for identity in OpenIDIdentity.all(): identity.delete()  
+        for application in Application.all(): application.delete()
+        for session in OAuth2Session.all(): session.delete()
+        
         for federation in Federation.all(): federation.delete()
         for testbed in Testbed.all(): testbed.delete()
         for platform in Platform.all(): platform.delete()
-#        for project in Project.all(): project.delete()
-#        for experiment in Experiment.all(): experiment.delete()
-#        for image in Image.all(): image.delete()
-#        for property_set in PropertySet.all(): property_set.delete()
-#        for virtual_node in VirtualNode.all(): virtual_node.delete()
-#        for virtual_node_group in VirtualNodeGroup.all(): virtual_node_group.delete()
-#        for virtual_task in VirtualTask.all(): virtual_task.delete()
+        for interface in Interface.all(): interface.delete()
+        for sensor in Sensor.all(): sensor.delete()
+        for actuator in Actuator.all(): actuator.delete()
+        
+        for project in Project.all(): project.delete()
+        for experiment in Experiment.all(): experiment.delete()
+        for image in Image.all(): image.delete()
+        for property_set in PropertySet.all(): property_set.delete()
+        for virtual_node in VirtualNode.all(): virtual_node.delete()
+        for virtual_node_group in VirtualNodeGroup.all(): virtual_node_group.delete()
+        for virtual_task in VirtualTask.all(): virtual_task.delete()
         
         Federation(
             name = 'COTEFE',
@@ -50,48 +52,90 @@ class DatastoreInitialization(webapp2.RequestHandler):
             name = 'TWIST',
             description = 'The TKN Wireless Indoor Sensor network Testbed (TWIST), developed by the Telecommunication Networks Group (TKN) at the Technische Universitaet Berlin, is a scalable and flexible testbed architecture for experimenting with wireless sensor network applications in an indoor setting.',
             organization = 'TU Berlin',
-            homepage = config.TESTBED_HOMEPAGE_1,
-            server_url = config.TESTBED_SERVER_URL_1,
-            background_image_url = config.TESTBED_BACKGROUND_IMAGE,
-            coordinates_mapping_function_x = config.TESTBED_COORD_X,
-            coordinates_mapping_function_y = config.TESTBED_COORD_Y,
+            homepage = 'https://www.twist.tu-berlin.de:8000',
+            server_url = 'https://www.twist.tu-berlin.de:8001',
+            background_image_url = 'https://www.twist.tu-berlin.de:8001/uploads/testbed/background.jpg',
+            coordinates_mapping_function_x = '-5.5+x*46.9+y+16.6',
+            coordinates_mapping_function_y =  '1517-y*16.9-z*78.3',
         ).put()
         
         Testbed(
-            name = config.TESTBED_NAME_2,
-            description = config.TESTBED_DESCRIPTION_2,
-            organization = config.TESTBED_ORGANIZATION_2,
-            server_url = config.TESTBED_SERVER_URL_2,
+            name = 'WISEBED',
+            description = 'The WISEBED project is a joint effort of nine academic and research institutes across Europe.',
+            organization = 'TU Delft',
+            server_url = 'http://example.org',
         ).put()
         
         Platform(
-            name = config.PLATFORM_NAME_1,
-            description = config.PLATFORM_DESCRIPTION_1,
+            key_name = 'eyesifxv20',
+            name = 'eyesIFXv20',
+            description = '',
         ).put()
         
         Platform(
-            name = config.PLATFORM_NAME_2,
-            description = config.PLATFORM_DESCRIPTION_2,
+            key_name = 'eyesifxv21',
+            name = 'eyesIFXv21',
+            description = '',
         ).put()
         
         Platform(
-            name = config.PLATFORM_NAME_3,
-            description = config.PLATFORM_DESCRIPTION_3,
+            key_name = 'tmotesky',
+            name = 'TmoteSky',
+            description = '',
         ).put()
         
         Platform(
-            name = config.PLATFORM_NAME_4,
-            description = config.PLATFORM_DESCRIPTION_4,
+            key_name = 'telosa',
+            name = 'TelosA',
+            description = '',
         ).put()
         
         Platform(
-            name = config.PLATFORM_NAME_5,
-            description = config.PLATFORM_DESCRIPTION_5,
+            key_name = 'telosb',
+            name = 'TelosB',
+            description = '',
         ).put()
         
-        Platform(
-            name = config.PLATFORM_NAME_6,
-            description = config.PLATFORM_DESCRIPTION_6,
+        Interface(
+            key_name = 'tinyos',
+            name = 'TinyOS',
+            description = '',
+        ).put()
+        
+        Interface(
+            key_name = 'contiki',
+            name = 'Contiki',
+            description = '',
+        ).put()
+        
+        Sensor(
+            key_name = 'temperature',
+            name = 'Temperature',
+            description = '',
+        ).put()
+        
+        Sensor(
+            key_name = 'pressure',
+            name = 'Pressure',
+            description = '',
+        ).put()
+        
+        Sensor(
+            key_name = 'light',
+            name = 'Light',
+            description = '',
+        ).put()
+        
+        Actuator(
+            key_name = 'sound',
+            name = 'Sound',
+            description = '',
+        ).put()
+        
+        Actuator(
+            key_name = 'led',
+            name = 'LED',
+            description = '',
         ).put()
         
         self.response.out.write('Datastore has been initialized!')
@@ -678,10 +722,11 @@ class FederationResourceHandler(OAuth2RESTJSONHandler):
             
         try:
             federation = Federation.all().get()
+            self.response.out.write(serialize(federation.to_dict()))
         except:
             self.response.status = '404'
             
-        self.response.out.write(serialize(federation.to_dict()))
+        
             
 # TESTBED
             
@@ -718,33 +763,32 @@ class TestbedResourceHandler(OAuth2RESTJSONHandler):
 class PlatformCollectionHandler(OAuth2RESTJSONHandler):
     
     def options(self):
+        
         allowed_methods = ['GET']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
     def get(self):
         
-        platform_list = list()
+        resource_list = list()
         query = Platform.all()
-        if self.request.get('name'):
-            query = query.filter('name =', self.request.get('name'))
-        for platform in query:
-            platform_list.append(platform.to_dict(head_only = True))
-        self.response.out.write(serialize(platform_list))
+        for resource in query:
+            resource_list.append(resource.to_dict(head_only = True))
+        self.response.out.write(serialize(resource_list))
                 
 class PlatformResourceHandler(OAuth2RESTJSONHandler):
     
-    def options(self, platform_id=None):
+    def options(self):
+        
         allowed_methods = ['GET']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
-    def get(self, platform_id):
+    def get(self, resource_id):
         
         try:
-            platform = Platform.get_by_id(int(platform_id))        
+            resource = Platform.get_by_key_name(resource_id)
+            self.response.out.write(serialize(resource.to_dict()))      
         except:
             self.response.status = '404'
-            
-        self.response.out.write(serialize(platform.to_dict()))
 
 # PROJECT
 

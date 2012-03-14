@@ -2,7 +2,7 @@ from handlers import *
 
 routes = [    
 
-    # (r'^/admin/init$', DatastoreInitialization),
+    (r'^/admin/init$', DatastoreInitialization),
     
     (r'^/login$', Login),
     
@@ -20,15 +20,6 @@ routes = [
     (r'^/applications', Applications),
     (r'^/logout$', Logout),
     
-    (r'^/docs', Docs),
-    
-    # (r'^/explore/users$', Users),
-    # (r'^/explore/testbeds$', Testbeds),
-    # (r'^/explore/platforms$', Platforms),
-    
-    # (r'^/cotefe/projects$', Projects),
-    # (r'^/cotefe/experiments$', Experiments),
-    
     (r'^/me$', MeHandler),
     
     (r'^/users/$', UserCollectionHandler),
@@ -40,7 +31,16 @@ routes = [
     (r'^/testbeds/(\d+)$', TestbedResourceHandler),
     
     (r'^/platforms/$', PlatformCollectionHandler),
-    (r'^/platforms/(\d+)$', PlatformResourceHandler),
+    (r'^/platforms/(\w+)$', PlatformResourceHandler),
+    
+#    (r'^/interfaces/$', InterfaceCollectionHandler),
+#    (r'^/interfaces/(\w+)$', InterfaceResourceHandler),
+#    
+#    (r'^/sensors/$', SensorCollectionHandler),
+#    (r'^/sensors/(\w+)$', SensorResourceHandler),
+#    
+#    (r'^/actuators/$', ActuatorCollectionHandler),
+#    (r'^/actuators/(\w+)$', ActuatorResourceHandler),
     
     (r'^/projects/$', ProjectCollectionHandler),
     (r'^/projects/(\d+)$', ProjectResourceHandler),
