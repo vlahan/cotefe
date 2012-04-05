@@ -1,0 +1,43 @@
+application: cotefejs
+version: 1
+runtime: python
+api_version: 1
+threadsafe: true
+
+handlers:
+
+
+- url: /css
+  static_dir: css
+  secure: always
+
+- url: /dashboard
+  static_files: htmls/dashboard.html
+  upload: htmls/.*
+  secure: always
+  
+- url: /
+  static_files: demo.html
+  upload: /.*
+  secure: always
+  
+- url: /htmls
+  static_dir: htmls
+  secure: always
+
+- url: /templates
+  static_dir: templates
+  secure: always
+
+- url: /images/(.*)
+  static_files: images/\1
+  upload: images/.*
+  secure: always
+
+- url: /scripts
+  static_dir: scripts
+  secure: always
+  
+- url: /io
+  script: pythonModule/io.py
+  secure: always
