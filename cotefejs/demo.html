@@ -5,15 +5,25 @@
 		<script type="text/javascript" src="../scripts/cotefe.js"></script>
 		<style>
 			div , fieldset {display:block;border:1px solid #ff0000;margin:10px}
-			form legend{display:block;border:1px dotted #ffccff;}
-			
+			form legend{display:block;border:1px dotted #ffccff;}			
 		</style>
 	</head>
 	<body>
 		<div>
 			<form>
 				<fieldset>
-				<legend>ID</legend>
+					<legend>ID</legend>
+					<label for="token">Oauth Access Token:</label>
+					<input name="token" placeholder="token" />
+				</fieldset>
+			</form>
+		</div>
+		<div>
+			<form>
+				<fieldset>
+					<legend>Static Resources</legend>
+					<label for="testbed1">TestBeds:</label>
+					<input name="testbed1" placeholder="TestBed1" />
 				</fieldset>
 			</form>
 		</div>
