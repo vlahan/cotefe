@@ -10,7 +10,7 @@ SERVER_URL = 'https://api.cotefe.net'
 CLIENT_ID = 'e78507fb71e54a8281b3c676076e9158'
 CLIENT_SECRET = '7ebc2f5e50904cef9df39926a50c2bec'
 REDIRECT_URI = 'http://localhost'
-ACCESS_TOKEN = '1e0f0a6c64c6461c8261ba6d57b940f5'
+ACCESS_TOKEN = 'bd5fb5eaa72c4788a1e96a2f720d45c8'
 
 # SERVER_URL = 'http://localhost:8080'
 # CLIENT_ID = '04e04ed1db97451497fa1e4ee14db358'
@@ -21,7 +21,7 @@ ACCESS_TOKEN = '1e0f0a6c64c6461c8261ba6d57b940f5'
 # EXPERIMENT CONFIGURATION
 
 DEFAULT_NAME = 'DEMO'
-DEFAULT_DESCRIPTION = 'COTEFE API DEMO - PLEASE DO NOT DELETE!'
+DEFAULT_DESCRIPTION = 'EWSN 2012 DEMO - PLEASE DO NOT DELETE!'
 PLATFORM_NAME = 'TmoteSky'
 # NUM_NODES_S = 1
 # NUM_NODES_P = 93
@@ -319,4 +319,4 @@ logging.info('Check your job at %s' % my_job)
 
 # execute the job
 
-api.execute_job(my_job)
+api.execute(my_job)

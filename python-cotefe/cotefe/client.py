@@ -1,9 +1,5 @@
-import urllib
-import httplib2
 import json
-import urllib2
-from poster.encode import multipart_encode
-from poster.streaminghttp import register_openers
+import requests
 
 from models import *
 
@@ -16,9 +12,8 @@ class COTEFEAPI(object):
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
         self.access_token = access_token
-        self.http = httplib2.Http(disable_ssl_certificate_validation=True)
         
-    def build_uri(self, path = '/', params=dict()):
+    def _build_uri(self, path = '/', params=dict()):
         base_uri = path if path.startswith('http') else '%s%s' % (self.server_url, path)
         # if self.access_token:
         #     params.update(access_token = self.access_token)
@@ -27,12 +22,19 @@ class COTEFEAPI(object):
         else:
             return base_uri
     
-    def build_headers(self):
+    def _build_headers(self):
         headers = {
             'Content-type': 'application/json',
             'Authorization': 'OAuth %s' % self.access_token
         }
         return headers
+    
+    def _make_request_(self, method, url, headers=None, data, files=None):
+        
+        r = requests.request(method=method, url=url, headers=headers, data=data, files=files)
+        
+        return r.text
+        
         
     # hits the url /oauth2/auth
     def get_authorize_url(self):
