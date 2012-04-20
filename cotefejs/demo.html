@@ -2,44 +2,61 @@
 <html>
 	<head>
 		<title>CotefeJS Frame</title>
+		<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+  		<script src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+  		<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
+  		<script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
 		<script type="text/javascript" src="../scripts/cotefe.js"></script>
+		
 		<style>
-			div , fieldset {display:block;border:1px solid #ff0000;margin:10px}
-			form legend{display:block;border:1px dotted #ffccff;}			
+			div , fieldset {display:block;border:1px solid #ff0000;margin:10px;
+				-moz-box-shadow: 0 0 6px #A4A4A4;
+				-webkit-box-shadow: 0 0 6px #A4A4A4;
+			}
+			div h3{display:block;margin:0;padding-left:10px;color:#ffffff;background-color:#ff0000;
+				-moz-box-shadow: 0 0 6px #A4A4A4;
+				-webkit-box-shadow: 0 0 6px #A4A4A4;					
+			}			
+			form input[type="text"]{width:250px;border:1px solid #ff0000;height:25px;}
 		</style>
 	</head>
 	<body>
 		<div>
+			<h3>ID</h3>
 			<form>
 				<fieldset>
-					<legend>ID</legend>
+					
 					<label for="token">Oauth Access Token:</label>
-					<input name="token" placeholder="token" />
+					<input type="text" name="token" value="1908700504b2474e9e9d6cc6225d3ece" />
 				</fieldset>
 			</form>
 		</div>
 		<div>
+			<h3>Static Resources</h3>
 			<form>
 				<fieldset>
-					<legend>Static Resources</legend>
+					
 					<label for="testbed1">TestBeds:</label>
-					<input name="testbed1" placeholder="TestBed1" />
+					<input type="text"  name="testbed1" placeholder="TestBed1" />
 				</fieldset>
 			</form>
 		</div>
 		<div>
+			<h3>Project</h3>
 			<form>
 				<fieldset>
-				<legend>Project</legend>
+				
 				</fieldset>
 			</form>
 		</div>
 		<div>
+			<h3>Experiment</h3>
 			<form>
 				<fieldset>
-				<legend>Experiment</legend>
+				
 				</fieldset>
 			</form>
 		</div>
+		<div id="test"></div>
 	</body>
 </html>
