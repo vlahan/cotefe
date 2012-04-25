@@ -6,10 +6,10 @@
   		<script src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
   		<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
   		<script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
-		<script type="text/javascript" src="../scripts/cotefe.js"></script>
+		<script type="text/javascript" src="../scripts/cotefe1.js"></script>
 		
 		<style>
-			div , fieldset {display:block;border:1px solid #ff0000;margin:10px;
+			div , fieldset {display:block;border:1px solid #ccc;margin:10px;
 				-moz-box-shadow: 0 0 6px #A4A4A4;
 				-webkit-box-shadow: 0 0 6px #A4A4A4;
 			}
@@ -17,7 +17,10 @@
 				-moz-box-shadow: 0 0 6px #A4A4A4;
 				-webkit-box-shadow: 0 0 6px #A4A4A4;					
 			}			
-			form input[type="text"]{width:250px;border:1px solid #ff0000;height:25px;}
+			form input[type="text"]{width:250px;border:1px solid #ccc;height:25px;}
+			form fieldset{position:relative;}
+			fieldset table input[type="text"]{width:190px;border:1px solid #ccc;height:25px;float:right;}
+			textarea{width:100%;height:200px;border:1px solid #ccc;padding:0px;}
 		</style>
 	</head>
 	<body>
@@ -31,6 +34,7 @@
 				</fieldset>
 			</form>
 		</div>
+		
 		<div>
 			<h3>Static Resources</h3>
 			<form>
@@ -42,10 +46,34 @@
 			</form>
 		</div>
 		<div>
+		    <h3>User</h3>
+		    <form>
+		    <div id="userContent">		        
+		    </div>
+		    </form>
+		</div>
+		<div>
 			<h3>Project</h3>
 			<form>
 				<fieldset>
-				
+				    <table width="100%">
+				        <tr>
+				            <td width="30%">
+				                <input type="button" class="get" name="getProject" value="GET"/>
+				                <input type="text" name="get_projectid" />
+				                <hr>
+				                <input type="button" class=".post" name="newProject" value="POST"/><hr>
+				                <input type="button" name="editProject" value="PUT"/>
+				                <input type="text" name="put_projectid" />
+				                <hr>
+				                <input type="button" class=".delete" name="delProject" value="DELETE"/>
+				                <input type="text" name="del_projectid" />
+				            </td>
+				            <td><textarea id="projects"></textarea></td>
+				        </tr>
+				    </table>
+				    
+				    
 				</fieldset>
 			</form>
 		</div>
