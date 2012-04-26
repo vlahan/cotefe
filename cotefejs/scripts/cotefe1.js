@@ -11,20 +11,20 @@
 	 * models
 	 */
 	userInfo = Backbone.Model.extend({
-				url:cotefe.apiurl+"me"+"?access_token="+cotefe.token,
-				uri:"",
-				media_type:"",
-				username:"",
-				id: 31034,
-				first: "Sanjeet Raj",
-				last: "Pandey",
-				email: "sanjeet.raj@gmail.com",
-				organization: "TKN",
-				projects:[],
-				experiemnts:[],
-				jobs: [],
-				datetime_created: "2012-02-03T17:59:46+0000",
-				datetime_modified: "2012-04-18T09:37:48+0000",
+					url:cotefe.apiurl+"me"+"?access_token="+cotefe.token,
+					uri:"",
+					media_type:"",
+					username:"",
+					id: 31034,
+					first: "Sanjeet Raj",
+					last: "Pandey",
+					email: "sanjeet.raj@gmail.com",
+					organization: "TKN",
+					projects:[],
+					experiemnts:[],
+					jobs: [],
+					datetime_created: "2012-02-03T17:59:46+0000",
+					datetime_modified: "2012-04-18T09:37:48+0000",
 				
 				display: function() {
 				    this.fetch({
@@ -42,7 +42,7 @@
 				url:cotefe.apiurl+"projects/?access_token="+cotefe.token,
 				uri: "https://api.cotefe.net/projects/47001",
 				media_type: "application/json",
-				name: "Project1",
+				name: "blabla",
 				id: 47001,
 				description: "hey there fdagra",
 				owner: {},
@@ -53,7 +53,8 @@
 				display: function() {
 				    this.fetch({
 				      	success: function(model, response) {
-				      			
+				      		new ProjectView({model:model});
+				      			//console.log(model);
 				        		return (model);
 				      		}
 			    		});
@@ -119,18 +120,57 @@
 	  	loaduser:function(){alert(JSON.stringify(this.model));}
 	});
 	
-	 
+	
+	ProjectView=Backbone.View.extend({
+		el: "#projects",
+		
+		template:'',
+		initialize : function() {  _.bindAll(this, "render");this.render(); },
+		render : function() 
+		{
+	    		
+	    		$(this.el).val(JSON.stringify(this.model,null,'\t'));//_.template(JSON.stringify(this.model,null,'\t'),this.model.toJSON())
+	    		return this;
+	    },
+	  	
+	});
 	 
 
 })(jQuery)
 $(document).ready(function(){
    
    user= new userInfo();
+   
    user.display();
-   proj= new project();
-   proj.display();
-   exp= new experiemnt();
-   exp.display();
+   //proj= new project();
+   //proj.display();
+   //exp= new experiemnt();
+   //exp.display();
+   
+   $('input[type=button]').click(function(){
+   				element=$(this).parents('form');
+   				type=(element.attr("class"));
+   				method=$(this).attr('name');
+   				if(method=="GET")
+   				{
+   					//check next box
+   					text=$(this).next('input[type=text]').val();
+   					if(text!="")
+   					{
+   						projects=new project();
+   						projects.url="https://api.cotefe.net/projects/"+text+"?access_token=1908700504b2474e9e9d6cc6225d3ece";
+   						projects.display();
+   						//console.log(projects.get('url'));
+   					}
+   					else
+   					{
+   						projects=new project({'url':"https://api.cotefe.net/projects/?access_token=1908700504b2474e9e9d6cc6225d3ece"});
+   						projects.display();
+   					}
+   				}   			
+   			});
+   
+   
    
    
   

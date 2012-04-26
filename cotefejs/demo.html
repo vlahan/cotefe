@@ -13,10 +13,11 @@
 				-moz-box-shadow: 0 0 6px #A4A4A4;
 				-webkit-box-shadow: 0 0 6px #A4A4A4;
 			}
-			div h3{display:block;margin:0;padding-left:10px;color:#ffffff;background-color:#ff0000;
+			div h3,div h1{display:block;margin:0;padding-left:10px;color:#ffffff;background-color:#8A4B08;
 				-moz-box-shadow: 0 0 6px #A4A4A4;
 				-webkit-box-shadow: 0 0 6px #A4A4A4;					
-			}			
+			}	
+					
 			form input[type="text"]{width:250px;border:1px solid #ccc;height:25px;}
 			form fieldset{position:relative;}
 			fieldset table input[type="text"]{width:190px;border:1px solid #ccc;height:25px;float:right;}
@@ -24,6 +25,7 @@
 		</style>
 	</head>
 	<body>
+	    <div><h1>COTEFE Client Simulation</h1></div>
 		<div>
 			<h3>ID</h3>
 			<form>
@@ -41,7 +43,7 @@
 				<fieldset>
 					
 					<label for="testbed1">TestBeds:</label>
-					<input type="text"  name="testbed1" placeholder="TestBed1" />
+					<input type="text"  name="testbed1" />
 				</fieldset>
 			</form>
 		</div>
@@ -54,19 +56,19 @@
 		</div>
 		<div>
 			<h3>Project</h3>
-			<form>
+			<form class="project">
 				<fieldset>
-				    <table width="100%">
+				    <table width="100%" >
 				        <tr>
 				            <td width="30%">
-				                <input type="button" class="get" name="getProject" value="GET"/>
+				                <input type="button" class="get" name="GET" value="GET"/>
 				                <input type="text" name="get_projectid" />
 				                <hr>
-				                <input type="button" class=".post" name="newProject" value="POST"/><hr>
-				                <input type="button" name="editProject" value="PUT"/>
+				                <input type="button" class="post" name="POST" value="POST"/><hr>
+				                <input type="button" name="PUT" value="PUT"/>
 				                <input type="text" name="put_projectid" />
 				                <hr>
-				                <input type="button" class=".delete" name="delProject" value="DELETE"/>
+				                <input type="button" class=".delete" name="DELETE" value="DELETE"/>
 				                <input type="text" name="del_projectid" />
 				            </td>
 				            <td><textarea id="projects"></textarea></td>
@@ -81,7 +83,7 @@
 			<h3>Experiment</h3>
 			<form>
 				<fieldset>
-				
+				hello
 				</fieldset>
 			</form>
 		</div>
