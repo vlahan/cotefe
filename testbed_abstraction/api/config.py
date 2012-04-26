@@ -1,0 +1,10 @@
+SERVER_URL = 'http://localhost:8000'
+TESTBED_NAME = 'TWIST'
+TESTBED_ORGANIZATION = 'TU Berlin'
+TESTBED_CITY = 'Berlin'
+TESTBED_COUNTRY = 'Germany'
+MEDIA_TYPE = 'application/json'
+JSON_ENSURE_ASCII = True
+JSON_INDENT = 4
+FMT_DT_TO_STR = '%Y-%m-%dT%H:%M:%S%z'
+FMT_STR_TO_DT = '%Y-%m-%dT%H:%M:%S+0000'
