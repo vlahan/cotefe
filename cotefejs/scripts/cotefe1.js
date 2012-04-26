@@ -39,8 +39,9 @@
 	      });
 	
 	project  = Backbone.Model.extend({
-				url:cotefe.apiurl+"projects/?access_token="+cotefe.token,
-				uri: "https://api.cotefe.net/projects/47001",
+				defailts:{
+				url:"",
+				uri: "",
 				media_type: "application/json",
 				name: "blabla",
 				id: 47001,
@@ -49,17 +50,32 @@
 				experiments:[],
 				experiment_count: 1,
 				datetime_created: "2012-04-18T09:47:14+0000",
-				datetime_modified: "2012-04-18T09:47:24+0000",
+				datetime_modified: "2012-04-18T09:47:24+0000"
+				},
 				display: function() {
 				    this.fetch({
 				      	success: function(model, response) {
 				      		new ProjectView({model:model});
-				      			//console.log(model);
 				        		return (model);
 				      		}
 			    		});
 			  		}
 		  });
+	
+	
+	projects = Backbone.Collection.extend({
+		url:cotefe.apiurl+"projects/?access_token="+cotefe.token,
+		model:project,
+        display:function(){
+       	this.fetch({
+			success: function(model,result) {	
+					new ProjectListView({model:model});				      		
+	        		 return model;
+	      		}
+    		});
+       	
+       ;}, 
+	});
 	
 	experiemnt=Backbone.Model.extend({
 				url:cotefe.apiurl+"experiments/?access_token="+cotefe.token,
@@ -134,7 +150,16 @@
 	    },
 	  	
 	});
-	 
+	
+	ProjectListView=Backbone.View.extend({
+		el:"#projects",
+		template:'',
+		initialize:function(){_.bindAll(this,"render");this.render();},
+		render:function()
+		{
+			$(this.el).val(JSON.stringify(this.model,null,'\t'));
+		}
+	});
 
 })(jQuery)
 $(document).ready(function(){
@@ -164,8 +189,8 @@ $(document).ready(function(){
    					}
    					else
    					{
-   						projects=new project({'url':"https://api.cotefe.net/projects/?access_token=1908700504b2474e9e9d6cc6225d3ece"});
-   						projects.display();
+   						projectCollection=new projects();
+   						projectCollection.display();
    					}
    				}   			
    			});
