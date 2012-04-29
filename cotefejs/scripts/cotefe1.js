@@ -84,7 +84,7 @@
 	/*
 	 * a experiment model
 	 */
-	experiemnt = Backbone.Model.extend({
+	experiment = Backbone.Model.extend({
 				url:cotefe.apiurl+"experiments/?access_token="+cotefe.token,
 				uri: "https://api.cotefe.net/experiments/45002",
 				media_type: "application/json",
@@ -110,7 +110,19 @@
 			    		});
 			  		}
 		 });
-	
+		
+		experiments = Backbone.Collection.extend({				
+				url:cotefe.apiurl+"experiments/?access_token="+cotefe.token,				
+				model:experiment,
+		        display:function(){
+		       	this.fetch({
+					success: function(model,result) {	
+							new ProjectListView({el:"#experiemnts",model:model});				      		
+			      		}
+		    		});
+		       	
+		       ;}, 
+		 });
 	
 	
 	

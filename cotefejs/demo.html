@@ -13,7 +13,7 @@
 				-moz-box-shadow: 0 0 6px #A4A4A4;
 				-webkit-box-shadow: 0 0 6px #A4A4A4;
 			}
-			div h3,div h1{display:block;margin:0;padding-left:10px;color:#ffffff;background-color:#8A4B08;
+			div h3,div h1{display:block;margin:0;padding-left:10px;color:#ffffff;background-color:#0174DF;
 				-moz-box-shadow: 0 0 6px #A4A4A4;
 				-webkit-box-shadow: 0 0 6px #A4A4A4;					
 			}	
@@ -74,20 +74,33 @@
 				            </td>
 				            <td><textarea id="projects"></textarea></td>
 				        </tr>
-				    </table>
-				    
-				    
+				    </table>				    
 				</fieldset>
 			</form>
 		</div>
 		<div>
 			<h3>Experiment</h3>
-			<form>
+			<form class="experiment" >
 				<fieldset>
-				hello
-				</fieldset>
+                    <table width="100%" >
+                        <tr>
+                            <td width="30%">
+                                <input type="button" class="get" name="GET" value="GET"/>
+                                <input type="text" name="get_projectid" />
+                                <hr>
+                                <input type="button" class="post" name="POST" value="POST"/><hr>
+                                <input type="button" name="PUT" value="PUT"/>
+                                <input type="text" name="put_projectid" />
+                                <hr>
+                                <input type="button" class=".delete" name="DELETE" value="DELETE"/>
+                                <input type="text" name="del_projectid" />
+                            </td>
+                            <td><textarea id="experiments"></textarea></td>
+                        </tr>
+                    </table>                    
+                </fieldset>
 			</form>
 		</div>
-		<div id="test"></div>
+		
 	</body>
 </html>
