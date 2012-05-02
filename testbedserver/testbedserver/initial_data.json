@@ -1,0 +1,486 @@
+[
+   {
+      "pk":"TWIST",
+      "model":"api.testbed",
+      "fields":{
+         "organization":"TU Berlin",
+         "name":"TKN Wireless Indoor Sensor network Testbed",
+         "description":"The TKN Wireless Indoor Sensor network Testbed (TWIST), developed by the Telecommunication Networks Group (TKN) at the Technische Universit\u00e4t Berlin, is a scalable and flexible testbed architecture for experimenting with wireless sensor network applications in an indoor setting. It provides basic services like node configuration, network-wide programming, out-of-band extraction of debug data and gathering of application data, as well as several novel features:\r\n\r\n- experiments with heterogeneous node platforms\r\n- support for flat and hierarchical setups\r\n- active power supply control of the nodes\r\n\r\nThe self-configuration capability, the use of hardware with standardized interfaces and open-source software makes the TWIST architecture scalable, affordable, and easily replicable."
+      }
+   },
+   {
+      "pk":"eyesIFXv21",
+      "model":"api.platform",
+      "fields":{
+         "native_id":1,
+         "name":"eyesIFX WSN node v2.1"
+      }
+   },
+   {
+      "pk":"eyesIFXv20",
+      "model":"api.platform",
+      "fields":{
+         "native_id":2,
+         "name":"eyesIFX WSN node v2.0"
+      }
+   },
+   {
+      "pk":"TelosA",
+      "model":"api.platform",
+      "fields":{
+         "native_id":3,
+         "name":"Telos (Rev A 2004-04-27)"
+      }
+   },
+   {
+      "pk":"TelosB",
+      "model":"api.platform",
+      "fields":{
+         "native_id":4,
+         "name":"Telos (Rev B 2004-xx-xx)"
+      }
+   },
+   {
+      "pk":"TmoteSky",
+      "model":"api.platform",
+      "fields":{
+         "native_id":5,
+         "name":"Tmote Sky"
+      }
+   },
+   {
+      "pk":"Roomba",
+      "model":"api.platform",
+      "fields":{
+         "native_id":10,
+         "name":"Roomba"
+      }
+   },
+   {
+      "pk":13,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_contenttype",
+         "name":"Can add content type",
+         "content_type":5
+      }
+   },
+   {
+      "pk":4,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_group",
+         "name":"Can add group",
+         "content_type":2
+      }
+   },
+   {
+      "pk":28,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_image",
+         "name":"Can add Image",
+         "content_type":10
+      }
+   },
+   {
+      "pk":31,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_job",
+         "name":"Can add Job",
+         "content_type":11
+      }
+   },
+   {
+      "pk":43,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_job2node",
+         "name":"Can add Job2Node",
+         "content_type":15
+      }
+   },
+   {
+      "pk":19,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_logentry",
+         "name":"Can add log entry",
+         "content_type":7
+      }
+   },
+   {
+      "pk":10,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_message",
+         "name":"Can add message",
+         "content_type":4
+      }
+   },
+   {
+      "pk":34,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_node",
+         "name":"Can add Node",
+         "content_type":12
+      }
+   },
+   {
+      "pk":37,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_nodegroup",
+         "name":"Can add NodeGroup",
+         "content_type":13
+      }
+   },
+   {
+      "pk":40,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_nodegroup2node",
+         "name":"Can add NodeGroup2Node",
+         "content_type":14
+      }
+   },
+   {
+      "pk":1,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_permission",
+         "name":"Can add permission",
+         "content_type":1
+      }
+   },
+   {
+      "pk":25,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_platform",
+         "name":"Can add Platform",
+         "content_type":9
+      }
+   },
+   {
+      "pk":16,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_session",
+         "name":"Can add session",
+         "content_type":6
+      }
+   },
+   {
+      "pk":22,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_testbed",
+         "name":"Can add Testbed",
+         "content_type":8
+      }
+   },
+   {
+      "pk":7,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"add_user",
+         "name":"Can add user",
+         "content_type":3
+      }
+   },
+   {
+      "pk":14,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_contenttype",
+         "name":"Can change content type",
+         "content_type":5
+      }
+   },
+   {
+      "pk":5,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_group",
+         "name":"Can change group",
+         "content_type":2
+      }
+   },
+   {
+      "pk":29,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_image",
+         "name":"Can change Image",
+         "content_type":10
+      }
+   },
+   {
+      "pk":32,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_job",
+         "name":"Can change Job",
+         "content_type":11
+      }
+   },
+   {
+      "pk":44,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_job2node",
+         "name":"Can change Job2Node",
+         "content_type":15
+      }
+   },
+   {
+      "pk":20,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_logentry",
+         "name":"Can change log entry",
+         "content_type":7
+      }
+   },
+   {
+      "pk":11,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_message",
+         "name":"Can change message",
+         "content_type":4
+      }
+   },
+   {
+      "pk":35,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_node",
+         "name":"Can change Node",
+         "content_type":12
+      }
+   },
+   {
+      "pk":38,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_nodegroup",
+         "name":"Can change NodeGroup",
+         "content_type":13
+      }
+   },
+   {
+      "pk":41,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_nodegroup2node",
+         "name":"Can change NodeGroup2Node",
+         "content_type":14
+      }
+   },
+   {
+      "pk":2,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_permission",
+         "name":"Can change permission",
+         "content_type":1
+      }
+   },
+   {
+      "pk":26,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_platform",
+         "name":"Can change Platform",
+         "content_type":9
+      }
+   },
+   {
+      "pk":17,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_session",
+         "name":"Can change session",
+         "content_type":6
+      }
+   },
+   {
+      "pk":23,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_testbed",
+         "name":"Can change Testbed",
+         "content_type":8
+      }
+   },
+   {
+      "pk":8,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"change_user",
+         "name":"Can change user",
+         "content_type":3
+      }
+   },
+   {
+      "pk":15,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_contenttype",
+         "name":"Can delete content type",
+         "content_type":5
+      }
+   },
+   {
+      "pk":6,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_group",
+         "name":"Can delete group",
+         "content_type":2
+      }
+   },
+   {
+      "pk":30,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_image",
+         "name":"Can delete Image",
+         "content_type":10
+      }
+   },
+   {
+      "pk":33,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_job",
+         "name":"Can delete Job",
+         "content_type":11
+      }
+   },
+   {
+      "pk":45,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_job2node",
+         "name":"Can delete Job2Node",
+         "content_type":15
+      }
+   },
+   {
+      "pk":21,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_logentry",
+         "name":"Can delete log entry",
+         "content_type":7
+      }
+   },
+   {
+      "pk":12,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_message",
+         "name":"Can delete message",
+         "content_type":4
+      }
+   },
+   {
+      "pk":36,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_node",
+         "name":"Can delete Node",
+         "content_type":12
+      }
+   },
+   {
+      "pk":39,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_nodegroup",
+         "name":"Can delete NodeGroup",
+         "content_type":13
+      }
+   },
+   {
+      "pk":42,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_nodegroup2node",
+         "name":"Can delete NodeGroup2Node",
+         "content_type":14
+      }
+   },
+   {
+      "pk":3,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_permission",
+         "name":"Can delete permission",
+         "content_type":1
+      }
+   },
+   {
+      "pk":27,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_platform",
+         "name":"Can delete Platform",
+         "content_type":9
+      }
+   },
+   {
+      "pk":18,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_session",
+         "name":"Can delete session",
+         "content_type":6
+      }
+   },
+   {
+      "pk":24,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_testbed",
+         "name":"Can delete Testbed",
+         "content_type":8
+      }
+   },
+   {
+      "pk":9,
+      "model":"auth.permission",
+      "fields":{
+         "codename":"delete_user",
+         "name":"Can delete user",
+         "content_type":3
+      }
+   },
+   {
+      "pk":1,
+      "model":"auth.user",
+      "fields":{
+         "username":"admin",
+         "first_name":"",
+         "last_name":"",
+         "is_active":true,
+         "is_superuser":true,
+         "is_staff":true,
+         "last_login":"2011-07-10 20:19:18",
+         "groups":[
+
+         ],
+         "user_permissions":[
+
+         ],
+         "password":"sha1$559d4$8b12b7d2bcd92c88219d79c7c52c816e73b43c93",
+         "email":"admin@example.org",
+         "date_joined":"2011-06-20 15:26:17"
+      }
+   }
+]
