@@ -10,6 +10,8 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     
+    url(r'', include('testbed_abstraction.api.urls')),
+    
     url(r'^$', root_handler),
                        
     url(r'^(\w+)/$', collection_handler),

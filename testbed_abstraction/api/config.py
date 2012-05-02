@@ -1,4 +1,4 @@
-SERVER_URL = 'http://localhost:8000'
+SERVER_URL = 'http://localhost:8001'
 TESTBED_NAME = 'TWIST'
 TESTBED_ORGANIZATION = 'TU Berlin'
 TESTBED_CITY = 'Berlin'
