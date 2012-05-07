@@ -7,26 +7,8 @@
 			
 		};
 	
-	/*
-	 * user model
-	 */
-	user = Backbone.Model.extend({url:cotefe.apiurl+"me"+"?access_token="+cotefe.token,	uri:"",	media_type:"",username:"",id: 31034,first: "",last: "",
-					email: "",organization: "",	projects:[],experiemnts:[],	jobs: [],datetime_created: "",datetime_modified: "",
-					display: function(item) {
-					    this.fetch({
-					      	success: function(model, response) {
-					      			new ListView({el:item,model:model});
-					        		return (model);
-					      		}
-				    		});
-				  	},
-				
-	      });
 	
-	/*
-	 * a resource model
-	 */
-	resource  = Backbone.Model.extend({
+	Resource  = Backbone.Model.extend({
 					display: function(item) {
 					    this.fetch({
 					      	success: function(model, response) {
@@ -37,18 +19,23 @@
 				  		}
 		  });
 	
-	/*
-	 * project list based on project model
-	 */
-	ResourceList = Backbone.Collection.extend({	model:resource,	display:function(item){	this.fetch({success: function(model,result) {new ListView({el:item,model:model});}})}, 
+	
+	
+	ResourceList = Backbone.Collection.extend({	model:Resource,	display:function(item){	this.fetch({success: function(model,result) {new ListView({el:item,model:model});}})},
 		 });
 	
-	projectList=ResourceList.extend({url:cotefe.apiurl+"projects/?access_token="+cotefe.token});
-	experimentList=ResourceList.extend({url:cotefe.apiurl+"experiments/?access_token="+cotefe.token});
-	jobList=ResourceList.extend({url:cotefe.apiurl+"jobs/?access_token="+cotefe.token});
+	
+	User=Resource.extend({url:cotefe.apiurl+"me"+"?access_token="+cotefe.token});						//user
+	
+	ProjectList=ResourceList.extend({url:cotefe.apiurl+"projects/?access_token="+cotefe.token});		//projects list
+	ExperimentList=ResourceList.extend({url:cotefe.apiurl+"experiments/?access_token="+cotefe.token});	//experiment list
+	JobList=ResourceList.extend({url:cotefe.apiurl+"jobs/?access_token="+cotefe.token});				//jobs list
 	
 	
 	
+	/*
+	 * view
+	 */
 	
 	ListView=Backbone.View.extend({
 		initialize:function(){_.bindAll(this,"render");this.render();},
@@ -57,6 +44,59 @@
 			$(this.el).val(JSON.stringify(this.model,null,'\t'));
 		}
 	});
+	
+	
+	
+	
+	/*
+	 * help functions
+	 */
+	
+	resourcetype = function(type)
+	{
+		switch(type)
+		{
+			case "project": prjs=new ProjectList();prjs.display("#projects");break;
+			case "experiment":experiments=new ExperimentList();experiments.display("#experiments");break;
+			case "job":jobs=new JobList();jobs.display("#jobs");break;		
+		}
+		
+	}
+
+	resourceSingleItem = function (id,type)
+	{
+		id=id.trim();
+		switch(type)
+		{
+			case "project": 	single_project=new Resource();
+	        					single_project.url=cotefe.apiurl+"projects/"+id+"?access_token="+cotefe.token;
+	        					single_project.display("#projects");
+	        					break;
+			case "experiment":	single_exp=new Resource();
+								single_exp.url=cotefe.apiurl+"experiments/"+id+"?access_token="+cotefe.token;
+								single_exp.display("#experiments");
+								break;
+			case "job":jobs=	single_job=new Resource();
+								single_job.url=cotefe.apiurl+"jobs/"+id+"?access_token="+cotefe.token;
+								single_job.display("#jobs");
+								break;
+		
+		}
+		
+	}
+
+
+	checkInput = function(element)
+	{
+		text=$(element).next('input[type=text]').val();
+		if(text.trim()!="")
+			{
+				return text;
+			}
+		return false;
+	}
+	
+	
 
 })(jQuery)
 
@@ -64,7 +104,7 @@
 
 $(document).ready(function(){
    
-   usera= new user();   
+   usera= new User();   
    usera.display("#userContent");
 
    $('input[type=button]').click(function(){
@@ -74,7 +114,7 @@ $(document).ready(function(){
    				
    				switch(method)
    				{
-   					case 'GET':resourcetype(type);
+   					case 'GET':	checkInput(this)!=false?resourceSingleItem(checkInput(this),type):resourcetype(type);
    				
    				}
    				
@@ -93,14 +133,4 @@ $(document).ready(function(){
  });
 
 
-function resourcetype(type)
-{
-	switch(type)
-	{
-		case "project": prjs=new projectList();prjs.display("#projects");break;
-		case "experiment":experiments=new experimentList();experiments.display("#experiments");break;
-		case "job":jobs=new jobList();jobs.display("#jobs");break;
-	
-	}
-	
-}
+
