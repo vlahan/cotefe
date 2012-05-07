@@ -52,6 +52,26 @@
 	 * help functions
 	 */
 	
+	postModel=function(type)
+	{
+		url="";
+		name=type+Math.floor(Math.random()*100);
+		description=name+" Description";
+		switch(type)
+		{
+			case "project":url=cotefe.apiurl+"projects/?access_token="+cotefe.token; break;
+			case "experiment":url=cotefe.apiurl+"experiments/?access_token="+cotefe.token; break;
+			case "job":url=cotefe.apiurl+"jobs/?access_token="+cotefe.token; break;
+		}
+		
+		resource=new Resource({name:name,description:description});
+		resource.url=url;
+		resource.save({success:function(){alert("Successfully saved");}});
+		
+		
+	}
+	
+	
 	resourcetype = function(type)
 	{
 		switch(type)
@@ -84,6 +104,25 @@
 		}
 		
 	}
+	
+	removeSingleItem = function (id,type)
+	{
+		id=id.trim();
+		resource=new Resource();;
+		switch(type)
+		{
+			case "project": 	resource.url=cotefe.apiurl+"projects/"+id+"?access_token="+cotefe.token;
+	        					break;
+			case "experiment":	resource.url=cotefe.apiurl+"experiments/"+id+"?access_token="+cotefe.token;
+								break;
+			case "job":jobs=	resource.url=cotefe.apiurl+"jobs/"+id+"?access_token="+cotefe.token;
+								break;
+		
+		}
+		
+		resource.destroy({success:function(){alert("Successfully Deleted");}});
+		
+	}
 
 
 	checkInput = function(element)
@@ -114,7 +153,9 @@ $(document).ready(function(){
    				
    				switch(method)
    				{
-   					case 'GET':	checkInput(this)!=false?resourceSingleItem(checkInput(this),type):resourcetype(type);
+   					case 'GET':	checkInput(this)!=false?resourceSingleItem(checkInput(this),type):resourcetype(type);break;
+   					case 'POST': postModel(type);break;
+   					case 'DELETE':checkInput(this)!=false?removeSingleItem(checkInput(this),type):alert("NO ID provided");break;
    				
    				}
    				
