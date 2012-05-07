@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from django.db import models
-from api import config, utils
+
+from testbed_abstraction import config, utils
 
 class Resource(models.Model):
     id = models.CharField(max_length=255, primary_key=True, verbose_name='Id', default=utils.generate_id)

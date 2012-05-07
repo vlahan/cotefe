@@ -2,8 +2,8 @@ import json
 
 from django.http import HttpResponse, HttpResponseNotAllowed
 
+from testbed_abstraction import config, utils
 from api.models import *
-from api import config, utils
 
 model_by_url = dict()
 model_by_url['nodes'] = Node
