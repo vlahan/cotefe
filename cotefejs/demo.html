@@ -39,19 +39,10 @@
 		</div>
 		
 		<div>
-			<h3>Static Resources</h3>
-			<form>
-				<fieldset>
-					
-					<label for="testbed1">TestBeds:</label>
-					<input type="text"  name="testbed1" />
-				</fieldset>
-			</form>
-		</div>
-		<div>
 		    <h3>User</h3>
 		    <form>
-		    <div id="userContent">		        
+		    <div>
+		    	<textarea id="userContent"></textarea>		        
 		    </div>
 		    </form>
 		</div>
@@ -69,7 +60,7 @@
 				                <input type="button" name="PUT" value="PUT"/>
 				                <input type="text" name="put_projectid" />
 				                <hr>
-				                <input type="button" class=".delete" name="DELETE" value="DELETE"/>
+				                <input type="button" class="delete" name="DELETE" value="DELETE"/>
 				                <input type="text" name="del_projectid" />
 				            </td>
 				            <td><textarea id="projects"></textarea></td>
@@ -92,7 +83,7 @@
                                 <input type="button" name="PUT" value="PUT"/>
                                 <input type="text" name="put_projectid" />
                                 <hr>
-                                <input type="button" class=".delete" name="DELETE" value="DELETE"/>
+                                <input type="button" class="delete" name="DELETE" value="DELETE"/>
                                 <input type="text" name="del_projectid" />
                             </td>
                             <td><textarea id="experiments"></textarea></td>
@@ -101,6 +92,38 @@
                 </fieldset>
 			</form>
 		</div>
-		
+		<div>
+			<h3>Jobs</h3>
+			<form class="job" >
+				<fieldset>
+                    <table width="100%" >
+                        <tr>
+                            <td width="30%">
+                                <input type="button" class="get" name="GET" value="GET"/>
+                                <input type="text" name="get_jobid" />
+                                <hr>
+                                <input type="button" class="post" name="POST" value="POST"/><hr>
+                                <input type="button" name="PUT" value="PUT"/>
+                                <input type="text" name="put_jobid" />
+                                <hr>
+                                <input type="button" class="delete" name="DELETE" value="DELETE"/>
+                                <input type="text" name="del_jobid" />
+                            </td>
+                            <td><textarea id="jobs"></textarea></td>
+                        </tr>
+                    </table>                    
+                </fieldset>
+			</form>
+		</div>
+		<div>
+			<h3>Static Resources</h3>
+			<form>
+				<fieldset>
+					
+					<label for="testbed1">TestBeds:</label>
+					<input type="text"  name="testbed1" />
+				</fieldset>
+			</form>
+		</div>
 	</body>
 </html>
