@@ -1,8 +1,13 @@
-SERVER_URL = 'http://localhost:8001'
-TESTBED_NAME = 'TWIST'
-TESTBED_ORGANIZATION = 'TU Berlin'
-TESTBED_CITY = 'Berlin'
-TESTBED_COUNTRY = 'Germany'
+# customize the following aliases to reflect the specific testbed
+
+SERVER_URL = ''
+TESTBED_NAME = ''
+TESTBED_ORGANIZATION = ''
+TESTBED_CITY = ''
+TESTBED_COUNTRY = ''
+
+# do not change below this line
+
 MEDIA_TYPE = 'application/json'
 JSON_ENSURE_ASCII = True
 JSON_INDENT = 4
