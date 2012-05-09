@@ -24,8 +24,8 @@ handlers:
   static_dir: static/scripts
   
 - url: /favicon\.ico
-  static_files: static/images/favicon.ico
-  upload: static/images/favicon\.ico
+  static_files: static/pics/favicon.ico
+  upload: static/pics/favicon\.ico
 
 - url: /.*
   script: main.app

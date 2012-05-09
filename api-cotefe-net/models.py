@@ -117,6 +117,9 @@ class Federation(Resource):
         r['description'] = self.description
         r['testbeds'] = build_url(path = '/testbeds/')
         r['platforms'] = build_url(path = '/platforms/')
+        r['interfaces'] = build_url(path = '/interfaces/')
+        r['sensors'] = build_url(path = '/sensors/')
+        r['actuators'] = build_url(path = '/actuators/')
         r['projects'] = build_url(path = '/projects/')
         r['experiments'] = build_url(path = '/experiments/')
         # r['jobs'] = build_url(path = '/jobs/')

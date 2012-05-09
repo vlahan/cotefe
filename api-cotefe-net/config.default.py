@@ -1,10 +1,11 @@
 import os
-import logging
 
-APP_ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+SERVER_NAME = os.environ['SERVER_NAME']
 
-FEDERATION_SERVER_URL = 'http://192.168.103.114:8080'
-# FEDERATION_SERVER_URL = 'https://api.cotefe.net'
+if SERVER_NAME == 'api-cotefe-net.appspot.com':
+    FEDERATION_SERVER_URL = 'https://api.cotefe.net'
+else:
+    FEDERATION_SERVER_URL = 'http://192.168.103.114:8080'
 
 MEDIA_TYPE = 'application/json'
 

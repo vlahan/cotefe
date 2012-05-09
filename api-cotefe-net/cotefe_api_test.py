@@ -3,11 +3,18 @@ import logging
 import requests
 from datetime import date, datetime, timedelta
 
-SERVER_URL = 'http://192.168.103.114:8080'
+# SERVER_URL = 'http://192.168.103.114:8080'
+SERVER_URL = 'https://api.cotefe.net'
+
 CLIENT_ID = 'af8a4e04b93343fe9220c3ef4f836f8a'
 CLIENT_SECRET = 'df27c691eab94b6cb719aeeedae6f6f9'
 REDIRECT_URI = 'http://localhost'
-ACCESS_TOKEN = 'b581bcdc94df465ebfdc13785cf24b68'
+# ACCESS_TOKEN = 'b581bcdc94df465ebfdc13785cf24b68'
+ACCESS_TOKEN = 'e302d1e3aa77446f8360935ebf4855f5'
+
+# GET A TOKEN WITH
+# http://192.168.103.114:8080/oauth2/auth?client_id=164e79cfc7e742e696b9cbd9e3bfc7f9&redirect_uri=http://localhost&response_type=token
+# https://api.cotefe.net/oauth2/auth?client_id=733a1bac70834c34938dbc7825e2534c&redirect_uri=http://localhost&response_type=token
 
 DEFAULT_NAME = 'TEST'
 DEFAULT_DESCRIPTION = 'COTEFE API TEST - PLEASE DO NOT DELETE!'
@@ -27,7 +34,7 @@ logging.debug('Your OAuth2 access_token is %s' % ACCESS_TOKEN)
 
 def apitest(method, url, headers, params, data, files, status_code_expected):
     
-    r = requests.request(method=method, url=url, headers=headers, params=params, data=data, files=files)
+    r = requests.request(method=method, url=url, headers=headers, params=params, data=data, files=files, verify=False)
     logging.warning('%s %s ====> %s expected, %s received' % (method, url, status_code_expected, r.status_code))
     
 # /
