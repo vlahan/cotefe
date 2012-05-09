@@ -1,15 +1,24 @@
-application: cotefe-server
+application: api-cotefe-net
 version: 1
 runtime: python27
 api_version: 1
 threadsafe: yes
 
 handlers:
+
+# CRON
+
+# - url: /report/weekly
+#   script: reports.py
+#   login: admin
+  
+# WEB INTERFACE
+
 - url: /css
   static_dir: static/css
   
-- url: /images
-  static_dir: static/images
+- url: /pics
+  static_dir: static/pics
   
 - url: /scripts
   static_dir: static/scripts

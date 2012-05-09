@@ -7,7 +7,7 @@ from routes import routes
 session_config = {}
 session_config['webapp2_extras.sessions'] = { 'secret_key': 'cotefe' }
 
-app = webapp2.WSGIApplication(routes, debug=config.DEBUG, config=session_config)
+app = webapp2.WSGIApplication(routes, config=session_config)
 
 def main():
     app.run()

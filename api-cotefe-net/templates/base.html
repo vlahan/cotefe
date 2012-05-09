@@ -34,29 +34,21 @@
     
         <div id="menu">
         
-            Home | 
-        
             {% if user %}
     
-            <a href="/account">Account</a> | <a href="/identities">My Identities</a> | <a href="/sessions">My Sessions</a> | <a href="/applications">My Apps</a> |
-            
-            {% endif %}
-            
-            <a href="/docs">Documentation</a> | Help
-            
-            {% if user %}
-    
-            | <a href="/logout">Logout</a>
+            <a href="/account">Account</a> | <a href="/identities">My Identities</a> | <a href="/sessions">My Sessions</a> | <a href="/applications">My Apps</a> | <a href="/logout">Logout</a>
             
             {% else %}
             
-            | <a href="/openid/login">Login</a>
+            <a href="/openid/login">Login</a>
             
             {% endif %}
             
         </div>
         
-        </div>
+     </div>
+        
+        <!--
         
         {% if user %}
         
@@ -109,7 +101,7 @@
         
         {% endif %}
     
-    
+    -->
     
     
     

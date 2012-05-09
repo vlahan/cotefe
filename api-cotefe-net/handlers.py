@@ -22,26 +22,28 @@ class DatastoreInitialization(webapp2.RequestHandler):
     def get(self):
         
         # cleaning the datastore
-        for user in User.all(): user.delete()
+        # for user in User.all(): user.delete()
         
-        for identity in OpenIDIdentity.all(): identity.delete()  
-        for application in Application.all(): application.delete()
-        for session in OAuth2Session.all(): session.delete()
+        # for identity in OpenIDIdentity.all(): identity.delete()  
+        # for application in Application.all(): application.delete()
+        # for session in OAuth2Session.all(): session.delete()
         
         for federation in Federation.all(): federation.delete()
         for testbed in Testbed.all(): testbed.delete()
         for platform in Platform.all(): platform.delete()
+        for sensor in Sensor.all(): sensor.delete()
+        for actuator in Actuator.all(): actuator.delete()
         for interface in Interface.all(): interface.delete()
         for sensor in Sensor.all(): sensor.delete()
         for actuator in Actuator.all(): actuator.delete()
         
-        for project in Project.all(): project.delete()
-        for experiment in Experiment.all(): experiment.delete()
-        for image in Image.all(): image.delete()
-        for property_set in PropertySet.all(): property_set.delete()
-        for virtual_node in VirtualNode.all(): virtual_node.delete()
-        for virtual_node_group in VirtualNodeGroup.all(): virtual_node_group.delete()
-        for virtual_task in VirtualTask.all(): virtual_task.delete()
+        # for project in Project.all(): project.delete()
+        # for experiment in Experiment.all(): experiment.delete()
+        # for image in Image.all(): image.delete()
+        # for property_set in PropertySet.all(): property_set.delete()
+        # for virtual_node in VirtualNode.all(): virtual_node.delete()
+        # for virtual_node_group in VirtualNodeGroup.all(): virtual_node_group.delete()
+        # for virtual_task in VirtualTask.all(): virtual_task.delete()
         
         Federation(
             name = 'COTEFE',
@@ -63,7 +65,8 @@ class DatastoreInitialization(webapp2.RequestHandler):
             name = 'WISEBED',
             description = 'The WISEBED project is a joint effort of nine academic and research institutes across Europe.',
             organization = 'TU Delft',
-            server_url = 'http://example.org',
+            homepage = 'http://localhost',
+            server_url = 'http://localhost',
         ).put()
         
         Platform(
@@ -670,21 +673,20 @@ class OAuth2RESTJSONHandler(webapp2.RequestHandler):
 class MeHandler(OAuth2RESTJSONHandler):
     
     def options(self):
+        
         allowed_methods = ['GET']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
 
     def get(self):
         
-        try:
-            self.response.out.write(serialize(self.user.to_dict()))        
+        self.response.out.write(serialize(self.user.to_dict()))        
         
-        except:
-            self.response.status = '404'
 # USER
             
 class UserCollectionHandler(OAuth2RESTJSONHandler):
     
     def options(self):
+        
         allowed_methods = ['GET']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
         
@@ -786,6 +788,102 @@ class PlatformResourceHandler(OAuth2RESTJSONHandler):
         
         try:
             resource = Platform.get_by_key_name(resource_id)
+            self.response.out.write(serialize(resource.to_dict()))      
+        except:
+            self.response.status = '404'
+            
+# INTERFACE
+            
+class InterfaceCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self):
+        
+        resource_list = list()
+        query = Interface.all()
+        for resource in query:
+            resource_list.append(resource.to_dict(head_only = True))
+        self.response.out.write(serialize(resource_list))
+                
+class InterfaceResourceHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, resource_id):
+        
+        try:
+            resource = Interface.get_by_key_name(resource_id)
+            self.response.out.write(serialize(resource.to_dict()))      
+        except:
+            self.response.status = '404'
+            
+# SENSOR
+            
+class SensorCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self):
+        
+        resource_list = list()
+        query = Sensor.all()
+        for resource in query:
+            resource_list.append(resource.to_dict(head_only = True))
+        self.response.out.write(serialize(resource_list))
+                
+class SensorResourceHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, resource_id):
+        
+        try:
+            resource = Sensor.get_by_key_name(resource_id)
+            self.response.out.write(serialize(resource.to_dict()))      
+        except:
+            self.response.status = '404'
+            
+# ACTUATOR
+            
+class ActuatorCollectionHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self):
+        
+        resource_list = list()
+        query = Actuator.all()
+        for resource in query:
+            resource_list.append(resource.to_dict(head_only = True))
+        self.response.out.write(serialize(resource_list))
+                
+class ActuatorResourceHandler(OAuth2RESTJSONHandler):
+    
+    def options(self):
+        
+        allowed_methods = ['GET']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, resource_id):
+        
+        try:
+            resource = Actuator.get_by_key_name(resource_id)
             self.response.out.write(serialize(resource.to_dict()))      
         except:
             self.response.status = '404'
@@ -947,24 +1045,21 @@ class ExperimentResourceHandler(OAuth2RESTJSONHandler):
 
 class ImageCollectionHandler(OAuth2RESTJSONHandler):
     
-    def options(self, experiment_id):
+    def options(self):
         allowed_methods = ['GET', 'POST']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
-    def get(self, experiment_id):
-        
-        experiment = Experiment.get_by_id(int(experiment_id))
+    def get(self):
         
         image_list = list()
-        query = Image.all().filter('experiment =', experiment)
+        query = Image.all()
         for image in query:
             image_list.append(image.to_dict(head_only = True))
         self.response.out.write(serialize(image_list))
         
-    def post(self, experiment_id):
+    def post(self):
         
         try:
-            experiment = Experiment.get_by_id(int(experiment_id))
 
             image_dict = json.loads(self.request.body)
 
@@ -972,7 +1067,6 @@ class ImageCollectionHandler(OAuth2RESTJSONHandler):
             image.name = image_dict['name']
             image.description = image_dict['description']
             image.owner = self.user
-            image.experiment = experiment
             image.put()
 
             self.response.status = '201'
@@ -988,7 +1082,7 @@ class ImageResourceHandler(OAuth2RESTJSONHandler):
         allowed_methods = ['GET', 'PUT', 'DELETE']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
-    def get(self, experiment_id, image_id):
+    def get(self, image_id):
         
         try:
             image = Image.get_by_id(int(image_id))
@@ -997,7 +1091,7 @@ class ImageResourceHandler(OAuth2RESTJSONHandler):
         except:
             self.response.status = '404'
                 
-    def put(self, experiment_id, image_id):
+    def put(self, image_id):
         
         try:
             image = Image.get_by_id(int(image_id))
@@ -1010,7 +1104,7 @@ class ImageResourceHandler(OAuth2RESTJSONHandler):
         except:
             self.response.status = '404'
             
-    def delete(self, experiment_id, image_id):
+    def delete(self, image_id):
         
         try:
             image = Image.get_by_id(int(image_id))
@@ -1021,11 +1115,11 @@ class ImageResourceHandler(OAuth2RESTJSONHandler):
 
 class ImageUploadHandler(OAuth2RESTJSONHandler):
     
-    def options(self, experiment_id, image_id):
+    def options(self, image_id):
         allowed_methods = ['POST']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
         
-    def post(self, experiment_id, image_id):
+    def post(self, image_id):
         
         try:
             image = Image.get_by_id(int(image_id))
@@ -1039,11 +1133,11 @@ class ImageUploadHandler(OAuth2RESTJSONHandler):
 
 class ImageDownloadHandler(OAuth2RESTJSONHandler):
 
-    def options(self, experiment_id, image_id):
+    def options(self, image_id):
         allowed_methods = ['GET']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
 
-    def get(self, experiment_id, image_id):
+    def get(self, image_id):
         
         try:
             image = Image.get_by_id(int(image_id))
@@ -1320,7 +1414,76 @@ class VirtualTaskResourceHandler(OAuth2RESTJSONHandler):
 # JOB
 
 class JobCollectionHandler(OAuth2RESTJSONHandler):
-    pass
-
+    
+    def options(self):
+        allowed_methods = ['GET', 'POST']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self):
+        
+        collection = list()
+        
+        try:
+            query = Job.all().filter('owner =', self.user)
+        except:
+            query = Job.all()
+            
+        for resource in query:
+            collection.append(resource.to_dict(head_only = True))
+        self.response.out.write(serialize(collection))
+            
+    def post(self):
+        
+        resource_dict = json.loads(self.request.body)
+        
+        resource = Job()
+        
+        resource.name = resource_dict['name']
+        resource.description = resource_dict['description']
+        resource.owner = self.user
+        resource.experiment = Experiment.get_by_id(int(resource_dict['experiment_id']))
+        resource.put()
+        
+        self.response.status = '201'
+        self.response.headers['Location'] = '%s' % resource.uri()
+        self.response.headers['Content-Location'] = '%s' % resource.uri()
+            
 class JobResourceHandler(OAuth2RESTJSONHandler):
-    pass
+    
+    def options(self, experiment_id):
+        allowed_methods = ['GET', 'PUT', 'DELETE']
+        OAuth2RESTJSONHandler.options(self, allowed_methods)
+    
+    def get(self, job_id):
+        
+        try:
+            resource = Job.get_by_id(int(job_id))        
+        except:
+            self.response.status = '404'
+            
+        self.response.out.write(serialize(resource.to_dict()))
+        
+    def put(self, job_id):
+        
+        resource_dict = json.loads(self.request.body)
+        
+        try:
+            resource = Job.get_by_id(int(job_id))
+        except:
+            self.response.status = '404'
+
+        resource.name = resource_dict['name']
+        resource.description = resource_dict['description']
+        resource.put()
+        
+        self.response.out.write(serialize(resource.to_dict()))
+        
+        
+    def delete(self, job_id):
+        
+        try:
+            resource = Job.get_by_id(int(job_id))
+        except:
+            self.response.status = '404'
+            
+        resource.delete()
