@@ -10,8 +10,8 @@
 	 */
 	var cotefe = {
 			baseurl:"http://localhost:8080",
-			apiurl: "http://192.168.103.114:8080/",
-			token : "0d288b2a89504ffb817402e4265acf89",
+			apiurl: "https://api.cotefe.net/",
+			token : "1908700504b2474e9e9d6cc6225d3ece",
 			requesturl:"http://192.168.103.114:8080/oauth2/auth?client_id=f069267fed5b48cd9ea50aa521dc4316&redirect_uri=http://localhost:8080"
 		};
 	
@@ -91,19 +91,17 @@
 	
 	putModel=function(type,text)
 	{	
-		
-		
-		
-		res=new Resource();
+		tem={};
 		obj= JSON.parse(text);
 		var count = 0;
 		for (var attr in obj) {
 		    if (obj.hasOwnProperty(attr)) {
-		      //res.put(attr,obj[attr]);
+		    	tem[attr]=obj[attr];
 		    }
 		}
-		
-		
+		res=new Resource(tem);
+		res.url=tem.uri+"?access_token="+cotefe.token;
+		res.save({success:function(){alert("Successfully updated");}});
 		
 	}
 	
