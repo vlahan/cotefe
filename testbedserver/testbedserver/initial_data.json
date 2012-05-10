@@ -9,7 +9,7 @@
       }
    },
    {
-      "pk":"eyesIFXv21",
+      "pk":"eyesifxv21",
       "model":"api.platform",
       "fields":{
          "native_id":1,
@@ -17,7 +17,7 @@
       }
    },
    {
-      "pk":"eyesIFXv20",
+      "pk":"eyesifxv20",
       "model":"api.platform",
       "fields":{
          "native_id":2,
@@ -25,7 +25,7 @@
       }
    },
    {
-      "pk":"TelosA",
+      "pk":"telosa",
       "model":"api.platform",
       "fields":{
          "native_id":3,
@@ -33,7 +33,7 @@
       }
    },
    {
-      "pk":"TelosB",
+      "pk":"telosb",
       "model":"api.platform",
       "fields":{
          "native_id":4,
@@ -41,7 +41,7 @@
       }
    },
    {
-      "pk":"TmoteSky",
+      "pk":"tmotesky",
       "model":"api.platform",
       "fields":{
          "native_id":5,
@@ -49,7 +49,7 @@
       }
    },
    {
-      "pk":"Roomba",
+      "pk":"roomba",
       "model":"api.platform",
       "fields":{
          "native_id":10,

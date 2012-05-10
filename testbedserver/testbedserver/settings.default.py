@@ -69,7 +69,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # 'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.doc.XViewMiddleware',
 )
 
@@ -155,14 +155,14 @@ JSON_ENSURE_ASCII = True
 UUID_LENGTH = 8
 
 # TESTBED ADAPTATION API
-SERVER_URL = 'http://localhost:8001'
-# SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
+# SERVER_URL = 'http://localhost:8001'
+SERVER_URL = 'http://www.twist.tu-berlin.de:8001'
 
 # FEDERATION_URL = 'http://localhost:8080'
 FEDERATION_URL = 'https://api.cotefe.net'
 
 XMLRPC_PROTOCOL = 'https'
 XMLRPC_USERNAME = 'conetuser'
-XMLRPC_PASSWORD = 'password'
+XMLRPC_PASSWORD = 'gy3343V5405'
 XMLRPC_HOST = 'localhost'
 XMLRPC_PORT = '8005'
