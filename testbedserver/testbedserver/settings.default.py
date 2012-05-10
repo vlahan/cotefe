@@ -1,7 +1,7 @@
 
 import os
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -53,16 +53,16 @@ TEMPLATE_LOADERS = (
    'django.template.loaders.app_directories.Loader',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-   'django.core.context_processors.auth',
-   'django.core.context_processors.media',
-   'django.core.context_processors.request',
-)
+#TEMPLATE_CONTEXT_PROCESSORS = (
+#   'django.core.context_processors.auth',
+#   'django.core.context_processors.media',
+#   'django.core.context_processors.request',
+#)
 
-if DEBUG:
-    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.debug',)
-if USE_I18N:
-    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.i18n',)
+#if DEBUG:
+#    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.debug',)
+#if USE_I18N:
+#    TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.i18n',)
     
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -75,10 +75,13 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'testbedserver.urls'
 
+# Python dotted path to the WSGI application used by Django's runserver.
+WSGI_APPLICATION = 'testbedserver.wsgi.application'
+
 TEMPLATE_DIRS = ()
 for root, dirs, files in os.walk(PROJECT_PATH):
-   if 'templates' in dirs:
-       TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
+    if 'templates' in dirs:
+        TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -89,17 +92,17 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     # 'django.contrib.admindocs',
-    'testbedserver.api',
+    'api',
     # 'registration',
     # 'profiles',
 )
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake'
-    }
-}
+#CACHES = {
+#    'default': {
+#        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#        'LOCATION': 'unique-snowflake'
+#    }
+#}
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
