@@ -1,15 +1,11 @@
 import os
+from collections import OrderedDict
 
 from django.db import models
 from django.contrib.auth.models import User
-try:
-    from settings import *
-    from utils import *
-    from odict import OrderedDict
-except ImportError:
-    from testbedserver.settings import *
-    from testbedserver.utils import *
-    from testbedserver.odict import OrderedDict
+
+from testbedserver.utils import *
+    
 
 class Resource(models.Model):
     class Meta:

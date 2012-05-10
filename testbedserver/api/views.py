@@ -5,16 +5,9 @@ from django.http import *
 from django.core.exceptions import ObjectDoesNotExist
 import decimal
 
-try:
-    from api.models import *
-    from settings import *
-    from utils import *
-    from proxy import TestbedProxy
-except ImportError:
-    from testbedserver.api.models import *
-    from testbedserver.settings import *
-    from testbedserver.utils import *
-    from testbedserver.proxy import TestbedProxy
+from api.models import *
+from testbedserver.utils import *
+from testbedserver.proxy import TestbedProxy
 
 
 proxy = TestbedProxy(
