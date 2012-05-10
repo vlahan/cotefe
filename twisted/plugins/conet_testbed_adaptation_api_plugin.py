@@ -12,10 +12,8 @@ from twisted.python import threadpool, util as tutil
 from twisted.internet import reactor, defer, ssl
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'testbedserver.settings'
-# from django.conf import settings
-# from django.core.handlers.wsgi import WSGIHandler
-from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+from django.conf import settings
+from django.core.handlers.wsgi import WSGIHandler
 
 class Options(usage.Options):
     optParameters = [["port", "p", 8001, "The port number to listen on."]]
@@ -60,8 +58,7 @@ class ServerServiceMaker(object):
         multi = service.MultiService()
         tps = ThreadPoolService(threadpool.ThreadPool())
         tps.setServiceParent(multi)
-        # resource = wsgi.WSGIResource(reactor, tps.pool, WSGIHandler())
-        resource = wsgi.WSGIResource(reactor, tps.pool, application)
+        resource = wsgi.WSGIResource(reactor, tps.pool, WSGIHandler())
         root = Root(resource)
 #        static_resource = static.File(os.path.join(os.path.abspath('.'), 'mydjangosite/media'))
 #        root.putChild('media', static_resource)
