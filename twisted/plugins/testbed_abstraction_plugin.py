@@ -45,8 +45,8 @@ class ThreadPoolService(service.Service):
 
 class ServerServiceMaker(object):
     implements(IServiceMaker, IPlugin)
-    tapname = 'testbedserver'
-    description = 'CONET Testbed Adaptation API Server'
+    tapname = 'testbed_abstraction'
+    description = 'Testbed Abstraction API Server'
     options = Options
 
     sslContext = ssl.DefaultOpenSSLContextFactory(
