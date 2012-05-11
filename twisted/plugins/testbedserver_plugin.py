@@ -50,8 +50,8 @@ class ServerServiceMaker(object):
     options = Options
 
     sslContext = ssl.DefaultOpenSSLContextFactory(
-        tutil.sibpath(__file__, 'cert/privkey.pem'),
-        tutil.sibpath(__file__, 'cert/cacert.pem')
+        tutil.sibpath(__file__, '../web2/cert/privkey.pem'),
+        tutil.sibpath(__file__, '../web2/cert/cacert.pem')
         )
           
     def makeService(self, options):
