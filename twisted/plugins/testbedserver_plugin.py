@@ -1,4 +1,4 @@
-import os
+    import os
 import sys
 
 from zope.interface import implements
@@ -45,7 +45,7 @@ class ThreadPoolService(service.Service):
 
 class ServerServiceMaker(object):
     implements(IServiceMaker, IPlugin)
-    tapname = 'testbed_abstraction'
+    tapname = 'testbedserver'
     description = 'Testbed Abstraction API Server'
     options = Options
 
