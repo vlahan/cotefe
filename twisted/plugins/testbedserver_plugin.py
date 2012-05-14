@@ -10,6 +10,7 @@ from twisted.application.service import IServiceMaker
 from twisted.web import server, resource, wsgi, static, client
 from twisted.python import threadpool, util as tutil
 from twisted.internet import reactor, defer, ssl
+sys.path.append('/var/twist/twist_v1/conet/testbedserver')
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'testbedserver.settings'
 from django.conf import settings
@@ -50,8 +51,8 @@ class ServerServiceMaker(object):
     options = Options
 
     sslContext = ssl.DefaultOpenSSLContextFactory(
-        tutil.sibpath(__file__, '../web2/cert/privkey.pem'),
-        tutil.sibpath(__file__, '../web2/cert/cacert.pem')
+        tutil.sibpath(__file__, '../../../web2/cert/privkey.pem'),
+        tutil.sibpath(__file__, '../../../web2/cert/cacert.pem')
         )
           
     def makeService(self, options):
