@@ -1,4 +1,3 @@
-
 import os
 
 DEBUG = True
@@ -69,14 +68,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    # 'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.doc.XViewMiddleware',
 )
 
 ROOT_URLCONF = 'testbedserver.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'testbedserver.wsgi.application'
+# WSGI_APPLICATION = 'testbedserver.wsgi.application'
 
 TEMPLATE_DIRS = ()
 for root, dirs, files in os.walk(PROJECT_PATH):
@@ -156,7 +155,7 @@ UUID_LENGTH = 8
 
 # TESTBED ADAPTATION API
 # SERVER_URL = 'http://localhost:8001'
-SERVER_URL = 'http://www.twist.tu-berlin.de:8001'
+SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
 
 # FEDERATION_URL = 'http://localhost:8080'
 FEDERATION_URL = 'https://api.cotefe.net'
