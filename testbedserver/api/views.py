@@ -126,11 +126,25 @@ def node_collection_handler(request):
             
         nodes = [ n.to_dict(head_only = True) for n in nodes ]
         
-        logging.warning('NUMBER OF NODES RETURNED: %d' % len(nodes))
+        # logging.warning('NUMBER OF NODES RETURNED: %d' % len(nodes))
         
         # generating 200 response
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
+        
+        ## CACHING ##
+        
+        from wsgiref.handlers import format_date_time
+        import datetime
+        from time import mktime
+        
+        now = datetime.datetime.now()
+        expires = now + datetime.timedelta(0, 3600)
+        stamp = mktime(expires.timetuple())
+
+        response['Expires'] = format_date_time(stamp)
+        response['Cache-control'] = 'max-age=3600, must-revalidate'
+        
         response.write(serialize(nodes))
         return response
     
