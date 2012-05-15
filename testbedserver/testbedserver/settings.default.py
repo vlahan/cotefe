@@ -75,7 +75,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'testbedserver.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-# WSGI_APPLICATION = 'testbedserver.wsgi.application'
+WSGI_APPLICATION = 'testbedserver.wsgi.application'
 
 TEMPLATE_DIRS = ()
 for root, dirs, files in os.walk(PROJECT_PATH):
