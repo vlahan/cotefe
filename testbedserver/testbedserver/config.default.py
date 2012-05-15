@@ -8,8 +8,8 @@ JSON_ENSURE_ASCII = True
 UUID_LENGTH = 8
 
 # TESTBED ADAPTATION API
-SERVER_URL = 'http://localhost:8001'
-# SERVER_URL = 'http://www.twist.tu-berlin.de:8001'
+# SERVER_URL = 'http://localhost:8001'
+SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
 
 # FEDERATION_URL = 'http://localhost:8080'
 FEDERATION_URL = 'https://api.cotefe.net'

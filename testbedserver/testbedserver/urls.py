@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     
     url(r'^platforms/$', platform_collection_handler),
         
-    url(r'^nodes1/$', node_collection_handler),
+    url(r'^nodes/$', node_collection_handler),
     url(r'^nodes/4dd1ba50$', robot_resource_handler),
     url(r'^nodes/(?P<node_id>\w+)$', node_resource_handler),
     
