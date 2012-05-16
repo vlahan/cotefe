@@ -10,9 +10,9 @@
 	 */
 	var cotefe = {
 			baseurl:"http://localhost:8080",
-			apiurl: "https://api.cotefe.net/",
-			token : "1908700504b2474e9e9d6cc6225d3ece",
-			requesturl:"http://192.168.103.114:8080/oauth2/auth?client_id=f069267fed5b48cd9ea50aa521dc4316&redirect_uri=http://localhost:8080"
+			apiurl: "http://192.168.103.114:8080/",//"https://api.cotefe.net/"
+			token : "b53538ec924f40f1a0777aa996fec928",//1908700504b2474e9e9d6cc6225d3ece
+			requesturl:"http://192.168.103.114:8080/oauth2/auth?client_id=a9db080f68f642fda61307323d035d28&redirect_uri=http://localhost:8080"
 		};
 	
 	/*
@@ -43,6 +43,7 @@
 	ProjectList=ResourceList.extend({url:cotefe.apiurl+"projects/?access_token="+cotefe.token});		//projects list
 	ExperimentList=ResourceList.extend({url:cotefe.apiurl+"experiments/?access_token="+cotefe.token});	//experiment list
 	JobList=ResourceList.extend({url:cotefe.apiurl+"jobs/?access_token="+cotefe.token});				//jobs list
+	ImageList=ResourceList.extend({url:cotefe.apiurl+"images/?access_token="+cotefe.token});				//jobs list
 	
 	
 	
@@ -75,8 +76,11 @@
 			case "project":url=cotefe.apiurl+"projects/?access_token="+cotefe.token; break;
 			case "experiment":url=cotefe.apiurl+"experiments/?access_token="+cotefe.token; break;
 			case "job":url=cotefe.apiurl+"jobs/?access_token="+cotefe.token; break;
+			case "image":url=cotefe.apiurl+"images/?access_token="+cotefe.token; break;
 		}
 		
+		//resource=new Resource({name:name,description:description,project_id:8});
+		//resource=new Resource({name:name,description:description,experiment_id:9,testbed_id:"twist",datetime_from:"2012-05-15T13:00:00+0000",datetime_to:"2012-05-15T15:00:00+0000"});
 		resource=new Resource({name:name,description:description});
 		resource.url=url;
 		resource.save({success:function(){alert("Successfully saved");}});
@@ -116,6 +120,7 @@
 			case "project": resourceList=new ProjectList();dom_id="#projects";break;
 			case "experiment":resourceList=new ExperimentList();dom_id="#experiments";break;
 			case "job":resourceList=new JobList();dom_id="#jobs";break;		
+			case "image":resourceList=new ImageList();dom_id="#images";break;		
 		}
 		resourceList.display(dom_id);		
 		
@@ -134,9 +139,13 @@
 								single_exp.url=cotefe.apiurl+"experiments/"+id+"?access_token="+cotefe.token;
 								single_exp.display("#experiments");
 								break;
-			case "job":jobs=	single_job=new Resource();
+			case "job":			single_job=new Resource();
 								single_job.url=cotefe.apiurl+"jobs/"+id+"?access_token="+cotefe.token;
 								single_job.display("#jobs");
+								break;
+			case "image":		single_job=new Resource();
+								single_job.url=cotefe.apiurl+"images/"+id+"?access_token="+cotefe.token;
+								single_job.display("#images");
 								break;
 		
 		}
@@ -153,7 +162,9 @@
 	        					break;
 			case "experiment":	resource.url=cotefe.apiurl+"experiments/"+id+"?access_token="+cotefe.token;
 								break;
-			case "job":jobs=	resource.url=cotefe.apiurl+"jobs/"+id+"?access_token="+cotefe.token;
+			case "job":			resource.url=cotefe.apiurl+"jobs/"+id+"?access_token="+cotefe.token;
+								break;
+			case "image":		resource.url=cotefe.apiurl+"images/"+id+"?access_token="+cotefe.token;
 								break;
 		
 		}
