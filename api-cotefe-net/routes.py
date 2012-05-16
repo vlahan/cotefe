@@ -1,96 +1,98 @@
-from handlers import *
+from handlers import admin, openid, oauth2, www, user, federation, platform, interface, sensor, actuator, testbed, image, project, experiment, propertyset, virtualnode, virtualnodegroup, virtualtask, job
 
 routes = [    
 
     ## ADMIN ONLY #
     
-    (r'^/admin/init$', DatastoreInitialization),
-    
-    # (r'^/login$', Login),
+    (r'^/admin/init$', admin.DatastoreInitialization),
     
     ## OPENID HANDLERS ##
     
-    (r'^/openid/login$', OpenIDLogin),
-    (r'^/openid/callback', OpenIDCallback),
-    (r'^/openid/new', OpenIDNew),
-    (r'^/openid/connect$', OpenIDConnect),
+    (r'^/openid/login$', openid.OpenIDLogin),
+    (r'^/openid/callback', openid.OpenIDCallback),
+    (r'^/openid/new', openid.OpenIDNew),
+    (r'^/openid/connect$', openid.OpenIDConnect),
     
     ## OAUTH2 HANDLERS ##
     
-    (r'^/oauth2/auth$', OAuth2Authorize),
-    (r'^/oauth2/token', OAuth2Token),
+    (r'^/oauth2/auth$', oauth2.OAuth2Authorize),
+    (r'^/oauth2/token', oauth2.OAuth2Token),
     
     ## COTEFE IDENTITY/SESSIONS/APPS MANAGEMENT INTERFACE ##
     
-    (r'^/account$', Account),
-    (r'^/identities', Identities),
-    (r'^/sessions', Sessions),
-    (r'^/applications', Applications),
-    (r'^/logout$', Logout),
+    # (r'^/login$', www.Login),
+    (r'^/account$', www.Account),
+    (r'^/identities', www.Identities),
+    (r'^/sessions', www.Sessions),
+    (r'^/applications', www.Applications),
+    (r'^/logout$', www.Logout),
     
     ## COTEFE API ##
     
-    (r'^/$', FederationResourceHandler),
+    (r'^/$', federation.FederationResourceHandler),
     
-    (r'^/me$', MeHandler),
-    (r'^/me/images/$', MeHandler),
-    (r'^/me/experiments/$', MeHandler),
-    (r'^/me/jobs/$', MeHandler),
+    (r'^/me$', user.MeHandler),
+    # (r'^/me/images/$', user.MyImages),
+    # (r'^/me/projects/$', user.MyProjects),
+    # (r'^/me/experiments/$', user.MyExperiments),
+    # (r'^/me/jobs/$', user.MyJobs),
     
-    (r'^/users/$', UserCollectionHandler),
-    (r'^/users/(\d+)$', UserResourceHandler),
-    # (r'^/users/(\d+)/images/$', UserImageCollectionHandler),
-    # (r'^/users/(\d+)/experiments/$', UserExperimentCollectionHandler),
-    # (r'^/users/(\d+)/jobs/$', UserJobCollectionHandler),
+    (r'^/users/$', user.UserCollectionHandler),
+    (r'^/users/(\d+)$', user.UserResourceHandler),
+    # (r'^/users/(\d+)/images/$', user.UserImageCollectionHandler),
+    # (r'^/users/(\d+)/experiments/$', user.UserExperimentCollectionHandler),
+    # (r'^/users/(\d+)/jobs/$', user.UserJobCollectionHandler),
     
-    (r'^/platforms/$', PlatformCollectionHandler),
-    (r'^/platforms/(\w+)$', PlatformResourceHandler),
+    (r'^/platforms/$', platform.PlatformCollectionHandler),
+    (r'^/platforms/(\w+)$', platform.PlatformResourceHandler),
     
-    (r'^/interfaces/$', InterfaceCollectionHandler),
-    (r'^/interfaces/(\w+)$', InterfaceResourceHandler),
+    (r'^/interfaces/$', interface.InterfaceCollectionHandler),
+    (r'^/interfaces/(\w+)$', interface.InterfaceResourceHandler),
     
-    (r'^/sensors/$', SensorCollectionHandler),
-    (r'^/sensors/(\w+)$', SensorResourceHandler),
+    (r'^/sensors/$', sensor.SensorCollectionHandler),
+    (r'^/sensors/(\w+)$', sensor.SensorResourceHandler),
     
-    (r'^/actuators/$', ActuatorCollectionHandler),
-    (r'^/actuators/(\w+)$', ActuatorResourceHandler),
+    (r'^/actuators/$', actuator.ActuatorCollectionHandler),
+    (r'^/actuators/(\w+)$', actuator.ActuatorResourceHandler),
     
-    (r'^/testbeds/$', TestbedCollectionHandler),
-    (r'^/testbeds/(\d+)$', TestbedResourceHandler),
+    (r'^/testbeds/$', testbed.TestbedCollectionHandler),
+    (r'^/testbeds/(\w+)$', testbed.TestbedResourceHandler),
     
     # IMAGE
     
-    (r'^/images/$', ImageCollectionHandler),
-    (r'^/images/(\d+)$', ImageResourceHandler),
-    (r'^/images/(\d+)/upload$', ImageUploadHandler),
-    (r'^/images/(\d+)/download$', ImageDownloadHandler),
+    (r'^/images/$', image.ImageCollectionHandler),
+    (r'^/images/(\d+)$', image.ImageResourceHandler),
+    (r'^/images/(\d+)/upload$', image.ImageUploadHandler),
+    (r'^/images/(\d+)/download$', image.ImageDownloadHandler),
+    
+    (r'^/image-upload-form/$', image.ImageUploadForm),
     
     # PROJECT
     
-    (r'^/projects/$', ProjectCollectionHandler),
-    (r'^/projects/(\d+)$', ProjectResourceHandler),
+    (r'^/projects/$', project.ProjectCollectionHandler),
+    (r'^/projects/(\d+)$', project.ProjectResourceHandler),
     
     # EXPERIMENT
     
-    (r'^/experiments/$', ExperimentCollectionHandler),
-    (r'^/experiments/(\d+)$', ExperimentResourceHandler),
+    (r'^/experiments/$', experiment.ExperimentCollectionHandler),
+    (r'^/experiments/(\d+)$', experiment.ExperimentResourceHandler),
     
-    (r'^/experiments/(\d+)/property-sets/$', PropertySetCollectionHandler),
-    (r'^/experiments/(\d+)/property-sets/(\d+)$', PropertySetResourceHandler),
+    (r'^/experiments/(\d+)/property-sets/$', propertyset.PropertySetCollectionHandler),
+    (r'^/experiments/(\d+)/property-sets/(\d+)$', propertyset.PropertySetResourceHandler),
     
-    (r'^/experiments/(\d+)/virtual-nodes/$', VirtualNodeCollectionHandler),
-    (r'^/experiments/(\d+)/virtual-nodes/(\d+)$', VirtualNodeResourceHandler),
+    (r'^/experiments/(\d+)/virtual-nodes/$', virtualnode.VirtualNodeCollectionHandler),
+    (r'^/experiments/(\d+)/virtual-nodes/(\d+)$', virtualnode.VirtualNodeResourceHandler),
     
-    (r'^/experiments/(\d+)/virtual-nodegroups/$', VirtualNodeGroupCollectionHandler),
-    (r'^/experiments/(\d+)/virtual-nodegroups/(\d+)$', VirtualNodeGroupResourceHandler),
+    (r'^/experiments/(\d+)/virtual-nodegroups/$', virtualnodegroup.VirtualNodeGroupCollectionHandler),
+    (r'^/experiments/(\d+)/virtual-nodegroups/(\d+)$', virtualnodegroup.VirtualNodeGroupResourceHandler),
     
-    (r'^/experiments/(\d+)/virtual-tasks/$', VirtualTaskCollectionHandler),
-    (r'^/experiments/(\d+)/virtual-tasks/(\d+)$', VirtualTaskResourceHandler),
+    (r'^/experiments/(\d+)/virtual-tasks/$', virtualtask.VirtualTaskCollectionHandler),
+    (r'^/experiments/(\d+)/virtual-tasks/(\d+)$', virtualtask.VirtualTaskResourceHandler),
     
     # JOB
     
-    (r'^/jobs/$', JobCollectionHandler),
-    (r'^/jobs/(\d+)$', JobResourceHandler),
+    (r'^/jobs/$', job.JobCollectionHandler),
+    (r'^/jobs/(\d+)$', job.JobResourceHandler),
 
     # (r'^/jobs/(\d+)/nodes/$', NodeCollectionHandler),
     # (r'^/jobs/(\d+)/nodes/(\d+)$', NodeResourceHandler),

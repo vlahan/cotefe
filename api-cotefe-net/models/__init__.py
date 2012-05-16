@@ -6,34 +6,7 @@ from google.appengine.ext import db
 from google.appengine.ext.db import polymodel
 
 import config
-from utils import build_url, convert_datetime_to_string
-
-class ReadOnlyResouce(polymodel.PolyModel):
-    
-    name = db.StringProperty()
-    description = db.TextProperty()
-    
-    datetime_created = db.DateTimeProperty(auto_now_add=True)
-    datetime_modified = db.DateTimeProperty(auto_now=True)
-    
-    def id(self):
-        return self.key().name()
-        
-    def uri(self):
-        return build_url(path = '/%ss/%s' % (string.lower(self.__class__.__name__), self.id()))
-
-    def to_dict(self, head_only = False):
-        r = OrderedDict()
-        r['uri'] = self.uri()
-        r['media_type'] = config.MEDIA_TYPE
-        r['name'] = self.name
-        r['id'] = self.id()
-        if not head_only:
-            r['description'] = self.description
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
-        return r
-    
+import utils
 
 class Resource(db.Model):
     pass
@@ -52,18 +25,15 @@ class User(Resource):
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
-    def id(self):
-        return self.key().id()
-        
     def uri(self):
-        return build_url(path = '/users/%s' % self.id())
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.key().id())
     
     def to_dict(self, head_only = False):
         r = OrderedDict()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['username'] = self.username
-        r['id'] = self.id()
+        r['id'] = self.key().id()
         if not head_only:
             r['first'] = self.first
             r['last'] = self.last
@@ -72,8 +42,8 @@ class User(Resource):
             r['projects'] = [ p.to_dict(head_only = True) for p in self.projects ]
             r['experiments'] = [ e.to_dict(head_only = True) for e in self.experiments ]
             r['jobs'] = [ j.to_dict(head_only = True) for j in self.jobs ]
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
     
 class OpenIDIdentity(db.Model):
@@ -111,21 +81,22 @@ class Federation(Resource):
     
     def to_dict(self):
         r = OrderedDict()
-        r['uri'] = build_url()
+        r['uri'] = '%s/' % config.FEDERATION_SERVER_URL
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
         r['description'] = self.description
-        r['testbeds'] = build_url(path = '/testbeds/')
-        r['platforms'] = build_url(path = '/platforms/')
-        r['interfaces'] = build_url(path = '/interfaces/')
-        r['sensors'] = build_url(path = '/sensors/')
-        r['actuators'] = build_url(path = '/actuators/')
-        r['projects'] = build_url(path = '/projects/')
-        r['experiments'] = build_url(path = '/experiments/')
-        # r['jobs'] = build_url(path = '/jobs/')
-        r['users'] = build_url(path = '/users/')
-        r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-        r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+        r['testbeds'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'testbeds')
+        r['platforms'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'platforms')
+        r['interfaces'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'interfaces')
+        r['sensors'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'sensors')
+        r['actuators'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'actuators')
+        r['projects'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'projects')
+        r['experiments'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'experiments')
+        r['jobs'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'jobs')
+        r['users'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'users')
+        r['images'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'images')
+        r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+        r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
         
 class Testbed(Resource):
@@ -144,33 +115,53 @@ class Testbed(Resource):
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
-    def id(self):
-        return self.key().id()
-        
     def uri(self):
-        return build_url(path = '/testbeds/%s' % self.id())
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.key().name())
     
     def to_dict(self, head_only = False):
         r = OrderedDict()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
-        r['id'] = self.id()
+        r['id'] = self.key().name()
         if not head_only:
             r['description'] = self.description
             r['organization'] = self.organization
             r['server_url'] = self.server_url
-            r['platforms'] = build_url(path = '/platforms/')
-            r['nodes'] = build_url(path = '/nodes/')
-            r['node_count'] = self.node_count
-            r['jobs'] = build_url(path = '/jobs/')
+            # r['platforms'] = build_url(path = '/platforms/')
+            # r['nodes'] = build_url(path = '/nodes/')
+            # r['node_count'] = self.node_count
+            # r['jobs'] = build_url(path = '/jobs/')
             
             r['background_image_url'] = self.background_image_url
             r['coordinates_mapping_function_x'] = self.coordinates_mapping_function_x
             r['coordinates_mapping_function_y'] = self.coordinates_mapping_function_y
             
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
+        return r
+    
+class ReadOnlyResouce(polymodel.PolyModel):
+    
+    name = db.StringProperty()
+    description = db.TextProperty()
+    
+    datetime_created = db.DateTimeProperty(auto_now_add=True)
+    datetime_modified = db.DateTimeProperty(auto_now=True)
+    
+    def uri(self):
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.key().name())
+
+    def to_dict(self, head_only = False):
+        r = OrderedDict()
+        r['uri'] = self.uri()
+        r['media_type'] = config.MEDIA_TYPE
+        r['name'] = self.name
+        r['id'] = self.key().name()
+        if not head_only:
+            r['description'] = self.description
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
     
 class Platform(ReadOnlyResouce):
@@ -196,9 +187,9 @@ class Project(Resource):
 
     def id(self):
         return self.key().id()
-        
+    
     def uri(self):
-        return build_url(path = '/projects/%s' % self.id())
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -212,8 +203,8 @@ class Project(Resource):
             r['experiments'] = [ e.to_dict(head_only = True) for e in self.experiments ]
             r['experiment_count'] = len(r['experiments'])
             # r['members'] = [ User.get_by_id(user_key.id()).to_dict(head_only = True) for user_key in self.members ]
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
     
 #class ProjectMembership(Relationship):
@@ -232,10 +223,10 @@ class Experiment(Resource):
 
     def id(self):
         return self.key().id()
-        
+    
     def uri(self):
-        return build_url(path = '/experiments/%s' % self.id())
-
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
+    
     def to_dict(self, head_only = False):
         r = OrderedDict()
         r['uri'] = self.uri()
@@ -259,8 +250,8 @@ class Experiment(Resource):
             r['virtual_node_groups'] = [ vng.to_dict(head_only = True) for vng in self.virtual_node_groups ]
             r['virtual_tasks'] = [ vt.to_dict(head_only = True) for vt in self.virtual_tasks ]
             r['jobs'] = [ j.to_dict(head_only = True) for j in self.jobs ]
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
     
     
@@ -280,7 +271,7 @@ class Image(Resource):
         return self.key().id()
     
     def uri(self):
-        return build_url(path = '/experiments/%s/images/%s' % (self.experiment.id(), self.id()))
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -297,8 +288,8 @@ class Image(Resource):
                 r['experiment'] = self.experiment.to_dict(head_only = True)
             except:
                 r['experiment'] = None
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
             
 
@@ -321,7 +312,7 @@ class PropertySet(Resource):
         return self.key().id()
     
     def uri(self):
-        return build_url(path = '/experiments/%s/property-sets/%s' % (self.experiment.id(), self.id()))
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -342,8 +333,8 @@ class PropertySet(Resource):
             r['platform'] = self.platform.to_dict(head_only = True)
             r['num_nodes'] = self.num_nodes
             r['virtual_nodes'] = [ vn.to_dict(head_only = True) for vn in self.virtual_nodes ]
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
             
 class VirtualNode(Resource):
@@ -362,7 +353,7 @@ class VirtualNode(Resource):
         return self.key().id()
     
     def uri(self):
-        return build_url(path = '/experiments/%s/virtual-nodes/%s' % (self.experiment.id(), self.id()))
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -389,8 +380,8 @@ class VirtualNode(Resource):
                 r['image'] = self.image.to_dict(head_only = True)
             except:
                 r['image'] = None
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
             
 class VirtualNodeGroup(Resource):
@@ -405,9 +396,9 @@ class VirtualNodeGroup(Resource):
     
     def id(self):
         return self.key().id()
-
+    
     def uri(self):
-        return build_url(path = '/experiments/%s/virtual-nodegroups/%s' % (self.experiment.id(), self.id()))
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -431,8 +422,8 @@ class VirtualNodeGroup(Resource):
                 r['image'] = self.image.uri()
             except:
                 r['image'] = None
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
         
 class VirtualNodeGroup2VirtualNode(Relationship):
@@ -455,9 +446,9 @@ class VirtualTask(Resource):
     
     def id(self):
         return self.key().id()
-
+    
     def uri(self):
-        return build_url(path = '/experiments/%s/virtual-tasks/%s' % (self.experiment.id(), self.id()))
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -477,8 +468,8 @@ class VirtualTask(Resource):
                 r['project'] = self.experiment.project.to_dict(head_only = True)
             except:
                 r['project'] = None            
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
             
 class Job(Resource):
@@ -495,22 +486,19 @@ class Job(Resource):
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
-    def id(self):
-        return self.key().id()
-
     def uri(self):
-        return build_url(path = '/jobs/%s' % (self.experiment.id(), self.id()))
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.key().id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
-        r['id'] = self.id()
+        r['id'] = self.key().id()
         if not head_only:
             r['description'] = self.description
-            r['datetime_from'] = convert_datetime_to_string(self.datetime_from)
-            r['datetime_to'] = convert_datetime_to_string(self.datetime_to)
+            r['datetime_from'] = utils.datetime_to_string(self.datetime_from)
+            r['datetime_to'] = utils.datetime_to_string(self.datetime_to)
             r['testbed'] = self.testbed.to_dict(head_only = True)
             
             try:
@@ -526,8 +514,8 @@ class Job(Resource):
             except:
                 r['property_set'] = None
             
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
 
 class Task(Resource):
@@ -544,9 +532,9 @@ class Task(Resource):
 
     def id(self):
         return self.key().id()
-
+    
     def uri(self):
-        return build_url(path = '/tasks/%s' % self.id())
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -561,6 +549,6 @@ class Task(Resource):
             r['virtual_task'] = self.virtual_task.uri()
             r['job'] = self.job.uri()
 
-            r['datetime_created'] = convert_datetime_to_string(self.datetime_created)
-            r['datetime_modified'] = convert_datetime_to_string(self.datetime_modified)
+            r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
+            r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r

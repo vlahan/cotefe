@@ -19,3 +19,5 @@ CONTENT_TYPE = 'application/json'
 CHARSET = 'utf8'
 
 FMT_DT_TO_STR = '%Y-%m-%dT%H:%M:%S+0000'
+
+FMT_STR_TO_DT = '%Y-%m-%dT%H:%M:%S+0000'
