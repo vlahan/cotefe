@@ -65,7 +65,7 @@ routes = [
     (r'^/images/(\d+)/upload$', image.ImageUploadHandler),
     (r'^/images/(\d+)/download$', image.ImageDownloadHandler),
     
-    (r'^/image-upload-form/$', image.ImageUploadForm),
+    (r'^/image-upload-form$', image.ImageUploadForm),
     
     # PROJECT
     

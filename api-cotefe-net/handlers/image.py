@@ -92,7 +92,11 @@ class ImageUploadHandler(OAuth2RESTJSONHandler):
             imagefile = self.request.get('imagefile')
             image.imagefile = imagefile
             image.put()
-            # self.response.out.write(utils.serialize(image.to_dict()))
+            
+            import config
+            self.response.headers['Content-Type'] = 'text/html; charset=%s' % config.CHARSET
+            
+            self.response.out.write('<html><body>SUCCESS! Download the file <a href="%s/download">here</a></body></html>' % image.uri())
             
         except:
             self.response.status = '500'
@@ -119,7 +123,7 @@ class ImageUploadForm(webapp2.RequestHandler):
         
         action_url = self.request.get('action_url')
         
-        self.response.out.write('<html><body><form action="%s"><input type="file" name="imagefile" /><input type="submit" value="Upload" /></form></body></html>' % action_url)
+        self.response.out.write('<html><body><form enctype="multipart/form-data" method="post" action="%s"><input type="file" name="imagefile" /><input type="submit" value="Upload" /></form></body></html>' % action_url)
                                 
                                 
                                 
