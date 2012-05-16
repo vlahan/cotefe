@@ -93,6 +93,7 @@ class ImageUploadHandler(OAuth2RESTJSONHandler):
             image.imagefile = imagefile
             image.put()
             
+            # this is supposed to produce output on an iframe (client-side) so I force an overwriting of the content-tyoe header
             import config
             self.response.headers['Content-Type'] = 'text/html; charset=%s' % config.CHARSET
             
