@@ -10,8 +10,8 @@
 	 */
 	var cotefe = {
 			baseurl:"http://localhost:8080",
-			apiurl: "http://192.168.103.114:8080/",//"https://api.cotefe.net/"
-			token : "b53538ec924f40f1a0777aa996fec928",//1908700504b2474e9e9d6cc6225d3ece
+			apiurl: "https://api.cotefe.net/",//"http://192.168.103.114:8080/",
+			token : "e302d1e3aa77446f8360935ebf4855f5",//1908700504b2474e9e9d6cc6225d3ece//"61bbae52602044259159fca72d594aa2",
 			requesturl:"http://192.168.103.114:8080/oauth2/auth?client_id=a9db080f68f642fda61307323d035d28&redirect_uri=http://localhost:8080"
 		};
 	
