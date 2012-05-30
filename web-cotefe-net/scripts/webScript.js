@@ -15,6 +15,7 @@ ui							={
 		experiments:{id:"experiments",template:"experimentNew.ejs", templateVars:{uri:"",type:cotefe.experiments.name,selected:null,projects:cotefe.session.getValueFromKey(cotefe.projects.session),name:"",description:""}},
 		
 };
+
 ui.init						=function(){
 	ui.initSignOut();
 	ui.events.leftMenu();
