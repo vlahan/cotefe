@@ -11,6 +11,12 @@ class JobCollectionHandler(OAuth2RESTJSONHandler):
     
     def get(self):
         
+        testbeds = Testbed.all()
+        
+        for testbed in testbeds:
+            
+            testbed_jobs = get_all_jobs(testbed.server_url)
+        
         collection = list()
         
         try:

@@ -1,19 +1,18 @@
 import webapp2
 
-from models import Federation, Testbed, Platform, Sensor, Actuator, Interface
+from models import User, Testbed, Platform, Sensor, Actuator, Interface
 
 class DatastoreInitialization(webapp2.RequestHandler):
 
     def get(self):
         
         # cleaning the datastore
-        # for user in User.all(): user.delete()
+        for user in User.all(): user.delete()
         
         # for identity in OpenIDIdentity.all(): identity.delete()  
         # for application in Application.all(): application.delete()
         # for session in OAuth2Session.all(): session.delete()
         
-        for federation in Federation.all(): federation.delete()
         for testbed in Testbed.all(): testbed.delete()
         for platform in Platform.all(): platform.delete()
         for sensor in Sensor.all(): sensor.delete()
@@ -28,9 +27,8 @@ class DatastoreInitialization(webapp2.RequestHandler):
         # for virtual_node_group in VirtualNodeGroup.all(): virtual_node_group.delete()
         # for virtual_task in VirtualTask.all(): virtual_task.delete()
         
-        Federation(
-            name = 'COTEFE',
-            description = 'The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities.',
+        User(
+             username='claudio',
         ).put()
         
         Testbed(

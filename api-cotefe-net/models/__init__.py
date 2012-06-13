@@ -71,33 +71,6 @@ class OAuth2Session(db.Model):
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
-
-class Federation(Resource):
-    name = db.StringProperty()
-    description = db.TextProperty()
-    
-    datetime_created = db.DateTimeProperty(auto_now_add=True)
-    datetime_modified = db.DateTimeProperty(auto_now=True)
-    
-    def to_dict(self):
-        r = OrderedDict()
-        r['uri'] = '%s/' % config.FEDERATION_SERVER_URL
-        r['media_type'] = config.MEDIA_TYPE
-        r['name'] = self.name
-        r['description'] = self.description
-        r['testbeds'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'testbeds')
-        r['platforms'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'platforms')
-        r['interfaces'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'interfaces')
-        r['sensors'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'sensors')
-        r['actuators'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'actuators')
-        r['projects'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'projects')
-        r['experiments'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'experiments')
-        r['jobs'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'jobs')
-        r['users'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'users')
-        r['images'] = '%s/%s/' % (config.FEDERATION_SERVER_URL, 'images')
-        r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
-        r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
-        return r
         
 class Testbed(Resource):
     name = db.StringProperty()

@@ -20,7 +20,7 @@ routes = [
     
     ## COTEFE IDENTITY/SESSIONS/APPS MANAGEMENT INTERFACE ##
     
-    # (r'^/login$', www.Login),
+    (r'^/login$', www.Login),
     (r'^/account$', www.Account),
     (r'^/identities', www.Identities),
     (r'^/sessions', www.Sessions),

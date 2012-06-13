@@ -4,18 +4,8 @@ import requests
 from datetime import date, datetime, timedelta
 
 SERVER_URL = 'http://localhost:8080'
-# SERVER_URL = 'http://192.168.103.114:8080'
-# SERVER_URL = 'https://api.cotefe.net'
 
-CLIENT_ID = 'af8a4e04b93343fe9220c3ef4f836f8a'
-CLIENT_SECRET = 'df27c691eab94b6cb719aeeedae6f6f9'
-REDIRECT_URI = 'http://localhost'
-# ACCESS_TOKEN = 'b581bcdc94df465ebfdc13785cf24b68'
 ACCESS_TOKEN = '3a1a36bfe9e84f0a9908ab390667d4da'
-
-# GET A TOKEN WITH
-# http://192.168.103.114:8080/oauth2/auth?client_id=164e79cfc7e742e696b9cbd9e3bfc7f9&redirect_uri=http://localhost&response_type=token
-# https://api.cotefe.net/oauth2/auth?client_id=733a1bac70834c34938dbc7825e2534c&redirect_uri=http://localhost&response_type=token
 
 DEFAULT_NAME = 'TEST'
 DEFAULT_DESCRIPTION = 'COTEFE API TEST - PLEASE DO NOT DELETE!'
@@ -27,9 +17,6 @@ logging.basicConfig(
         datefmt='[%Y-%m-%d %H:%M:%S %z]',
     )
 
-# logging.basicConfig(level=logging.DEBUG)
-
-logging.debug('Your OAuth2 access_token is %s' % ACCESS_TOKEN)
 
 # # test begins # #
 
