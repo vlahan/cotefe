@@ -6,17 +6,17 @@ from django.core.exceptions import ObjectDoesNotExist
 import decimal
 
 from api.models import *
-from testbedserver.utils import *
+from testbedserver import config, utils
 from testbedserver.proxy import TestbedProxy
 
 
 proxy = TestbedProxy(
     '%s://%s:%s@%s:%s' % (
-        XMLRPC_PROTOCOL,
-        XMLRPC_USERNAME,
-        XMLRPC_PASSWORD,
-        XMLRPC_HOST,
-        XMLRPC_PORT
+        config.XMLRPC_PROTOCOL,
+        config.XMLRPC_USERNAME,
+        config.XMLRPC_PASSWORD,
+        config.XMLRPC_HOST,
+        config.XMLRPC_PORT
     )
 )
 
@@ -28,7 +28,7 @@ def testbed_resource_handler(request):
         testbed = Testbed.objects.all()[0]
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(serialize(testbed.to_dict()))
+        response.write(utils.serialize(testbed.to_dict()))
         return response
     
     if request.method == 'OPTIONS':
@@ -143,8 +143,7 @@ def node_collection_handler(request):
         stamp = mktime(expires.timetuple())
 
         response['Expires'] = format_date_time(stamp)
-        response['Cache-control'] = 'max-age=3600, must-revalidate'
-        
+        response['Cache-control'] = 'max-age=3600,must-revalidate'
         response.write(serialize(nodes))
         return response
     
