@@ -6,6 +6,14 @@ TESTBED_ORGANIZATION = ''
 TESTBED_CITY = ''
 TESTBED_COUNTRY = ''
 
+# TWIST specific XML-RPC configuration
+
+XMLRPC_PROTOCOL = 'https'
+XMLRPC_USERNAME = 'conetuser'
+XMLRPC_PASSWORD = 'gy3343V5405'
+XMLRPC_HOST = 'localhost'
+XMLRPC_PORT = '8005'
+
 # do not change below this line
 
 MEDIA_TYPE = 'application/json'
