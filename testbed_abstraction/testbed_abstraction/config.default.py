@@ -1,10 +1,12 @@
 # customize the following aliases to reflect the specific testbed
 
-SERVER_URL = ''
-TESTBED_NAME = ''
-TESTBED_ORGANIZATION = ''
-TESTBED_CITY = ''
-TESTBED_COUNTRY = ''
+SERVER_URL = 'http://127.0.0.1:8001'
+FEDERATION_SERVER_URL = 'https://api.cotefe.net'
+
+TESTBED_NAME = 'TWIST'
+TESTBED_ORGANIZATION = 'TU Berlin'
+TESTBED_CITY = 'Berlin'
+TESTBED_COUNTRY = 'Germany'
 
 # TWIST specific XML-RPC configuration
 
