@@ -10,9 +10,9 @@ from twisted.application.service import IServiceMaker
 from twisted.web import server, resource, wsgi, static, client
 from twisted.python import threadpool, util as tutil
 from twisted.internet import reactor, defer, ssl
-sys.path.append('/var/twist/twist_v1/conet/hmsite')
+sys.path.append('/var/twist/twist_v1/conet/testbed_abstraction')
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'hmsite.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'testbed_abstraction.settings'
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIHandler
 
@@ -46,8 +46,8 @@ class ThreadPoolService(service.Service):
 
 class ServerServiceMaker(object):
     implements(IServiceMaker, IPlugin)
-    tapname = 'hmsite'
-    description = 'Testbed Abstraction API Server for HomeMatic'
+    tapname = 'testbed_abstraction'
+    description = 'Testbed Abstraction API Server'
     options = Options
 
     sslContext = ssl.DefaultOpenSSLContextFactory(
