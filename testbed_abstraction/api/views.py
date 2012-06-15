@@ -2,7 +2,7 @@ import logging
 import decimal
 from collections import OrderedDict
 
-from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseServerError, Http404
 from django.core.exceptions import ObjectDoesNotExist
 
 from testbed_abstraction import config, utils
@@ -11,7 +11,7 @@ from homematic.proxy import HomeMaticProxy
 from homematic.config import HOMEMATIC_CCU_URL
 from homematic.utils import *
 
-from api.models import Platform, Image, Node, Channel
+from api.models import Platform, Node, Channel
 
 twist_proxy = TestbedProxy(
     '%s://%s:%s@%s:%s' % (
@@ -23,7 +23,7 @@ twist_proxy = TestbedProxy(
     )
 )
 
-homamatic_proxy = HomeMaticProxy(HOMEMATIC_CCU_URL)
+homematic_proxy = HomeMaticProxy(HOMEMATIC_CCU_URL)
 
 def testbed_handler(request):
     
@@ -138,7 +138,7 @@ def node_collection_handler(request):
         
         platform = Platform.objects.get(id = 'homematic')
         
-        device_list = homamatic_proxy.listDevices()
+        device_list = homematic_proxy.listDevices()
         
         node_list = Node.objects.all().filter(platform = platform)
         channel_list = Channel.objects.all()
@@ -206,8 +206,8 @@ def node_collection_handler(request):
         if 'platform' in request.GET and not (request.GET['platform'] is None):
             nodes = nodes.filter(platform = Platform.objects.get(id = request.GET['platform']))
             
-        if 'image' in request.GET and not (request.GET['image'] is None):
-            nodes = nodes.filter(image = Image.objects.get(id = request.GET['image']))
+#        if 'image' in request.GET and not (request.GET['image'] is None):
+#            nodes = nodes.filter(image = Image.objects.get(id = request.GET['image']))
             
         if 'n' in request.GET and not (request.GET['n'] is None):
             nodes = nodes[:request.GET['n']]
@@ -265,16 +265,28 @@ def node_resource_handler(request, node_id):
     
     if request.method == 'GET':
                 
-        try:
-            native_node_dict = twist_proxy.getNode(node.native_id)[0]
+        try:            
+            
+            if node.platform.id == 'homematic':
+                
+                # Getting the devices list from CCU
+                device_list = homematic_proxy.listDevices()
+                # Checking whether the node is still connected. (cross checking the sqlite result with CCU device list)
+                assert check_device_presence_for_node(node.id, device_list)
+            
+            else:
+                
+                # getting nodes from TWIST
+                twist_proxy.getNode(node.native_id)[0]
+            
         except Exception:
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
             return response
     
-        node.name = 'WSN node'
-        node.platform = Platform.objects.filter(native_id = native_node_dict['platform_id'])[0]
-        node.save()
+        # node.name = 'WSN node'
+        # node.platform = Platform.objects.filter(native_id = native_node_dict['platform_id'])[0]
+        # node.save()
         
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
@@ -291,6 +303,65 @@ def node_resource_handler(request, node_id):
         response = HttpResponseNotAllowed(allowed_methods)
         del response['Content-Type']
         return response
+    
+    
+def node_channel_collection_handler(request, nodeid):
+    
+    if request.method == 'GET':
+
+        # Getting the list of all channels
+        channels = Channel.objects.all().filter(node = Node.objects.get(id = nodeid))
+        
+        # applying possible filters
+        if 'type' in request.GET and not (request.GET['type'] is None):
+            
+            if request.GET['type'] == 'sensor':
+                channels = channels.filter(is_sensor = True)
+                
+            elif request.GET['type'] == 'actuator':
+                channels = channels.filter(is_actuator = True)
+            
+            else:
+                pass
+            
+        # Getting the devices list from CCU
+        device_list = homematic_proxy.listDevices()
+        channel_list = list()
+        
+        for ch in channels:
+            # Checking whether the channel is still present. (cross checking the sqlite result with CCU device list)
+            if(check_device_presence_for_channel(ch.id, device_list)):
+                channel_list.append(ch.to_dict(head_only=True))
+        
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(utils.serialize(channel_list))
+        return response
+
+
+def node_channel_resource_handler(request, nodeid, channelid):
+    
+    if request.method == 'GET':
+        # Getting the devices list from CCU
+        device_list = homematic_proxy.listDevices()
+        # Getting the channel from sqlite
+
+        try:
+            channel = Channel.objects.get(id = '%s:%s' % (nodeid, channelid))
+        except Channel.DoesNotExist:
+            raise Http404   
+                   
+        # Checking whether the channel is still present. (cross checking the sqlite result with CCU device list)
+        try:
+            if(check_device_presence_for_channel(channel.id, device_list)):        
+                # Forming httpresponse 
+                response = HttpResponse()
+                response['Content-Type'] = 'application/json'
+                cdict = channel.to_dict()
+                response.write(utils.serialize(cdict))
+                return response
+        except :
+            raise Http404
 
 #def nodegroup_collection_handler(request):
 #    

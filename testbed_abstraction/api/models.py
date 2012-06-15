@@ -48,8 +48,7 @@ class Platform(Resource):
 #    filename = instance.id
 #    return os.path.join(filepath, filename)
 #
-class Image(Resource):
-    pass
+# class Image(Resource):
 #    id = models.CharField(max_length=255, primary_key=True)
 #    name = models.CharField(max_length=255)
 #    description = models.TextField()
@@ -86,8 +85,7 @@ class Image(Resource):
 #        verbose_name = "Image"
 #        verbose_name_plural = verbose_name +'s'
 
-class Job(Resource):
-    pass
+# class Job(Resource):
 #    id = models.CharField(max_length=255, primary_key=True)
 #    native_id = models.IntegerField(default=0)
 #    native_platform_id_list = models.CommaSeparatedIntegerField(max_length=255)
@@ -142,7 +140,7 @@ class Node(Resource):
     # actuators = models.ManyToManyField(Actuator)
     # interfaces = models.ManyToManyField(Interface)
     
-    image = models.ForeignKey(Image, null=True, blank=True)
+    # image = models.ForeignKey(Image, null=True, blank=True)
     
     location_x = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Location X')
     location_y = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Location Y')
@@ -187,8 +185,9 @@ class Channel(Resource):
     id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)    
     node = models.ForeignKey(Node, related_name='channels')
-    is_sensor = models.BooleanField(default=1)
-    is_actuator= models.BooleanField(default=1)
+    is_sensor = models.BooleanField()
+    is_actuator= models.BooleanField()
+    
     def __unicode__(self):
         return self.name
     
@@ -207,9 +206,12 @@ class Channel(Resource):
             r['node'] = self.node.to_dict(head_only=True)
         return r
     
+    class Meta:
+        verbose_name = 'Channel'
+        verbose_name_plural = verbose_name +'s'
+    
 
-class NodeGroup(Resource):
-    pass
+#class NodeGroup(Resource):
 #    id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
 #    name = models.CharField(max_length=255, verbose_name='Name')
 #    description = models.TextField(verbose_name='Description')
@@ -241,14 +243,13 @@ class NodeGroup(Resource):
 #            # r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
 #        return r
 #        
-    class Meta:
-        verbose_name = "NodeGroup"
-        verbose_name_plural = verbose_name +'s'
+#    class Meta:
+#        verbose_name = "NodeGroup"
+#        verbose_name_plural = verbose_name +'s'
         
 
 
-class Status(Resource):
-    pass
+#class Status(Resource):
 #    id = models.CharField(max_length=255, primary_key=True)
 #    status = models.CharField(max_length=255)
 #    http_request = models.TextField()
@@ -272,6 +273,6 @@ class Status(Resource):
 #        r['datetime_modified'] = berlin_datetime_to_utc_string(self.datetime_modified)
 #        return r
 #    
-    class Meta:
-        verbose_name = "Status"
-        verbose_name_plural = verbose_name +'es'    
+#    class Meta:
+#        verbose_name = "Status"
+#        verbose_name_plural = verbose_name +'es'    
