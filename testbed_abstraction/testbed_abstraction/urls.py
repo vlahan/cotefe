@@ -1,7 +1,5 @@
 from django.conf.urls import patterns, include, url
 
-from testbed_abstraction import settings
-
 from api.views import *
 
 # Uncomment the next two lines to enable the admin:

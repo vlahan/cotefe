@@ -1,7 +1,7 @@
 # customize the following aliases to reflect the specific testbed
 
 # SERVER_URL = 'http://127.0.0.1:8001'
-SERVER_URL = 'http://www.twist.tu-berlin.de:8001'
+SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
 FEDERATION_SERVER_URL = 'https://api.cotefe.net'
 
 TESTBED_NAME = 'TWIST'
