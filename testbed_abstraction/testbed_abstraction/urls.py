@@ -23,6 +23,10 @@ urlpatterns = patterns('',
     url(r'^nodes/(\w+)/channels/$', node_channel_collection_handler),
     url(r'^nodes/(\w+)/channels/(\w+)$', node_channel_resource_handler),
     
+ 
+    url(r'^nodes/(\w+)/channels/(\w+)/parameters/$', channel_parameter_collection_handler),
+    url(r'^nodes/(\w+)/channels/(\w+)/parameters/(\w+)$', channel_parameter_resource_handler)
+
 #    url(r'^nodes/(\w+)/sensors/$', node_sensor_collection_handler),
 #    url(r'^nodes/(\w+)/sensors/(\w+)$', node_sensor_resource_handler),
 #    

@@ -9,6 +9,12 @@ class ChannelAdmin(admin.ModelAdmin):
 class NodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'platform', 'native_id', 'location_x', 'location_y', 'location_z')
 
+
+class ParameterAdmin(admin.ModelAdmin):
+    # ...
+    list_display = ('id', 'name', 'channel', 'value', 'unit', 'min', 'max')
+
 admin.site.register(Platform)
 admin.site.register(Node, NodeAdmin)
 admin.site.register(Channel, ChannelAdmin)
+admin.site.register(Parameter, ParameterAdmin)

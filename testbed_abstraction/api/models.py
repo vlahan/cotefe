@@ -211,6 +211,38 @@ class Channel(Resource):
         verbose_name_plural = verbose_name +'s'
     
 
+class Parameter(Resource):
+    id = models.CharField(max_length=255, primary_key=True)    
+    channel = models.ForeignKey(Channel, related_name='parameters')
+    name = models.CharField(max_length=255)    
+    value = models.FloatField(max_length=255)
+    type = models.CharField(max_length=255)      
+    unit = models.CharField(max_length=255)
+    min = models.FloatField(max_length=255)  
+    max = models.FloatField(max_length=255)  
+
+    def __unicode__(self):
+        return self.name
+    
+    def get_absolute_url(self):
+        return "%s/%s/%s" % (self.channel.get_absolute_url(), 'parameters', self.id.split(':')[-1])
+
+    def to_dict(self, head_only = False):
+        r = OrderedDict()
+        r['id']= self.id
+        r['name']=self.name
+        r['value']=self.value
+        r['media_type'] = config.MEDIA_TYPE
+        r['uri'] = self.get_absolute_url()
+        if not head_only:
+            r['type']=self.type
+            r['unit']=self.unit
+            r['min']=self.min
+            r['max']=self.max
+            r['channel']=self.channel.to_dict(head_only=True)
+        return r
+        
+
 #class NodeGroup(Resource):
 #    id = models.CharField(max_length=255, primary_key=True, verbose_name='ID')
 #    name = models.CharField(max_length=255, verbose_name='Name')

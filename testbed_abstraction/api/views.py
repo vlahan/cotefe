@@ -1,5 +1,6 @@
 import logging
 import decimal
+import json
 from collections import OrderedDict
 
 from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseServerError, Http404
@@ -11,7 +12,7 @@ from homematic.proxy import HomeMaticProxy
 from homematic.config import HOMEMATIC_CCU_URL
 from homematic.utils import *
 
-from api.models import Platform, Node, Channel
+from api.models import Platform, Node, Channel, Parameter
 
 twist_proxy = TestbedProxy(
     '%s://%s:%s@%s:%s' % (
@@ -92,16 +93,18 @@ def node_collection_handler(request):
     allowed_methods = ['GET']
     
     if request.method == 'GET':
-        
+
         ########################################################
         #################      TWIST      ######################
         ########################################################
         
         try:
+            print 'got the nodes????'
             native_node_list = twist_proxy.getAllNodes()
-            
+            print 'seems to be !!!'
         except Exception:
             # 500
+            print 'cant get the nodes :( dont feel bad dude !'
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
             return response
@@ -134,7 +137,7 @@ def node_collection_handler(request):
         ################    HOMEMATIC      #####################
         ########################################################
         
-        # Getting the list of all channels, nodes from the sqlite and devices from CCU
+        # Getting the list of all channels, nodes,parameters from the sqlite and devices from CCU
         
         platform = Platform.objects.get(id = 'homematic')
         
@@ -142,7 +145,7 @@ def node_collection_handler(request):
         
         node_list = Node.objects.all().filter(platform = platform)
         channel_list = Channel.objects.all()
-        
+        parameter_list = Parameter.objects.all()
         
         # Adding the nodes to a set inorder to avoid adding same node multiple times into sqlite
         hmnodes = set()
@@ -153,7 +156,11 @@ def node_collection_handler(request):
             parent = n['PARENT']
             
             if (parent!='' and parent!= 'BidCoS-RF'):
-                
+
+                #Getting the paramset description and the paramset for each device
+                paramset = homematic_proxy.getParamset(n['ADDRESS'],"VALUES")
+                paramset_description = homematic_proxy.getParamsetDescription(n['ADDRESS'],"VALUES")
+
                 # Adding new nodes
                 if not check_node_presence(parent, node_list):
                     if (parent not in hmnodes):
@@ -172,10 +179,28 @@ def node_collection_handler(request):
                     channel = Channel(id = n['ADDRESS'] , node = assign_node, name = n['TYPE'], is_sensor=sensor_status, is_actuator= actuator_status)
                     channel.save()
                     
+                #Adding Parameters
+                position_in_paramset = 0
+                for parameter in paramset_description:
+                    if((parameter in paramset)==True):
+                        if not check_parameter_presence(n['ADDRESS'], position_in_paramset, parameter_list):
+                            assign_channel = Channel.objects.get(id=n['ADDRESS'])
+                            min_value = paramset_description[parameter]['MIN']
+                            max_value = paramset_description[parameter]['MAX']
+                            punit = paramset_description[parameter]['UNIT']
+                            ptype = paramset_description[parameter]['TYPE']
+                            pid = '%s:%d' % (assign_channel.id,position_in_paramset)
+                            pname = paramset_description[parameter]['ID']
+                            pvalue = homematic_proxy.getValue(n['ADDRESS'],parameter)
+                            parameter_object = Parameter(id=pid, channel = assign_channel, min=min_value, max=max_value, unit = punit, value=pvalue, type= ptype, name = pname)
+                            parameter_object.save()
+                    position_in_paramset = position_in_paramset + 1
+
         # Getting the list of channels and nodes from sqlite after the above updation 
         channel_list = Channel.objects.all()
         node_list = Node.objects.filter(platform = platform)
-        
+        parameter_list = Parameter.objects.all()
+
         # Deleting the channels which are not present in actual devices list but shown out in sqlite
         for channel in channel_list:
             if not check_device_presence_for_channel(channel.id, device_list):
@@ -185,6 +210,11 @@ def node_collection_handler(request):
         for node in node_list:
             if not check_device_presence_for_node(node.id, device_list):
                 node.delete()
+
+        # Deleting the parameters from sqlite for which the related device is not present in the device list from CCU
+        for parameter in parameter_list:
+            if not check_device_presence_for_parameter(parameter.id, device_list):
+                parameter.delete()
         
         ########################################################
         ##############    END OF HOMEMATIC    ##################
@@ -360,8 +390,131 @@ def node_channel_resource_handler(request, nodeid, channelid):
                 cdict = channel.to_dict()
                 response.write(utils.serialize(cdict))
                 return response
+            else:
+                channel.delete()
         except :
             raise Http404
+
+    
+def channel_parameter_collection_handler(request, nodeid, channelid):
+
+    if request.method == 'GET':
+
+        # Getting the list of all parameters from SQLite!
+        parameters = Parameter.objects.all().filter(channel = Channel.objects.get(id = nodeid+':'+channelid))
+        # Getting the devices list from CCU
+        device_list = homematic_proxy.listDevices()
+        parameter_list = list()
+        for parameter in parameters:
+            #Checking whether the device with corresponding parameters is still present in the CCU Devices list
+            if(check_device_presence_for_parameter(parameter.id, device_list)):
+                pvalue = homematic_proxy.getValue(parameter.channel.id,parameter.name)
+                parameter.value = float(pvalue)
+                parameter.save()
+                parameter_list.append(parameter.to_dict(head_only=True))
+            else:
+                parameter.delete()
+
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        response.write(utils.serialize(parameter_list))
+        return response
+
+def channel_parameter_resource_handler(request, nodeid, channelid, parameterid):
+    allowed_methods = ['GET', 'PATCH', 'PUT']
+
+    if request.method == 'GET':
+        # Getting the devices list from CCU
+        device_list = homematic_proxy.listDevices()
+        # Getting the parameter from sqlite
+
+        try:
+            parameter = Parameter.objects.get(id = '%s:%s:%s' % (nodeid, channelid, parameterid))
+
+        except Channel.DoesNotExist:
+            raise Http404   
+                   
+        # Checking whether the device correspoding to the parameter is still present in devices list from CCU.
+        try:
+            if(check_device_presence_for_parameter(parameter.id, device_list)):        
+                # Forming httpresponse 
+                pvalue = homematic_proxy.getValue(parameter.channel.id,parameter.name)
+                parameter.value = float(pvalue)
+                parameter.save()
+                response = HttpResponse()
+                response['Content-Type'] = 'application/json'
+                pdict = parameter.to_dict()
+                response.write(utils.serialize(pdict))
+                return response
+            else:
+                parameter.delete()
+        except :
+            raise Http404    
+
+    if request.method == 'PATCH':
+        #Getting the json object from the request
+        channel_parameter_json = request.raw_post_data
+        
+        try:
+            #Converting the json object to dictionary
+            channel_parameter_dict = utils.deserialize(channel_parameter_json)
+            #Retrieving the parameter object from the SQLite
+            parameter = Parameter.objects.get(id = '%s:%s:%s' % (nodeid, channelid, parameterid))
+            #Changing the value of the parameter object and saving it back
+            parameter_value = channel_parameter_dict['value']
+            parameter.value = float(parameter_value)
+            parameter.save()
+            print 'came here'
+            type_casted_pvalue = get_type_casted_param(parameter.type, parameter_value)
+            homematic_proxy.setValue(parameter.channel.id,parameter.name,type_casted_pvalue)
+            # generate response
+            response = HttpResponse()
+            response['Content-Type'] = 'application/json'
+            response.write(utils.serialize(parameter.to_dict()))
+            return response
+            
+        except Exception:
+            # 400
+            print 'yeah! its an exception'
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+
+    if request.method == 'PUT':
+        #Getting the json object from the request
+        parameter_json = request.raw_post_data
+        try:
+            #Converting the json object to dictionary
+            channel_parameter_dict = utils.deserialize(parameter_json)
+            #Retrieving the parameter object from the SQLite
+            parameter = Parameter.objects.get(id = '%s:%s:%s' % (nodeid, channelid, parameterid))
+            #Changing the attributes of the parameter object and saving it back
+            parameter_value = channel_parameter_dict['value']
+            parameter.value   = float(parameter_value)
+            parameter.name    = channel_parameter_dict['name']
+            parameter.id      = channel_parameter_dict['id']
+            parameter.unit    = channel_parameter_dict['unit']
+            min_value = channel_parameter_dict['min']
+            max_value = channel_parameter_dict['max']
+            parameter.min    = float(min_value)
+            parameter.max     = float(max_value)
+            parameter.save()
+            type_casted_pvalue = get_type_casted_param(parameter.type, parameter_value)
+            homematic_proxy.setValue(parameter.channel.id,parameter.name,type_casted_pvalue)
+            # generate response
+            response = HttpResponse()
+            response['Content-Type'] = 'application/json'
+            response.write(utils.serialize(parameter.to_dict()))
+            return response
+            
+        except Exception:
+            # 400
+            print 'yeah! its an exception'
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+
+
 
 #def nodegroup_collection_handler(request):
 #    
