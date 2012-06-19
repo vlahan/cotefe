@@ -362,6 +362,9 @@ def node_channel_collection_handler(request, nodeid):
             # Checking whether the channel is still present. (cross checking the sqlite result with CCU device list)
             if(check_device_presence_for_channel(ch.id, device_list)):
                 channel_list.append(ch.to_dict(head_only=True))
+
+            else:
+                ch.delete()
         
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
