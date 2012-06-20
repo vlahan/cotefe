@@ -14,8 +14,19 @@ $(document).ready(function(){
 	 */
 	res=new  cotefe.Resource({model:cotefe.Resource});
 	res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
-	res.display("",DashBoardView);
-
+	res.display("",DashBoardGreetView);
+	
+	/*
+	 * content for dashboard
+	 */
+	res=new  cotefe.Resource({model:cotefe.Resource});
+	res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
+	res.display("",DashBoardContentView);
+	/*
+	 * content event for left Menu
+	 */
+	new LeftMenuView();
+	
 });
 
 /*
@@ -54,14 +65,18 @@ events.tabs				=function(){
 events.disableAnchor		=function(params){
 	$("#sidebar, #content").on("click",function(event){event.preventDefault();event.stopPropagation();});
 };
+
+
 /*
- * views
+ * dashboard views
  */
-var DashBoardView =Backbone.View.extend({
+var DashBoardGreetView=Backbone.View.extend({
 	
 	el:'#userWelcomeText',
-	content:'#content',
+	
+	
 	initialize:function(){_.bindAll(this,"render");this.render();},
+	
 	render:function()
 	{		
 		var data={
@@ -70,7 +85,29 @@ var DashBoardView =Backbone.View.extend({
 			};		
 		menu = new EJS({url: '../templates/greetTemplate.ejs'}).render(data);
 		$(this.el).html(menu);
-		//console.log(this.model);
+	}
+	
+});
+var DashBoardContentView =Backbone.View.extend({
+	
+	el:'#content',
+	
+	initialize:function(){_.bindAll(this,"render");this.render();},
+	events:{
+		"click #content .edit":'edit',
+		"click #content .delete":'deleteo',
+	},
+	edit:function(event) { event.preventDefault();alert(event.target);},
+	deleteo:function(event) { event.preventDefault();alert(event.target);},
+	render:function()
+	{	
+		datai={
+				projects:"projects",
+				experiments:"experiments",
+				jobs:"jobs",
+				images:"images"
+		}
+		
 		projects=this.model.attributes.projects;
 		experiments=this.model.attributes.experiments;
 		row=5;//minimum line to display
@@ -87,17 +124,34 @@ var DashBoardView =Backbone.View.extend({
 		
 		
 		var data={
-				imagedata			: new EJS({url: '../templates/imageMenu.ejs'}).render(),
+				imagedata			: new EJS({url: '../templates/imageMenu.ejs'}).render(datai),
 				projecttable		: new EJS({url: '../templates/tableModel.ejs'}).render(datap),	
 				exptable			: new EJS({url: '../templates/tableModel.ejs'}).render(datae),
 			};
 		
 		menu = new EJS({url: '../templates/dashboard.ejs'}).render(data);
-		$(this.content).html(menu);
-		events.leftMenu();
+		$(this.el).html(menu);
+		//events.leftMenu();
 		events.initSignOut();
 		events.tabs();
-		events.disableAnchor();
+		
+	}
+	
+});
+var LeftMenuView=Backbone.View.extend({
+	el:'#sidebar',
+	initialize:function(){_.bindAll(this,"render");this.render();},
+	render:function()
+	{		
+		var data={};		
+		menu = new EJS({url: '../templates/leftmenu.ejs'}).render(data);
+		$(this.el).html(menu);
+		$("#nav a").click(function(event) {
+	         event.preventDefault();
+	         var ids=($(this).attr('id'));
+	         //handler.leftMenu(ids);
+	   });
+	   $('#nav a').on("click",function(event) {$(this).next().toggle('fast');}).next().hide();   
 	}
 	
 });
