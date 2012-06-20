@@ -9,24 +9,31 @@
 		<script type="text/javascript" src="../scripts/jsuri-1.1.1.js"></script>
 		<script type="text/javascript" src="../scripts/ejs.js"></script>
 		<script type="text/javascript" src="../scripts/cotefe.js"></script>
+		<script type="text/javascript" src="../scripts/scripts.js"></script>
+		
 		
 		
 	</head>
 	<body>
 		<!-- main DIV starts -->
 		<script>
-			var address=document.location.href;
-			var access_token=new Uri(address).getQueryParamValue('access_token');
-			if(access_token === undefined || access_token === "" || access_token === null)
-			{
-				document.location.href=cotefe.mainUri;
-			}
-			else
-			{
-				sessionStorage.setItem('access_token', access_token);
-				//this.document.write(access_token);
-				replaceBody('dashboardFrame');
-			}
+		$(document).ready(function(){
+				var address=document.location.href;
+				var access_token=new Uri(address).getQueryParamValue('access_token');
+				if(access_token === undefined || access_token === "" || access_token === null)
+				{
+					document.location.href=cotefe.mainUri;
+				}
+				else
+				{
+					sessionStorage.setItem('access_token', access_token);
+					//this.document.write(access_token);
+					data={};
+					new_Content = new EJS({url: '../templates/dashboardFrame.ejs'}).render(data);
+					var x=document.getElementsByTagName("body");
+					x[0].innerHTML=new_Content;
+				}
+			});
 		</script>
 		<div>
 			<span>Fetching Data , Please Wait ..thankYou</span><br>

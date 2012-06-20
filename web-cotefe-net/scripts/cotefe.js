@@ -24,7 +24,7 @@ var cotefe=(function($){
         debug               : false,
         
         Resource  : Backbone.Model.extend({
-				display: function(item) {
+				display: function(item,view) {
 					this.fetch({
 						success: function(model, response) {
 							       new view({model:model});
@@ -46,34 +46,22 @@ var cotefe=(function($){
 
 })(jQuery)
 
-view =Backbone.View.extend({
+var DashBoardView =Backbone.View.extend({
 	
+	el:'#userWelcomeText',
 	initialize:function(){_.bindAll(this,"render");this.render();},
 	render:function()
-	{
-		$("body").load("../htmls/dashboard.html");
-		console.log(JSON.stringify(this.model));
+	{		
+		var data={
+				first		: this.model.attributes.first,
+				last		: this.model.attributes.last,				
+			};		
+		menu = new EJS({url: '../templates/greetTemplate.ejs'}).render(data);
+		$(this.el).html(menu);			
 	}
 	
 });
 
-$(document).ready(function(){
-    
-	//res=new  cotefe.ResourceList({model:cotefe.Resource});
-	//res.url=cotefe.apiUri+cotefe.user.uri+"?access_token=2d07d8ede77a4ff5aeef07553026deee";
-	//res.url=cotefe.apiUri+cotefe.projects.uri+"?access_token=2d07d8ede77a4ff5aeef07553026deee";
-	//res.url=cotefe.apiUri+cotefe.platforms.uri+"?access_token=2d07d8ede77a4ff5aeef07553026deee";
-	//res.display();
-	
-   
- });
 
-function replaceBody(file)
-{
-	data={};
-	new_Content = new EJS({url: '../templates/'+file+'.ejs'}).render(data);
-	var element=document.getElementsByTagName("body");
-	element.innerHTML=new_Content;
-}
 
 
