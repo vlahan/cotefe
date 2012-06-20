@@ -242,6 +242,7 @@ class Parameter(Resource):
             r['min']=self.min
             r['max']=self.max
             r['channel']=self.channel.to_dict(head_only=True)
+            r['node']=self.channel.node.to_dict(head_only=True)
         return r
         
 
