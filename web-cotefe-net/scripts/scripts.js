@@ -157,7 +157,7 @@ var LeftMenuView=Backbone.View.extend({
 		"click #homescreen":function(){res=new  cotefe.Resource({model:cotefe.Resource});
 							res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
 							res.display("",DashBoardContentView);},
-		"click #addP":function(){res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects",type:"projects",description:"",name:""})});},					
+		"click #addP":function(){res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},					
 	},
 	signout:function(event) { event.preventDefault();cotefe.signOut();},
 	render:function()
@@ -184,9 +184,8 @@ var ProjectEdit=Backbone.View.extend({
 		
 		},
 		
-	submit:function(event){event.preventDefault();
-		
-		arr={};
+	submit:function(event){
+		event.preventDefault();		
 		url="";
 		temprory=($("#projectform").serializeArray());
 		for(i =0;i<temprory.length;i++)
@@ -194,19 +193,21 @@ var ProjectEdit=Backbone.View.extend({
 				if(temprory[i].name=="uri")
 					{
 						url=temprory[i].value;
-						continue;
+						
 					}
 				else if(temprory[i].name=="type")
 					{
 						continue;
 					}
-				arr[temprory[i].name]=temprory[i].value;
+				this.model.attributes[temprory[i].name]=temprory[i].value;
+				
 			}
-		console.log(arr);
-		res=new cotefe.Resource(arr);
+		
+		res=this.model;	
+		console.log(res);
 		res.url=url+"?access_token="+getToken();
 		res.save({success:function(){alert("Successfully updated");}});
-	
+		
 	},	
 	render:function()
 	{	
