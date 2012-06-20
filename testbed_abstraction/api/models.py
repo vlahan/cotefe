@@ -3,7 +3,8 @@ import os
 from collections import OrderedDict
 from django.db import models
 
-from testbed_abstraction import config, utils
+from api import config
+from testbed_abstraction import utils
 
 class Resource(models.Model):
     

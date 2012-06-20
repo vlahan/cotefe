@@ -1,12 +1,10 @@
-import logging
-import decimal
-import json
 from collections import OrderedDict
 
 from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseServerError, Http404
 from django.core.exceptions import ObjectDoesNotExist
 
-from twist import config
+from api import config
+from twist.config import XMLRPC_PROTOCOL, XMLRPC_USERNAME, XMLRPC_PASSWORD, XMLRPC_HOST, XMLRPC_PORT
 from testbed_abstraction import utils
 from twist.proxy import TWISTProxy
 from homematic.proxy import HomeMaticProxy
@@ -17,11 +15,11 @@ from api.models import Platform, Node, Channel, Parameter
 
 twist_proxy = TWISTProxy(
     '%s://%s:%s@%s:%s' % (
-        config.XMLRPC_PROTOCOL,
-        config.XMLRPC_USERNAME,
-        config.XMLRPC_PASSWORD,
-        config.XMLRPC_HOST,
-        config.XMLRPC_PORT
+        XMLRPC_PROTOCOL,
+        XMLRPC_USERNAME,
+        XMLRPC_PASSWORD,
+        XMLRPC_HOST,
+        XMLRPC_PORT
     )
 )
 
@@ -100,12 +98,9 @@ def node_collection_handler(request):
         ########################################################
         
         try:
-            print 'got the nodes????'
             native_node_list = twist_proxy.getAllNodes()
-            print 'seems to be !!!'
         except Exception:
             # 500
-            print 'cant get the nodes :( dont feel bad dude !'
             response = HttpResponseServerError()
             response['Content-Type'] = 'application/json'
             return response
@@ -468,7 +463,6 @@ def channel_parameter_resource_handler(request, nodeid, channelid, parameterid):
             parameter_value = channel_parameter_dict['value']
             parameter.value = float(parameter_value)
             parameter.save()
-            print 'came here'
             type_casted_pvalue = get_type_casted_param(parameter.type, parameter_value)
             homematic_proxy.setValue(parameter.channel.id,parameter.name,type_casted_pvalue)
             # generate response
@@ -479,7 +473,6 @@ def channel_parameter_resource_handler(request, nodeid, channelid, parameterid):
             
         except Exception:
             # 400
-            print 'yeah! its an exception'
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
             return response
@@ -513,7 +506,6 @@ def channel_parameter_resource_handler(request, nodeid, channelid, parameterid):
             
         except Exception:
             # 400
-            print 'yeah! its an exception'
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
             return response

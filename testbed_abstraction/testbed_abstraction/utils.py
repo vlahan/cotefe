@@ -2,7 +2,7 @@ import json
 import pytz
 import uuid
 from datetime import datetime
-from testbed_abstraction import config
+from api import config
 
 # serialization of python dictionaries and lists into JSON format
 # more info at http://docs.python.org/library/json.html
