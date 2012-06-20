@@ -71,7 +71,7 @@ events.tabs				=function(){
 
 
 /*
- * dashboard views
+ * dash-board views
  */
 var DashBoardGreetView=Backbone.View.extend({
 	
@@ -101,11 +101,16 @@ var DashBoardContentView =Backbone.View.extend({
 		"click #content .delete":'deleteo',
 	},
 	edit:function(event) { 
-		event.preventDefault();
-		
+		event.preventDefault();		
 		res=new  cotefe.Resource();
 		res.url=event.target+"?access_token="+getToken();
-		res.display("",ProjectEdit);
+		
+		type=(event.target.parentNode.parentNode.parentNode.parentNode.id);
+		switch(type)
+		{
+			case "projects":res.display("",ProjectEdit);break;
+			case "experiments":res.display("",ExperimentEdit);break;
+		}
 		
 	},
 	deleteo:function(event) { event.preventDefault();alert(event.target);},
@@ -120,6 +125,7 @@ var DashBoardContentView =Backbone.View.extend({
 		
 		projects=this.model.attributes.projects;
 		experiments=this.model.attributes.experiments;
+		sessionStorage.setItem("user",JSON.stringify(this.model));
 		row=5;//minimum line to display
 		datap={
 				type:"projects",
@@ -157,7 +163,8 @@ var LeftMenuView=Backbone.View.extend({
 		"click #homescreen":function(){res=new  cotefe.Resource({model:cotefe.Resource});
 							res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
 							res.display("",DashBoardContentView);},
-		"click #addP":function(){res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},					
+		"click #addP":function(){res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
+		"click #addE":function(){res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",projects:""})});},		
 	},
 	signout:function(event) { event.preventDefault();cotefe.signOut();},
 	render:function()
@@ -174,14 +181,14 @@ var LeftMenuView=Backbone.View.extend({
 	
 });
 
+
 var ProjectEdit=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
 },
 	events:
 		{
-			"click input[name=submit]":'submit',
-		
+			"click input[name=submit]":'submit',		
 		},
 		
 	submit:function(event){
@@ -211,6 +218,7 @@ var ProjectEdit=Backbone.View.extend({
 	},	
 	render:function()
 	{	
+		
 		data={
 				uri			:this.model.attributes.uri,
 				type		:"projects",
@@ -223,3 +231,57 @@ var ProjectEdit=Backbone.View.extend({
 	}
 	
 });
+
+
+var ExperimentEdit=Backbone.View.extend({
+	el:"#content",
+	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
+},
+	events:
+		{
+			"click input[name=submit]":'submit',		
+		},
+		
+	submit:function(event){
+		event.preventDefault();		
+		url="";
+		temprory=($("#experimentform").serializeArray());
+		for(i =0;i<temprory.length;i++)
+			{
+				if(temprory[i].name=="uri")
+					{
+						url=temprory[i].value;
+						
+					}
+				else if(temprory[i].name=="type")
+					{
+						continue;
+					}
+				this.model.attributes[temprory[i].name]=temprory[i].value;
+				
+			}
+		
+		res=this.model;	
+		console.log(res);
+		res.url=url+"?access_token="+getToken();
+		res.save({success:function(){alert("Successfully updated");}});
+		
+	},	
+	render:function()
+	{	
+		obj=JSON.parse(sessionStorage.getItem("user"));
+		data={
+				uri			:this.model.attributes.uri,
+				type		:"experiments",
+				name		:this.model.attributes.name,
+				selected	:this.model.attributes.project,
+				projects	:obj.projects,
+				description	:this.model.attributes.description,
+		},
+		
+		menu = new EJS({url: '../templates/experimentNew.ejs'}).render(data);
+		$(this.el).html(menu);
+	}
+	
+});
+
