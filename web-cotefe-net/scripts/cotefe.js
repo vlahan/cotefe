@@ -3,7 +3,7 @@
 var cotefe=(function($){
  
 	var config = {
-        mainUri             : "https://web.cotefe.net",
+        mainUri             : "http://localhost:8080",
         apiUri              : "https://api.cotefe.net",
         version             : 1.0,
         projects            : {uri:"/projects/",         session:"_cotefeProject",       message:"Project",      name:"projects"},
@@ -20,7 +20,7 @@ var cotefe=(function($){
         link2               : function(path,token){return (path+"?access_token="+token);},
         linkTok             : function(path,token){return (this.link(path)+"?access_token="+token);},
         log                 : function(value){console.log(value);},
-        signOut             : function(){cotefe.session.clearAll();window.location.href=this.mainUri;},
+        signOut             : function(){sessionStorage.clear();window.location.href=this.mainUri;},
         debug               : false,
         
         Resource  : Backbone.Model.extend({
@@ -46,21 +46,7 @@ var cotefe=(function($){
 
 })(jQuery)
 
-var DashBoardView =Backbone.View.extend({
-	
-	el:'#userWelcomeText',
-	initialize:function(){_.bindAll(this,"render");this.render();},
-	render:function()
-	{		
-		var data={
-				first		: this.model.attributes.first,
-				last		: this.model.attributes.last,				
-			};		
-		menu = new EJS({url: '../templates/greetTemplate.ejs'}).render(data);
-		$(this.el).html(menu);			
-	}
-	
-});
+
 
 
 
