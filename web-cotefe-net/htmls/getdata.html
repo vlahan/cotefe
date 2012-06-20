@@ -1,8 +1,11 @@
 <html>
 	<head>
 		<title>Getting Data</title>
+		<script type="text/javascript" src="../scripts/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="../scripts/underscore.js"></script>
+		<script type="text/javascript" src="../scripts/backbone.js"></script>
 		<script type="text/javascript" src="../scripts/jsuri-1.1.1.js"></script>
-		<script type="text/javascript" src="../scripts/config.js"></script>
+		<script type="text/javascript" src="../scripts/cotefe.js"></script>
 		<script>
 			var address=document.location.href;
 			var access_token=new Uri(address).getQueryParamValue('access_token');
@@ -12,8 +15,7 @@
 			}
 			else
 			{
-				//cotefe.token= access_token;
-				cotefe.application.getUser(access_token); 
+				this.document.write(access_token);
 			}
 		</script>
 	</head>
