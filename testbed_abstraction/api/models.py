@@ -233,11 +233,11 @@ class Parameter(Resource):
         r = OrderedDict()
         r['id']= self.id
         r['name']=self.name
-        r['value']=self.value
         r['media_type'] = config.MEDIA_TYPE
         r['uri'] = self.get_absolute_url()
         if not head_only:
             r['type']=self.type
+            r['value']=self.value
             r['unit']=self.unit
             r['min']=self.min
             r['max']=self.max
