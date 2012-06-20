@@ -205,6 +205,7 @@ class Channel(Resource):
             r['is_sensor'] = self.is_sensor
             r['is_actuator'] = self.is_actuator
             r['node'] = self.node.to_dict(head_only=True)
+            r['parameters'] = [ p.to_dict(head_only=True) for p in self.parameters.all() ]
         return r
     
     class Meta:
