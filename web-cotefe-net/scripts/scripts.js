@@ -95,13 +95,18 @@ var DashBoardContentView =Backbone.View.extend({
 	
 	el:'#content',
 	
-	initialize:function(){_.bindAll(this,"render");this.render();},
+	initialize:function(){_.bindAll(this,"render");
+			$(this.el).undelegate('#content .edit', 'click');
+			$(this.el).undelegate('#content .delete', 'click');
+			this.render();
+	},
 	events:{
 		"click #content .edit":'edit',
 		"click #content .delete":'deleteo',
 	},
 	edit:function(event) { 
-		event.preventDefault();		
+		event.preventDefault();	
+		
 		res=new  cotefe.Resource();
 		res.url=event.target+"?access_token="+getToken();
 		
@@ -113,7 +118,13 @@ var DashBoardContentView =Backbone.View.extend({
 		}
 		
 	},
-	deleteo:function(event) { event.preventDefault();alert(event.target);},
+	deleteo:function(event) { 
+		event.preventDefault();
+		res=new  cotefe.Resource();
+		res.url=event.target+"?access_token="+getToken();
+		console.log(res.url);
+		res.destroy({success:function(){alert("Successfully Deleted");}});
+	},
 	render:function()
 	{	
 		datai={
@@ -164,7 +175,7 @@ var LeftMenuView=Backbone.View.extend({
 							res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
 							res.display("",DashBoardContentView);},
 		"click #addP":function(){res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
-		"click #addE":function(){res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",projects:""})});},		
+		"click #addE":function(){res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});},		
 	},
 	signout:function(event) { event.preventDefault();cotefe.signOut();},
 	render:function()
@@ -181,11 +192,11 @@ var LeftMenuView=Backbone.View.extend({
 	
 });
 
-
 var ProjectEdit=Backbone.View.extend({
 	el:"#content",
-	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
-},
+	initialize:function(){_.bindAll(this,"render");this.render();
+			$(this.el).undelegate('input[name=submit]', 'click');
+	},
 	events:
 		{
 			"click input[name=submit]":'submit',		
@@ -231,7 +242,6 @@ var ProjectEdit=Backbone.View.extend({
 	}
 	
 });
-
 
 var ExperimentEdit=Backbone.View.extend({
 	el:"#content",
