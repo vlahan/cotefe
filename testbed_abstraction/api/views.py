@@ -6,15 +6,16 @@ from collections import OrderedDict
 from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseServerError, Http404
 from django.core.exceptions import ObjectDoesNotExist
 
-from testbed_abstraction import config, utils
-from testbed_abstraction.proxy import TestbedProxy
+from twist import config
+from testbed_abstraction import utils
+from twist.proxy import TWISTProxy
 from homematic.proxy import HomeMaticProxy
 from homematic.config import HOMEMATIC_CCU_URL
 from homematic.utils import *
 
 from api.models import Platform, Node, Channel, Parameter
 
-twist_proxy = TestbedProxy(
+twist_proxy = TWISTProxy(
     '%s://%s:%s@%s:%s' % (
         config.XMLRPC_PROTOCOL,
         config.XMLRPC_USERNAME,
