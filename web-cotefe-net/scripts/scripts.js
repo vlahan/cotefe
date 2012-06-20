@@ -4,7 +4,12 @@
 
 function getToken()
 {
-	return sessionStorage.getItem('access_token');
+	if(sessionStorage.getItem('access_token'))
+		return sessionStorage.getItem('access_token');
+	else
+		{
+			cotefe.signOut();
+		}
 }
 
 $(document).ready(function(){
@@ -62,9 +67,7 @@ events.tabs				=function(){
         return false;
     });
 };
-events.disableAnchor		=function(params){
-	$("#sidebar, #content").on("click",function(event){event.preventDefault();event.stopPropagation();});
-};
+
 
 
 /*
@@ -97,7 +100,14 @@ var DashBoardContentView =Backbone.View.extend({
 		"click #content .edit":'edit',
 		"click #content .delete":'deleteo',
 	},
-	edit:function(event) { event.preventDefault();alert(event.target);},
+	edit:function(event) { 
+		event.preventDefault();
+		
+		res=new  cotefe.Resource();
+		res.url=event.target+"?access_token="+getToken();
+		res.display("",ProjectEdit);
+		
+	},
 	deleteo:function(event) { event.preventDefault();alert(event.target);},
 	render:function()
 	{	
@@ -140,7 +150,16 @@ var DashBoardContentView =Backbone.View.extend({
 });
 var LeftMenuView=Backbone.View.extend({
 	el:'#sidebar',
+	
 	initialize:function(){_.bindAll(this,"render");this.render();},
+	events:{
+		"click #signout":'signout',
+		"click #homescreen":function(){res=new  cotefe.Resource({model:cotefe.Resource});
+							res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
+							res.display("",DashBoardContentView);},
+		"click #addP":function(){res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects",type:"projects",description:"",name:""})});},					
+	},
+	signout:function(event) { event.preventDefault();cotefe.signOut();},
 	render:function()
 	{		
 		var data={};		
@@ -149,9 +168,57 @@ var LeftMenuView=Backbone.View.extend({
 		$("#nav a").click(function(event) {
 	         event.preventDefault();
 	         var ids=($(this).attr('id'));
-	         //handler.leftMenu(ids);
 	   });
 	   $('#nav a').on("click",function(event) {$(this).next().toggle('fast');}).next().hide();   
+	}
+	
+});
+
+var ProjectEdit=Backbone.View.extend({
+	el:"#content",
+	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
+},
+	events:
+		{
+			"click input[name=submit]":'submit',
+		
+		},
+		
+	submit:function(event){event.preventDefault();
+		
+		arr={};
+		url="";
+		temprory=($("#projectform").serializeArray());
+		for(i =0;i<temprory.length;i++)
+			{
+				if(temprory[i].name=="uri")
+					{
+						url=temprory[i].value;
+						continue;
+					}
+				else if(temprory[i].name=="type")
+					{
+						continue;
+					}
+				arr[temprory[i].name]=temprory[i].value;
+			}
+		console.log(arr);
+		res=new cotefe.Resource(arr);
+		res.url=url+"?access_token="+getToken();
+		res.save({success:function(){alert("Successfully updated");}});
+	
+	},	
+	render:function()
+	{	
+		data={
+				uri			:this.model.attributes.uri,
+				type		:"projects",
+				name		:this.model.attributes.name,
+				description	:this.model.attributes.description,
+		},
+		
+		menu = new EJS({url: '../templates/projectNew.ejs'}).render(data);
+		$(this.el).html(menu);
 	}
 	
 });
