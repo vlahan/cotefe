@@ -25,14 +25,7 @@ urlpatterns = patterns('',
     
  
     url(r'^nodes/(\w+)/channels/(\w+)/parameters/$', channel_parameter_collection_handler),
-    url(r'^nodes/(\w+)/channels/(\w+)/parameters/(\w+)$', channel_parameter_resource_handler)
-
-#    url(r'^nodes/(\w+)/sensors/$', node_sensor_collection_handler),
-#    url(r'^nodes/(\w+)/sensors/(\w+)$', node_sensor_resource_handler),
-#    
-#    url(r'^nodes/(\w+)/actuators/$', node_actuator_collection_handler),
-#    url(r'^nodes/(\w+)/actuators/(\w+)$', node_actuator_resource_handler),
-
+    url(r'^nodes/(\w+)/channels/(\w+)/parameters/(\w+)$', channel_parameter_resource_handler),
     
     # url(r'^nodegroups/$', nodegroup_collection_handler),
     # url(r'^nodegroups/(?P<nodegroup_id>\w+)$', nodegroup_resource_handler),
@@ -40,13 +33,12 @@ urlpatterns = patterns('',
     # url(r'^nodegroups/(?P<nodegroup_id>\w+)/image/(?P<image_id>\w+)$', burn_image_to_nodegroup_handler),
     # url(r'^nodegroups/(?P<nodegroup_id>\w+)/image$', erase_image_to_nodegroup_handler),
     
-    
-    # url(r'^jobs/$', job_collection_handler),
-    # url(r'^jobs/(?P<job_id>\w+)$', job_resource_handler),
+    url(r'^jobs/$', job_collection_handler),
+    url(r'^jobs/(?P<job_id>\w+)$', job_resource_handler),
   
-    # url(r'^images/$', image_collection_handler),
-    # url(r'^images/(?P<image_id>\w+)$', image_resource_handler),
-    # url(r'^images/(?P<image_id>\w+)/upload$', imagefile_upload_handler),
+    url(r'^images/$', image_collection_handler),
+    url(r'^images/(?P<image_id>\w+)$', image_resource_handler),
+    url(r'^images/(?P<image_id>\w+)/upload$', imagefile_upload_handler),
     
     # url(r'^status/$', status_collection_handler),
     # url(r'^status/(?P<status_id>\w+)$', status_resource_handler),

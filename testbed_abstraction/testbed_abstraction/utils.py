@@ -92,3 +92,13 @@ def utc_string_to_local_datetime(str_utc):
     dt_local = utc_datetime_to_local_datetime(dt_utc)
     return dt_local
 
+# always convert to the local TZ before storing the resource
+def naive_local_string_to_local_datetime(naive_str_local):
+    naive_dt_local = naive_string_to_naive_datetime(naive_str_local)
+    dt_local = naive_local_datetime_to_local_datetime(naive_dt_local)
+    return dt_local
+
+def naive_utc_string_to_local_datetime(naive_str_utc):
+    naive_dt_utc = naive_utc_datetime_to_utc_datetime(naive_str_utc)
+    dt_local = utc_datetime_to_local_datetime(naive_dt_utc)
+    return dt_local
