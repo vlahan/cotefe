@@ -179,8 +179,9 @@ class Parameter(Resource):
         
         
 class Job(Resource):
-    id = models.CharField(max_length=255, primary_key=True, default=utils.generate_id())
-    native_id = models.IntegerField(default=0)
+    # id = models.CharField(max_length=255, primary_key=True, default=utils.generate_id())
+    id = models.AutoField(primary_key=True)
+    native_id = models.IntegerField(null=True, blank=True)
     native_platform_id_list = models.CommaSeparatedIntegerField(max_length=255)
     name = models.CharField(max_length=255)
     description = models.TextField()
