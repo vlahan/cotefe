@@ -31,8 +31,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# where the admin files are
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+ADMIN_MEDIA_PREFIX = '/media/admin/'
 
 # place where upload file to
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')

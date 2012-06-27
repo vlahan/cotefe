@@ -232,7 +232,7 @@ class Image(Resource):
             r['upload'] = '%s/upload' % self.get_absolute_url()
             # r['download'] = '%s/download' % self.get_absolute_url()
             if self.file:
-                r['download'] = '%s/static/%s' % (config.SERVER_URL,  self.file.name)
+                r['download'] = '%s/media/%s' % (config.SERVER_URL,  self.file.name)
             else:
                 r['download'] = None
             r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
