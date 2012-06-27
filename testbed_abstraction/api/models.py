@@ -1,10 +1,7 @@
 import os
-
 from collections import OrderedDict
 from django.db import models
-
-from api import config
-from testbed_abstraction import utils
+from api import config, utils
 
 class Resource(models.Model):
     
@@ -36,8 +33,45 @@ class Platform(Resource):
             r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
             r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
         return r
-        
+    
+class Job(Resource):
+    id = models.CharField(max_length=255, primary_key=True, default=utils.generate_id)
+    native_id = models.IntegerField(null=True, blank=True)
+    native_platform_id_list = models.CommaSeparatedIntegerField(max_length=255, null=True, blank=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    datetime_from = models.DateTimeField()
+    datetime_to = models.DateTimeField()
+    nodes = models.ManyToManyField(Node, related_name='jobs')
+    datetime_created = models.DateTimeField(auto_now_add=True)
+    datetime_modified = models.DateTimeField(auto_now=True)
 
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return '%s/%s/%s' % (config.SERVER_URL, 'jobs', self.id)
+    
+    def to_dict(self, head_only = False):
+        r = OrderedDict()
+        r['id'] = self.id
+        r['uri'] = self.get_absolute_url()
+        r['media_type'] = config.MEDIA_TYPE
+        r['name'] = self.name
+        if not head_only:
+            r['description'] = self.description
+            r['datetime_from'] = utils.local_datetime_to_utc_string(self.datetime_from)
+            r['datetime_to'] = utils.local_datetime_to_utc_string(self.datetime_to)
+            if self.name == '(native job)':
+                r['nodes'] = [ n.to_dict(head_only=True) for n in Node.objects.filter(platform__in = Platform.objects.filter(native_id__in = map(int, self.native_platform_id_list.split(',')))) ]
+            else:
+                r['nodes'] = [ n.to_dict(head_only=True) for n in self.nodes.all() ]
+            r['node_count'] = len(r['nodes'])
+            r['nodegroups'] = [ ng.to_dict(head_only=True) for ng in self.nodegroups.all() ]
+            r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
+            r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
+        return r
+    
 def update_filename(instance, filename):
     filepath = 'images'
     filename = instance.id
@@ -47,6 +81,7 @@ class Image(Resource):
     id = models.CharField(max_length=255, primary_key=True, default=utils.generate_id())
     name = models.CharField(max_length=255)
     description = models.TextField()
+    job = models.ForeignKey(Job, related_name='images')
     file = models.FileField(upload_to=update_filename, null=True, blank=True)
     
     datetime_created = models.DateTimeField(auto_now_add=True)
@@ -75,7 +110,6 @@ class Image(Resource):
             r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
         return r
     
-
 class Node(Resource):
     id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
@@ -111,10 +145,8 @@ class Node(Resource):
             r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
             r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
         return r
-        
-        
+
 class Channel(Resource):
-    
     id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)    
     node = models.ForeignKey(Node, related_name='channels')
@@ -125,7 +157,7 @@ class Channel(Resource):
         return self.name
 
     def get_absolute_url(self):
-        return '%s/%s/%s' % (self.node.get_absolute_url(), 'channels', self.id)
+        return '%s/%s/%s' % (self.node.get_absolute_url(), 'channels', self.id.split(':')[-1])
     
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -142,7 +174,6 @@ class Channel(Resource):
             r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
         return r
     
-
 class Parameter(Resource):
     id = models.CharField(max_length=255, primary_key=True)    
     channel = models.ForeignKey(Channel, related_name='parameters')
@@ -176,50 +207,9 @@ class Parameter(Resource):
             r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
             r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
         return r
-        
-        
-class Job(Resource):
-    # id = models.CharField(max_length=255, primary_key=True, default=utils.generate_id())
-    id = models.AutoField(primary_key=True)
-    native_id = models.IntegerField(null=True, blank=True)
-    native_platform_id_list = models.CommaSeparatedIntegerField(max_length=255)
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    datetime_from = models.DateTimeField()
-    datetime_to = models.DateTimeField()
-    nodes = models.ManyToManyField(Node, related_name='jobs')
-    datetime_created = models.DateTimeField(auto_now_add=True)
-    datetime_modified = models.DateTimeField(auto_now=True)
-
-    def __unicode__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return '%s/%s/%s' % (config.SERVER_URL, 'jobs', self.id)
     
-    def to_dict(self, head_only = False):
-        r = OrderedDict()
-        r['id'] = self.id
-        r['uri'] = self.get_absolute_url()
-        r['media_type'] = config.MEDIA_TYPE
-        r['name'] = self.name
-        if not head_only:
-            r['description'] = self.description
-            r['datetime_from'] = utils.local_datetime_to_utc_string(self.datetime_from)
-            r['datetime_to'] = utils.local_datetime_to_utc_string(self.datetime_to)
-            if self.name == '(native job)':
-                r['nodes'] = [ n.to_dict(head_only=True) for n in Node.objects.filter(platform__in = Platform.objects.filter(native_id__in = map(int, self.native_platform_id_list.split(',')))) ]
-            else:
-                r['nodes'] = [ n.to_dict(head_only=True) for n in self.nodes.all() ]
-            r['node_count'] = len(r['nodes'])
-            r['nodegroups'] = [ ng.to_dict(head_only=True) for ng in self.nodegroups.all() ]
-            r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
-            r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
-        return r
-    
-
 class NodeGroup(Resource):
-    id = models.CharField(max_length=255, primary_key=True, default=utils.generate_id())
+    id = models.CharField(max_length=255, primary_key=True, default=utils.generate_id)
     name = models.CharField(max_length=255)
     description = models.TextField()
     job = models.ForeignKey(Job, related_name='nodegroups')
@@ -232,7 +222,8 @@ class NodeGroup(Resource):
         return self.name
     
     def get_absolute_url(self):
-        return "%s/%s/%s" % (config.SERVER_URL, 'nodegroups', self.id)
+        # return '%s/%s/%s/%s/%s' % (config.SERVER_URL, 'jobs', self.job.id, 'nodegroups', self.id)
+        return '%s/%s/%s' % (config.SERVER_URL, 'nodegroups', self.id)
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -250,8 +241,7 @@ class NodeGroup(Resource):
             r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
             r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
         return r
-        
-
+    
 class Status(Resource):
     id = models.CharField(max_length=255, primary_key=True, default=utils.generate_id())
     status = models.CharField(max_length=255)
@@ -275,4 +265,4 @@ class Status(Resource):
         r['status'] = self.status
         r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
         r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
-        return r   
+        return r 

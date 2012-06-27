@@ -12,7 +12,14 @@ from homematic.proxy import HomeMaticProxy
 from homematic.config import HOMEMATIC_CCU_URL
 from homematic.utils import *
 
-from api.models import *
+from api.models.channel import Channel
+from api.models.image import Image
+from api.models.job import Job
+from api.models.node import Node
+from api.models.nodegroup import NodeGroup
+from api.models.parameter import Parameter
+from api.models.platform import Platform
+from api.models.status import Status
 
 twist_proxy = TWISTProxy(
     '%s://%s:%s@%s:%s' % (
@@ -131,92 +138,94 @@ def node_collection_handler(request):
         ################    END OF TWIST   #####################
         ########################################################
         
-        ########################################################
-        ################    HOMEMATIC      #####################
-        ########################################################
+        if 'platform' not in request.GET or (request.GET['platform'] == 'homematic'):
         
-        # Getting the list of all channels, nodes,parameters from the sqlite and devices from CCU
-        
-        platform = Platform.objects.get(id = 'homematic')
-        
-        device_list = homematic_proxy.listDevices()
-        
-        node_list = Node.objects.all().filter(platform = platform)
-        channel_list = Channel.objects.all()
-        parameter_list = Parameter.objects.all()
-        
-        # Adding the nodes to a set inorder to avoid adding same node multiple times into sqlite
-        hmnodes = set()
-        
-        # Adding the new nodes and channels which are not present in the Django sqlite database
-        for n in device_list:
+            ########################################################
+            ################    HOMEMATIC      #####################
+            ########################################################
             
-            parent = n['PARENT']
+            # Getting the list of all channels, nodes,parameters from the sqlite and devices from CCU
             
-            if (parent!='' and parent!= 'BidCoS-RF'):
-
-                #Getting the paramset description and the paramset for each device
-                paramset = homematic_proxy.getParamset(n['ADDRESS'],"VALUES")
-                paramset_description = homematic_proxy.getParamsetDescription(n['ADDRESS'],"VALUES")
-
-                # Adding new nodes
-                if not check_node_presence(parent, node_list):
-                    if (parent not in hmnodes):
-                        hmnodes.add(parent)
-                        node = Node(
-                            id = parent,
-                            name = n['PARENT_TYPE'],
-                            platform = platform) 
-                        node.save()
-                        
-                #Adding new channels
-                if not check_channel_presence(n['ADDRESS'], channel_list):
-                    assign_node = Node.objects.get(id = parent)
-                    sensor_status = check_sensor(n['ADDRESS'],assign_node.name)
-                    actuator_status = check_actuator(n['ADDRESS'],assign_node.name)
-                    channel = Channel(id = n['ADDRESS'] , node = assign_node, name = n['TYPE'], is_sensor=sensor_status, is_actuator= actuator_status)
-                    channel.save()
-                    
-                #Adding Parameters
-                position_in_paramset = 0
-                for parameter in paramset_description:
-                    if((parameter in paramset)==True):
-                        if not check_parameter_presence(n['ADDRESS'], position_in_paramset, parameter_list):
-                            assign_channel = Channel.objects.get(id=n['ADDRESS'])
-                            min_value = paramset_description[parameter]['MIN']
-                            max_value = paramset_description[parameter]['MAX']
-                            punit = paramset_description[parameter]['UNIT']
-                            ptype = paramset_description[parameter]['TYPE']
-                            pid = '%s:%d' % (assign_channel.id,position_in_paramset)
-                            pname = paramset_description[parameter]['ID']
-                            pvalue = homematic_proxy.getValue(n['ADDRESS'],parameter)
-                            parameter_object = Parameter(id=pid, channel = assign_channel, min=min_value, max=max_value, unit = punit, value=pvalue, type= ptype, name = pname)
-                            parameter_object.save()
-                    position_in_paramset = position_in_paramset + 1
-
-        # Getting the list of channels and nodes from sqlite after the above updation 
-        channel_list = Channel.objects.all()
-        node_list = Node.objects.filter(platform = platform)
-        parameter_list = Parameter.objects.all()
-
-        # Deleting the channels which are not present in actual devices list but shown out in sqlite
-        for channel in channel_list:
-            if not check_device_presence_for_channel(channel.id, device_list):
-                channel.delete()
+            platform = Platform.objects.get(id = 'homematic')
+            
+            device_list = homematic_proxy.listDevices()
+            
+            node_list = Node.objects.all().filter(platform = platform)
+            channel_list = Channel.objects.all()
+            parameter_list = Parameter.objects.all()
+            
+            # Adding the nodes to a set inorder to avoid adding same node multiple times into sqlite
+            hmnodes = set()
+            
+            # Adding the new nodes and channels which are not present in the Django sqlite database
+            for n in device_list:
                 
-        # Deleting the nodes which are not present in actual devices list but shown out in sqlite 
-        for node in node_list:
-            if not check_device_presence_for_node(node.id, device_list):
-                node.delete()
-
-        # Deleting the parameters from sqlite for which the related device is not present in the device list from CCU
-        for parameter in parameter_list:
-            if not check_device_presence_for_parameter(parameter.id, device_list):
-                parameter.delete()
-        
-        ########################################################
-        ##############    END OF HOMEMATIC    ##################
-        ########################################################
+                parent = n['PARENT']
+                
+                if (parent!='' and parent!= 'BidCoS-RF'):
+    
+                    #Getting the paramset description and the paramset for each device
+                    paramset = homematic_proxy.getParamset(n['ADDRESS'],"VALUES")
+                    paramset_description = homematic_proxy.getParamsetDescription(n['ADDRESS'],"VALUES")
+    
+                    # Adding new nodes
+                    if not check_node_presence(parent, node_list):
+                        if (parent not in hmnodes):
+                            hmnodes.add(parent)
+                            node = Node(
+                                id = parent,
+                                name = n['PARENT_TYPE'],
+                                platform = platform) 
+                            node.save()
+                            
+                    #Adding new channels
+                    if not check_channel_presence(n['ADDRESS'], channel_list):
+                        assign_node = Node.objects.get(id = parent)
+                        sensor_status = check_sensor(n['ADDRESS'],assign_node.name)
+                        actuator_status = check_actuator(n['ADDRESS'],assign_node.name)
+                        channel = Channel(id = n['ADDRESS'] , node = assign_node, name = n['TYPE'], is_sensor=sensor_status, is_actuator= actuator_status)
+                        channel.save()
+                        
+                    #Adding Parameters
+                    position_in_paramset = 0
+                    for parameter in paramset_description:
+                        if((parameter in paramset)==True):
+                            if not check_parameter_presence(n['ADDRESS'], position_in_paramset, parameter_list):
+                                assign_channel = Channel.objects.get(id=n['ADDRESS'])
+                                min_value = paramset_description[parameter]['MIN']
+                                max_value = paramset_description[parameter]['MAX']
+                                punit = paramset_description[parameter]['UNIT']
+                                ptype = paramset_description[parameter]['TYPE']
+                                pid = '%s:%d' % (assign_channel.id,position_in_paramset)
+                                pname = paramset_description[parameter]['ID']
+                                pvalue = homematic_proxy.getValue(n['ADDRESS'],parameter)
+                                parameter_object = Parameter(id=pid, channel = assign_channel, min=min_value, max=max_value, unit = punit, value=pvalue, type= ptype, name = pname)
+                                parameter_object.save()
+                        position_in_paramset = position_in_paramset + 1
+    
+            # Getting the list of channels and nodes from sqlite after the above updation 
+            channel_list = Channel.objects.all()
+            node_list = Node.objects.filter(platform = platform)
+            parameter_list = Parameter.objects.all()
+    
+            # Deleting the channels which are not present in actual devices list but shown out in sqlite
+            for channel in channel_list:
+                if not check_device_presence_for_channel(channel.id, device_list):
+                    channel.delete()
+                    
+            # Deleting the nodes which are not present in actual devices list but shown out in sqlite 
+            for node in node_list:
+                if not check_device_presence_for_node(node.id, device_list):
+                    node.delete()
+    
+            # Deleting the parameters from sqlite for which the related device is not present in the device list from CCU
+            for parameter in parameter_list:
+                if not check_device_presence_for_parameter(parameter.id, device_list):
+                    parameter.delete()
+            
+            ########################################################
+            ##############    END OF HOMEMATIC    ##################
+            ########################################################
         
         # getting all the node models from the database
         nodes = Node.objects.all().order_by('location_x', 'location_y', 'location_z')
@@ -513,124 +522,6 @@ def channel_parameter_resource_handler(request, nodeid, channelid, parameterid):
 
 
 
-#def nodegroup_collection_handler(request):
-#    
-#    allowed_methods = ['GET', 'POST']
-#    
-#    if request.method == 'GET':
-#        
-#        nodegroups = [ nodegroup.to_dict(head_only = True) for nodegroup in NodeGroup.objects.all() ]
-#        
-#        # generating 200 response
-#        response = HttpResponse()
-#        response['Content-Type'] = 'application/json'
-#        response.write(utils.serialize(nodegroups))
-#        return response
-#    
-#    if request.method == 'POST':
-#        
-#        try:
-#            nodegroup_dict = utils.deserialize(request.raw_post_data)
-#
-#            nodegroup = NodeGroup(
-#                name = nodegroup_dict['name'],
-#                description = nodegroup_dict['description'],
-#                job = Job.objects.get(id = nodegroup_dict['job'])
-#            )
-#            nodegroup.save()
-#            
-#            for node_id in nodegroup_dict['nodes']:
-#                NodeGroup2Node.objects.get_or_create(nodegroup = nodegroup, node = Node.objects.get(id = node_id))
-#            
-#            # generate response
-#            response = HttpResponse(status=201)
-#            response['Location'] = nodegroup.get_absolute_url()
-#            response['Content-Location'] = nodegroup.get_absolute_url()
-#            response['Content-Type'] = 'application/json'
-#            return response
-#        except Exception:
-#            # 400
-#            response = HttpResponseBadRequest()
-#            response['Content-Type'] = 'application/json'
-#            return response
-#        
-#    if request.method == 'OPTIONS':
-#        # 204
-#        response = HttpResponse(status=204)
-#        response['Allow'] = ', '.join(allowed_methods)
-#        del response['Content-Type']
-#        return response
-#
-#    else:
-#        response = HttpResponseNotAllowed(allowed_methods)
-#        del response['Content-Type']
-#        return response
-#    
-#def nodegroup_resource_handler(request, nodegroup_id):
-#    
-#    allowed_methods = ['GET', 'PUT', 'DELETE']
-#    
-#    try:
-#        nodegroup = NodeGroup.objects.get(id = nodegroup_id)
-#    
-#    except ObjectDoesNotExist:
-#        # 404
-#        response = HttpResponseNotFound()
-#        response['Content-Type'] = 'application/json'
-#        return response
-#    
-#    if request.method == 'OPTIONS':
-#        # 204
-#        response = HttpResponse(status=204)
-#        response['Allow'] = ', '.join(allowed_methods)
-#        del response['Content-Type']
-#        return response
-#    
-#    if request.method == 'GET':
-#        # 200
-#        response = HttpResponse()
-#        response['Content-Type'] = 'application/json'
-#        response.write(utils.serialize(nodegroup.to_dict()))
-#        return response
-#    
-#    if request.method == 'PUT':
-#        
-#        nodegroup_json = request.raw_post_data
-#        
-#        try:
-#            nodegroup_dict = utils.deserialize(nodegroup_json)
-#
-#            nodegroup.name = nodegroup_dict['name']
-#            nodegroup.description = nodegroup_dict['description']
-#            
-#            nodegroup.save()
-#            
-#            # generate response
-#            response = HttpResponse()
-#            response['Content-Type'] = 'application/json'
-#            response.write(utils.serialize(nodegroup.to_dict()))
-#            return response
-#            
-#        except Exception:
-#            # 400
-#            response = HttpResponseBadRequest()
-#            response['Content-Type'] = 'application/json'
-#            return response
-#        
-#    if request.method == 'DELETE':
-#        
-#        nodegroup.delete()
-#        
-#        # generate response
-#        response = HttpResponse()
-#        response['Content-Type'] = 'application/json'
-#        return response
-#        
-#    else:
-#        response = HttpResponseNotAllowed(allowed_methods)
-#        del response['Content-Type']
-#        return response
-
 def job_collection_handler(request):
     
     allowed_methods = ['GET', 'POST']
@@ -654,14 +545,14 @@ def job_collection_handler(request):
                     'native_platform_id_list' : ','.join(map(str,native_job_dict['resources'])),
                     'name' : '(native job)',
                     'description' : native_job_dict['description'],
-                    'datetime_from' : utils.naive_local_string_to_local_datetime(native_job_dict['time_begin']),
-                    'datetime_to' : utils.naive_local_string_to_local_datetime(native_job_dict['time_end']),
+                    'datetime_from' : utils.local_string_to_local_datetime(native_job_dict['time_begin']),
+                    'datetime_to' : utils.local_string_to_local_datetime(native_job_dict['time_end']),
                 }
             )
             if not created:
                 resource_model.description = native_job_dict['description']
-                resource_model.time_begin = utils.naive_local_string_to_local_datetime(native_job_dict['time_begin'])
-                resource_model.time_end = utils.naive_local_string_to_local_datetime(native_job_dict['time_end'])
+                resource_model.time_begin = utils.local_string_to_local_datetime(native_job_dict['time_begin'])
+                resource_model.time_end = utils.local_string_to_local_datetime(native_job_dict['time_end'])
                 resource_model.save()
         
         # delete nodes that are not present in the native database
@@ -672,11 +563,11 @@ def job_collection_handler(request):
         
         if 'date_from' in request.GET and not (request.GET['date_from'] is None):
             datetime_from = request.GET['date_from'] + 'T00:00:00'
-            jobs = jobs.filter(datetime_from__gte = utils.utc_string_to_utc_datetime(datetime_from))
+            jobs = jobs.filter(datetime_from__gte = utils.utc_string_to_local_datetime(datetime_from))
             
         if 'date_to' in request.GET and not (request.GET['date_to'] is None):
             datetime_to = request.GET['date_to'] + 'T23:59:59'
-            jobs = jobs.filter(datetime_to__lte = utils.utc_string_to_utc_datetime(datetime_to))
+            jobs = jobs.filter(datetime_to__lte = utils.utc_string_to_local_datetime(datetime_to))
 
         job_list = [ resource_model.to_dict(head_only = True) for resource_model in jobs ]
         
@@ -687,55 +578,45 @@ def job_collection_handler(request):
         return response
     
     if request.method == 'POST':
+               
+        job_dict = utils.deserialize(request.raw_post_data)
         
-        try:
-            job_dict = utils.deserialize(request.raw_post_data)
+        if ('nodes' in job_dict) and not (job_dict['nodes'] is None):
+            node_id_list = job_dict['nodes']
             
-            if ('nodes' in job_dict) and not (job_dict['nodes'] is None):
-                node_id_list = job_dict['nodes']
-                
-            platform_native_id_set = set()
-            for node_id in node_id_list:
-                node = Node.objects.get(id = node_id)
-                platform_native_id_set.add(node.platform.native_id)
-            
-            native_job_dict = dict()
-            native_job_dict['description'] = job_dict['description']
-            native_job_dict['time_begin'] = job_dict['datetime_from']
-            native_job_dict['time_end'] = job_dict['datetime_to']
-            native_job_dict['resources'] = list(platform_native_id_set)
-            
-            try:
-                created_job_id_list = twist_proxy.createJob(native_job_dict)
-                if len(created_job_id_list) == 0:
-                    raise None
-            except Exception:
-                # 500
-                response = HttpResponseServerError()
-                response['Content-Type'] = 'application/json'
-                return response
-            
-            job = Job(
-                name = job_dict['name'],
-                description = job_dict['description'],
-                datetime_from = utils.naive_local_string_to_local_datetime(job_dict['datetime_from']),
-                datetime_to = utils.naive_local_string_to_local_datetime(job_dict['datetime_to']),
-                native_id = created_job_id_list[0]['job_id'],
-                nodes = [ Node.objects.get(id = node_id) for node_id in node_id_list])
-            job.save()
-                
-            # generate response
-            response = HttpResponse(status=201)
-            response['Location'] = job.get_absolute_url()
-            response['Content-Location'] = job.get_absolute_url()
-            response['Content-Type'] = 'application/json'
-            return response
+        platform_native_id_set = set()
+        for node_id in node_id_list:
+            node = Node.objects.get(id = node_id)
+            platform_native_id_set.add(node.platform.native_id)
         
-        except Exception:
-            # 400
-            response = HttpResponseBadRequest()
-            response['Content-Type'] = 'application/json'
-            return response
+        native_job_dict = dict()
+        native_job_dict['description'] = job_dict['description']
+        native_job_dict['time_begin'] = utils.utc_string_to_local_string(job_dict['datetime_from'])
+        native_job_dict['time_end'] = utils.utc_string_to_local_string(job_dict['datetime_to'])
+        native_job_dict['resources'] = list(platform_native_id_set)
+        
+        created_job_id_list = twist_proxy.createJob(native_job_dict)
+
+        job = Job(
+            name = job_dict['name'],
+            description = job_dict['description'],
+            datetime_from = utils.utc_string_to_local_datetime(job_dict['datetime_from']),
+            datetime_to = utils.utc_string_to_local_datetime(job_dict['datetime_to']),
+            native_id = created_job_id_list[0]['job_id'],
+        )
+        
+        job.save()
+        
+        job.nodes = [ Node.objects.get(id = node_id) for node_id in node_id_list ]
+            
+        job.save()
+        
+        # generate response
+        response = HttpResponse(status=201)
+        response['Location'] = job.get_absolute_url()
+        response['Content-Location'] = job.get_absolute_url()
+        response['Content-Type'] = 'application/json'
+        return response
     
     if request.method == 'OPTIONS':
         # 204
@@ -779,8 +660,8 @@ def job_resource_handler(request, job_id):
         
         native_resource_dict = native_resource_list[0]    
         job.description = native_resource_dict['description']
-        job.datetime_from = utils.naive_local_string_to_local_datetime(native_resource_dict['time_begin'])
-        job.datetime_to = utils.naive_local_string_to_local_datetime(native_resource_dict['time_end'])
+        job.datetime_from = utils.local_string_to_local_datetime(native_resource_dict['time_begin'])
+        job.datetime_to = utils.local_string_to_local_datetime(native_resource_dict['time_end'])
             
         job.save()
         
@@ -806,8 +687,8 @@ def job_resource_handler(request, job_id):
             native_job_dict = dict()
             native_job_dict['job_id'] = job.native_id
             native_job_dict['description'] = job_dict['description']
-            native_job_dict['time_begin'] = job_dict['datetime_from']
-            native_job_dict['time_end'] = job_dict['datetime_to']
+            native_job_dict['time_begin'] = utils.utc_string_to_local_string(job_dict['datetime_from'])
+            native_job_dict['time_end'] = utils.utc_string_to_local_string(job_dict['datetime_to'])
             native_job_dict['resources'] = list(platform_native_id_set)
                 
             try:
@@ -819,8 +700,8 @@ def job_resource_handler(request, job_id):
             
             job.name = job_dict['name']
             job.description = job_dict['description']
-            job.datetime_from = utils.utc_string_to_utc_datetime(job_dict['datetime_from'])
-            job.datetime_to = utils.utc_string_to_utc_datetime(job_dict['datetime_to'])
+            job.datetime_from = utils.utc_string_to_local_datetime(job_dict['datetime_from'])
+            job.datetime_to = utils.utc_string_to_local_datetime(job_dict['datetime_to'])
             job.nodes = [ Node.objects.get(id = node_id) for node_id in node_id_list]
             job.save()
 
@@ -865,28 +746,131 @@ def job_resource_handler(request, job_id):
         del response['Content-Type']
         return response
 
-def image_collection_handler(request):
+def nodegroup_collection_handler(request):
     
-    allowed_methods = ['GET', 'POST']
+    allowed_methods = ['POST']
+    
+    if request.method == 'POST':
+        
+        try:
+            
+            nodegroup_dict = utils.deserialize(request.raw_post_data)
+
+            nodegroup = NodeGroup(
+                name = nodegroup_dict['name'],
+                description = nodegroup_dict['description'],
+                job = Job.objects.get(id = nodegroup_dict['job'])
+            )
+            nodegroup.save()
+            
+            nodegroup.nodes = [ Node.objects.get(id = node_id) for node_id in nodegroup_dict['nodes'] ]
+            
+            nodegroup.save()
+            
+            # generate response
+            response = HttpResponse(status=201)
+            response['Location'] = nodegroup.get_absolute_url()
+            response['Content-Location'] = nodegroup.get_absolute_url()
+            response['Content-Type'] = 'application/json'
+            return response
+        except Exception:
+            # 400
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
+
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+    
+def nodegroup_resource_handler(request, nodegroup_id):
+    
+    allowed_methods = ['GET', 'PUT', 'DELETE']
+    
+    try:
+        
+        nodegroup = NodeGroup.objects.get(id = nodegroup_id)
+    
+    except ObjectDoesNotExist:
+        # 404
+        response = HttpResponseNotFound()
+        response['Content-Type'] = 'application/json'
+        return response
+    
+    if request.method == 'OPTIONS':
+        # 204
+        response = HttpResponse(status=204)
+        response['Allow'] = ', '.join(allowed_methods)
+        del response['Content-Type']
+        return response
     
     if request.method == 'GET':
-        
-        collection_list = [ resource_model.to_dict(head_only = True) for resource_model in Image.objects.all() ]
-        
         # 200
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
-        response.write(utils.serialize(collection_list))
+        response.write(utils.serialize(nodegroup.to_dict()))
         return response
+    
+    if request.method == 'PUT':
+        
+        nodegroup_json = request.raw_post_data
+        
+        try:
+            nodegroup_dict = utils.deserialize(nodegroup_json)
+
+            nodegroup.name = nodegroup_dict['name']
+            nodegroup.description = nodegroup_dict['description']
+            
+            nodegroup.save()
+            
+            # generate response
+            response = HttpResponse()
+            response['Content-Type'] = 'application/json'
+            response.write(utils.serialize(nodegroup.to_dict()))
+            return response
+            
+        except Exception:
+            # 400
+            response = HttpResponseBadRequest()
+            response['Content-Type'] = 'application/json'
+            return response
+        
+    if request.method == 'DELETE':
+        
+        nodegroup.delete()
+        
+        # generate response
+        response = HttpResponse()
+        response['Content-Type'] = 'application/json'
+        return response
+        
+    else:
+        response = HttpResponseNotAllowed(allowed_methods)
+        del response['Content-Type']
+        return response
+
+def image_collection_handler(request):
+        
+    allowed_methods = ['POST']
     
     if request.method == 'POST':
                 
         try:
+            
             image_dict = utils.deserialize(request.raw_post_data)
             
             image = Image(
                 name = image_dict['name'],
-                description = image_dict['description']
+                description = image_dict['description'],
+                job = Job.objects.get(id = image_dict['job'])
             )
             
             image.save()
@@ -921,6 +905,7 @@ def image_resource_handler(request, image_id):
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
+        job = Job.objects.get(id = job_id)
         image = Image.objects.get(id = image_id)
     
     except ObjectDoesNotExist:
