@@ -1,4 +1,3 @@
-# Django settings for testbed_abstraction project.
 
 import os
 
@@ -32,19 +31,23 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-MEDIA_ROOT = os.path.join(PROJECT_PATH, 'uploads')
-MEDIA_URL = '/uploads/'
+# place where upload file to
+MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
+MEDIA_URL = '/media/'
 
+# place where static files are served from
 STATIC_ROOT = os.path.join(PROJECT_PATH, 'static')
 STATIC_URL = '/static/'
 
+# place where static files are before they are collected with
+# python manage.py collectstatic
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_PATH, 'uploads'),
+    os.path.join(PROJECT_PATH, 'media'),
     )
 
 STATICFILES_FINDERS = (
-    # 'django.contrib.staticfiles.finders.FileSystemFinder',
-    # 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -53,17 +56,17 @@ SECRET_KEY = '!^^3th531%!zviwshigpt@xbe==3!^y*k^df)3x--i)(s_cd#y'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    # 'django.template.loaders.filesystem.Loader',
-    # 'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
     # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
-    # 'django.middleware.common.CommonMiddleware',
-    # 'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
-    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # 'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -78,13 +81,13 @@ for root, dirs, files in os.walk(PROJECT_PATH):
         TEMPLATE_DIRS += (os.path.join(root, 'templates'),)
 
 INSTALLED_APPS = (
-    # 'django.contrib.auth',
-    # 'django.contrib.contenttypes',
-    # 'django.contrib.sessions',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
     # 'django.contrib.sites',
-    # 'django.contrib.messages',
-    # 'django.contrib.staticfiles',
-    # 'django.contrib.admin',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
     'api',
 )
 

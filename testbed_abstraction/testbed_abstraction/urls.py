@@ -1,18 +1,16 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, include,  url
 
 from api.views import *
 
 # Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 
 urlpatterns = patterns('',
 
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
     
     url(r'^$', testbed_handler),
-    
-    # url(r'^uploads/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.MEDIA_ROOT }),
         
     url(r'^platforms/$', platform_collection_handler),
         
@@ -35,7 +33,7 @@ urlpatterns = patterns('',
     url(r'^images/$', image_collection_handler),
     url(r'^images/(\w+)$', image_resource_handler),
     url(r'^images/(\w+)/upload$', imagefile_upload_handler),
-    # url(r'^images/(\w+)/download', imagefile_download_handler),
+    # url(r'^images/(\w+)/download', imagefile_download_handler), # solved differently with Django staticfiles
     
     # url(r'^tasks/$', task_collection_handler),
     # url(r'^tasks/(\w+)$', task_resource_handler),

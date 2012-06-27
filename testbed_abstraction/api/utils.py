@@ -1,8 +1,14 @@
+import os
 import json
 import pytz
 import uuid
 from datetime import datetime
 from api import config
+
+def update_filename(instance, filename):
+    filepath = 'images'
+    filename = instance.id
+    return os.path.join(filepath, filename)
 
 # serialization of python dictionaries and lists into JSON format
 # more info at http://docs.python.org/library/json.html

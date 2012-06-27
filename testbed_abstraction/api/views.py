@@ -5,21 +5,15 @@ import decimal
 from django.http import *
 from django.core.exceptions import *
 
-from api import config
+from api import config, utils
+from api.models import *
+
 from twist.config import XMLRPC_PROTOCOL, XMLRPC_USERNAME, XMLRPC_PASSWORD, XMLRPC_HOST, XMLRPC_PORT
 from twist.proxy import TWISTProxy
+
 from homematic.proxy import HomeMaticProxy
 from homematic.config import HOMEMATIC_CCU_URL
 from homematic.utils import *
-
-from api.models.channel import Channel
-from api.models.image import Image
-from api.models.job import Job
-from api.models.node import Node
-from api.models.nodegroup import NodeGroup
-from api.models.parameter import Parameter
-from api.models.platform import Platform
-from api.models.status import Status
 
 twist_proxy = TWISTProxy(
     '%s://%s:%s@%s:%s' % (
@@ -138,7 +132,8 @@ def node_collection_handler(request):
         ################    END OF TWIST   #####################
         ########################################################
         
-        if 'platform' not in request.GET or (request.GET['platform'] == 'homematic'):
+        # if 'platform' not in request.GET or (request.GET['platform'] == 'homematic'):
+        if False:
         
             ########################################################
             ################    HOMEMATIC      #####################
@@ -882,7 +877,10 @@ def image_collection_handler(request):
             response['Content-Type'] = 'application/json'
             return response
         
-        except Exception:
+        except Exception, error:
+            
+            logging.debug(str(error))
+            
             # 400
             response = HttpResponseBadRequest()
             response['Content-Type'] = 'application/json'
@@ -905,7 +903,7 @@ def image_resource_handler(request, image_id):
     allowed_methods = ['GET', 'PUT', 'DELETE']
     
     try:
-        job = Job.objects.get(id = job_id)
+
         image = Image.objects.get(id = image_id)
     
     except ObjectDoesNotExist:
