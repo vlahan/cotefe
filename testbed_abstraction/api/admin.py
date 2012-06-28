@@ -32,3 +32,13 @@ class ImageAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'job', 'file')
     
 admin.site.register(Image, ImageAdmin)
+
+class StatusAdmin(admin.ModelAdmin):
+    list_display = ('id', 'http_request', 'status')
+    
+admin.site.register(Status, StatusAdmin)
+
+#class TaskAdmin(admin.ModelAdmin):
+#    list_display = ('id', 'name', 'job', 'method', 'target')
+#    
+#admin.site.register(Task, TaskAdmin)

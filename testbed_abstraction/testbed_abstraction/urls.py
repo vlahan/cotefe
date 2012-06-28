@@ -38,13 +38,14 @@ urlpatterns = patterns('',
     url(r'^images/(\w+)/upload$', imagefile_upload_handler),
     # url(r'^images/(\w+)/download', imagefile_download_handler), # solved differently with Django staticfiles
     
-    # url(r'^tasks/$', task_collection_handler),
-    # url(r'^tasks/(\w+)$', task_resource_handler),
+#    url(r'^tasks/$', task_collection_handler),
+#    url(r'^tasks/(\w+)$', task_resource_handler),
+#    url(r'^tasks/(\w+)/run$', task_execution_handler),
 
-    # url(r'^nodegroups/(?P<nodegroup_id>\w+)/image/(?P<image_id>\w+)$', burn_image_to_nodegroup_handler),
-    # url(r'^nodegroups/(?P<nodegroup_id>\w+)/image$', erase_image_to_nodegroup_handler),
+    url(r'^nodegroups/(\w+)/image/(\w+)$', burn_image_to_nodegroup_handler),
+    url(r'^nodegroups/(\w+)/image$', erase_image_to_nodegroup_handler),
     
     # url(r'^status/$', status_collection_handler),
-    # url(r'^status/(?P<status_id>\w+)$', status_resource_handler),
+    url(r'^status/(\w+)$', status_resource_handler),
     
 )

@@ -58,6 +58,7 @@ class Node(Resource):
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
         if not head_only:
+            r['native_id'] = self.native_id
             r['platform'] = self.platform.to_dict(head_only=True)
             r['channels'] = [ ch.to_dict(head_only=True) for ch in self.channels.all() ]
             if self.native_id:
@@ -157,6 +158,7 @@ class Job(Resource):
         r['name'] = self.name
         if not head_only:
             r['description'] = self.description
+            r['native_id'] = self.native_id
             r['datetime_from'] = utils.local_datetime_to_utc_string(self.datetime_from)
             r['datetime_to'] = utils.local_datetime_to_utc_string(self.datetime_to)
             if self.name == '(native job)':
@@ -166,6 +168,7 @@ class Job(Resource):
             r['node_count'] = len(r['nodes'])
             r['nodegroups'] = [ ng.to_dict(head_only=True) for ng in self.nodegroups.all() ]
             r['images'] = [ i.to_dict(head_only=True) for i in self.images.all() ]
+            # r['tasks'] = [ t.to_dict(head_only=True) for t in self.tasks.all() ]
             r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
             r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
         return r
@@ -241,6 +244,38 @@ class Image(Resource):
             r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
         return r
     
+#class Task(Resource):
+#    id = models.CharField(max_length=255, primary_key=True, default=utils.generate_id)
+#    name = models.CharField(max_length=255)
+#    description = models.TextField()
+#    job = models.ForeignKey('api.Job', related_name='tasks')
+#    method = models.CharField(max_length=255)
+#    target = models.CharField(max_length=255)
+#    datetime_created = models.DateTimeField(auto_now_add=True)
+#    datetime_modified = models.DateTimeField(auto_now=True)
+#
+#    def __unicode__(self):
+#        return self.name
+#
+#    def get_absolute_url(self):
+#        return '%s/%s/%s' % (config.SERVER_URL, 'tasks', self.id)
+#    
+#    def to_dict(self, head_only = False):
+#        r = OrderedDict()
+#        r['id'] = self.id
+#        r['uri'] = self.get_absolute_url()
+#        r['media_type'] = config.MEDIA_TYPE
+#        r['name'] = self.name
+#        if not head_only:
+#            r['description'] = self.description
+#            r['job'] = self.job.to_dict(head_only=True)
+#            r['method'] = self.method
+#            r['target'] = self.target
+#            r['run'] = self.get_absolute_url()+'/run'
+#            r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
+#            r['datetime_modified'] = utils.local_datetime_to_utc_string(self.datetime_modified)
+#        return r
+    
     
 class Status(Resource):
     id = models.CharField(max_length=255, primary_key=True, default=utils.generate_id)
@@ -260,7 +295,6 @@ class Status(Resource):
         r['id']= self.id
         r['uri'] = self.get_absolute_url()
         r['media_type'] = config.MEDIA_TYPE
-        r['name']=self.name
         r['http_request'] = self.http_request
         r['status'] = self.status
         r['datetime_created'] = utils.local_datetime_to_utc_string(self.datetime_created)
