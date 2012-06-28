@@ -132,8 +132,7 @@ def node_collection_handler(request):
         ################    END OF TWIST   #####################
         ########################################################
         
-        # if 'platform' not in request.GET or (request.GET['platform'] == 'homematic'):
-        if False:
+        if 'platform' not in request.GET or (request.GET['platform'] == 'homematic'):
         
             ########################################################
             ################    HOMEMATIC      #####################
