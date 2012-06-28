@@ -1,7 +1,6 @@
 import logging
 from collections import OrderedDict
 import decimal
-import requests
 
 from django.http import *
 from django.core.exceptions import *
