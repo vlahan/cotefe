@@ -43,6 +43,11 @@ class COTESTBEDAPI(object):
             resource_dict = self._make_request('GET', response.headers['content-location'])
             return resource_dict['id']
         
+        elif expected_status_code == 202:
+            
+            status_dict = self._make_request('GET', response.headers['location'])
+            return status_dict['id']
+        
         else:
             
             return response.json
@@ -165,37 +170,51 @@ class COTESTBEDAPI(object):
         self._make_request('POST', '/images/'+image.id+'/upload', files={'imagefile': open(imagefile, 'rb')})
         
         return self.get_image(image_id, job)
-        
-#    def create_virtual_task(self, name, description, action, virtual_nodegroup, image, experiment):
+    
+#    def get_task(self, task_id, job):
+#        
+#        task_dict = self._make_request('GET', '/tasks/'+task_id)
+#        
+#        return Task(task_dict, job)
+#    
+#    def create_task(self, name, description, job, action, nodegroup, image=None):
 #        
 #        method = {
 #            'install': 'PUT',
 #            'erase': 'DELETE'
 #        }
 #        
-#        vt_dict = {
+#        task_dict = {
 #            'name': name,
 #            'description': description,
+#            'job': job.id,
 #            'method': method[action]
 #        }
 #        
-#        if image:
-#            vt_dict['target'] = self.build_uri(path = '%s/image/%s' % (virtual_nodegroup.uri, image.id))
+#        if action == 'install' and image:
+#            task_dict['target'] = nodegroup.uri+'/image/'+image.id
 #        else:
-#            vt_dict['target'] = self.build_uri(path = '%s/image' % virtual_nodegroup.uri)
+#            task_dict['target'] = nodegroup.uri+'/image'
 #        
-#        uri = self.build_uri(path = '/experiments/%s/virtual-tasks/' % experiment.id)
-#        method = 'POST'
-#        headers = self.build_headers()
-#        body = utils.serialize(vt_dict)
-#        response, content = self.http.request(uri=uri, method=method, headers=headers, body=body)
-#        assert response.status == 201
-#
-#        uri = self.build_uri(path = response['content-location'])
-#        method = 'GET'
-#        headers = self.build_headers()
-#        response, content = self.http.request(uri=uri, method=method, headers=headers)
-#        assert response.status == 200
+#        task_id = self._make_request('POST', '/tasks/', data=utils.serialize(task_dict), expected_status_code=201)
 #        
-#        return VirtualTask(utils.deserialize(content), experiment)
+#        return self.get_task(task_id, job)
+
+    def get_status(self, status_id):
+        
+        status_dict = self._make_request('GET', '/status/'+status_id)
+        
+        return Status(status_dict)
+
+    def erase_nodegroup(self, nodegroup):
+        
+        status_id = self._make_request('DELETE', '/nodegroups/'+nodegroup.id+'/image', expected_status_code=202)
+        
+        return self.get_status(status_id)
+    
+    def install_image_to_nodegroup(self, nodegroup, image):
+        
+        status_id = self._make_request('PUT', '/nodegroups/'+nodegroup.id+'/image/'+image.id, expected_status_code=202)
+        
+        return self.get_status(status_id)
         

@@ -52,24 +52,23 @@ class NodeGroup(Resource):
         self.job = job
         self.nodes = nodes
 
-class Task(Resource):
-    
-    def __init__(self, d, job):
-        self.uri = d['uri']
-        self.id = d['id']
-        self.name = d['name']
-        self.description = d['description']
-        action = {
-            'PUT': 'install',
-            'DELETE': 'erase'
-        }
-        self.action = action[d['method']]
-        self.target = d['target']
-        self.job = job
-
+#class Task(Resource):
+#    def __init__(self, d, job):
+#        self.uri = d['uri']
+#        self.id = d['id']
+#        self.name = d['name']
+#        self.description = d['description']
+#        action = {
+#            'PUT': 'install',
+#            'DELETE': 'erase'
+#        }
+#        self.action = action[d['method']]
+#        self.target = d['target']
+#        self.job = job
+        
 class Status(Resource):
-    def __init__(self, d, platform, experiment):
+    def __init__(self, d):
         self.uri = d['uri']
         self.id = d['id']
-        self.name = d['name']
-        self.description = d['description']
+        self.http_request = d['http_request']
+        self.status = d['status']

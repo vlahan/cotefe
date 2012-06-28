@@ -2,6 +2,7 @@
 # in installing 3 different images on 3 different groups of nodes
 
 import logging
+import webbrowser
 import config
 from cotestbed.client import COTESTBEDAPI
 from datetime import date, datetime, timedelta
@@ -20,27 +21,23 @@ my_testbed = api.get_testbed()
 
 # INITIALIZE DATABASE
 
-api.get_nodes()
-api.get_jobs()
+#api.get_nodes()
+#api.get_jobs()
 
 # RESOURCE DISCOVERY
 # GETTING A LIST OF N NODES MATCHING THE GIVEN PLATFORM
 
-nodes = api.get_nodes(
-    n = config.NUM_NODES_ALL,
-    platform = config.PLATFORM_NAME)
+nodes = api.get_nodes(n = config.NUM_NODES_ALL, platform = config.PLATFORM_NAME)
 
 assert len(nodes) == config.NUM_NODES_ALL
 
 # AVAILABILITY DISCOVERY
 # GETTING A LIST OF CURRENT JOBS ACCORDING TO THE SPECIFIED TIME SPAN
 
-date_from = date.today()
-date_to = date_from + timedelta(days = config.CALENDAR_SPAN_DAYS)
-
-jobs = api.get_jobs(
-    date_from = date_from,
-    date_to = date_to)
+#date_from = date.today()
+#date_to = date_from + timedelta(days = config.CALENDAR_SPAN_DAYS)
+#
+#jobs = api.get_jobs(date_from = date_from, date_to = date_to)
 
 # JOB RESERVATION
 # SCHEDULING A JOB WITH THE GIVEN NODES
@@ -51,8 +48,6 @@ my_job = api.create_job(
     datetime_from = datetime.utcnow() + timedelta(minutes = config.START_JOB_IN_MINUTES),
     datetime_to = datetime.utcnow() + timedelta(minutes = config.END_JOB_IN_MINUTES),
     nodes = nodes)
-
-# my_job = api.get_job('b2926edec55043ad84d3734d7b534fa3')
 
 logging.info('Check your job at %s' % my_job)
 
@@ -151,8 +146,6 @@ my_image_I = api.create_image(
     
 logging.info('Check your image I at %s' % my_image_I)
 
-exit()
-
 ## CREATE A NEW TASK 0
 #
 #my_task_0 = api.create_task(
@@ -176,7 +169,7 @@ exit()
 #    
 #logging.info('Check your task 1 at %s' % my_task_1)
 #
-## CREATE A NEW VIRTUAL TASK 2
+## CREATE A NEW TASK 2
 #
 #my_task_2 = api.create_task(
 #    name = 'Install image on Publisher nodes',
@@ -188,7 +181,7 @@ exit()
 #
 #logging.info('Check your task 2 at %s' % my_task_2)
 #
-## CREATE A NEW VIRTUAL TASK 3
+## CREATE A NEW TASK 3
 #
 #my_task_3 = api.create_task(
 #    name = 'Install image on Interferer nodes',
@@ -200,7 +193,7 @@ exit()
 #    
 #logging.info('Check your task 3 at %s' % my_task_3)
 #   
-## CREATE A NEW VIRTUAL TASK 4
+## CREATE A NEW TASK 4
 #
 #my_task_4 = api.create_task(
 #    name = 'Erase Interferer nodes',
@@ -210,32 +203,42 @@ exit()
 #    nodegroup = my_nodegroup_I)
 #
 #logging.info('Check your task 4 at %s' % my_task_4)
-#
-#logging.info('Now check your job again at %s' % my_job)
-#
-## RUNNING THE TASKS
-#
-#status_0 = api.run_task(my_task_0)
-#
-#while api.check_status(status_0) != 'completed':
-#    time.sleep(10000)
-#
-#status_1 = api.run_task(my_task_1)
-#
-#while api.check_status(status_1) != 'completed':
-#    time.sleep(10000)
-#    
-#status_2 = api.run_task(my_task_2)
-#
-#while api.check_status(status_2) != 'completed':
-#    time.sleep(10000)
-#
-#status_3 = api.run_task(my_task_3)
-#
-#while api.check_status(status_3) != 'completed':
-#    time.sleep(10000)
-#
-#status_4 = api.run_task(my_task_4)
-#
-#while api.check_status(status_4) != 'completed':
-#    time.sleep(10000)
+
+logging.info('Now check your job again at %s' % my_job)
+webbrowser.open(my_job.uri)
+
+# RUNNING THE TASKS
+
+logging.info('# # # # # JOB EXECUTION STARTED # # # # #')
+
+raw_input('(press ENTER when you are ready to execute the next operation)')
+
+logging.info('Erasing all nodes.. ')
+my_status_0 = api.erase_nodegroup(my_nodegroup_ALL)
+logging.info('Check the status of the current task at %s' % my_status_0)
+
+raw_input('(press ENTER when you are ready to execute the next operation)')
+
+logging.info('Installing image to Subscriber nodes.. ')
+my_status_1 = api.install_image_to_nodegroup(my_nodegroup_S, my_image_S)
+logging.info('Check the status of the current task at %s' % my_status_1)
+
+raw_input('(press ENTER when you are ready to execute the next operation)')
+
+logging.info('Installing image to all Publisher nodes.. ')
+my_status_2 = api.install_image_to_nodegroup(my_nodegroup_P, my_image_P)
+logging.info('Check the status of the current task at %s' % my_status_2)
+
+raw_input('(press ENTER when you are ready to execute the next operation)')
+
+logging.info('Installing image to Interferer nodes.. ')
+my_status_3 = api.install_image_to_nodegroup(my_nodegroup_I, my_image_I)
+logging.info('Check the status of the current task at %s' % my_status_3)
+
+raw_input('(press ENTER when you are ready to execute the next operation)')
+
+logging.info('Erasing image on Interferer nodes.. ')
+my_status_4 = api.erase_nodegroup(my_nodegroup_I)
+logging.info('Check the status of the current task at %s' % my_status_4)
+
+logging.info('# # # # # JOB EXECUTION ENDED # # # # #')

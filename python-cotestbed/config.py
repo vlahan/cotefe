@@ -1,6 +1,6 @@
 
-# SERVER_URL = 'http://127.0.0.1:8001'
-SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
+SERVER_URL = 'http://127.0.0.1:8001'
+# SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
 
 # EXPERIMENT CONFIGURATION
 
@@ -17,5 +17,5 @@ IMAGEFILE_I = 'images/demo_image_interferers'
 NUM_NODES_ALL = NUM_NODES_S + NUM_NODES_P + NUM_NODES_I
 
 CALENDAR_SPAN_DAYS = 7
-START_JOB_IN_MINUTES = 14400
-END_JOB_IN_MINUTES   = 14401
+START_JOB_IN_MINUTES = 1
+END_JOB_IN_MINUTES   = 61
