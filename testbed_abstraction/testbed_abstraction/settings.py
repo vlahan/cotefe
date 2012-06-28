@@ -45,7 +45,7 @@ STATIC_URL = '/static/'
 # place where static files are before they are collected with
 # python manage.py collectstatic
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_PATH, 'media'),
+    # os.path.join(PROJECT_PATH, 'media'),
     )
 
 STATICFILES_FINDERS = (
