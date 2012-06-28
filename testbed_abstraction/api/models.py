@@ -195,6 +195,7 @@ class NodeGroup(Resource):
         r['name']=self.name
         if not head_only:
             r['description'] = self.description
+            r['job'] = self.job.to_dict(head_only=True)
             r['nodes'] = [ n.to_dict(head_only=True) for n in self.nodes.all()]
             if self.image:
                 r['image'] = self.image.get_absolute_url()
@@ -229,6 +230,7 @@ class Image(Resource):
         r['name'] = self.name
         if not head_only:
             r['description'] = self.description
+            r['job'] = self.job.to_dict(head_only=True)
             r['upload'] = '%s/upload' % self.get_absolute_url()
             # r['download'] = '%s/download' % self.get_absolute_url()
             if self.file:

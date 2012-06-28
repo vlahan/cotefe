@@ -32,6 +32,7 @@ USE_L10N = True
 USE_TZ = True
 
 ADMIN_MEDIA_PREFIX = '/media/admin/'
+ADMIN_MEDIA_ROOT = os.path.join(PROJECT_PATH, 'static')
 
 # place where upload file to
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
