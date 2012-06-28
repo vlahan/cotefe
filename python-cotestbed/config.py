@@ -1,6 +1,6 @@
 
-SERVER_URL = 'http://127.0.0.1:8001'
-# SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
+# SERVER_URL = 'http://127.0.0.1:8001'
+SERVER_URL = 'https://www.twist.tu-berlin.de:8001'
 
 # EXPERIMENT CONFIGURATION
 

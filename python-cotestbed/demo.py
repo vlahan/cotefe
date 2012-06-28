@@ -216,29 +216,26 @@ raw_input('(press ENTER when you are ready to execute the next operation)')
 logging.info('Erasing all nodes.. ')
 my_status_0 = api.erase_nodegroup(my_nodegroup_ALL)
 logging.info('Check the status of the current task at %s' % my_status_0)
-
-raw_input('(press ENTER when you are ready to execute the next operation)')
+webbrowser.open(my_status_0.uri)
 
 logging.info('Installing image to Subscriber nodes.. ')
 my_status_1 = api.install_image_to_nodegroup(my_nodegroup_S, my_image_S)
 logging.info('Check the status of the current task at %s' % my_status_1)
-
-raw_input('(press ENTER when you are ready to execute the next operation)')
+webbrowser.open(my_status_1.uri)
 
 logging.info('Installing image to all Publisher nodes.. ')
 my_status_2 = api.install_image_to_nodegroup(my_nodegroup_P, my_image_P)
 logging.info('Check the status of the current task at %s' % my_status_2)
-
-raw_input('(press ENTER when you are ready to execute the next operation)')
+webbrowser.open(my_status_2.uri)
 
 logging.info('Installing image to Interferer nodes.. ')
 my_status_3 = api.install_image_to_nodegroup(my_nodegroup_I, my_image_I)
 logging.info('Check the status of the current task at %s' % my_status_3)
-
-raw_input('(press ENTER when you are ready to execute the next operation)')
+webbrowser.open(my_status_3.uri)
 
 logging.info('Erasing image on Interferer nodes.. ')
 my_status_4 = api.erase_nodegroup(my_nodegroup_I)
 logging.info('Check the status of the current task at %s' % my_status_4)
+webbrowser.open(my_status_4.uri)
 
 logging.info('# # # # # JOB EXECUTION ENDED # # # # #')
