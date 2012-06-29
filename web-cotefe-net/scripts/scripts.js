@@ -1,5 +1,5 @@
 /**
- * after token saved and dashboard loaded
+ * after token saved and dash-board loaded
  */
 
 function getToken()
@@ -15,14 +15,14 @@ function getToken()
 $(document).ready(function(){
 	
 	/*
-	 * user info of dashboard
+	 * user info of dash-board
 	 */
 	res=new  cotefe.Resource({model:cotefe.Resource});
 	res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
 	res.display("",DashBoardGreetView);
 	
 	/*
-	 * content for dashboard
+	 * content for dash-board
 	 */
 	res=new  cotefe.Resource({model:cotefe.Resource});
 	res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
@@ -39,14 +39,6 @@ $(document).ready(function(){
  */
 
 events					={};
-events.leftMenu			=function(){
-	$("#nav a").click(function(event) {
-         event.preventDefault();
-         var ids=($(this).attr('id'));
-         //handler.leftMenu(ids);
-   });
-   $('#nav a').on("click",function(event) {$(this).next().toggle('fast');}).next().hide();   
-};
 events.initSignOut				=function(){
 	$("#signout").bind("click",function(event){event.preventDefault();cotefe.signOut();});
 };
@@ -71,7 +63,7 @@ events.tabs				=function(){
 
 
 /*
- * dashboard views
+ * dash-board views
  */
 var DashBoardGreetView=Backbone.View.extend({
 	
@@ -102,11 +94,11 @@ var DashBoardContentView =Backbone.View.extend({
 	},
 	events:{
 		"click #content #projects .edit":'editp',
-		"click #content #projects .delete":'deletep',
+		"click #content #projects .delete":'deleteResource',
 		"click #content #experiments .edit":'edite',
-		"click #content #experiments .delete":'deletee',
+		"click #content #experiments .delete":'deleteResource',
 		"click #content #jobs .edit":'editj',
-		"click #content #jobs .delete":'deletej',
+		"click #content #jobs .delete":'deleteResource',
 	},
 	editp:function(event) { 
 		event.preventDefault();
@@ -116,23 +108,24 @@ var DashBoardContentView =Backbone.View.extend({
 		res.display("",ProjectEdit);
 		
 	},
-	deletep:function(event)
+	deleteResource:function(event)
 	{
 		event.preventDefault();
 		var delres=new  cotefe.Resource();
-		var path=(event.target.attributes[0].nodeValue);
+		var path=(event.target);
 		delres.id=2000002;
 		delres.url=path+"?access_token="+getToken();
-		console.log(delres);
+		
 		delres.destroy({
 				success : _.bind(function(model, response) {
-					console.log("Success");
 	                console.log(model);
+	                $(this.el).undelegate('#content .delete', 'click');
 	            }, this),
 	            error : _.bind(function(model, response) {
-	            	console.log("Error");
 				  	console.log(model);
+				  	$(this.el).undelegate('#content .delete', 'click');
 			    }, this)
+			    
 		});
 	},
 	edite:function(event) { 
@@ -142,13 +135,7 @@ var DashBoardContentView =Backbone.View.extend({
 		res.display("",ExperimentEdit);
 		
 	},
-	deletee:function(event)
-	{
-		event.preventDefault();
-		res=new  cotefe.Resource();
-		res.url=event.target+"?access_token="+getToken();
-		res.destroy();
-	},
+	
 	editj:function(event) { 
 		event.preventDefault();
 		res=new  cotefe.Resource();
@@ -156,13 +143,7 @@ var DashBoardContentView =Backbone.View.extend({
 		res.display("",ExperimentEdit);
 		
 	},
-	deletej:function(event)
-	{
-		event.preventDefault();
-		res=new  cotefe.Resource();
-		res.url=event.target+"?access_token="+getToken();
-		res.destroy();
-	},
+	
 		
 
 	render:function()
