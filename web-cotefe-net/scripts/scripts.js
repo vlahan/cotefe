@@ -79,7 +79,7 @@ var DashBoardGreetView=Backbone.View.extend({
 				last		: this.model.attributes.last,				
 			};		
 		menu = new EJS({url: '../templates/greetTemplate.ejs'}).render(data);
-		$(this.el).html(menu);
+		$(this.el).html(menu).fadeIn();
 	}
 	
 });
@@ -93,16 +93,15 @@ var DashBoardContentView =Backbone.View.extend({
 			this.render();
 	},
 	events:{
-		"click #content #projects .edit":'editp',
-		"click #content #projects .delete":'deleteResource',
-		"click #content #experiments .edit":'edite',
-		"click #content #experiments .delete":'deleteResource',
+		"click #content #projects .edit":'editp',		
+		"click #content #experiments .edit":'edite',		
 		"click #content #jobs .edit":'editj',
-		"click #content #jobs .delete":'deleteResource',
+		"click #content .delete":'deleteResource',
+		
 	},
 	editp:function(event) { 
 		event.preventDefault();
-		
+		$(this.el).html("");
 		res=new  cotefe.Resource();
 		res.url=event.target+"?access_token="+getToken();
 		res.display("",ProjectEdit);
@@ -118,18 +117,17 @@ var DashBoardContentView =Backbone.View.extend({
 		
 		delres.destroy({
 				success : _.bind(function(model, response) {
-	                console.log(model);
-	                $(this.el).undelegate('#content .delete', 'click');
+	                console.log(model);  
 	            }, this),
 	            error : _.bind(function(model, response) {
 				  	console.log(model);
-				  	$(this.el).undelegate('#content .delete', 'click');
 			    }, this)
 			    
 		});
 	},
 	edite:function(event) { 
 		event.preventDefault();
+		$(this.el).html("");
 		res=new  cotefe.Resource();
 		res.url=event.target+"?access_token="+getToken();
 		res.display("",ExperimentEdit);
@@ -138,6 +136,7 @@ var DashBoardContentView =Backbone.View.extend({
 	
 	editj:function(event) { 
 		event.preventDefault();
+		$(this.el).remove();
 		res=new  cotefe.Resource();
 		res.url=event.target+"?access_token="+getToken();
 		res.display("",ExperimentEdit);
@@ -178,8 +177,8 @@ var DashBoardContentView =Backbone.View.extend({
 			};
 		
 		menu = new EJS({url: '../templates/dashboard.ejs'}).render(data);
-		$(this.el).html(menu);
-		//events.leftMenu();
+		$(this.el).html(menu).fadeIn();
+		
 		events.initSignOut();
 		events.tabs();
 		
@@ -257,7 +256,7 @@ var ProjectEdit=Backbone.View.extend({
 		},
 		
 		menu = new EJS({url: '../templates/projectNew.ejs'}).render(data);
-		$(this.el).html(menu);
+		$(this.el).html(menu).fadeIn();
 	}
 	
 });
@@ -307,7 +306,7 @@ var ExperimentEdit=Backbone.View.extend({
 		},
 		
 		menu = new EJS({url: '../templates/experimentNew.ejs'}).render(data);
-		$(this.el).html(menu);
+		$(this.el).html(menu).fadeIn();
 	}
 	
 });
