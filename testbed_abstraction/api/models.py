@@ -76,6 +76,8 @@ class Channel(Resource):
     node = models.ForeignKey('api.Node', related_name='channels')
     is_sensor = models.BooleanField()
     is_actuator= models.BooleanField()
+    datetime_created = models.DateTimeField(auto_now_add=True)
+    datetime_modified = models.DateTimeField(auto_now=True)
     
     def __unicode__(self):
         return self.name
@@ -106,7 +108,9 @@ class Parameter(Resource):
     type = models.CharField(max_length=255)      
     unit = models.CharField(max_length=255)
     min = models.FloatField(max_length=255)  
-    max = models.FloatField(max_length=255)  
+    max = models.FloatField(max_length=255)
+    datetime_created = models.DateTimeField(auto_now_add=True)
+    datetime_modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.name
