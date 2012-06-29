@@ -105,6 +105,8 @@ var DashBoardContentView =Backbone.View.extend({
 		"click #content #projects .delete":'deletep',
 		"click #content #experiments .edit":'edite',
 		"click #content #experiments .delete":'deletee',
+		"click #content #jobs .edit":'editj',
+		"click #content #jobs .delete":'deletej',
 	},
 	editp:function(event) { 
 		event.preventDefault();
@@ -135,6 +137,22 @@ var DashBoardContentView =Backbone.View.extend({
 		res.url=event.target+"?access_token="+getToken();
 		res.destroy();
 	},
+	editj:function(event) { 
+		event.preventDefault();
+		res=new  cotefe.Resource();
+		res.url=event.target+"?access_token="+getToken();
+		res.display("",ExperimentEdit);
+		
+	},
+	deletej:function(event)
+	{
+		event.preventDefault();
+		res=new  cotefe.Resource();
+		res.url=event.target+"?access_token="+getToken();
+		res.destroy();
+	},
+		
+
 	render:function()
 	{	
 		datai={
@@ -261,7 +279,6 @@ var ExperimentEdit=Backbone.View.extend({
 		
 	submit:function(event){
 		event.preventDefault();	
-		console.log(event.target);
 		url="";
 		temprory=($("#experimentform").serializeArray());
 		for(i =0;i<temprory.length;i++)
