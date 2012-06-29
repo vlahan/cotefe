@@ -117,9 +117,12 @@ var DashBoardContentView =Backbone.View.extend({
 		
 		delres.destroy({
 				success : _.bind(function(model, response) {
+					var al=new Alert({classname:"alertSuccess",message:"Resource Deletion Successfull !"});
+					al.render("alertSuccess","Resource Deletion Successfull !");
 	                console.log(model);  
 	            }, this),
 	            error : _.bind(function(model, response) {
+	            	var al=new Alert({classname:"alertFail",message:"Resource Deletion failed !"});
 				  	console.log(model);
 			    }, this)
 			    
@@ -178,7 +181,7 @@ var DashBoardContentView =Backbone.View.extend({
 		
 		menu = new EJS({url: '../templates/dashboard.ejs'}).render(data);
 		$(this.el).html(menu).fadeIn();
-		
+				
 		events.initSignOut();
 		events.tabs();
 		
@@ -214,7 +217,7 @@ var LeftMenuView=Backbone.View.extend({
 var ProjectEdit=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
-},
+		},
 	events:
 		{
 			"click input[name=submit]":'submit',		
@@ -222,7 +225,6 @@ var ProjectEdit=Backbone.View.extend({
 		
 	submit:function(event){
 		event.preventDefault();	
-		console.log(event.target);
 		url="";
 		temprory=($("#projectform").serializeArray());
 		for(i =0;i<temprory.length;i++)
@@ -243,7 +245,18 @@ var ProjectEdit=Backbone.View.extend({
 		res=this.model;	
 		
 		res.url=url+"?access_token="+getToken();
-		res.save({success:function(){alert("Successfully updated");}});
+		res.save({wait: true,
+			
+			success : function(model, response) {
+                console.log(response); 
+                var al=new Alert({classname:"alertSuccess",message:"Project create/update done!"});
+            },
+            error :function(model, response) {
+			  	console.log(model);
+		    },
+			
+			
+		});
 		
 	},	
 	render:function()
@@ -310,3 +323,23 @@ var ExperimentEdit=Backbone.View.extend({
 	}
 	
 });
+
+
+var Alert=Backbone.View.extend({
+	
+	el:'body',
+	initialize:function(){},
+	
+	render:function(classname,message)
+	{		
+		var data={
+				classname	: classname,
+				message		: message,				
+			};		
+			menu = new EJS({url: '../templates/alert.ejs'}).render(data);
+			$(this.el).append(menu).fadeIn().delay(3000).queue(function() {$("#alert").remove();
+		});
+	}
+	
+});
+

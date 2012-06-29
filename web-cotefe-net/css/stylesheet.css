@@ -42,10 +42,10 @@ article h3,#header nav a{color:#dc7621;}
 border-bottom-right-radius: 10px;}
 .roundBl,.alertSuccess,.alertFail{
 	-moz-border-radius-bottomleft: 10px;
-border-bottom-left-radius: 10px;
+	border-bottom-left-radius: 10px;
 }
-.alertFail{position:absolute;top:0px;left:300px;display:block;background-color:#cc0000;border: 1px solid #ff0000;}
-.alertSuccess{position:absolute;top:0px;left:300px;display:block;background-color:#ccff00;border: 1px solid #00ff00;}
+.alertFail{position:fixed;top:0px;left:50%;display:block;background-color:#cc0000;border: 1px solid #ff0000;}
+.alertSuccess{position:fixed;top:0px;left:50%;display:block;background-color:#ccff00;border: 1px solid #00ff00;}
 .alertSuccess span,.alertFail{display:block;padding:10px;}
 
 #header{position:relative;}
