@@ -119,9 +119,21 @@ var DashBoardContentView =Backbone.View.extend({
 	deletep:function(event)
 	{
 		event.preventDefault();
-		res=new  cotefe.Resource();
-		res.url=event.target+"?access_token="+getToken();
-		res.destroy();
+		var delres=new  cotefe.Resource();
+		var path=(event.target.attributes[0].nodeValue);
+		delres.id=2000002;
+		delres.url=path+"?access_token="+getToken();
+		console.log(delres);
+		delres.destroy({
+				success : _.bind(function(model, response) {
+					console.log("Success");
+	                console.log(model);
+	            }, this),
+	            error : _.bind(function(model, response) {
+	            	console.log("Error");
+				  	console.log(model);
+			    }, this)
+		});
 	},
 	edite:function(event) { 
 		event.preventDefault();
