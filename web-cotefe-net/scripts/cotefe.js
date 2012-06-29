@@ -31,7 +31,7 @@ var cotefe=(function($){
 			        				return (model);
 			      				}
 		    				});
-		  				}
+		  				},
 		  	
         			}),
         			

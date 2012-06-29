@@ -17,17 +17,17 @@
                                     		items=projects[i];
                                     		
                                     	%>
-                                    	<option value="<%= items.id %> " <% 
+                                    	<option value="<%= projects[i].id %> " <% 
                                     	if(selected != undefined || selected !=null)
                                     	{
                                     		
-                                    		if(selected.id===items.id)
+                                    		if(selected.id==projects[i].id)
                                     		{
                                     			%> selected <%
                                     		}
                                     	}
                                     	                                    	
-                                    	 %>  ><%= items.name %></option>
+                                    	 %>  ><%= projects[i].name %></option>
                                     <% }
                                     } %>
                                     

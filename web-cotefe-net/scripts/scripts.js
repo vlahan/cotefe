@@ -71,7 +71,7 @@ events.tabs				=function(){
 
 
 /*
- * dash-board views
+ * dashboard views
  */
 var DashBoardGreetView=Backbone.View.extend({
 	
@@ -101,29 +101,39 @@ var DashBoardContentView =Backbone.View.extend({
 			this.render();
 	},
 	events:{
-		"click #content .edit":'edit',
-		"click #content .delete":'deleteo',
+		"click #content #projects .edit":'editp',
+		"click #content #projects .delete":'deletep',
+		"click #content #experiments .edit":'edite',
+		"click #content #experiments .delete":'deletee',
 	},
-	edit:function(event) { 
-		event.preventDefault();	
+	editp:function(event) { 
+		event.preventDefault();
 		
 		res=new  cotefe.Resource();
 		res.url=event.target+"?access_token="+getToken();
-		
-		type=(event.target.parentNode.parentNode.parentNode.parentNode.id);
-		switch(type)
-		{
-			case "projects":res.display("",ProjectEdit);break;
-			case "experiments":res.display("",ExperimentEdit);break;
-		}
+		res.display("",ProjectEdit);
 		
 	},
-	deleteo:function(event) { 
+	deletep:function(event)
+	{
 		event.preventDefault();
 		res=new  cotefe.Resource();
 		res.url=event.target+"?access_token="+getToken();
-		console.log(res.url);
-		res.destroy({success:function(){alert("Successfully Deleted");}});
+		res.destroy();
+	},
+	edite:function(event) { 
+		event.preventDefault();
+		res=new  cotefe.Resource();
+		res.url=event.target+"?access_token="+getToken();
+		res.display("",ExperimentEdit);
+		
+	},
+	deletee:function(event)
+	{
+		event.preventDefault();
+		res=new  cotefe.Resource();
+		res.url=event.target+"?access_token="+getToken();
+		res.destroy();
 	},
 	render:function()
 	{	
@@ -191,19 +201,18 @@ var LeftMenuView=Backbone.View.extend({
 	}
 	
 });
-
 var ProjectEdit=Backbone.View.extend({
 	el:"#content",
-	initialize:function(){_.bindAll(this,"render");this.render();
-			$(this.el).undelegate('input[name=submit]', 'click');
-	},
+	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
+},
 	events:
 		{
 			"click input[name=submit]":'submit',		
 		},
 		
 	submit:function(event){
-		event.preventDefault();		
+		event.preventDefault();	
+		console.log(event.target);
 		url="";
 		temprory=($("#projectform").serializeArray());
 		for(i =0;i<temprory.length;i++)
@@ -222,14 +231,13 @@ var ProjectEdit=Backbone.View.extend({
 			}
 		
 		res=this.model;	
-		console.log(res);
+		
 		res.url=url+"?access_token="+getToken();
 		res.save({success:function(){alert("Successfully updated");}});
 		
 	},	
 	render:function()
 	{	
-		
 		data={
 				uri			:this.model.attributes.uri,
 				type		:"projects",
@@ -242,7 +250,6 @@ var ProjectEdit=Backbone.View.extend({
 	}
 	
 });
-
 var ExperimentEdit=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
@@ -253,7 +260,8 @@ var ExperimentEdit=Backbone.View.extend({
 		},
 		
 	submit:function(event){
-		event.preventDefault();		
+		event.preventDefault();	
+		console.log(event.target);
 		url="";
 		temprory=($("#experimentform").serializeArray());
 		for(i =0;i<temprory.length;i++)
@@ -272,20 +280,19 @@ var ExperimentEdit=Backbone.View.extend({
 			}
 		
 		res=this.model;	
-		console.log(res);
+		
 		res.url=url+"?access_token="+getToken();
 		res.save({success:function(){alert("Successfully updated");}});
 		
 	},	
 	render:function()
 	{	
-		obj=JSON.parse(sessionStorage.getItem("user"));
+		
 		data={
 				uri			:this.model.attributes.uri,
 				type		:"experiments",
 				name		:this.model.attributes.name,
 				selected	:this.model.attributes.project,
-				projects	:obj.projects,
 				description	:this.model.attributes.description,
 		},
 		
@@ -294,4 +301,3 @@ var ExperimentEdit=Backbone.View.extend({
 	}
 	
 });
-
