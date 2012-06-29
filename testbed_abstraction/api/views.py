@@ -41,6 +41,7 @@ def testbed_handler(request):
         resource['organization'] = config.TESTBED_ORGANIZATION
         resource['city'] = config.TESTBED_CITY
         resource['country'] = config.TESTBED_COUNTRY
+        resource['platforms'] = config.SERVER_URL+'/platforms/'
         resource['nodes'] = config.SERVER_URL+'/nodes/'
         resource['jobs'] = config.SERVER_URL+'/jobs/'
         # resource['images'] = config.SERVER_URL+'/images/'
