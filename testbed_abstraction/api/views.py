@@ -43,8 +43,8 @@ def testbed_handler(request):
         resource['country'] = config.TESTBED_COUNTRY
         resource['nodes'] = config.SERVER_URL+'/nodes/'
         resource['jobs'] = config.SERVER_URL+'/jobs/'
-        resource['images'] = config.SERVER_URL+'/images/'
-        resource['users'] = config.SERVER_URL+'/users/'
+        # resource['images'] = config.SERVER_URL+'/images/'
+        # resource['users'] = config.SERVER_URL+'/users/'
         
         response = HttpResponse()
         response['Content-Type'] = 'application/json'
