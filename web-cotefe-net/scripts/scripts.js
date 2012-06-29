@@ -114,19 +114,19 @@ var DashBoardContentView =Backbone.View.extend({
 		var path=(event.target);
 		delres.id=2000002;
 		delres.url=path+"?access_token="+getToken();
-		
 		delres.destroy({
-				success : _.bind(function(model, response) {
+				success :function(model, response) {
 					var al=new Alert({classname:"alertSuccess",message:"Resource Deletion Successfull !"});
 					al.render("alertSuccess","Resource Deletion Successfull !");
-	                console.log(model);  
-	            }, this),
-	            error : _.bind(function(model, response) {
+					 $('a[href="'+event.target+'"]').parent().parent().remove();
+	            },
+	            error :function(model, response) {
 	            	var al=new Alert({classname:"alertFail",message:"Resource Deletion failed !"});
 				  	console.log(model);
-			    }, this)
+			    },
 			    
 		});
+		
 	},
 	edite:function(event) { 
 		event.preventDefault();
@@ -337,8 +337,7 @@ var Alert=Backbone.View.extend({
 				message		: message,				
 			};		
 			menu = new EJS({url: '../templates/alert.ejs'}).render(data);
-			$(this.el).append(menu).fadeIn().delay(3000).queue(function() {$("#alert").remove();
-		});
+			$(this.el).append(menu).fadeIn().delay(3000).queue(function() {$("#alert").fadeOut();$("#alert").remove(); });
 	}
 	
 });
