@@ -116,13 +116,13 @@ var DashBoardContentView =Backbone.View.extend({
 		delres.url=path+"?access_token="+getToken();
 		delres.destroy({
 				success :function(model, response) {
-					var al=new Alert({classname:"alertSuccess",message:"Resource Deletion Successfull !"});
+					var al=new Alert({});
 					al.render("alertSuccess","Resource Deletion Successfull !");
 					 $('a[href="'+event.target+'"]').parent().parent().remove();
 	            },
 	            error :function(model, response) {
-	            	var al=new Alert({classname:"alertFail",message:"Resource Deletion failed !"});
-				  	console.log(model);
+	            	var al=new Alert({});
+	            	al.render("alertFail","Resource Deletion failed !");
 			    },
 			    
 		});
@@ -245,14 +245,25 @@ var ProjectEdit=Backbone.View.extend({
 		res=this.model;	
 		
 		res.url=url+"?access_token="+getToken();
-		res.save({wait: true,
+		res.save({ id: this.model.get('id') },{
 			
 			success : function(model, response) {
-                console.log(response); 
-                var al=new Alert({classname:"alertSuccess",message:"Project create/update done!"});
+                console.log(model);
+                var al=new Alert({});
+				
+                if(model.id==undefined)
+                	{
+                		al.render("alertSuccess","Project created successfully!");
+                	}
+                else
+                	{
+                		al.render("alertSuccess","Project updated successfully!");
+                	}
+                
             },
             error :function(model, response) {
-			  	console.log(model);
+            	var al=new Alert({});
+				al.render("alertFail","Project create/update Failed!");
 		    },
 			
 			
@@ -337,7 +348,7 @@ var Alert=Backbone.View.extend({
 				message		: message,				
 			};		
 			menu = new EJS({url: '../templates/alert.ejs'}).render(data);
-			$(this.el).append(menu).fadeIn().delay(3000).queue(function() {$("#alert").fadeOut();$("#alert").remove(); });
+			$(this.el).append(menu).fadeIn().delay(3000).queue(function() {$("#alert").fadeOut(); });
 	}
 	
 });
