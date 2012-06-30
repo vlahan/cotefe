@@ -18,16 +18,12 @@ class FederationResourceHandler(OAuth2RESTJSONHandler):
         r['media_type'] =   config.MEDIA_TYPE
         r['name'] =         config.FEDERATION_NAME
         r['description'] =  config.FEDERATION_DESCRIPTION
+        r['users'] =        '%s/%s/' % (config.FEDERATION_SERVER_URL, 'users')
         r['testbeds'] =     '%s/%s/' % (config.FEDERATION_SERVER_URL, 'testbeds')
         r['platforms'] =    '%s/%s/' % (config.FEDERATION_SERVER_URL, 'platforms')
-        r['interfaces'] =   '%s/%s/' % (config.FEDERATION_SERVER_URL, 'interfaces')
-        r['sensors'] =      '%s/%s/' % (config.FEDERATION_SERVER_URL, 'sensors')
-        r['actuators'] =    '%s/%s/' % (config.FEDERATION_SERVER_URL, 'actuators')
         r['projects'] =     '%s/%s/' % (config.FEDERATION_SERVER_URL, 'projects')
         r['experiments'] =  '%s/%s/' % (config.FEDERATION_SERVER_URL, 'experiments')
         r['jobs'] =         '%s/%s/' % (config.FEDERATION_SERVER_URL, 'jobs')
-        r['users'] =        '%s/%s/' % (config.FEDERATION_SERVER_URL, 'users')
-        r['images'] =       '%s/%s/' % (config.FEDERATION_SERVER_URL, 'images')
         
         self.response.out.write(utils.serialize(r))
         

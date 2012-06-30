@@ -1,0 +1,2 @@
+RUN LOCALLY WITH
+dev_appserver.py . -a 0.0.0.0 -p 8080 --datastore_path=cotefe.datastore

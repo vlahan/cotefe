@@ -1,5 +1,4 @@
 import json
-import hashlib
 import uuid
 from datetime import datetime
 
@@ -7,15 +6,6 @@ import config
 
 def build_url(server_url = config.FEDERATION_SERVER_URL, path = '/'):
     return '%s%s' % (server_url, path)
-
-def encrypt(word):
-    return hashlib.md5(word).hexdigest()
-
-# generated random 16 characters strings as identifiers
-# more info at http://docs.python.org/library/uuid.html
-
-def generate_hash():
-    return uuid.uuid4().hex
    
 
 # (de)serialization of python dictionaries and lists into JSON format
@@ -26,6 +16,11 @@ def serialize(dict_or_list):
 
 def deserialize(string):
     return json.loads(string)
+
+# generates a 16 digits hex string
+
+def generate_hash():
+    return uuid.uuid4().hex
 
 
 # datetime and time zone utility functions

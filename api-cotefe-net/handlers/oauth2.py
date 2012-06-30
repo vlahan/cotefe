@@ -98,9 +98,9 @@ class OAuth2Token(BaseHandler):
     
     def post(self):
         
-        grant_type = self.request.get('grant_type')
+        # grant_type = self.request.get('grant_type')
         code = self.request.get('code')
-        redirect_uri = self.request.get('redirect_uri')
+        # redirect_uri = self.request.get('redirect_uri')
         oauth2session_list = OAuth2Session.all().filter('code =', code).fetch(1)
         oauth2session = oauth2session_list[0]
         oauth2session.access_token = utils.generate_hash()

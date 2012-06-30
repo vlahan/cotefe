@@ -1,4 +1,4 @@
-from handlers import admin, openid, oauth2, www, user, federation, platform, interface, sensor, actuator, testbed, image, project, experiment, propertyset, virtualnode, virtualnodegroup, virtualtask, job
+from handlers import admin, openid, oauth2, www, user, federation, platform, testbed, image, project, experiment, propertyset, virtualnode, virtualnodegroup, virtualtask, job
 
 routes = [    
 
@@ -45,15 +45,6 @@ routes = [
     
     (r'^/platforms/$', platform.PlatformCollectionHandler),
     (r'^/platforms/(\w+)$', platform.PlatformResourceHandler),
-    
-    (r'^/interfaces/$', interface.InterfaceCollectionHandler),
-    (r'^/interfaces/(\w+)$', interface.InterfaceResourceHandler),
-    
-    (r'^/sensors/$', sensor.SensorCollectionHandler),
-    (r'^/sensors/(\w+)$', sensor.SensorResourceHandler),
-    
-    (r'^/actuators/$', actuator.ActuatorCollectionHandler),
-    (r'^/actuators/(\w+)$', actuator.ActuatorResourceHandler),
     
     (r'^/testbeds/$', testbed.TestbedCollectionHandler),
     (r'^/testbeds/(\w+)$', testbed.TestbedResourceHandler),

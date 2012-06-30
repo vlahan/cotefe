@@ -1,9 +1,6 @@
-import logging
-import string
 from collections import OrderedDict
 
 from google.appengine.ext import db
-from google.appengine.ext.db import polymodel
 
 import config
 import utils
@@ -16,6 +13,7 @@ class Relationship(db.Model):
 
 class User(Resource):
     username = db.StringProperty()
+    # password has beed disabled since we only allow login via OpenID
     # password = db.StringProperty()
     first = db.StringProperty()
     last = db.StringProperty()
@@ -25,15 +23,18 @@ class User(Resource):
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
+    def id(self):
+        return self.key().id()
+    
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.key().id())
+        return '%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'users', self.id())
     
     def to_dict(self, head_only = False):
         r = OrderedDict()
+        r['id'] = self.id()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['username'] = self.username
-        r['id'] = self.key().id()
         if not head_only:
             r['first'] = self.first
             r['last'] = self.last
@@ -71,32 +72,27 @@ class OAuth2Session(db.Model):
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
-        
 class Testbed(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
-    
     organization = db.StringProperty()
     homepage = db.LinkProperty()
     server_url = db.LinkProperty()
-    node_count = db.IntegerProperty()
-    
-    background_image_url = db.LinkProperty()
-    coordinates_mapping_function_x = db.StringProperty()
-    coordinates_mapping_function_y = db.StringProperty()
-    
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
+    def id(self):
+        return self.key().name()
+    
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.key().name())
+        return '%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'testbeds', self.id())
     
     def to_dict(self, head_only = False):
         r = OrderedDict()
+        r['id'] = self.id()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
-        r['id'] = self.key().name()
         if not head_only:
             r['description'] = self.description
             r['organization'] = self.organization
@@ -105,56 +101,38 @@ class Testbed(Resource):
             # r['nodes'] = build_url(path = '/nodes/')
             # r['node_count'] = self.node_count
             # r['jobs'] = build_url(path = '/jobs/')
-            
-            r['background_image_url'] = self.background_image_url
-            r['coordinates_mapping_function_x'] = self.coordinates_mapping_function_x
-            r['coordinates_mapping_function_y'] = self.coordinates_mapping_function_y
-            
             r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
             r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
     
-class ReadOnlyResouce(polymodel.PolyModel):
-    
+class Platform(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
-    
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
+    def id(self):
+        return self.key().name()
+    
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.key().name())
+        return '%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'platforms', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
+        r['id'] = self.id()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
-        r['id'] = self.key().name()
         if not head_only:
             r['description'] = self.description
             r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
             r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
-    
-class Platform(ReadOnlyResouce):
-    pass
-
-class Interface(ReadOnlyResouce):
-    pass
-
-class Sensor(ReadOnlyResouce):
-    pass
-
-class Actuator(ReadOnlyResouce):
-    pass
 
 class Project(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
-    
     owner = db.ReferenceProperty(User, collection_name='projects')
-
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
 
@@ -162,14 +140,14 @@ class Project(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, 'projects', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
+        r['id'] = self.id()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
-        r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
             r['owner'] = self.owner.to_dict(head_only = True)
@@ -187,10 +165,8 @@ class Project(Resource):
 class Experiment(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
-    
     owner = db.ReferenceProperty(User, collection_name='experiments')
     project = db.ReferenceProperty(Project, collection_name='experiments')
-    
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
 
@@ -198,14 +174,14 @@ class Experiment(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, 'experiments', self.id())
     
     def to_dict(self, head_only = False):
         r = OrderedDict()
+        r['id'] = self.id()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
-        r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
             try:
@@ -231,12 +207,9 @@ class Experiment(Resource):
 class Image(Resource):
     name = db.StringProperty()
     description = db.TextProperty()
-    
     imagefile = db.BlobProperty()
-    
     owner = db.ReferenceProperty(User, collection_name='images')
     experiment = db.ReferenceProperty(Experiment, collection_name='images')
-    
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
@@ -244,14 +217,14 @@ class Image(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, 'images', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
+        r['id'] = self.id()
         r['uri'] = self.uri()
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
-        r['id'] = self.id()
         if not head_only:
             r['description'] = self.description
             if self.imagefile:
@@ -285,7 +258,7 @@ class PropertySet(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, 'property-sets', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -326,7 +299,7 @@ class VirtualNode(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
+        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, 'virtual-nodes', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -400,8 +373,8 @@ class VirtualNodeGroup(Resource):
         return r
         
 class VirtualNodeGroup2VirtualNode(Relationship):
-   vng = db.ReferenceProperty(VirtualNodeGroup, collection_name='virtual_nodes')
-   vn = db.ReferenceProperty(VirtualNode, collection_name='virtual_nodegroups')
+    vng = db.ReferenceProperty(VirtualNodeGroup, collection_name='virtual_nodes')
+    vn = db.ReferenceProperty(VirtualNode, collection_name='virtual_nodegroups')
             
 class VirtualTask(Resource):
     name = db.StringProperty()
@@ -421,7 +394,7 @@ class VirtualTask(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
+        return '%s/%s/%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'experiments', self.experiment.id(), 'virtual-tasks', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -460,7 +433,7 @@ class Job(Resource):
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.key().id())
+        return '%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'jobs', self.key().id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -507,7 +480,7 @@ class Task(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
+        return '%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'tasks', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()

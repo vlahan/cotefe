@@ -6,14 +6,6 @@ threadsafe: yes
 
 handlers:
 
-# CRON
-
-# - url: /report/weekly
-#   script: reports.py
-#   login: admin
-  
-# WEB INTERFACE
-
 - url: /css
   static_dir: static/css
   
