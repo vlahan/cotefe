@@ -248,7 +248,6 @@ var ProjectEdit=Backbone.View.extend({
 		res.save({ id: this.model.get('id') },{
 			
 			success : function(model, response) {
-                console.log(model);
                 var al=new Alert({});
 				
                 if(model.id==undefined)
@@ -315,7 +314,28 @@ var ExperimentEdit=Backbone.View.extend({
 		res=this.model;	
 		
 		res.url=url+"?access_token="+getToken();
-		res.save({success:function(){alert("Successfully updated");}});
+		res.save({ id: this.model.get('id') },{
+					
+					success : function(model, response) {
+		                var al=new Alert({});
+						
+		                if(model.id==undefined)
+		                	{
+		                		al.render("alertSuccess","Experiment created successfully!");
+		                	}
+		                else
+		                	{
+		                		al.render("alertSuccess","Experiment updated successfully!");
+		                	}
+		                
+		            },
+		            error :function(model, response) {
+		            	var al=new Alert({});
+						al.render("alertFail","Experiment create/update Failed!");
+				    },
+					
+					
+				});
 		
 	},	
 	render:function()
@@ -338,8 +358,8 @@ var ExperimentEdit=Backbone.View.extend({
 
 var Alert=Backbone.View.extend({
 	
-	el:'body',
-	initialize:function(){},
+	el:'#alert-wrapper',
+	initialize:function(){$("#alert").remove();},
 	
 	render:function(classname,message)
 	{		
@@ -348,7 +368,9 @@ var Alert=Backbone.View.extend({
 				message		: message,				
 			};		
 			menu = new EJS({url: '../templates/alert.ejs'}).render(data);
-			$(this.el).append(menu).fadeIn().delay(3000).queue(function() {$("#alert").fadeOut(); });
+			$(this.el).append(menu).fadeIn().delay(3000).fadeOut(500, function(){
+			      $(this.el).html("");
+			  });//queue(function() {$("#alert").fadeOut();$("#alert").remove(); });
 	}
 	
 });

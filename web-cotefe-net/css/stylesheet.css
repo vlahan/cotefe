@@ -44,8 +44,8 @@ border-bottom-right-radius: 10px;}
 	-moz-border-radius-bottomleft: 10px;
 	border-bottom-left-radius: 10px;
 }
-.alertFail{position:fixed;top:0px;left:50%;display:block;background-color:#cc0000;border: 1px solid #ff0000;}
-.alertSuccess{position:fixed;top:0px;left:50%;display:block;background-color:#ccff00;border: 1px solid #00ff00;}
+.alertFail{z-index:2000;position:fixed;top:0px;left:50%;display:block;background-color:#cc0000;border: 1px solid #ff0000;}
+.alertSuccess{z-index:2000;position:fixed;top:0px;left:50%;display:block;background-color:#ccff00;border: 1px solid #00ff00;}
 .alertSuccess span,.alertFail{display:block;padding:10px;}
 
 #header{position:relative;}
@@ -117,7 +117,7 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { background: #fff;	bord
 .tab_content table tr{height:30px;}
 .tab_content table tr:nth-child(odd) {background: #EAEAEA;}
 .tab_content table tr:hover {background: #ccc;}
-.tab_content table th{background-color:#ffffff;color:#2D2D2D;padding-left:10px;text-align:left;border-bottom:5px solid #DC7621;;}
+.tab_content table th{background-color:#ffffff;color:#2D2D2D;padding-left:10px;text-align:left;border-bottom:5px solid #DC7621;}
 .tab_content table tr td{padding-left:10px;}
 .tab_content form table tr td{width:50%;}
 .tab_content table tr td a{color:#DC7621;}
