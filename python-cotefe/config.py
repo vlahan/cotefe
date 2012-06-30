@@ -1,0 +1,28 @@
+# SERVER_URL = 'https://api.cotefe.net'
+SERVER_URL = 'http://localhost:8080'
+
+# OAUTH 2.0 CONFIGURATION
+CLIENT_ID = '7bee3a1b88b14a928c2c1834c62f11ca'
+CLIENT_SECRET = '05e2c245ce4d461f8135a8e5790a4b8d'
+REDIRECT_URI = 'http://localhost'
+
+# EXPERIMENT CONFIGURATION
+
+DEFAULT_NAME = 'DEMO'
+DEFAULT_DESCRIPTION = 'EWSN 2012 DEMO - PLEASE DO NOT DELETE!'
+PLATFORM_NAME = 'tmotesky'
+# NUM_NODES_S = 1
+# NUM_NODES_P = 93
+# NUM_NODES_I = 2
+NUM_NODES_S = 1
+NUM_NODES_P = 3
+NUM_NODES_I = 2
+IMAGEFILE_S = 'images/demo_image_subscriber_ctp'
+IMAGEFILE_P = 'images/demo_image_publishers_ctp'
+IMAGEFILE_I = 'images/demo_image_interferers'
+
+NUM_NODES_ALL = NUM_NODES_S + NUM_NODES_P + NUM_NODES_I
+
+CALENDAR_SPAN_DAYS = 7
+START_JOB_IN_MINUTES = 1
+END_JOB_IN_MINUTES = 61

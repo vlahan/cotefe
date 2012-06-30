@@ -1,8 +1,13 @@
 class Resource(object):
     
-    def __str__(self):
-        
+    def __repr__(self):
         return self.uri
+    
+    def __str__(self):
+        return self.__repr__()
+    
+    def __unicode__(self):
+        return self.__repr__()
     
 class User(Resource):
     def __init__(self, d):
@@ -20,11 +25,11 @@ class Federation(Resource):
         self.name = d['name']
 
 class Testbed(Resource):
-     def __init__(self, d):
+    def __init__(self, d):
+        self.id = d['id']
         self.uri = d['uri']
         self.name = d['name']
         self.organization = d['organization']
-        self.id
 
 class Platform(Resource):
     def __init__(self, d):
