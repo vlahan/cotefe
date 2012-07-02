@@ -139,7 +139,7 @@ var DashBoardContentView =Backbone.View.extend({
 	
 	editj:function(event) { 
 		event.preventDefault();
-		$(this.el).remove();
+		$(this.el).html("");
 		res=new  cotefe.Resource();
 		res.url=event.target+"?access_token="+getToken();
 		res.display("",ExperimentEdit);
