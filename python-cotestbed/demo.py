@@ -208,6 +208,7 @@ logging.info('Now check your job again at %s' % my_job)
 webbrowser.open(my_job.uri)
 
 # RUNNING THE TASKS
+# TODO: Add breaks between tasks/commands
 
 logging.info('# # # # # JOB EXECUTION STARTED # # # # #')
 
