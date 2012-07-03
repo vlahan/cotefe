@@ -143,7 +143,14 @@ def node_collection_handler(request):
             
             platform = Platform.objects.get(id = 'homematic')
             
-            device_list = homematic_proxy.listDevices()
+            try:
+              device_list = homematic_proxy.listDevices()
+            except Exception
+              except Exception:
+              # 500
+                response = HttpResponseServerError()
+                response['Content-Type'] = 'application/json'
+                return response
             
             node_list = Node.objects.all().filter(platform = platform)
             channel_list = Channel.objects.all()
@@ -160,9 +167,12 @@ def node_collection_handler(request):
                 if (parent!='' and parent!= 'BidCoS-RF'):
     
                     #Getting the paramset description and the paramset for each device
-                    paramset = homematic_proxy.getParamset(n['ADDRESS'],"VALUES")
-                    paramset_description = homematic_proxy.getParamsetDescription(n['ADDRESS'],"VALUES")
-    
+                    try:
+                      paramset = homematic_proxy.getParamset(n['ADDRESS'],"VALUES")
+                      paramset_description = homematic_proxy.getParamsetDescription(n['ADDRESS'],"VALUES")
+                    except Exception:
+                      break
+                    
                     # Adding new nodes
                     if not check_node_presence(parent, node_list):
                         if (parent not in hmnodes):
