@@ -309,7 +309,13 @@ var ProjectEdit=Backbone.View.extend({
 var ProjectList=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();
+		$(this.el).undelegate('.headings a', 'click');
 		},
+	events:{
+		"click .headings a":function(event){event.preventDefault();
+			res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});
+		},
+	},
 	render:function()
 	{	
 		
@@ -325,7 +331,7 @@ var ProjectList=Backbone.View.extend({
 		
 		menu = new EJS({url: '../templates/tableModel.ejs'}).render(datap);	
 		
-		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:""});
+		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#"});
 		$(this.el).html(listing).fadeIn();
 	}
 	
@@ -334,11 +340,13 @@ var ProjectList=Backbone.View.extend({
 var ExperimentList=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();
+	$(this.el).undelegate('.headings a', 'click');
+	},
+	events:{
+		"click .headings a":function(event){event.preventDefault();
+		res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});
 		},
-	events:
-		{
-				
-		},
+	},
 	render:function()
 	{	
 		
@@ -352,9 +360,9 @@ var ExperimentList=Backbone.View.extend({
 				objects:projectssession,				
 		};
 		
-		menu = new EJS({url: '../templates/tableModel.ejs'}).render(datap);	
+		menu = new EJS({url: '../templates/tableModelex.ejs'}).render(datap);	
 		
-		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:""});
+		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#"});
 		$(this.el).html(listing).fadeIn();
 	}
 	

@@ -13,15 +13,6 @@
 				for(i=0; i<len; i++) {%>
 					<tr>
 						<td><a href="<%=objects[i].uri%>" class="experimentResource"><%= objects[i].name %></a></td>
-						<%
-							if(objects[i].project != undefined)
-							{
-								
-								%><td><%= objects[i].project.name %></td><%
-							}
-						%>
-						<td><%= objects[i].datetime_created %></td>
-						
 						<td><a href="<%= objects[i].uri %>" class="edit"  >Edit</a></td>
 						<td><a href="<%= objects[i].uri %>" class="delete"  >Delete</a></td>
 					</tr>
