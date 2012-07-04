@@ -1,23 +1,25 @@
 	<div>
-		Name:
-		<%= name %><br><br>
-		ID:
-		<%= id %><br><br>
-		URI:
-		<%= uri %><br><br>
-		Description:
-		<%= description %><br><br>
-		Organization:
-		<%= organization %><br><br>
-		Server URL:
-		<%= server_url %><br><br>
-		
-		Coordinates mapping function x:
-		<%= coordinates_mapping_function_x %><br><br>
-		Coordinates mapping function y:
-		<%= coordinates_mapping_function_y %><br><br>
-		Creation Date:
-		<%= datetime_created %><br><br>
-		Modification Date:<%= arr.datetime_modified %>
+		<table>
+			<tr><td>Name:</td><td><%= name %></td></tr>
+			<tr><td>ID:</td><td>
+				<%= id %></td></tr>
+			<tr><td>URI:</td><td>
+				<%= uri %></td></tr>
+			
+			<tr><td>Organization:</td><td>
+				<%= organization %></td></tr>
+			<tr><td>Server URL:</td><td>
+				<%= server_url %></td></tr>
+				
+			<tr><td>Coordinates mapping function x:</td><td>
+				<%= coordinates_mapping_function_x %></td></tr>
+			<tr><td>Coordinates mapping function y:</td><td>
+				<%= coordinates_mapping_function_y %></td></tr>
+			<tr><td>Creation Date:</td><td>
+				<%= datetime_created %></td></tr>
+			<tr><td>Modification Date:</td><td><%= arr.datetime_modified %></td></tr>
+			<tr><td colspan="2">
+				<%= description %></td></tr>
+		</table>
 	</div>				
 					
