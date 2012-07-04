@@ -35,7 +35,7 @@ var cotefe=(function($){
 		  	
         			}),
         			
-        ResourceList: Backbone.Collection.extend({display:function(item){	this.fetch({success: function(model,result) {new view({model:model});}})},
+        ResourceList: Backbone.Collection.extend({display:function(item,view){	this.fetch({success: function(model,result) {new view({model:model});}})},
 		 }),
        
     };

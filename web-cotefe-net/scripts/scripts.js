@@ -17,7 +17,7 @@ $(document).ready(function(){
 	/*
 	 * user info of dash-board
 	 */
-	res=new  cotefe.Resource({model:cotefe.Resource});
+	res=new  cotefe.Resource();
 	res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
 	res.display("",DashBoardGreetView);
 	
@@ -59,6 +59,16 @@ events.tabs				=function(){
         return false;
     });
 };
+
+
+function UpdateSession(data)
+{
+	if( sessionStorage.getItem("user"))
+		{
+			sessionStorage.setItem("user",data);	
+		
+		}
+}
 
 
 
@@ -122,7 +132,7 @@ var DashBoardContentView =Backbone.View.extend({
 				success :function(model, response) {
 					var al=new Alert({});
 					al.render("alertSuccess","Resource Deletion Successfull !");
-					 $('a[href="'+event.target+'"]').parent().parent().remove();
+					 $('a[href="'+event.target+'"]').parent().parent().remove();					 
 	            },
 	            error :function(model, response) {
 	            	var al=new Alert({});
@@ -198,11 +208,17 @@ var LeftMenuView=Backbone.View.extend({
 	initialize:function(){_.bindAll(this,"render");this.render();},
 	events:{
 		"click #signout":'signout',
-		"click #homescreen":function(){res=new  cotefe.Resource({model:cotefe.Resource});
+		"click #homescreen , #dashboard":function(){res=new  cotefe.Resource();
 							res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
 							res.display("",DashBoardContentView);},
 		"click #addP":function(){res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
+		"click #listP":function(){res=new  cotefe.Resource();
+								 res.url=cotefe.apiUri+cotefe.projects.uri+"?access_token="+getToken();
+								 res.display("",ProjectList);},
 		"click #addE":function(){res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});},		
+		"click #listE":function(){res=new  cotefe.Resource();
+		 res.url=cotefe.apiUri+cotefe.experiments.uri+"?access_token="+getToken();
+		 res.display("",ExperimentList);},
 	},
 	signout:function(event) { event.preventDefault();cotefe.signOut();},
 	render:function()
@@ -256,6 +272,8 @@ var ProjectEdit=Backbone.View.extend({
 				
                 if(model.id==undefined)
                 	{
+                		
+                		
                 		al.render("alertSuccess","Project created successfully!");
                 	}
                 else
@@ -287,6 +305,62 @@ var ProjectEdit=Backbone.View.extend({
 	}
 	
 });
+
+var ProjectList=Backbone.View.extend({
+	el:"#content",
+	initialize:function(){_.bindAll(this,"render");this.render();
+		},
+	render:function()
+	{	
+		
+		
+		var projectssession=JSON.parse(sessionStorage.getItem("user")).projects;
+		row=projectssession.length;
+		
+		datap={
+				type:"projects",
+				headings:['Project Name','Edit','Delete'],
+				objects:projectssession,				
+		};
+		
+		menu = new EJS({url: '../templates/tableModel.ejs'}).render(datap);	
+		
+		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:""});
+		$(this.el).html(listing).fadeIn();
+	}
+	
+});
+
+var ExperimentList=Backbone.View.extend({
+	el:"#content",
+	initialize:function(){_.bindAll(this,"render");this.render();
+		},
+	events:
+		{
+				
+		},
+	render:function()
+	{	
+		
+		
+		var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
+		row=projectssession.length;
+		
+		datap={
+				type:"experiments",
+				headings:['Experiment Name','Edit','Delete'],
+				objects:projectssession,				
+		};
+		
+		menu = new EJS({url: '../templates/tableModel.ejs'}).render(datap);	
+		
+		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:""});
+		$(this.el).html(listing).fadeIn();
+	}
+	
+});
+
+
 var ExperimentEdit=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
@@ -370,10 +444,16 @@ var Alert=Backbone.View.extend({
 		var data={
 				classname	: classname,
 				message		: message,				
-			};		
+			};	
+			res=new  cotefe.Resource();
+			res.url=cotefe.apiUri+cotefe.user.uri+"?access_token="+getToken();
+			res.fetch({	success: function(model, response) { UpdateSession(JSON.stringify(model));}});
+		
 			menu = new EJS({url: '../templates/alert.ejs'}).render(data);
+			
 			$(this.el).append(menu).fadeIn().delay(3000).fadeOut(500, function(){
-			      $(this.el).html("");
+					
+					$(this.el).html("");
 			  });
 	}
 	
