@@ -6,9 +6,10 @@
 					<td width="25%" valign="top">
 						<ul id="tablesubnav">
 							<% if(objects != undefined || objects != null)
+								
 								for(i=0;i<objects.length;i++)
 									{
-										arr=JSON.parse(objects[i]);
+										arr=objects[i];
 										%><li><a href="<%= arr.uri %>"><span><%= arr.name %></span></a></li><%
 									}
 							%>

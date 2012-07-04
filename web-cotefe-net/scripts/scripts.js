@@ -102,6 +102,7 @@ var DashBoardContentView =Backbone.View.extend({
 			$(this.el).undelegate('#content .delete', 'click');
 			$(this.el).undelegate('#content #pic-button .project', 'click');
 			$(this.el).undelegate('#content #pic-button .experiment', 'click');
+			
 			this.render();
 	},
 	events:{
@@ -190,7 +191,7 @@ var DashBoardContentView =Backbone.View.extend({
 		var data={
 				imagedata			: new EJS({url: '../templates/imageMenu.ejs'}).render(datai),
 				projecttable		: new EJS({url: '../templates/tableModel.ejs'}).render(datap),	
-				exptable			: new EJS({url: '../templates/tableModel.ejs'}).render(datae),
+				exptable			: new EJS({url: '../templates/tableModelex.ejs'}).render(datae),
 			};
 		
 		menu = new EJS({url: '../templates/dashboard.ejs'}).render(data);
@@ -219,6 +220,7 @@ var LeftMenuView=Backbone.View.extend({
 		"click #listE":function(){res=new  cotefe.Resource();
 		 res.url=cotefe.apiUri+cotefe.experiments.uri+"?access_token="+getToken();
 		 res.display("",ExperimentList);},
+		 "click #testbeds":function(){var testres=new TestBedList({model:new cotefe.Resource()});testres.render(); },
 	},
 	signout:function(event) { event.preventDefault();cotefe.signOut();},
 	render:function()
@@ -440,6 +442,81 @@ var ExperimentEdit=Backbone.View.extend({
 	}
 	
 });
+
+/*
+ * testbed list view
+ */
+
+
+var TestBedList=Backbone.View.extend({
+	el:"#content",
+	events:	{
+		"click #tablesubnav a":'displaydetail',
+	},
+	displaydetail:function(event)
+	{
+		event.preventDefault();
+		
+		var testBedResource=JSON.parse(sessionStorage.getItem("testbeds"));
+		
+		for(var i in testBedResource)
+			{			
+				if(event.target.innerHTML==testBedResource[i].name)
+				{						
+					var testbedd = new EJS({url: '../templates/testbedsdetails.ejs'}).render(testBedResource[i]);			
+					$("#content #detail").html(testbedd).fadeIn();
+				}
+			}
+	},
+	render:function()
+	{	
+		var testBedResource="";
+		if(sessionStorage.getItem("testbeds"))
+			{
+				testBedResource=sessionStorage.getItem("testbeds");
+			}
+		else
+			{
+				var ResTestbed= new cotefe.ResourceList({model:new cotefe.Resource()});
+				ResTestbed.url=cotefe.apiUri+cotefe.testbeds.uri+"?access_token="+getToken();
+				ResTestbed.fetch({success:function(collection){
+					for(var i in collection.models )
+						{
+							var temptestbed= new cotefe.Resource();
+							temptestbed.url=collection.models[i].get("uri")+"?access_token="+getToken();
+							temptestbed.fetch({
+								success:function(model, response)
+								{
+									if(sessionStorage.getItem("testbeds"))
+										{
+											var jsonobj=JSON.parse(sessionStorage.getItem("testbeds"));
+											jsonobj.push(model);
+											sessionStorage.setItem("testbeds",JSON.stringify(jsonobj));
+										}
+									else
+										{
+											var mod=[model];
+											sessionStorage.setItem("testbeds",JSON.stringify(mod));
+										}
+								}
+								
+							});
+						}
+					
+				}});
+			}
+		
+		datap={
+				head:"TestBeds",
+				objects:JSON.parse(sessionStorage.getItem("testbeds")),				
+		};
+		
+		menu = new EJS({url: '../templates/tableExplore.ejs'}).render(datap);			
+		$(this.el).html(menu).fadeIn();
+	}
+	
+});
+
 
 
 var Alert=Backbone.View.extend({
