@@ -90,6 +90,8 @@ var DashBoardContentView =Backbone.View.extend({
 	initialize:function(){_.bindAll(this,"render");
 			$(this.el).undelegate('#content .edit', 'click');
 			$(this.el).undelegate('#content .delete', 'click');
+			$(this.el).undelegate('#content #pic-button .project', 'click');
+			$(this.el).undelegate('#content #pic-button .experiment', 'click');
 			this.render();
 	},
 	events:{
@@ -97,6 +99,8 @@ var DashBoardContentView =Backbone.View.extend({
 		"click #content #experiments .edit":'edite',		
 		"click #content #jobs .edit":'editj',
 		"click #content .delete":'deleteResource',
+		"click #content #pic-button .project":function(){event.preventDefault();res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
+		"click #content #pic-button .experiment":function(){event.preventDefault();res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});},		
 		
 	},
 	editp:function(event) { 
@@ -370,7 +374,7 @@ var Alert=Backbone.View.extend({
 			menu = new EJS({url: '../templates/alert.ejs'}).render(data);
 			$(this.el).append(menu).fadeIn().delay(3000).fadeOut(500, function(){
 			      $(this.el).html("");
-			  });//queue(function() {$("#alert").fadeOut();$("#alert").remove(); });
+			  });
 	}
 	
 });
