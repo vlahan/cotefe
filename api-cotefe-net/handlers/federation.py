@@ -23,7 +23,7 @@ class FederationResourceHandler(OAuth2RESTJSONHandler):
         r['platforms'] =    '%s/%s/' % (config.FEDERATION_SERVER_URL, 'platforms')
         r['projects'] =     '%s/%s/' % (config.FEDERATION_SERVER_URL, 'projects')
         r['experiments'] =  '%s/%s/' % (config.FEDERATION_SERVER_URL, 'experiments')
-        r['jobs'] =         '%s/%s/' % (config.FEDERATION_SERVER_URL, 'jobs')
+        # r['jobs'] =         '%s/%s/' % (config.FEDERATION_SERVER_URL, 'jobs')
         
         self.response.out.write(utils.serialize(r))
         

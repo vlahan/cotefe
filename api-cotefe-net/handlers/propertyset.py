@@ -14,7 +14,7 @@ class PropertySetCollectionHandler(OAuth2RESTJSONHandler):
     def get(self, experiment_id):
         
         try:
-            experiment = Experiment.get_by_id(int(experiment_id))
+            experiment = Experiment.get_by_id(experiment_id)
             property_set_list = list()
             query = PropertySet.all().filter('experiment =', experiment)
             for property_set in query:
@@ -25,47 +25,48 @@ class PropertySetCollectionHandler(OAuth2RESTJSONHandler):
             self.response.status = '404'
             
     def post(self, experiment_id):
-        
-        try:
-            experiment = Experiment.get_by_id(int(experiment_id))
-        
-            property_set_dict = utils.deserialize(self.request.body)
-        
-            platform = Platform.get_by_id(int(property_set_dict['platform_id']))
-        
-            property_set = PropertySet()
-            property_set.name = property_set_dict['name']
-            property_set.description = property_set_dict['description']
-            property_set.owner = self.user
-            property_set.experiment = experiment
-            property_set.platform = platform
-            property_set.num_nodes = property_set_dict['num_nodes']
-            property_set.put()
-        
-            # now generate virtual nodes!
             
-            # generate a list of virtual nodes
-            
-            vn_list = list()
+        import logging
+        logging.debug(experiment_id)
         
-            for k in range(1, property_set.num_nodes + 1):
-                vn = VirtualNode()
-                vn.name = 'virtual node #%s' % k
-                vn.experiment = property_set.experiment
-                vn.platform = property_set.platform
-                vn.property_set = property_set
-                vn.owner = self.user
-                # vn.put()
-                vn_list.append(vn)
-                
-            db.put(vn_list)
+        experiment = Experiment.get_by_id(int(experiment_id))
+    
+        property_set_dict = utils.deserialize(self.request.body)
+    
+        logging.debug(property_set_dict['platform_id'])
+        
+        platform = Platform.get_by_key_name(property_set_dict['platform_id'])
+    
+        property_set = PropertySet()
+        property_set.name = property_set_dict['name']
+        property_set.description = property_set_dict['description']
+        property_set.owner = self.user
+        property_set.experiment = experiment
+        property_set.platform = platform
+        property_set.num_nodes = property_set_dict['num_nodes']
+        property_set.put()
+    
+        # now generate virtual nodes!
+        
+        # generate a list of virtual nodes
+        
+        vn_list = list()
+    
+        for k in range(1, property_set.num_nodes + 1):
+            vn = VirtualNode()
+            vn.name = 'virtual node #%s' % k
+            vn.experiment = property_set.experiment
+            vn.platform = property_set.platform
+            vn.property_set = property_set
+            vn.owner = self.user
+            # vn.put()
+            vn_list.append(vn)
             
-            self.response.status = '201'
-            self.response.headers['Location'] = '%s' % property_set.uri()
-            self.response.headers['Content-Location'] = '%s' % property_set.uri()
-            
-        except:
-            self.response.status = '404'
+        db.put(vn_list)
+        
+        self.response.status = '201'
+        self.response.headers['Location'] = '%s' % property_set.uri()
+        self.response.headers['Content-Location'] = '%s' % property_set.uri()
             
 class PropertySetResourceHandler(OAuth2RESTJSONHandler):
     

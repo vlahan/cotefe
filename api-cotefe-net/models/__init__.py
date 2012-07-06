@@ -140,7 +140,7 @@ class Project(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, 'projects', self.id())
+        return '%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'projects', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -174,7 +174,7 @@ class Experiment(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, 'experiments', self.id())
+        return '%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'experiments', self.id())
     
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -192,7 +192,7 @@ class Experiment(Resource):
                 r['project'] = self.project.to_dict(head_only = True)
             except:
                 r['project'] = None
-            r['images'] = [ i.to_dict(head_only = True) for i in self.images ]
+            # r['images'] = [ i.to_dict(head_only = True) for i in self.images ]
             r['property_sets'] = [ ps.to_dict(head_only = True) for ps in self.property_sets ]
             r['virtual_nodes'] = [ vn.to_dict(head_only = True) for vn in self.virtual_nodes ]
             r['virtual_node_count'] = len(r['virtual_nodes'])
@@ -209,7 +209,7 @@ class Image(Resource):
     description = db.TextProperty()
     imagefile = db.BlobProperty()
     owner = db.ReferenceProperty(User, collection_name='images')
-    experiment = db.ReferenceProperty(Experiment, collection_name='images')
+    # experiment = db.ReferenceProperty(Experiment, collection_name='images')
     datetime_created = db.DateTimeProperty(auto_now_add=True)
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
@@ -217,7 +217,7 @@ class Image(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, 'images', self.id())
+        return '%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'images', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -227,13 +227,9 @@ class Image(Resource):
         r['name'] = self.name
         if not head_only:
             r['description'] = self.description
-            if self.imagefile:
-                r['download'] = '%s/download' % self.uri()
             r['upload'] = '%s/upload' % self.uri()
-            try:
-                r['experiment'] = self.experiment.to_dict(head_only = True)
-            except:
-                r['experiment'] = None
+            r['download'] = '%s/download' % self.uri()
+            # r['experiment'] = self.experiment.to_dict(head_only = True)
             r['datetime_created'] = utils.datetime_to_string(self.datetime_created)
             r['datetime_modified'] = utils.datetime_to_string(self.datetime_modified)
         return r
@@ -258,7 +254,7 @@ class PropertySet(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, 'property-sets', self.id())
+        return '%s/%s/%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'experiments', self.experiment.id(), 'property-sets', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -299,7 +295,7 @@ class VirtualNode(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, 'virtual-nodes', self.id())
+        return '%s/%s/%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'experiments', self.experiment.id(), 'virtual-nodes', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
@@ -344,7 +340,7 @@ class VirtualNodeGroup(Resource):
         return self.key().id()
     
     def uri(self):
-        return '%s/%ss/%s' % (config.FEDERATION_SERVER_URL, string.lower(self.__class__.__name__), self.id())
+        return '%s/%s/%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'experiments', self.experiment.id(), 'virtual-nodegroups', self.id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
