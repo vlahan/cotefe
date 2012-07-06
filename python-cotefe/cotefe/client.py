@@ -88,6 +88,157 @@ class COTEFEAPI(object):
 
         response = self._make_request('GET', '/me')
         return User(response)
+    
+    def get_project(self, project_id):
         
-
+        project_dict = self._make_request('GET', '/projects/'+str(project_id))
         
+        return Project(project_dict)
+    
+    def create_project(self, name, description):
+        
+        project_dict = {
+            'name': name,
+            'description': description,
+        }
+        
+        project_id = self._make_request('POST', '/projects/', data=utils.serialize(project_dict), expected_status_code=201)
+        
+        return self.get_project(project_id)
+    
+    def get_experiment(self, experiment_id, project):
+        
+        experiment_dict = self._make_request('GET', '/experiments/'+str(experiment_id))
+        
+        return Experiment(experiment_dict, project)
+    
+    def get_platform(self, platform_id):
+        
+        platform_dict = self._make_request('GET', '/platforms/'+platform_id)
+        
+        return Platform(platform_dict)
+    
+    def create_experiment(self, name, description, project):
+        
+        experiment_dict = {
+            'name': name,
+            'description': description,
+            'project_id': project.id
+        }
+        
+        experiment_id = self._make_request('POST', '/experiments/', data=utils.serialize(experiment_dict), expected_status_code=201)
+        
+        return self.get_experiment(experiment_id, project)
+    
+    def get_property_set(self, peoperty_set_id, platform, experiment):
+        
+        property_set_dict = self._make_request('GET', '/experiments/'+str(experiment.id)+'/property-sets/'+str(peoperty_set_id))
+        
+        return PropertySet(property_set_dict, platform, experiment)
+    
+    def create_property_set(self, name, description, platform, num_nodes, experiment):
+        
+        property_set = {
+            'name': name,
+            'description': description,
+            'platform_id': platform.id,
+            'num_nodes': num_nodes            
+        }
+        
+        property_set_id = self._make_request('POST', '/experiments/'+str(experiment.id)+'/property-sets/', data=utils.serialize(property_set), expected_status_code=201)
+        
+        return self.get_property_set(property_set_id, platform, experiment)
+    
+    def get_virtual_nodes(self, experiment):
+        
+        virtual_node_list = self._make_request('GET', '/experiments/'+str(experiment.id)+'/virtual-nodes/')
+        
+        virtual_nodes = list()
+        
+        for virtual_node_dict in virtual_node_list:
+            
+            virtual_nodes.append(self.get_virtual_node(virtual_node_dict['id'], experiment))
+            
+        return virtual_nodes
+    
+    def get_virtual_node(self, virtual_node_id, experiment):
+        
+        virtual_node_dict = self._make_request('GET', '/experiments/'+str(experiment.id)+'/virtual-nodes/'+str(virtual_node_id))
+        
+        return VirtualNode(virtual_node_dict, experiment)
+    
+    def get_virtual_nodegroup(self, virtual_nodegroup_id, experiment):
+        
+        virtual_nodegroup_dict = self._make_request('GET', '/experiments/'+str(experiment.id)+'/virtual-nodegroups/'+str(virtual_nodegroup_id))
+        
+        virtual_nodes = list()
+        
+        for virtual_node_dict in virtual_nodegroup_dict['virtual_nodes']:
+            
+            virtual_nodes.append(self.get_virtual_node(virtual_node_dict['id'], experiment))
+        
+        return VirtualNodeGroup(virtual_nodegroup_dict, virtual_nodes, experiment)
+    
+    def create_virtual_nodegroup(self, name, description, experiment, virtual_nodes):
+        
+        virtual_nodegroup_dict = {
+            'name': name,
+            'description': description,
+            'expeiriment_id': experiment.id,
+            'virtual_nodes': [vn.id for vn in virtual_nodes]
+        }
+        
+        virtual_node_id = self._make_request('POST', '/experiments/'+str(experiment.id)+'/virtual-nodegroups/', data=utils.serialize(virtual_nodegroup_dict), expected_status_code=201)
+        
+        return self.get_virtual_nodegroup(virtual_node_id, experiment)
+    
+    def get_image(self, image_id):
+        
+        image_dict = self._make_request('GET', '/images/'+str(image_id))
+        
+        return Image(image_dict)
+    
+    def create_image(self, name, description, imagefile):
+        
+        image_dict = {
+            'name': name,
+            'description': description,
+        }
+        
+        image_id = self._make_request('POST', '/images/', data=utils.serialize(image_dict), expected_status_code=201)
+        
+        image = self.get_image(image_id)
+        
+        self._make_request('POST', '/images/'+str(image.id)+'/upload', files={'imagefile': open(imagefile, 'rb')})
+        
+        return self.get_image(image_id)
+    
+    def get_virtual_task(self, virtual_task_id, experiment):
+        
+        virtual_task_dict = self._make_request('GET', '/experiments/'+str(experiment.id)+'/virtual-tasks/'+str(virtual_task_id))
+        
+        return VirtualTask(virtual_task_dict, experiment)
+    
+    def create_virtual_task(self, name, description, action, virtual_nodegroup, image, experiment):
+        
+        if action == 'install' and image:
+            
+            method = 'PUT'
+            target = virtual_nodegroup.uri+'/image/'+str(image.id)
+            
+        if action == 'erase':
+            
+            method = 'DELETE'
+            target = virtual_nodegroup.uri+'/image'
+        
+        virtual_task_dict = {
+            'name': name,
+            'description': description,
+            'experiment_id': experiment.id,
+            'method': method,
+            'target': target,
+        }
+        
+        virtual_task_id = self._make_request('POST', '/experiments/'+str(experiment.id)+'/virtual-tasks/', data=utils.serialize(virtual_task_dict), expected_status_code=201)
+        
+        return self.get_virtual_task(virtual_task_id, experiment)

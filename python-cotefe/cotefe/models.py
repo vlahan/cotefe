@@ -54,12 +54,11 @@ class Experiment(Resource):
         self.project = project
         
 class Image(Resource):
-    def __init__(self, d, experiment):
+    def __init__(self, d):
         self.id = d['id']
         self.uri = d['uri']
         self.name = d['name']
         self.description = d['description']
-        self.experiment = experiment
 
 class PropertySet(Resource):
     def __init__(self, d, platform, experiment):

@@ -9,24 +9,32 @@ from datetime import date, datetime, timedelta
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='[%Y-%m-%d %H:%M:%S %z]')
 
-# OAUTH 2.0 HANDSHAKE
-unauthorized_api = COTEFEAPI(server_url=config.SERVER_URL, client_id=config.CLIENT_ID, client_secret=config.CLIENT_SECRET, redirect_uri=config.REDIRECT_URI)
-authorize_url = unauthorized_api.get_authorize_url()
-webbrowser.open(authorize_url)
-print 'Visit this page and authorize access in your browser:', authorize_url
-code = raw_input('Paste in code in query string after redirect: ').strip()
-access_token = unauthorized_api.exchange_code_for_access_token(code)
+requests_log = logging.getLogger("requests")
+requests_log.setLevel(logging.WARNING)
 
-# AUTHORIZATION SUCCEDED  
-api = COTEFEAPI(server_url=config.SERVER_URL, access_token=access_token)
+if config.ACCESS_TOKEN:
+    
+    # AUTHORIZATION SUCCEDED  
+    api = COTEFEAPI(server_url=config.SERVER_URL, access_token=config.ACCESS_TOKEN)
+    
+else:
+    
+    # OAUTH 2.0 HANDSHAKE
+    unauthorized_api = COTEFEAPI(server_url=config.SERVER_URL, client_id=config.CLIENT_ID, client_secret=config.CLIENT_SECRET, redirect_uri=config.REDIRECT_URI)
+    authorize_url = unauthorized_api.get_authorize_url()
+    webbrowser.open(authorize_url)
+    print 'Visit this page and authorize access in your browser:', authorize_url
+    code = raw_input('Paste in code in query string after redirect: ').strip()
+    access_token = unauthorized_api.exchange_code_for_access_token(code)
+    
+    # AUTHORIZATION SUCCEDED  
+    api = COTEFEAPI(server_url=config.SERVER_URL, access_token=access_token)
 
-logging.info('Your OAuth2 access_token is %s' % access_token)
+    logging.info('Your OAuth2 access_token is %s' % access_token)
 
 me = api.get_current_user()
 
 logging.info('Check your account information at %s' % me)
-
-exit()
 
 # CREATE A NEW PROJECT
 
@@ -47,10 +55,8 @@ logging.info('Check your experiment at %s' % my_experiment)
 
 # SEARCH PLATFORM BY NAME
 
-platform_result = api.search_platform(
-    name = config.PLATFORM_NAME)
-
-my_platform = platform_result[0]
+my_platform = api.get_platform(
+    platform_id = config.PLATFORM_NAME)
 
 logging.info('Check the platform "%s" at %s' % (config.PLATFORM_NAME, my_platform))
 
@@ -92,7 +98,6 @@ logging.debug('%s virtual nodes in group P.' % len(my_virtual_nodes_P))
 assert len(my_virtual_nodes_P) == config.NUM_NODES_P
 
 logging.debug('%s virtual nodes in group I.' % len(my_virtual_nodes_I))
-
 assert len(my_virtual_nodes_I) == config.NUM_NODES_I
 
 # CREATE A NEW VIRTUAL NODEGROUP WITH ALL NODES
@@ -148,8 +153,7 @@ logging.info('Check your virtual nodegroup I at %s' % my_virtual_nodegroup_I)
 my_image_S = api.create_image(
     name = 'Image for Subscriber',
     description = config.DEFAULT_DESCRIPTION,
-    imagefile = config.IMAGEFILE_S,
-    experiment = my_experiment)
+    imagefile = config.IMAGEFILE_S)
     
 logging.info('Check your image S at %s' % my_image_S)
 
@@ -158,8 +162,7 @@ logging.info('Check your image S at %s' % my_image_S)
 my_image_P = api.create_image(
     name = 'Image for Publisher',
     description = config.DEFAULT_DESCRIPTION,
-    imagefile = config.IMAGEFILE_P,
-    experiment = my_experiment)
+    imagefile = config.IMAGEFILE_P)
     
 logging.info('Check your image P at %s' % my_image_P)
 
@@ -168,8 +171,7 @@ logging.info('Check your image P at %s' % my_image_P)
 my_image_I = api.create_image(
     name = 'Image for Interferer',
     description = config.DEFAULT_DESCRIPTION,
-    imagefile = config.IMAGEFILE_I,
-    experiment = my_experiment)
+    imagefile = config.IMAGEFILE_I)
     
 logging.info('Check your image I at %s' % my_image_I)
 
@@ -234,38 +236,3 @@ my_virtual_task_4 = api.create_virtual_task(
 logging.info('Check your virtual task 4 at %s' % my_virtual_task_4)
 
 logging.info('Now check your experiment again at %s' % my_experiment)
-
-# FIND TESTBEDS SUPPORTING THE EXPERIMENT
-
-my_testbeds = api.search_testbed(
-    support_experiment = my_experiment)
-
-my_testbed = my_testbeds[0]
-
-# FIND JOB CONFLICTING WITH THE CURRENT JOB IN THE SELECTED TESTBED
-
-date_from = date.today()
-date_to = date_from + timedelta(days = config.CALENDAR_SPAN_DAYS)
-
-
-conflicting_jobs = api.get_jobs(
-    for_experiment = my_experiment,
-    testbed = my_testbed,
-    date_from = date_from,
-    date_to = date_to)
-
-# try to schedule a job
-
-my_job = api.create_job(
-    name = config.DEFAULT_NAME,
-    description = config.DEFAULT_DESCRIPTION,
-    datetime_from = datetime.utcnow() + timedelta(minutes = config.START_JOB_IN_MINUTES),
-    datetime_to = datetime.utcnow() + timedelta(minutes = config.END_JOB_IN_MINUTES),
-    experiment = my_experiment,
-    testbed = my_testbed)
-
-logging.info('Check your job at %s' % my_job)
-
-# execute the job
-
-api.execute(my_job)
