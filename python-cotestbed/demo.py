@@ -215,7 +215,7 @@ logging.info('# # # # # JOB EXECUTION STARTED # # # # #')
 raw_input('(press ENTER when you are ready to execute the next operation)')
 
 logging.info('Erasing all nodes.. ')
-my_status_0 = api.erase_nodegroup(my_nodegroup_ALL)
+my_status_0 = api.erase_image_to_nodegroup(my_nodegroup_ALL)
 logging.info('Check the status of the current task at %s' % my_status_0)
 webbrowser.open(my_status_0.uri)
 
@@ -235,7 +235,7 @@ logging.info('Check the status of the current task at %s' % my_status_3)
 webbrowser.open(my_status_3.uri)
 
 logging.info('Erasing image on Interferer nodes.. ')
-my_status_4 = api.erase_nodegroup(my_nodegroup_I)
+my_status_4 = api.erase_image_to_nodegroup(my_nodegroup_I)
 logging.info('Check the status of the current task at %s' % my_status_4)
 webbrowser.open(my_status_4.uri)
 

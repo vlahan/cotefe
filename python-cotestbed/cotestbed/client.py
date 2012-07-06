@@ -206,7 +206,7 @@ class COTESTBEDAPI(object):
         
         return Status(status_dict)
 
-    def erase_nodegroup(self, nodegroup):
+    def erase_image_to_nodegroup(self, nodegroup):
         
         status_id = self._make_request('DELETE', '/nodegroups/'+nodegroup.id+'/image', expected_status_code=202)
         
