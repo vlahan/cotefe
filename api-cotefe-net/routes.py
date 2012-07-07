@@ -49,15 +49,6 @@ routes = [
     (r'^/testbeds/$', testbed.TestbedCollectionHandler),
     (r'^/testbeds/(\w+)$', testbed.TestbedResourceHandler),
     
-    # IMAGE
-    
-    (r'^/images/$', image.ImageCollectionHandler),
-    (r'^/images/(\d+)$', image.ImageResourceHandler),
-    (r'^/images/(\d+)/upload$', image.ImageUploadHandler),
-    (r'^/images/(\d+)/download$', image.ImageDownloadHandler),
-    
-    (r'^/image-upload-form$', image.ImageUploadForm),
-    
     # PROJECT
     
     (r'^/projects/$', project.ProjectCollectionHandler),
@@ -77,27 +68,14 @@ routes = [
     (r'^/experiments/(\d+)/virtual-nodegroups/$', virtualnodegroup.VirtualNodeGroupCollectionHandler),
     (r'^/experiments/(\d+)/virtual-nodegroups/(\d+)$', virtualnodegroup.VirtualNodeGroupResourceHandler),
     
+    (r'^/experiments/(\d+)/images/$', image.ImageCollectionHandler),
+    (r'^/experiments/(\d+)/images/(\d+)$', image.ImageResourceHandler),
+    (r'^/experiments/(\d+)/images/(\d+)/upload$', image.ImageUploadHandler),
+    (r'^/experiments/(\d+)/images/(\d+)/download$', image.ImageDownloadHandler),
+    
+    (r'^/experiments/(\d+)/image-upload-form$', image.ImageUploadForm),
+    
     (r'^/experiments/(\d+)/virtual-tasks/$', virtualtask.VirtualTaskCollectionHandler),
     (r'^/experiments/(\d+)/virtual-tasks/(\d+)$', virtualtask.VirtualTaskResourceHandler),
-    
-    # JOB
-    
-    (r'^/jobs/$', job.JobCollectionHandler),
-    (r'^/jobs/(\d+)$', job.JobResourceHandler),
-
-    # (r'^/jobs/(\d+)/nodes/$', NodeCollectionHandler),
-    # (r'^/jobs/(\d+)/nodes/(\d+)$', NodeResourceHandler),
-    
-    # (r'^/jobs/(\d+)/nodegroups/$', NodeGroupCollectionHandler),
-    # (r'^/jobs/(\d+)/nodegroups/(\d+)$', NodeGroupResourceHandler),
-    
-    # (r'^/jobs/(\d+)/tasks/$', TaskCollectionHandler),
-    # (r'^/jobs/(\d+)/tasks/(\d+)$', TaskResourceHandler),
-    
-    # (r'^/jobs/(\d+)/logs/$', LogsCollectionHandler),
-    # (r'^/jobs/(\d+)/logs/(\d+)$', LogResourceHandler),
-    
-    # (r'^/jobs/(\d+)/traces/$', TraceCollectionHandler),
-    # (r'^/jobs/(\d+)/traces/(\d+)$', TraceResourceHandler),
 
 ]
