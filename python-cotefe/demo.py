@@ -12,12 +12,12 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefm
 requests_log = logging.getLogger("requests")
 requests_log.setLevel(logging.WARNING)
 
-if config.ACCESS_TOKEN:
+try:
     
     # AUTHORIZATION SUCCEDED  
     api = COTEFEAPI(server_url=config.SERVER_URL, access_token=config.ACCESS_TOKEN)
     
-else:
+except:
     
     # OAUTH 2.0 HANDSHAKE
     unauthorized_api = COTEFEAPI(server_url=config.SERVER_URL, client_id=config.CLIENT_ID, client_secret=config.CLIENT_SECRET, redirect_uri=config.REDIRECT_URI)
@@ -153,7 +153,8 @@ logging.info('Check your virtual nodegroup I at %s' % my_virtual_nodegroup_I)
 my_image_S = api.create_image(
     name = 'Image for Subscriber',
     description = config.DEFAULT_DESCRIPTION,
-    imagefile = config.IMAGEFILE_S)
+    imagefile = config.IMAGEFILE_S,
+    experiment = my_experiment)
     
 logging.info('Check your image S at %s' % my_image_S)
 
@@ -162,7 +163,8 @@ logging.info('Check your image S at %s' % my_image_S)
 my_image_P = api.create_image(
     name = 'Image for Publisher',
     description = config.DEFAULT_DESCRIPTION,
-    imagefile = config.IMAGEFILE_P)
+    imagefile = config.IMAGEFILE_P,
+    experiment = my_experiment)
     
 logging.info('Check your image P at %s' % my_image_P)
 
@@ -171,7 +173,8 @@ logging.info('Check your image P at %s' % my_image_P)
 my_image_I = api.create_image(
     name = 'Image for Interferer',
     description = config.DEFAULT_DESCRIPTION,
-    imagefile = config.IMAGEFILE_I)
+    imagefile = config.IMAGEFILE_I,
+    experiment = my_experiment)
     
 logging.info('Check your image I at %s' % my_image_I)
 
@@ -236,3 +239,5 @@ my_virtual_task_4 = api.create_virtual_task(
 logging.info('Check your virtual task 4 at %s' % my_virtual_task_4)
 
 logging.info('Now check your experiment again at %s' % my_experiment)
+
+webbrowser.open(my_experiment.uri)

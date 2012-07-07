@@ -28,16 +28,7 @@ class COTEFEAPI(object):
             url = self.server_url + target
         
         # makes the actual request. here we are using the Requests library but any other HTTP client would do (httplib2, etc.)
-        response = requests.request(
-            method=method,
-            url=url,
-            headers=headers,
-            params=params,
-            data=data,
-            files=files,
-            verify=False,
-            # config={'verbose': sys.stdout}
-        )
+        response = requests.request(method=method, url=url, headers=headers, params=params, data=data, files=files, verify=False)
         
         # makes sure that the code was as expected (default 200 OK)
         assert response.status_code == expected_status_code
@@ -192,26 +183,27 @@ class COTEFEAPI(object):
         
         return self.get_virtual_nodegroup(virtual_node_id, experiment)
     
-    def get_image(self, image_id):
+    def get_image(self, image_id, experiment):
         
-        image_dict = self._make_request('GET', '/images/'+str(image_id))
+        image_dict = self._make_request('GET', '/experiments/'+str(experiment.id)+'/images/'+str(image_id))
         
-        return Image(image_dict)
+        return Image(image_dict, experiment)
     
-    def create_image(self, name, description, imagefile):
+    def create_image(self, name, description, imagefile, experiment):
         
         image_dict = {
             'name': name,
             'description': description,
+            'experiment_id': experiment.id
         }
         
-        image_id = self._make_request('POST', '/images/', data=utils.serialize(image_dict), expected_status_code=201)
+        image_id = self._make_request('POST', '/experiments/'+str(experiment.id)+'/images/', data=utils.serialize(image_dict), expected_status_code=201)
         
-        image = self.get_image(image_id)
+        image = self.get_image(image_id, experiment)
         
-        self._make_request('POST', '/images/'+str(image.id)+'/upload', files={'imagefile': open(imagefile, 'rb')})
-        
-        return self.get_image(image_id)
+        self._make_request('POST', '/experiments/'+str(experiment.id)+'/images/'+str(image.id)+'/upload', files={ 'imagefile': ('imagefile', open(imagefile, 'rb')) })
+                
+        return self.get_image(image_id, experiment)
     
     def get_virtual_task(self, virtual_task_id, experiment):
         
