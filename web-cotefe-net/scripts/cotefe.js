@@ -12,7 +12,7 @@ var cotefe=(function($){
         platforms           : {uri:"/platforms/",        session:"_cotefePlatforms"},
         testbeds            : {uri:"/testbeds/",         session:"_cotefeTestbeds"},
         user                : {uri:"/me",                session:"_cotefeUser"},
-        oauth               : "https://api.cotefe.net/oauth2/auth?client_id=aba144033daa4826baf861686195c421",       
+        oauth               : "https://api.cotefe.net/oauth2/auth?client_id=4a9fb27ed6f94b64b40a1cab1c2f6929",       
         redirect            : "http://localhost:8080/htmls/dashboard.html&response_type=token",
         dashboard           : "/dashboard",        
         comment             : "JS configuration ",

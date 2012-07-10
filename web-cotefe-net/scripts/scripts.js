@@ -343,6 +343,7 @@ var ExperimentList=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();
 	$(this.el).undelegate('.headings a', 'click');
+	
 	},
 	events:{
 		"click .headings a":function(event){event.preventDefault();
@@ -356,10 +357,11 @@ var ExperimentList=Backbone.View.extend({
 		var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
 		row=projectssession.length;
 		
+		
 		datap={
 				type:"experiments",
 				headings:['Experiment Name','Edit','Delete'],
-				objects:projectssession,				
+				objects:projectssession,
 		};
 		
 		menu = new EJS({url: '../templates/tableModelex.ejs'}).render(datap);	
@@ -429,12 +431,15 @@ var ExperimentEdit=Backbone.View.extend({
 	render:function()
 	{	
 		
+		if(sessionStorage.getItem("user"))
+			projects=JSON.parse(sessionStorage.getItem("user")).projects;
 		data={
 				uri			:this.model.attributes.uri,
 				type		:"experiments",
 				name		:this.model.attributes.name,
 				selected	:this.model.attributes.project,
 				description	:this.model.attributes.description,
+				projects	:projects
 		},
 		
 		menu = new EJS({url: '../templates/experimentNew.ejs'}).render(data);
