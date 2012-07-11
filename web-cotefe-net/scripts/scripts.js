@@ -221,6 +221,7 @@ var LeftMenuView=Backbone.View.extend({
 		 res.url=cotefe.apiUri+cotefe.experiments.uri+"?access_token="+getToken();
 		 res.display("",ExperimentList);},
 		 "click #testbeds":function(){var testres=new TestBedList({model:new cotefe.Resource()});testres.render(); },
+		 "click #platforms":function(){var testres=new PlatformsList({model:new cotefe.Resource()});testres.render(); },
 	},
 	signout:function(event) { event.preventDefault();cotefe.signOut();},
 	render:function()
@@ -522,6 +523,80 @@ var TestBedList=Backbone.View.extend({
 	
 });
 
+
+/*
+ * platforms list view
+ */
+
+
+var PlatformsList=Backbone.View.extend({
+	el:"#content",
+	events:	{
+		//"click #tablesubnav a":'displaydetail',
+	},
+	displaydetail:function(event)
+	{
+		event.preventDefault();
+		
+		var testBedResource=JSON.parse(sessionStorage.getItem("platforms"));
+		
+		for(var i in testBedResource)
+			{			
+				if(event.target.innerHTML==testBedResource[i].name)
+				{						
+					var testbedd = new EJS({url: '../templates/testbedsdetails.ejs'}).render(testBedResource[i]);			
+					$("#content #detail").html(testbedd).fadeIn();
+				}
+			}
+	},
+	render:function()
+	{	
+		var testBedResource="";
+		if(sessionStorage.getItem("platforms"))
+			{
+				testBedResource=sessionStorage.getItem("platforms");
+			}
+		else
+			{
+				var ResTestbed= new cotefe.ResourceList({model:new cotefe.Resource()});
+				ResTestbed.url=cotefe.apiUri+cotefe.platforms.uri+"?access_token="+getToken();
+				ResTestbed.fetch({success:function(collection){
+					for(var i in collection.models )
+						{
+							var temptestbed= new cotefe.Resource();
+							temptestbed.url=collection.models[i].get("uri")+"?access_token="+getToken();
+							temptestbed.fetch({
+								success:function(model, response)
+								{
+									if(sessionStorage.getItem("platforms"))
+										{
+											var jsonobj=JSON.parse(sessionStorage.getItem("platforms"));
+											jsonobj.push(model);
+											sessionStorage.setItem("platforms",JSON.stringify(jsonobj));
+										}
+									else
+										{
+											var mod=[model];
+											sessionStorage.setItem("platforms",JSON.stringify(mod));
+										}
+								}
+								
+							});
+						}
+					
+				}});
+			}
+		
+		datap={
+				head:"Platforms",
+				objects:JSON.parse(sessionStorage.getItem("platforms")),				
+		};
+		
+		menu = new EJS({url: '../templates/platformsdetails.ejs'}).render(datap);			
+		$(this.el).html(menu).fadeIn();
+	}
+	
+});
 
 
 var Alert=Backbone.View.extend({
