@@ -107,7 +107,8 @@ var DashBoardContentView =Backbone.View.extend({
 	},
 	events:{
 		"click #content #projects .edit":'editp',		
-		"click #content #experiments .edit":'edite',		
+		"click #content #experiments .edit":'edite',
+		"click #content #experiments .experimentResource":'edite',			
 		"click #content #jobs .edit":'editj',
 		"click #content .delete":'deleteResource',
 		"click #content #pic-button .project":function(){event.preventDefault();res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
