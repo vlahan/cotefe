@@ -108,7 +108,7 @@ var DashBoardContentView =Backbone.View.extend({
 	events:{
 		"click #content #projects .edit":'editp',		
 		"click #content #experiments .edit":'edite',
-		"click #content #experiments .experimentResource":'edite',			
+		"click #content #experiments .experimentResource":'getpropertySet',			
 		"click #content #jobs .edit":'editj',
 		"click #content .delete":'deleteResource',
 		"click #content #pic-button .project":function(){event.preventDefault();res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
@@ -162,7 +162,18 @@ var DashBoardContentView =Backbone.View.extend({
 		
 	},
 	
-		
+	getpropertySet:function(event){
+		event.preventDefault();
+		$(this.el).html("");
+		res=new  cotefe.Resource();
+		res.url=event.target+"?access_token="+getToken();
+		res.display("",ExperimentPropertySet);
+		/*res.fetch({
+			      	success: function(model,response) {
+			      			console.log(model);
+			      		}
+		    		});*/
+	},	
 
 	render:function()
 	{	
@@ -445,6 +456,36 @@ var ExperimentEdit=Backbone.View.extend({
 		},
 		
 		menu = new EJS({url: '../templates/experimentNew.ejs'}).render(data);
+		$(this.el).html(menu).fadeIn();
+	}
+	
+});
+
+var ExperimentPropertySet=Backbone.View.extend({
+	el:"#content",
+	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
+		},
+	events:
+		{
+			"click input[name=submit]":'submit',		
+		},
+		
+	submit:function(event){
+		event.preventDefault();			
+	},	
+	render:function()
+	{	
+		
+		var e_experiments=null;
+		if(sessionStorage.getItem("user"))
+			e_experiments=JSON.parse(sessionStorage.getItem("user")).experiments;
+		data={
+				exps:e_experiments,
+				model:JSON.stringify(this.model)
+								
+		},
+		
+		menu = new EJS({url: '../templates/experimentres.ejs'}).render(data);
 		$(this.el).html(menu).fadeIn();
 	}
 	

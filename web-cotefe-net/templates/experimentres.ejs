@@ -6,17 +6,19 @@
                                     
                                     <%
                                     	
-                                    	objs=JSON.parse(exps);
-                                    	for(i=0;i<objs.length;i++)
+                                    	
+                                    	model=JSON.parse(model);
+                                    	
+                                    	for(i=0;i<exps.length;i++)
                                     	{
-                                    		info=JSON.parse(objs[i]);
-                                    		if(called_uri===info.uri)
+                                    		
+                                    		if(exps[i].id===model.id)
                                     		{
-                                    			%><option value="<%=info.id%>" selected><%=info.name%></option><%
+                                    			%><option value="<%=model.id%>" selected><%=model.name%></option><%
                                     		}
                                     		else
                                     		{
-                                    			%><option value="<%=info.id%>"><%=info.name%></option><%
+                                    			%><option value="<%=exps[i].id%>"><%=exps[i].name%></option><%
                                     		}
                                     	}
                                     %>
