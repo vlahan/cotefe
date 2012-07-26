@@ -476,6 +476,7 @@ var ExperimentPropertySet=Backbone.View.extend({
 	render:function()
 	{	
 		
+		console.log(this.model);
 		var e_experiments=null;
 		if(sessionStorage.getItem("user"))
 			e_experiments=JSON.parse(sessionStorage.getItem("user")).experiments;
@@ -487,6 +488,8 @@ var ExperimentPropertySet=Backbone.View.extend({
 		
 		menu = new EJS({url: '../templates/experimentres.ejs'}).render(data);
 		$(this.el).html(menu).fadeIn();
+		events.tabs();
+		
 	}
 	
 });
