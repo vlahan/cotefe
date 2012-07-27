@@ -3,15 +3,10 @@
 						<h1>
 							<span>Experiment : </span><span>
 								<select name="selectboxexp" id="selectbox" title="Select Experiment for detail">
-                                    
-                                    <%
-                                    	
-                                    	
-                                    	model=JSON.parse(model);
-                                    	
+                                   <%
+                                    	model=JSON.parse(model);                                    	
                                     	for(i=0;i<exps.length;i++)
-                                    	{
-                                    		
+                                    	{                                    		
                                     		if(exps[i].id===model.id)
                                     		{
                                     			%><option value="<%=model.id%>" selected><%=model.name%></option><%
@@ -43,7 +38,7 @@
 								    		<summary><div class="headings"><h1><span>New PropertySet</span></h1></div></summary>		
 											<form action="#">
 													<input type="hidden" value="New" name="formFun">
-												 <p>
+												<p>
 						                            <label for="name">PropertySet Name</label>
 						                            <input class="input-small" type="text" value="" name="name" id="name" placeholder="PropertySet Name">
 						                        </p>
@@ -101,14 +96,16 @@
 								    	
 								    	
 								        <table class="shadow-dark">
-								        	<tbody><tr><th>PropertySet Name</th><th>Date</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
+								        	<tbody>
+								        	<tr><th>PropertySet Name</th><th>Date</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
     										<tr><td>PropertySet1</td><td><time>2011-04-07</time></td><td>Edit</td><td>Delete</td></tr>
     										<tr><td>PropertySet2</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
     										<tr><td>PropertySet3</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
     										<tr><td>PropertySet4</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
     										<tr><td>PropertySet5</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
     										<tr><td>PropertySet6</td><td>Date</td><td>Edit</td><td>Delete</td></tr>								    
-								        </tbody></table>
+								        	</tbody>
+								        </table>
 								    </div>
 								    <!-- -->
 								    <div id="tab2" class="tab_content" style="display: none; ">
