@@ -12,6 +12,37 @@ function getToken()
 		}
 }
 
+function getPlatforms()
+{
+	var ResTestbed= new cotefe.ResourceList({model:new cotefe.Resource()});
+				ResTestbed.url=cotefe.apiUri+cotefe.platforms.uri+"?access_token="+getToken();
+				ResTestbed.fetch({success:function(collection){
+					for(var i in collection.models )
+						{
+							var temptestbed= new cotefe.Resource();
+							temptestbed.url=collection.models[i].get("uri")+"?access_token="+getToken();
+							temptestbed.fetch({
+								success:function(model, response)
+								{
+									if(sessionStorage.getItem("platforms"))
+										{
+											var jsonobj=JSON.parse(sessionStorage.getItem("platforms"));
+											jsonobj.push(model);
+											sessionStorage.setItem("platforms",JSON.stringify(jsonobj));
+										}
+									else
+										{
+											var mod=[model];
+											sessionStorage.setItem("platforms",JSON.stringify(mod));
+										}
+								}
+								
+							});
+						}
+					
+				}});
+}
+
 $(document).ready(function(){
 	
 	/*
@@ -605,33 +636,7 @@ var PlatformsList=Backbone.View.extend({
 			}
 		else
 			{
-				var ResTestbed= new cotefe.ResourceList({model:new cotefe.Resource()});
-				ResTestbed.url=cotefe.apiUri+cotefe.platforms.uri+"?access_token="+getToken();
-				ResTestbed.fetch({success:function(collection){
-					for(var i in collection.models )
-						{
-							var temptestbed= new cotefe.Resource();
-							temptestbed.url=collection.models[i].get("uri")+"?access_token="+getToken();
-							temptestbed.fetch({
-								success:function(model, response)
-								{
-									if(sessionStorage.getItem("platforms"))
-										{
-											var jsonobj=JSON.parse(sessionStorage.getItem("platforms"));
-											jsonobj.push(model);
-											sessionStorage.setItem("platforms",JSON.stringify(jsonobj));
-										}
-									else
-										{
-											var mod=[model];
-											sessionStorage.setItem("platforms",JSON.stringify(mod));
-										}
-								}
-								
-							});
-						}
-					
-				}});
+				getPlatforms();
 			}
 		
 		datap={
