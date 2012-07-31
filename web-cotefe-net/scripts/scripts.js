@@ -60,7 +60,6 @@ events.tabs				=function(){
     });
 };
 
-
 function UpdateSession(data)
 {
 	if( sessionStorage.getItem("user"))
