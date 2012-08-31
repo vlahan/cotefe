@@ -94,8 +94,8 @@
 						                            </tbody></table>
 						                        </div>
 						                        <p>
-						                            <label for="nodes">No of Nodes: <span id="rangeValue1">0</span></label>
-						                            <input id="slider1" name="nodes" type="range" min="0" max="200" value="0" onchange="printValue('slider1','rangeValue1')">
+						                            <label for="nodes">No of Nodes: <input type="text" id="rangeValue1" class="input-small" name="nodes" value="0" style="width:100px"/></label>
+						                            <input id="slider1" name="nodes" type="range" min="0" max="200" value="0" onchange="printValue(this.value,'rangeValue1')">
 						                        </p>
 												 <p>
 						                            <input class="button shadow-dark" name="submit" type="submit" value="Submit">

@@ -71,6 +71,18 @@ $(document).ready(function(){
 	
 });
 
+
+/*
+ * print value
+ */
+function printValue(arg0,arg1)
+{
+	var textbox= document.getElementById(arg1);
+	textbox.value=arg0;
+	
+}
+
+
 /*
  * events
  */
@@ -513,7 +525,8 @@ var ExperimentPropertySet=Backbone.View.extend({
 		},
 		
 	submit:function(event){
-		event.preventDefault();			
+		event.preventDefault();	
+		alert("hello");		
 	},	
 	render:function()
 	{		
