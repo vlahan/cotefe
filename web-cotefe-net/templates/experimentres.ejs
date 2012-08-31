@@ -45,13 +45,24 @@
 						                        <p>
 						                            <label for="selectboxplat">Platforms </label>
 						                            <select name="selectboxplat" id="selectboxplat">
-						                                    
-						                                    	<option value="Roomba">Roomba</option>
-						                                    	<option value="TelosA">Telos (Rev A 2004-04-27)</option>
-						                                    	<option value="TelosB">Telos (Rev B 2004-xx-xx)</option>
-						                                    	<option value="TmoteSky" selected="">Moteiv Tmote Sky</option>
-						                                    	<option value="eyesIFXv20">eyesIFX WSN node v2.0</option>
-						                                    	<option value="eyesIFXv21">eyesIFX WSN node v2.1</option>
+						                                    	<% 
+						                                    	console.log(platforms);
+						                                    	
+						                                    	for(i=0;i<platforms.length;i++)
+						                                    	{                                    		
+						                                    		if(platforms[i].id===model.id)
+						                                    		{
+						                                    			%><option value="<%=platforms[i].id%>" selected><%=platforms[i].name%></option><%
+						                                    		}
+						                                    		else
+						                                    		{
+						                                    			%><option value="<%=platforms[i].id%>"><%=platforms[i].name%></option><%
+						                                    		}
+						                                    	}
+						                                    	
+						                                    	
+						                                    	  %>
+						                                    	
 						                            </select>
 						                        </p>
 						                        <div>

@@ -16,7 +16,8 @@ function getPlatforms()
 {
 	var ResTestbed= new cotefe.ResourceList({model:new cotefe.Resource()});
 				ResTestbed.url=cotefe.apiUri+cotefe.platforms.uri+"?access_token="+getToken();
-				ResTestbed.fetch({success:function(collection){
+				ResTestbed.fetch({
+					success:function(collection){
 					for(var i in collection.models )
 						{
 							var temptestbed= new cotefe.Resource();
@@ -62,6 +63,11 @@ $(document).ready(function(){
 	 * content event for left Menu
 	 */
 	new LeftMenuView();
+	
+	/*
+	 * get all platforms as first place
+	 */
+	getPlatforms();
 	
 });
 
@@ -496,6 +502,7 @@ var ExperimentPropertySet=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
 						$(this.el).undelegate('.headings a', 'click');
+						
 		},
 	events:
 		{
@@ -514,9 +521,11 @@ var ExperimentPropertySet=Backbone.View.extend({
 		var e_experiments=null;
 		if(sessionStorage.getItem("user"))
 			e_experiments=JSON.parse(sessionStorage.getItem("user")).experiments;
+			platforms=JSON.parse(sessionStorage.getItem("platforms"));
 		data={
 				exps:e_experiments,
-				model:JSON.stringify(this.model)								
+				model:JSON.stringify(this.model),
+				platforms:platforms
 		},
 		
 		menu = new EJS({url: '../templates/experimentres.ejs'}).render(data);
