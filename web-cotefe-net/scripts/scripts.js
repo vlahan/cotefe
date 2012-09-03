@@ -29,11 +29,21 @@ function getPlatforms()
 										{
 											var jsonobj=JSON.parse(sessionStorage.getItem("platforms"));
 											jsonobj.push(model);
+											
+											var arr = {};
+
+											for ( i=0; i < jsonobj.length; i++ )
+											    arr[jsonobj[i]['id']] = jsonobj[i];
+											
+											jsonobj = new Array();
+											for ( key in arr )
+											    jsonobj.push(arr[key]);
+											
 											sessionStorage.setItem("platforms",JSON.stringify(jsonobj));
 										}
 									else
 										{
-											var mod=[model];
+											var mod=[model];											
 											sessionStorage.setItem("platforms",JSON.stringify(mod));
 										}
 								}
@@ -43,6 +53,30 @@ function getPlatforms()
 					
 				}});
 }
+
+
+function getExperimentSets(model)
+{
+	
+					var propertysetsArray=model.property_sets;
+					var virtualNodeGroupArray=model.virtual_node_groups;
+					var virtualNodesArray=model.virtual_nodes;
+					var virtualTaskArray=model.virtual_tasks;
+					var Images=model.images;
+					var Jobs=model.jobs;
+					/*
+					 * load all of the resources
+					 * dig deep
+					 */
+					for(var i in propertysetsArray)
+					{
+						console.log(propertysetsArray[i]);
+					}
+					
+					
+				
+}
+
 
 $(document).ready(function(){
 	
@@ -69,7 +103,11 @@ $(document).ready(function(){
 	 */
 	getPlatforms();
 	
+	
 });
+
+
+
 
 
 /*
@@ -527,18 +565,34 @@ var ExperimentPropertySet=Backbone.View.extend({
 	submit:function(event){
 		event.preventDefault();	
 		alert("hello");		
+	},
+	loadPropertySets:function(model)
+	{
+		var psets=model.property_sets;
+		
+		
 	},	
 	render:function()
 	{		
-		console.log(this.model);
+		//console.log(this.model);
+		getExperimentSets(this.model);
 		var e_experiments=null;
+		var e_propertySets=null;
 		if(sessionStorage.getItem("user"))
+		{
 			e_experiments=JSON.parse(sessionStorage.getItem("user")).experiments;
 			platforms=JSON.parse(sessionStorage.getItem("platforms"));
+		}
+		
 		data={
 				exps:e_experiments,
 				model:JSON.stringify(this.model),
-				platforms:platforms
+				platforms:platforms,
+				propertySets:"",
+				virtualNodeGroups:"",
+				images:"",
+				virtualTasks:""
+				
 		},
 		
 		menu = new EJS({url: '../templates/experimentres.ejs'}).render(data);
