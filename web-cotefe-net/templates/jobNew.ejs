@@ -1,0 +1,79 @@
+<div class="wrap">					
+	<div class="headings"><h1><span>New Job</span></h1></div>
+					
+	<form action="" id="jobform">
+		<input type="hidden" value="<%= uri %>" name="uri" id="uri"/>
+		<input type="hidden" value="<%= type %>" name="type" />
+		 <p>
+            <label for="name">Job Name</label>
+            <input class="input-small" type="text" value="<%= name %>" name="name" id="name" placeholder="Job Hello"/>
+        </p>
+         <p>
+                            <label for="selectbox">Experiment </label>
+                            <select name="experiment_id" id="selectbox" >
+                                    <option value="">Select a Experiment</option>
+                                    <% if(experiments != null){
+                                    	
+                                    	for(i=0; i<experiments.length; i++) { 
+                                    		items=experiments[i];
+                                    		
+                                    	%>
+                                    	<option value="<%= experiments[i].id %> " <% 
+                                    	if(selected != undefined || selected !=null)
+                                    	{
+                                    		
+                                    		if(selected.id==experiments[i].id)
+                                    		{
+                                    			%> selected <%
+                                    		}
+                                    	}
+                                    	                                    	
+                                    	 %>  ><%= experiments[i].name %></option>
+                                    <% }
+                                    } %>
+                                    
+                            </select>
+        </p>
+        <p>
+                            <label for="selectbox">Testbed </label>
+                            <select name="testbed_id" id="selectbox" >
+                                    <option value="">Select a TestBed</option>
+                                    <% if(testbeds != null){
+                                    	
+                                    	for(i=0; i<testbeds.length; i++) { 
+                                    		items=testbeds[i];
+                                    		
+                                    	%>
+                                    	<option value="<%= testbeds[i].id %> " <% 
+                                    	if(selected != undefined || selected !=null)
+                                    	{
+                                    		
+                                    		if(selected.id==testbeds[i].id)
+                                    		{
+                                    			%> selected <%
+                                    		}
+                                    	}
+                                    	                                    	
+                                    	 %>  ><%= testbeds[i].name %></option>
+                                    <% }
+                                    } %>
+                                    
+                            </select>
+        </p>
+        <p>
+            <label for="datetime_from">DateTime From</label>
+            <input class="input-small" name="datetime_from" id="datetime_from"  placeholder="YYYY-MM-DDThh:mm:ss" value="<%= datetime_from %>" />
+        </p>
+        <p>
+            <label for="datetime_to">DateTime To</label>
+            <input class="input-small" name="datetime_to" id="datetime_to"  placeholder="YYYY-MM-DDThh:mm:ss" value="<%= datetime_to %>" />
+        </p>
+        <p>
+            <label for="description">Job Description</label>
+            <textarea name="description" id="description" cols="60" rows="15" placeholder="Hello Description"><%= description %></textarea>
+        </p>
+		 <p>
+            <input class="button shadow-dark" name="submit" type="submit" value="Submit"/>
+        </p>
+	</form>	
+</div>

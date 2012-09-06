@@ -54,6 +54,36 @@ function getPlatforms()
 				}});
 }
 
+function getTestBeds()
+{
+	var ResTestbed= new cotefe.ResourceList({model:new cotefe.Resource()});
+				ResTestbed.url=cotefe.apiUri+cotefe.testbeds.uri+"?access_token="+getToken();
+				ResTestbed.fetch({success:function(collection){
+					for(var i in collection.models )
+						{
+							var temptestbed= new cotefe.Resource();
+							temptestbed.url=collection.models[i].get("uri")+"?access_token="+getToken();
+							temptestbed.fetch({
+								success:function(model, response)
+								{
+									if(sessionStorage.getItem("testbeds"))
+										{
+											var jsonobj=JSON.parse(sessionStorage.getItem("testbeds"));
+											jsonobj.push(model);
+											sessionStorage.setItem("testbeds",JSON.stringify(jsonobj));
+										}
+									else
+										{
+											var mod=[model];
+											sessionStorage.setItem("testbeds",JSON.stringify(mod));
+										}
+								}
+								
+							});
+						}
+					
+				}});
+}
 
 function getExperimentSets(model)
 {
@@ -198,7 +228,8 @@ var DashBoardContentView	=Backbone.View.extend({
 		"click #content .delete":'deleteResource',
 		"click #content #pic-button .project":function(){event.preventDefault();res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
 		"click #content #pic-button .experiment":function(){event.preventDefault();res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});},		
-		
+		"click #content #pic-button .jobs":function(){event.preventDefault();res=new  JobEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/jobs/",type:"jobs",description:"",name:"",experiment:"",testbed:"",datetimefrom:"",datetimeto:""})});},		
+
 	},
 	editp:function(event) { 
 		event.preventDefault();
@@ -548,6 +579,9 @@ var ExperimentEdit=Backbone.View.extend({
 	
 });
 
+
+
+
 var ExperimentPropertySet=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
@@ -603,6 +637,94 @@ var ExperimentPropertySet=Backbone.View.extend({
 	
 });
 
+
+/**jobs*/
+var JobEdit=Backbone.View.extend({
+	el:"#content",
+	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
+},
+	events:
+		{
+			"click input[name=submit]":'submit',		
+		},
+		
+	submit:function(event){
+		event.preventDefault();	
+		url="";
+		temprory=($("#jobform").serializeArray());
+		for(i =0;i<temprory.length;i++)
+			{
+				if(temprory[i].name=="uri")
+					{
+						url=temprory[i].value;
+						
+					}
+				else if(temprory[i].name=="type")
+					{
+						continue;
+					}
+				this.model.attributes[temprory[i].name]=temprory[i].value;
+				
+			}
+		
+		res=this.model;	
+		
+		res.url=url+"?access_token="+getToken();
+		res.save({ id: this.model.get('id') },{
+					
+					success : function(model, response) {
+		                var al=new Alert({});
+						
+		                if(model.id==undefined)
+		                	{
+		                		al.render("alertSuccess","Experiment created successfully!");
+		                	}
+		                else
+		                	{
+		                		al.render("alertSuccess","Experiment updated successfully!");
+		                	}
+		                
+		            },
+		            error :function(model, response) {
+		            	var al=new Alert({});
+						al.render("alertFail","Experiment create/update Failed!");
+				    },
+					
+					
+				});
+		
+	},	
+	render:function()
+	{	
+		
+		if(sessionStorage.getItem("user"))
+		{
+			experiment=JSON.parse(sessionStorage.getItem("user")).experiments;
+			getTestBeds();
+			testbeds=JSON.parse(sessionStorage.getItem("testbeds"));
+		}
+		data={
+				uri			:this.model.attributes.uri,
+				type		:"jobs",
+				name		:this.model.attributes.name,
+				selected	:this.model.attributes.experiments,
+				selectedbed	:this.model.attributes.testbeds,
+				description	:this.model.attributes.description,
+				experiments	:experiments,
+				testbeds	:testbeds,
+				datetime_from:"",
+				datetime_to:""
+				
+		},
+		
+		menu = new EJS({url: '../templates/jobNew.ejs'}).render(data);
+		$(this.el).html(menu).fadeIn();
+	}
+	
+});
+
+
+
 /*
  * testbed list view
  */
@@ -637,33 +759,7 @@ var TestBedList=Backbone.View.extend({
 			}
 		else
 			{
-				var ResTestbed= new cotefe.ResourceList({model:new cotefe.Resource()});
-				ResTestbed.url=cotefe.apiUri+cotefe.testbeds.uri+"?access_token="+getToken();
-				ResTestbed.fetch({success:function(collection){
-					for(var i in collection.models )
-						{
-							var temptestbed= new cotefe.Resource();
-							temptestbed.url=collection.models[i].get("uri")+"?access_token="+getToken();
-							temptestbed.fetch({
-								success:function(model, response)
-								{
-									if(sessionStorage.getItem("testbeds"))
-										{
-											var jsonobj=JSON.parse(sessionStorage.getItem("testbeds"));
-											jsonobj.push(model);
-											sessionStorage.setItem("testbeds",JSON.stringify(jsonobj));
-										}
-									else
-										{
-											var mod=[model];
-											sessionStorage.setItem("testbeds",JSON.stringify(mod));
-										}
-								}
-								
-							});
-						}
-					
-				}});
+				getTestBeds();
 			}
 		
 		datap={
