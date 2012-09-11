@@ -1,0 +1,27 @@
+# Bottlerocket
+Bottlerocket is a CONET TAA for a WISEBED testbed.
+
+# Required Packages
+Flask 0.9
+Flask-Script 0.3.3
+SQLAlchemy 0.7.8
+lxml 2.3.4
+spyne 2.8.2-rc
+suds 0.4
+times 0.4
+odict 1.5.0, if python v2.6 or earlier.
+
+Newer versions may or may not work.
+
+# Configuration
+Most of the settings are stored in config.py Some settings (like
+URI prefixes) are hard coded in wisebed/__init__.py. The endpoints for the
+Wisebed services are hard coded in the WSDLs.
+
+# Usage
+* Initialize and fill the database with fill_db.py
+* Start the controller_service.py
+* Start the TAA server via manage.py runserver. When running a production
+  server, make sure to disable debug mode, either via the config or with 
+  --no-debug. Also see manage.py runserver --help for other options,
+  like the host name and port number.
