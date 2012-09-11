@@ -137,9 +137,6 @@ $(document).ready(function(){
 });
 
 
-
-
-
 /*
  * print value
  */
@@ -349,6 +346,10 @@ var LeftMenuView=Backbone.View.extend({
 		"click #listE":function(){res=new  cotefe.Resource();
 		 res.url=cotefe.apiUri+cotefe.experiments.uri+"?access_token="+getToken();
 		 res.display("",ExperimentList);},
+		 "click #addJ":function(){res=new  JobEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/jobs/",type:"jobs",description:"",name:"",experiment:"",testbed:"",datetimefrom:"",datetimeto:""})});},		
+		 "click #listJ":function(){res=new  cotefe.Resource();
+		 res.url=cotefe.apiUri+cotefe.experiments.uri+"?access_token="+getToken();
+		 res.display("",JobsList);},
 		 "click #testbeds":function(){var testres=new TestBedList({model:new cotefe.Resource()});testres.render(); },
 		 "click #platforms":function(){var testres=new PlatformsList({model:new cotefe.Resource()});testres.render(); },
 	},
@@ -719,6 +720,39 @@ var JobEdit=Backbone.View.extend({
 		
 		menu = new EJS({url: '../templates/jobNew.ejs'}).render(data);
 		$(this.el).html(menu).fadeIn();
+	}
+	
+});
+
+var JobsList=Backbone.View.extend({
+	el:"#content",
+	initialize:function(){_.bindAll(this,"render");this.render();
+	$(this.el).undelegate('.headings a', 'click');
+	
+	},
+	events:{
+		"click .headings a":function(event){event.preventDefault();
+		res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});
+		},
+	},
+	render:function()
+	{	
+		
+		
+		var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
+		row=projectssession.length;
+		
+		
+		datap={
+				type:"experiments",
+				headings:['Experiment Name','Edit','Delete'],
+				objects:projectssession,
+		};
+		
+		menu = new EJS({url: '../templates/tableModelex.ejs'}).render(datap);	
+		
+		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#"});
+		$(this.el).html(listing).fadeIn();
 	}
 	
 });
