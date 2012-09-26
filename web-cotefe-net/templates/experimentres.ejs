@@ -4,7 +4,8 @@
 							<span>Experiment : </span><span>
 								<select name="selectboxexp" id="selectbox" title="Select Experiment for detail">
                                    <%
-                                    	model=JSON.parse(model);                                    	
+                                    	model=JSON.parse(model); 
+                                    	                             	
                                     	for(i=0;i<exps.length;i++)
                                     	{                                    		
                                     		if(exps[i].id===model.id)
@@ -108,13 +109,15 @@
 								    	
 								        <table class="shadow-dark">
 								        	<tbody>
-								        	<tr><th>PropertySet Name</th><th>Date</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
-    										<tr><td>PropertySet1</td><td><time>2011-04-07</time></td><td>Edit</td><td>Delete</td></tr>
-    										<tr><td>PropertySet2</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
-    										<tr><td>PropertySet3</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
-    										<tr><td>PropertySet4</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
-    										<tr><td>PropertySet5</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
-    										<tr><td>PropertySet6</td><td>Date</td><td>Edit</td><td>Delete</td></tr>								    
+								        	<tr><th>PropertySet Name</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
+    										<%
+    											console.log(model);
+    										  for(i=0;i<model.property_sets.length;i++)
+    										{
+    										 %><tr><td><%=model.property_sets[i].name%></td><td><a href="<%=model.property_sets[i].uri %>" class="edit">Edit</a></td><td class="delete"><a href="<%=model.property_sets[i].uri %>" class="delete">Delete</a></td></tr><%
+    										 	}
+    										 %>
+    																	    
 								        	</tbody>
 								        </table>
 								    </div>

@@ -281,6 +281,7 @@ var DashBoardContentView	=Backbone.View.extend({
 		res=new  cotefe.Resource();
 		res.url=event.target+"?access_token="+getToken();
 		res.display("",ExperimentPropertySet);
+		
 		/*res.fetch({
 			      	success: function(model,response) {
 			      			console.log(model);
@@ -587,6 +588,7 @@ var ExperimentPropertySet=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
 						$(this.el).undelegate('.headings a', 'click');
+						$(this.el).undelegate('#content .edit', 'click');
 						
 		},
 	events:
@@ -594,7 +596,8 @@ var ExperimentPropertySet=Backbone.View.extend({
 			"click input[name=submit]":'submit',
 			"click .headings a":function(event){event.preventDefault();
 						res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});
-					},					
+					},
+			"click .edit":"",				
 		},
 		
 	submit:function(event){
