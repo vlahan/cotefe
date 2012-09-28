@@ -505,7 +505,6 @@ var ExperimentList=Backbone.View.extend({
 	
 });
 
-
 var ExperimentEdit=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
