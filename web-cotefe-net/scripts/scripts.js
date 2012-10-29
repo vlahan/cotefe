@@ -472,6 +472,7 @@ var ProjectList=Backbone.View.extend({
 		row=projectssession.length;
 		
 		datap={
+				
 				type:"projects",
 				headings:['Project Name','Edit','Delete'],
 				objects:projectssession,				
@@ -479,7 +480,7 @@ var ProjectList=Backbone.View.extend({
 		
 		menu = new EJS({url: '../templates/tableModel.ejs'}).render(datap);	
 		
-		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#"});
+		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#",tableheader:"Projects"});
 		$(this.el).html(listing).fadeIn();
 	}
 	
@@ -505,6 +506,7 @@ var ExperimentList=Backbone.View.extend({
 		
 		
 		datap={
+				
 				type:"experiments",
 				headings:['Experiment Name','Edit','Delete'],
 				objects:projectssession,
@@ -512,7 +514,7 @@ var ExperimentList=Backbone.View.extend({
 		
 		menu = new EJS({url: '../templates/tableModelex.ejs'}).render(datap);	
 		
-		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#"});
+		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#",tableheader:"Experiments"});
 		$(this.el).html(listing).fadeIn();
 	}
 	
@@ -759,14 +761,15 @@ var JobsList=Backbone.View.extend({
 		
 		
 		datap={
-				type:"experiments",
-				headings:['Experiment Name','Edit','Delete'],
+				
+				type:"jobs",
+				headings:['Job Name','Edit','Delete'],
 				objects:projectssession,
 		};
 		
 		menu = new EJS({url: '../templates/tableModelex.ejs'}).render(datap);	
 		
-		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#"});
+		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#",tableheader:"Jobs"});
 		$(this.el).html(listing).fadeIn();
 	}
 	
@@ -776,6 +779,25 @@ var JobsList=Backbone.View.extend({
 /*
  * images upload/edit and list
  */
+
+function getImages(experimentsList)
+{
+	if(sessionStorage.getItem("images")){
+		return JSON.parse(sessionStorage.getItem("images"));
+	}
+	else
+	{
+		var imgList=new Array();
+		for(var i in experimentList)
+			{
+				var exp= new cotefe.Resource();
+				exp.url=experimentList[i].get("uri")+"?access_token="+getToken();
+				
+			
+			
+			}
+	}
+}
 
 var ImageEdit=Backbone.View.extend({
 	el:"#content",
@@ -840,7 +862,7 @@ var ImageEdit=Backbone.View.extend({
 		 //al.render("alertSuccess","Image source created successfully!");
 	},	
 	submit:function(event){
-		event.preventDefault();	
+		event.preventDefault();	/*
 		url="";
 		temprory=($("#imageform").serializeArray());
 		for(i =0;i<temprory.length;i++)
@@ -884,7 +906,7 @@ var ImageEdit=Backbone.View.extend({
 		    },
 			
 			
-		});
+		});*/
 		
 	},	
 	render:function()
@@ -902,6 +924,38 @@ var ImageEdit=Backbone.View.extend({
 	
 });
 
+var ImageList=Backbone.View.extend({
+	el:"#content",
+	initialize:function(){_.bindAll(this,"render");this.render();
+		$(this.el).undelegate('.headings a', 'click');
+		},
+	events:{
+		"click .headings a":function(event){event.preventDefault();
+			res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});
+		},
+	},
+	render:function()
+	{	
+		
+		
+		var experimentssession=JSON.parse(sessionStorage.getItem("user")).experiments;
+		row=experimentssession.length;
+		
+		
+		datap={
+				
+				type:"images",
+				headings:['Image Name','Edit','Delete'],
+				objects:projectssession,				
+		};
+		
+		menu = new EJS({url: '../templates/tableModel.ejs'}).render(datap);	
+		
+		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#",tableheader:"Images"});
+		$(this.el).html(listing).fadeIn();
+	}
+	
+});
 
 /*
  * testbed list view
