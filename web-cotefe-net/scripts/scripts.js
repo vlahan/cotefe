@@ -108,6 +108,7 @@ function getExperimentSets(model)
 					 */
 					for(var i in propertysetsArray)
 					{
+						
 						console.log(propertysetsArray[i]);
 					}
 					
@@ -611,12 +612,12 @@ var ExperimentPropertySet=Backbone.View.extend({
 			"click .headings a":function(event){event.preventDefault();
 						res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});
 					},
-			"click .edit":"",				
+			//s"click .edit":"",				
 		},
 		
 	submit:function(event){
 		event.preventDefault();	
-		alert("hello");		
+		alert("Sensor not yet defined");		
 	},
 	loadPropertySets:function(model)
 	{
@@ -782,7 +783,7 @@ var JobsList=Backbone.View.extend({
 
 function getImages(experimentsList)
 {
-	if(sessionStorage.getItem("images")){
+	/*if(sessionStorage.getItem("images")){
 		return JSON.parse(sessionStorage.getItem("images"));
 	}
 	else
@@ -796,7 +797,8 @@ function getImages(experimentsList)
 			
 			
 			}
-	}
+	}*/
+	//TODO: grabe from session saved propertyset
 }
 
 var ImageEdit=Backbone.View.extend({
