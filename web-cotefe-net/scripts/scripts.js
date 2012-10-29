@@ -106,11 +106,37 @@ function getExperimentSets(model)
 					 * load all of the resources
 					 * dig deep
 					 */
-					for(var i in propertysetsArray)
+					var experiments=new Array();
+					if(sessionStorage.getItem("experiments"))
+						{
+							var explist=json.parse(sessionStorage.getItem("experiments"));
+							var exists=false;
+							for(var i in explist)
+								{
+								
+									if(explist[i].id==model.get("id"))
+										{
+											exist=true;
+										}
+								
+								}
+							if(exist==false)
+								{
+									explist.push(model);
+								}
+							sessionStorage.setItem("experiments",JSON.stringify(explist));
+						}
+					else
+						{
+								experiments.push(model);
+								sessionStorage.setItem("experiments",JSON.stringify(experiments));
+						}
+					
+					/*for(var i in propertysetsArray)
 					{
 						
 						console.log(propertysetsArray[i]);
-					}
+					}*/
 					
 					
 				
