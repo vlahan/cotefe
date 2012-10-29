@@ -11,6 +11,7 @@ var cotefe=(function($){
         jobs                : {uri:"/jobs/",             session:"_cotefeJobs",          message:"Job",          name:"jobs"},
         platforms           : {uri:"/platforms/",        session:"_cotefePlatforms"},
         testbeds            : {uri:"/testbeds/",         session:"_cotefeTestbeds"},
+        images            	: {uri:"/images/",			 session:"_cotefeImages"},
         user                : {uri:"/me",                session:"_cotefeUser"},
         oauth               : "https://api.cotefe.net/oauth2/auth?client_id=4a9fb27ed6f94b64b40a1cab1c2f6929",       
         redirect            : "http://localhost:8080/htmls/dashboard.html&response_type=token",

@@ -788,13 +788,56 @@ var ImageEdit=Backbone.View.extend({
 		},
 	
 	generateLink:function(){
+		event.preventDefault();	
+		url="";
+		temprory=($("#imageform").serializeArray());
+		url=cotefe.apiUri+cotefe.experiments.uri+$.trim(temprory[3].value)+cotefe.images.uri;
 		
 		
+		res=this.model;	
+		this.model.set("type","image");
+		this.model.set("uri",url);
+		this.model.set("name",$.trim(temprory[2].value));
+		this.model.set("description",$.trim(temprory[4].value));
+		res.url=url+"?access_token="+getToken();
+		//console.log(res);
 		
+		res.save({ id: this.model.get('cid') },{
+					
+					success : function(model, text, XHR) {
+						
+		                var al=new Alert({});
+						//console.log(model);
+						
+		                /*if(model.id==undefined)
+		                	{
+		                		
+		                		
+		                		al.render("alertSuccess","Image source created successfully!");
+		                	}
+		                else
+		                	{
+		                		al.render("alertSuccess","Image source updated successfully!");
+		                	}
+		                */
+		            },
+		            error :function(model, response) {
+		            	var al=new Alert({});
+						al.render("alertFail","Image create/update Failed!");
+				    },
+					
+					
+				});
+		res.parse=function(resp, xhr){
+			var locationHeader = xhr.getResponseHeader('Location');
+			console.log(locationHeader);
+			
+			console.log(resp);
+			return resp
+		};
 		
-		
-		 var al=new Alert({});
-		 al.render("alertSuccess","Image source created successfully!");
+		 //var al=new Alert({});
+		 //al.render("alertSuccess","Image source created successfully!");
 	},	
 	submit:function(event){
 		event.preventDefault();	
