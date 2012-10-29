@@ -783,9 +783,19 @@ var ImageEdit=Backbone.View.extend({
 		},
 	events:
 		{
-			"click input[name=submit]":'submit',		
+			"click input[name=generateLink]":'generateLink',	
+			"click input[name=submit]":'submit',
 		},
+	
+	generateLink:function(){
 		
+		
+		
+		
+		
+		 var al=new Alert({});
+		 al.render("alertSuccess","Image source created successfully!");
+	},	
 	submit:function(event){
 		event.preventDefault();	
 		url="";

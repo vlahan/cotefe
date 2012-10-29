@@ -9,11 +9,30 @@
             <input class="input-small" type="text" value="<%= name %>" name="name" id="name" placeholder="Image1"/>
         </p>
         <p>
+                            <label for="selectbox">Experiment </label>
+                            <select name="experiment_id" id="selectbox" >
+                                    <option value="">Select a Experiment</option>
+                                    <% if(experiments != null){
+                                    	
+                                    	for(i=0; i<experiments.length; i++) { 
+                                    		items=experiments[i];
+                                    		
+                                    	%>
+                                    	<option value="<%= experiments[i].id %> " ><%= experiments[i].name %></option>
+                                    <% }
+                                    } %>
+                                    
+                            </select>
+        </p>
+        <p>
             <label for="description">Image Description</label>
             <textarea name="description" id="description" cols="60" rows="15" placeholder="Image Description"><%= description %></textarea>
         </p>
 		 <p>
-            <input class="button shadow-dark" name="submit" type="submit" value="Submit"/>
+            <input class="button shadow-dark" style="width:200px;" name="generateLink" type="button" value="Generate Upload Link"/>
         </p>
 	</form>	
+	<form action="" id="uploadLink">
+		
+	</form>
 </div>
