@@ -69,7 +69,15 @@ function getTestBeds()
 									if(sessionStorage.getItem("testbeds"))
 										{
 											var jsonobj=JSON.parse(sessionStorage.getItem("testbeds"));
-											jsonobj.push(model);
+											var found=false;
+											for (var i in jsonobj)
+												{
+													if(jsonobj[i].id==model.id)
+														found = true
+												
+												}
+											if(found==false){jsonobj.push(model);}
+											
 											sessionStorage.setItem("testbeds",JSON.stringify(jsonobj));
 										}
 									else
@@ -132,6 +140,10 @@ $(document).ready(function(){
 	 * get all platforms as first place
 	 */
 	getPlatforms();
+	/*
+	 * get all test beds right away
+	 */
+	getTestBeds();
 	
 	
 });
@@ -349,8 +361,9 @@ var LeftMenuView=Backbone.View.extend({
 		 res.display("",ExperimentList);},
 		 "click #addJ":function(){res=new  JobEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/jobs/",type:"jobs",description:"",name:"",experiment:"",testbed:"",datetimefrom:"",datetimeto:""})});},		
 		 "click #listJ":function(){res=new  cotefe.Resource();
-		 res.url=cotefe.apiUri+cotefe.experiments.uri+"?access_token="+getToken();
+		 res.url=cotefe.apiUri+cotefe.jobs.uri+"?access_token="+getToken();
 		 res.display("",JobsList);},
+		 "click #uploadIm":function(){res=new  ImageEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
 		 "click #testbeds":function(){var testres=new TestBedList({model:new cotefe.Resource()});testres.render(); },
 		 "click #platforms":function(){var testres=new PlatformsList({model:new cotefe.Resource()});testres.render(); },
 	},
@@ -759,6 +772,82 @@ var JobsList=Backbone.View.extend({
 	
 });
 
+
+/*
+ * images upload/edit and list
+ */
+
+var ImageEdit=Backbone.View.extend({
+	el:"#content",
+	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
+		},
+	events:
+		{
+			"click input[name=submit]":'submit',		
+		},
+		
+	submit:function(event){
+		event.preventDefault();	
+		url="";
+		temprory=($("#imageform").serializeArray());
+		for(i =0;i<temprory.length;i++)
+			{
+				if(temprory[i].name=="uri")
+					{
+						url=temprory[i].value;
+						
+					}
+				else if(temprory[i].name=="type")
+					{
+						continue;
+					}
+				this.model.attributes[temprory[i].name]=temprory[i].value;
+				
+			}
+		
+		res=this.model;	
+		
+		res.url=url+"?access_token="+getToken();
+		res.save({ id: this.model.get('id') },{
+			
+			success : function(model, response) {
+                var al=new Alert({});
+				
+                if(model.id==undefined)
+                	{
+                		
+                		
+                		al.render("alertSuccess","Image source created successfully!");
+                	}
+                else
+                	{
+                		al.render("alertSuccess","Image spurce updated successfully!");
+                	}
+                
+            },
+            error :function(model, response) {
+            	var al=new Alert({});
+				al.render("alertFail","Image create/update Failed!");
+		    },
+			
+			
+		});
+		
+	},	
+	render:function()
+	{	
+		data={
+				uri			:this.model.attributes.uri,
+				type		:"images",
+				name		:this.model.attributes.name,
+				description	:this.model.attributes.description,
+		},
+		
+		menu = new EJS({url: '../templates/imageUpload.ejs'}).render(data);
+		$(this.el).html(menu).fadeIn();
+	}
+	
+});
 
 
 /*

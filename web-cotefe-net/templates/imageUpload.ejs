@@ -1,0 +1,19 @@
+<div class="wrap">					
+	<div class="headings"><h1><span>Upload New Image</span></h1></div>
+					
+	<form action="" id="imageform">
+		<input type="hidden" value="<%= uri %>" name="uri" id="uri"/>
+		<input type="hidden" value="<%= type %>" name="type" />
+		 <p>
+            <label for="name">Image Name</label>
+            <input class="input-small" type="text" value="<%= name %>" name="name" id="name" placeholder="Image1"/>
+        </p>
+        <p>
+            <label for="description">Image Description</label>
+            <textarea name="description" id="description" cols="60" rows="15" placeholder="Image Description"><%= description %></textarea>
+        </p>
+		 <p>
+            <input class="button shadow-dark" name="submit" type="submit" value="Submit"/>
+        </p>
+	</form>	
+</div>
