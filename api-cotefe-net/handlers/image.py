@@ -34,7 +34,7 @@ class ImageCollectionHandler(OAuth2RESTJSONHandler):
             self.response.status = '201'
             self.response.headers['Location'] = '%s' % image.uri()
             self.response.headers['Content-Location'] = '%s' % image.uri()
-            self.response.out.write(utils.serialize(self.response.headers))
+            self.response.out.write('{"uploadLink":"'+image.uri()+'"}')
             
 
 class ImageResourceHandler(OAuth2RESTJSONHandler):
