@@ -65,7 +65,7 @@ class ImageResourceHandler(OAuth2RESTJSONHandler):
         except:
             self.response.status = '404'
             
-    def delete(self, image_id):
+    def delete(self,experiment_id, image_id):
         
         try:
             image = Image.get_by_id(int(image_id))
