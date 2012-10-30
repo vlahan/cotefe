@@ -101,14 +101,14 @@ function getAllExps(experimentList)
 			res.url=experimentList[i].uri+"?access_token="+getToken();
 			res.fetch({
 				success:function(model){
-					getExperimentSets(model);
+					getExperimentSets(model,false);
 				}
 			});
 			
 		}
 }
 
-function getExperimentSets(model)
+function getExperimentSets(model,force)
 {
 	
 					var propertysetsArray=model.get('property_sets');
@@ -132,6 +132,11 @@ function getExperimentSets(model)
 									if(explist[i].id==model.get("id"))
 										{
 											exists=true;
+										}
+									if(explist[i].id==model.get("id") && force==true)
+										{
+										
+											explist.splice(i, 0, model);
 										}
 								
 								}
@@ -700,7 +705,7 @@ var ExperimentPropertySet=Backbone.View.extend({
 	render:function()
 	{		
 		//console.log(this.model);
-		getExperimentSets(this.model);
+		getExperimentSets(this.model,false);
 		var e_experiments=null;
 		var e_propertySets=null;
 		if(sessionStorage.getItem("user"))
@@ -884,10 +889,19 @@ var ImageEdit=Backbone.View.extend({
 					success : function(model, text, XHR) {
 						
 		                var al=new Alert({});
-						console.log(model);
+						
 						al.render("alertSuccess","Please Upload your file now");
 						$('<iframe id="resultFrame"/>').appendTo('#uploadLink')
                         .contents().find('body').append('<form enctype="multipart/form-data" method="post" action="'+model.get("uploadLink")+"/upload?access_token="+getToken()+'" ><input type="file" name="imagefile" /><input type="submit" value="Upload" /></form>');
+						var newexp= new cotefe.Resource();
+						newexp.url=cotefe.apiUri+cotefe.experiments.uri+$.trim(temprory[3].value)+"?access_token="+getToken();
+						console.log(newexp.url);
+						newexp.fetch({
+							success:function(model){
+								console.log(newexp);
+								getExperimentSets(model,true);
+							}
+						});
 						
 		            },
 		            error :function(model, response) {
@@ -975,7 +989,7 @@ var ImageList=Backbone.View.extend({
 		},
 	events:{
 		"click .headings a":function(event){event.preventDefault();
-			res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});
+		res=new  ImageEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/images/",type:"images",description:"",name:""})});
 		},
 	},
 	render:function()
