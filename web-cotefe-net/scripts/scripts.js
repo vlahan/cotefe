@@ -307,11 +307,19 @@ var DashBoardContentView	=Backbone.View.extend({
 		var path=(event.target);
 		delres.id=2000002;
 		delres.url=path+"?access_token="+getToken();
+		
+		
 		delres.destroy({
 				success :function(model, response) {
 					var al=new Alert({});
 					al.render("alertSuccess","Resource Deletion Successfull !");
-					 $('a[href="'+event.target+'"]').parent().parent().remove();					 
+					var obj_type=$('a[href="'+event.target+'"]').parent().parent().parent().parent().attr("id");
+					if(obj_type==="images")
+						{
+						
+						}
+					$('a[href="'+event.target+'"]').parent().parent().remove();
+					 
 	            },
 	            error :function(model, response) {
 	            	var al=new Alert({});
