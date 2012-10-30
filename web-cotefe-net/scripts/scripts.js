@@ -273,6 +273,8 @@ var DashBoardContentView	=Backbone.View.extend({
 			$(this.el).undelegate('#content .delete', 'click');
 			$(this.el).undelegate('#content #pic-button .project', 'click');
 			$(this.el).undelegate('#content #pic-button .experiment', 'click');
+			$(this.el).undelegate('#content #pic-button .jobs', 'click');
+			$(this.el).undelegate('#content #pic-button .images', 'click');
 			
 			
 			this.render();
@@ -285,8 +287,10 @@ var DashBoardContentView	=Backbone.View.extend({
 		"click #content .delete":'deleteResource',
 		"click #content #pic-button .project":function(){event.preventDefault();res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
 		"click #content #pic-button .experiment":function(){event.preventDefault();res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});},		
-		"click #content #pic-button .jobs":function(){event.preventDefault();res=new  JobEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/jobs/",type:"jobs",description:"",name:"",experiment:"",testbed:"",datetimefrom:"",datetimeto:""})});},		
-
+		"click #content #pic-button .jobs":function(){event.preventDefault();res=new  JobEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/jobs/",type:"jobs",description:"",name:"",experiment:"",testbed:"",datetimefrom:"",datetimeto:""})});},
+		"click #content #pic-button .images":function(){event.preventDefault();res=new  ImageEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/images/",type:"images",description:"",name:""})});},		
+					
+		
 	},
 	editp:function(event) { 
 		event.preventDefault();
