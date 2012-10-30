@@ -49,6 +49,8 @@ border-bottom-right-radius: 10px;}
 .alertSuccess{z-index:2000;position:fixed;top:0px;left:50%;display:block;background-color:#ccff00;border: 1px solid #00ff00;}
 .alertSuccess span,.alertFail{display:block;padding:10px;}
 
+iframe{border:none;height:50px;width:500px;}
+
 #header{position:relative;}
 #header #logo{position:absolute; top:40px;}
 #header nav{position:absolute;right:0px;top:40px;}

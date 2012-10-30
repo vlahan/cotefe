@@ -93,15 +93,30 @@ function getTestBeds()
 				}});
 }
 
+function getAllExps(experimentList)
+{
+	for(i in experimentList)
+		{
+			var res=new  cotefe.Resource();
+			res.url=experimentList[i].uri+"?access_token="+getToken();
+			res.fetch({
+				success:function(model){
+					getExperimentSets(model);
+				}
+			});
+			
+		}
+}
+
 function getExperimentSets(model)
 {
 	
-					var propertysetsArray=model.property_sets;
-					var virtualNodeGroupArray=model.virtual_node_groups;
-					var virtualNodesArray=model.virtual_nodes;
-					var virtualTaskArray=model.virtual_tasks;
-					var Images=model.images;
-					var Jobs=model.jobs;
+					var propertysetsArray=model.get('property_sets');
+					var virtualNodeGroupArray=model.get('virtual_node_groups');
+					var virtualNodesArray=model.get('virtual_nodes');
+					var virtualTaskArray=model.get('virtual_tasks');
+					var Images=model.get('images');
+					var Jobs=model.get('jobs');
 					/*
 					 * load all of the resources
 					 * dig deep
@@ -109,18 +124,18 @@ function getExperimentSets(model)
 					var experiments=new Array();
 					if(sessionStorage.getItem("experiments"))
 						{
-							var explist=json.parse(sessionStorage.getItem("experiments"));
+							var explist=JSON.parse(sessionStorage.getItem("experiments"));
 							var exists=false;
 							for(var i in explist)
 								{
 								
 									if(explist[i].id==model.get("id"))
 										{
-											exist=true;
+											exists=true;
 										}
 								
 								}
-							if(exist==false)
+							if(exists==false)
 								{
 									explist.push(model);
 								}
@@ -254,6 +269,7 @@ var DashBoardContentView	=Backbone.View.extend({
 			$(this.el).undelegate('#content #pic-button .project', 'click');
 			$(this.el).undelegate('#content #pic-button .experiment', 'click');
 			
+			
 			this.render();
 	},
 	events:{
@@ -340,6 +356,31 @@ var DashBoardContentView	=Backbone.View.extend({
 		projects=this.model.attributes.projects;
 		experiments=this.model.attributes.experiments;
 		sessionStorage.setItem("user",JSON.stringify(this.model));
+		
+		if(!sessionStorage.getItem("experiments"))
+		{
+			var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
+			row=projectssession.length;			
+			getAllExps(projectssession);
+		}
+		
+		var imagesObjectList=JSON.parse(sessionStorage.getItem("experiments"));
+		var imageArray= new Array();
+		for(var i in imagesObjectList)
+			{
+				for(var j in imagesObjectList[i].images){
+					imageArray.push({"experiment_id":imagesObjectList[i].id,"experiment_name":imagesObjectList[i].name,"images":imagesObjectList[i].images[j]});
+				}
+			}
+		
+		dataimg={
+				
+				type:"images",
+				headings:['Image Name','Experiment','Edit','Delete'],
+				objects:imageArray,				
+		};
+		
+		
 		row=5;//minimum line to display
 		datap={
 				type:"projects",
@@ -357,6 +398,7 @@ var DashBoardContentView	=Backbone.View.extend({
 				imagedata			: new EJS({url: '../templates/imageMenu.ejs'}).render(datai),
 				projecttable		: new EJS({url: '../templates/tableModel.ejs'}).render(datap),	
 				exptable			: new EJS({url: '../templates/tableModelex.ejs'}).render(datae),
+				imageTable			: new EJS({url: '../templates/imageList.ejs'}).render(dataimg),
 			};
 		
 		menu = new EJS({url: '../templates/dashboard.ejs'}).render(data);
@@ -391,6 +433,7 @@ var LeftMenuView=Backbone.View.extend({
 		 res.url=cotefe.apiUri+cotefe.jobs.uri+"?access_token="+getToken();
 		 res.display("",JobsList);},
 		 "click #uploadIm":function(){res=new  ImageEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
+		 "click #listIm":function(){res=new  ImageList();},
 		 "click #testbeds":function(){var testres=new TestBedList({model:new cotefe.Resource()});testres.render(); },
 		 "click #platforms":function(){var testres=new PlatformsList({model:new cotefe.Resource()});testres.render(); },
 	},
@@ -543,6 +586,9 @@ var ExperimentList=Backbone.View.extend({
 		
 		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#",tableheader:"Experiments"});
 		$(this.el).html(listing).fadeIn();
+		
+		getAllExps(projectssession);
+		
 	}
 	
 });
@@ -807,25 +853,6 @@ var JobsList=Backbone.View.extend({
  * images upload/edit and list
  */
 
-function getImages(experimentsList)
-{
-	/*if(sessionStorage.getItem("images")){
-		return JSON.parse(sessionStorage.getItem("images"));
-	}
-	else
-	{
-		var imgList=new Array();
-		for(var i in experimentList)
-			{
-				var exp= new cotefe.Resource();
-				exp.url=experimentList[i].get("uri")+"?access_token="+getToken();
-				
-			
-			
-			}
-	}*/
-	//TODO: grabe from session saved propertyset
-}
 
 var ImageEdit=Backbone.View.extend({
 	el:"#content",
@@ -857,19 +884,11 @@ var ImageEdit=Backbone.View.extend({
 					success : function(model, text, XHR) {
 						
 		                var al=new Alert({});
-						//console.log(model);
+						console.log(model);
+						al.render("alertSuccess","Please Upload your file now");
+						$('<iframe id="resultFrame"/>').appendTo('#uploadLink')
+                        .contents().find('body').append('<form enctype="multipart/form-data" method="post" action="'+model.get("uploadLink")+"/upload?access_token="+getToken()+'" ><input type="file" name="imagefile" /><input type="submit" value="Upload" /></form>');
 						
-		                /*if(model.id==undefined)
-		                	{
-		                		
-		                		
-		                		al.render("alertSuccess","Image source created successfully!");
-		                	}
-		                else
-		                	{
-		                		al.render("alertSuccess","Image source updated successfully!");
-		                	}
-		                */
 		            },
 		            error :function(model, response) {
 		            	var al=new Alert({});
@@ -878,16 +897,7 @@ var ImageEdit=Backbone.View.extend({
 					
 					
 				});
-		res.parse=function(resp, xhr){
-			var locationHeader = xhr.getResponseHeader('Location');
-			console.log(locationHeader);
-			
-			console.log(resp);
-			return resp
-		};
 		
-		 //var al=new Alert({});
-		 //al.render("alertSuccess","Image source created successfully!");
 	},	
 	submit:function(event){
 		event.preventDefault();	/*
@@ -956,6 +966,12 @@ var ImageList=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();
 		$(this.el).undelegate('.headings a', 'click');
+		if(!sessionStorage.getItem("experiments"))
+			{
+				var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
+				row=projectssession.length;			
+				getAllExps(projectssession);
+			}
 		},
 	events:{
 		"click .headings a":function(event){event.preventDefault();
@@ -964,20 +980,24 @@ var ImageList=Backbone.View.extend({
 	},
 	render:function()
 	{	
-		
-		
-		var experimentssession=JSON.parse(sessionStorage.getItem("user")).experiments;
-		row=experimentssession.length;
-		
-		
+		var imagesObjectList=JSON.parse(sessionStorage.getItem("experiments"));
+		var imageArray= new Array();
+		for(var i in imagesObjectList)
+			{
+				for(var j in imagesObjectList[i].images){
+					imageArray.push({"experiment_id":imagesObjectList[i].id,"experiment_name":imagesObjectList[i].name,"images":imagesObjectList[i].images[j]});
+				}
+			}
+		row=imageArray.length;
+		//console.log(imageArray);
 		datap={
 				
 				type:"images",
-				headings:['Image Name','Edit','Delete'],
-				objects:projectssession,				
+				headings:['Image Name','Experiment','Edit','Delete'],
+				objects:imageArray,				
 		};
 		
-		menu = new EJS({url: '../templates/tableModel.ejs'}).render(datap);	
+		menu = new EJS({url: '../templates/imageList.ejs'}).render(datap);	
 		
 		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#",tableheader:"Images"});
 		$(this.el).html(listing).fadeIn();

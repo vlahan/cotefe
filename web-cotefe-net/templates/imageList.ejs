@@ -1,0 +1,27 @@
+<table class="shadow-dark" id="<%= type %>" >
+	<tr>
+	<% for(i=0; i<headings.length; i++) {%>
+			<th><%= headings[i] %></th>
+	<% } %>
+	</tr>
+	<% if(objects.length>0)
+		{
+				
+				len=(objects.length>row?row:objects.length);
+				
+				
+				for(i=0; i<len; i++) {%>
+					<tr>
+						<td><%= objects[i].images.name %></td>						
+						<td><%= objects[i].experiment_name %></td>		
+						<td><a href="<%= objects[i].images.uri %>" class="edit"  >Edit</a></td>
+						<td><a href="<%= objects[i].images.uri %>" class="delete"  >Delete</a></td>
+					</tr>
+			<% }
+		}
+		else
+		{
+			%><tr><td>You have No Items Yet in the list</td></tr> <%
+		}
+	 %>    
+</table>

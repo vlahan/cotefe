@@ -28,7 +28,8 @@ var cotefe=(function($){
 				display: function(item,view) {
 					this.fetch({
 						success: function(model, response) {
-							       new view({model:model});
+								if(view != undefined || view != null)
+							       {new view({model:model});}
 			        				return (model);
 			      				}
 		    				});
