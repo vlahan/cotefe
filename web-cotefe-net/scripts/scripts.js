@@ -95,7 +95,7 @@ function getTestBeds()
 
 function getAllExps(experimentList)
 {
-	console.log(experimentList);
+	
 	for(var i in experimentList)
 		{
 			var res=new  cotefe.Resource();
@@ -103,6 +103,7 @@ function getAllExps(experimentList)
 			res.fetch({
 				success:function(model){
 					getExperimentSets(model,false);
+					
 				}
 			});
 			
@@ -112,16 +113,17 @@ function getAllExps(experimentList)
 function getExperimentSets(model,force)
 {
 	
-					var propertysetsArray=model.get('property_sets');
+					/*var propertysetsArray=model.get('property_sets');
 					var virtualNodeGroupArray=model.get('virtual_node_groups');
 					var virtualNodesArray=model.get('virtual_nodes');
 					var virtualTaskArray=model.get('virtual_tasks');
 					var Images=model.get('images');
-					var Jobs=model.get('jobs');
+					var Jobs=model.get('jobs');*/
 					/*
 					 * load all of the resources
 					 * dig deep
 					 */
+
 					var experiments=new Array();
 					if(sessionStorage.getItem("experiments"))
 						{
@@ -143,9 +145,9 @@ function getExperimentSets(model,force)
 								}
 							if(exists===false)
 								{
-								experiments.push(model);
+									explist.push(model);
 								}
-							sessionStorage.setItem("experiments",JSON.stringify(experiments));
+							sessionStorage.setItem("experiments",JSON.stringify(explist));
 						}
 					else
 						{
@@ -326,7 +328,7 @@ var DashBoardContentView	=Backbone.View.extend({
 							
 							newexp.fetch({
 								success:function(model){
-									console.log(model);
+									
 									getExperimentSets(model,true);
 								}
 							});
@@ -924,7 +926,7 @@ var ImageEdit=Backbone.View.extend({
 						//console.log(newexp.url);
 						newexp.fetch({
 							success:function(model1){
-								console.log(newexp);
+							
 								getExperimentSets(model1,true);
 							}
 						});
@@ -1021,6 +1023,7 @@ var ImageList=Backbone.View.extend({
 			var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
 			getAllExps(projectssession);
 		}
+		
 		
 		
 		var imagesObjectList=JSON.parse(sessionStorage.getItem("experiments"));
