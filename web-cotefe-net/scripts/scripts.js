@@ -95,7 +95,8 @@ function getTestBeds()
 
 function getAllExps(experimentList)
 {
-	for(i in experimentList)
+	console.log(experimentList);
+	for(var i in experimentList)
 		{
 			var res=new  cotefe.Resource();
 			res.url=experimentList[i].uri+"?access_token="+getToken();
@@ -129,22 +130,22 @@ function getExperimentSets(model,force)
 							for(var i in explist)
 								{
 								
-									if(explist[i].id==model.get("id"))
+									if(explist[i].id===model.get("id") && force === false)
 										{
 											exists=true;
 										}
-									if(explist[i].id==model.get("id") && force==true)
+									if(explist[i].id===model.get("id") && force===true)
 										{
 										
 											explist.splice(i, 0, model);
 										}
 								
 								}
-							if(exists==false)
+							if(exists===false)
 								{
-									explist.push(model);
+								experiments.push(model);
 								}
-							sessionStorage.setItem("experiments",JSON.stringify(explist));
+							sessionStorage.setItem("experiments",JSON.stringify(experiments));
 						}
 					else
 						{
@@ -308,6 +309,7 @@ var DashBoardContentView	=Backbone.View.extend({
 		delres.id=2000002;
 		delres.url=path+"?access_token="+getToken();
 		
+		var expurl=$('a[href="'+event.target+'"]').parent().parent().children('td').eq(1).children('a').eq(0).attr("href");
 		
 		delres.destroy({
 				success :function(model, response) {
@@ -316,6 +318,18 @@ var DashBoardContentView	=Backbone.View.extend({
 					var obj_type=$('a[href="'+event.target+'"]').parent().parent().parent().parent().attr("id");
 					if(obj_type==="images")
 						{
+							/*
+							 * update experiment in session
+							 */
+							var newexp= new cotefe.Resource();
+							newexp.url=expurl+"?access_token="+getToken();
+							
+							newexp.fetch({
+								success:function(model){
+									console.log(model);
+									getExperimentSets(model,true);
+								}
+							});
 						
 						}
 					$('a[href="'+event.target+'"]').parent().parent().remove();
@@ -386,7 +400,7 @@ var DashBoardContentView	=Backbone.View.extend({
 		for(var i in imagesObjectList)
 			{
 				for(var j in imagesObjectList[i].images){
-					imageArray.push({"experiment_id":imagesObjectList[i].id,"experiment_name":imagesObjectList[i].name,"images":imagesObjectList[i].images[j]});
+					imageArray.push({"experiment_uri":imagesObjectList[i].uri,"experiment_name":imagesObjectList[i].name,"images":imagesObjectList[i].images[j]});
 				}
 			}
 		
@@ -603,7 +617,6 @@ var ExperimentList=Backbone.View.extend({
 		
 		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#",tableheader:"Experiments"});
 		$(this.el).html(listing).fadeIn();
-		
 		getAllExps(projectssession);
 		
 	}
@@ -874,6 +887,7 @@ var JobsList=Backbone.View.extend({
 var ImageEdit=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
+	$(this.el).undelegate('input[name=generateLink]', 'click');
 		},
 	events:
 		{
@@ -907,16 +921,16 @@ var ImageEdit=Backbone.View.extend({
                         .contents().find('body').append('<form enctype="multipart/form-data" method="post" action="'+model.get("uploadLink")+"/upload?access_token="+getToken()+'" ><input type="file" name="imagefile" /><input type="submit" value="Upload" /></form>');
 						var newexp= new cotefe.Resource();
 						newexp.url=cotefe.apiUri+cotefe.experiments.uri+$.trim(temprory[3].value)+"?access_token="+getToken();
-						console.log(newexp.url);
+						//console.log(newexp.url);
 						newexp.fetch({
-							success:function(model){
+							success:function(model1){
 								console.log(newexp);
-								getExperimentSets(model,true);
+								getExperimentSets(model1,true);
 							}
 						});
 						
 		            },
-		            error :function(model, response) {
+		            error :function(model1, response) {
 		            	var al=new Alert({});
 						al.render("alertFail","Image create/update Failed!");
 				    },
@@ -992,12 +1006,7 @@ var ImageList=Backbone.View.extend({
 	el:"#content",
 	initialize:function(){_.bindAll(this,"render");this.render();
 		$(this.el).undelegate('.headings a', 'click');
-		if(!sessionStorage.getItem("experiments"))
-			{
-				var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
-				row=projectssession.length;			
-				getAllExps(projectssession);
-			}
+		
 		},
 	events:{
 		"click .headings a":function(event){event.preventDefault();
@@ -1006,16 +1015,25 @@ var ImageList=Backbone.View.extend({
 	},
 	render:function()
 	{	
+		
+		if(!sessionStorage.getItem("experiments"))
+		{
+			var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
+			getAllExps(projectssession);
+		}
+		
+		
 		var imagesObjectList=JSON.parse(sessionStorage.getItem("experiments"));
+		
 		var imageArray= new Array();
 		for(var i in imagesObjectList)
 			{
 				for(var j in imagesObjectList[i].images){
-					imageArray.push({"experiment_id":imagesObjectList[i].id,"experiment_name":imagesObjectList[i].name,"images":imagesObjectList[i].images[j]});
+					imageArray.push({"experiment_uri":imagesObjectList[i].uri,"experiment_name":imagesObjectList[i].name,"images":imagesObjectList[i].images[j]});
 				}
 			}
 		row=imageArray.length;
-		//console.log(imageArray);
+		
 		datap={
 				
 				type:"images",
