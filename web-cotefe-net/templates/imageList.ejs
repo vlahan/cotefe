@@ -13,7 +13,7 @@
 				for(i=0; i<len; i++) {%>
 					<tr>
 						<td><%= objects[i].images.name %></td>						
-						<td><a href="<%= objects[i].experiment_uri %>" ><%= objects[i].experiment_name %></a></td>		
+						<td><a href="<%= objects[i].experiment_uri %>" class="experimentResource"><%= objects[i].experiment_name %></a></td>		
 						<td><a href="<%= objects[i].images.uri %>" class="edit"  >Edit</a></td>
 						<td><a href="<%= objects[i].images.uri %>" class="delete"  >Delete</a></td>
 					</tr>

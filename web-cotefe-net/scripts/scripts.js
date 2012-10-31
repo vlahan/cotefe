@@ -113,56 +113,42 @@ function getAllExps(experimentList)
 function getExperimentSets(model,force)
 {
 	
-					/*var propertysetsArray=model.get('property_sets');
-					var virtualNodeGroupArray=model.get('virtual_node_groups');
-					var virtualNodesArray=model.get('virtual_nodes');
-					var virtualTaskArray=model.get('virtual_tasks');
-					var Images=model.get('images');
-					var Jobs=model.get('jobs');*/
-					/*
-					 * load all of the resources
-					 * dig deep
-					 */
+			/*
+			 * load all of the resources
+			 * dig deep
+			 */
 
-					var experiments=new Array();
-					if(sessionStorage.getItem("experiments"))
+			var experiments=new Array();
+			if(sessionStorage.getItem("experiments"))
+				{
+					var explist=JSON.parse(sessionStorage.getItem("experiments"));
+					var exists=false;
+					for(var i in explist)
 						{
-							var explist=JSON.parse(sessionStorage.getItem("experiments"));
-							var exists=false;
-							for(var i in explist)
-								{
-								
-									if(explist[i].id===model.get("id") && force === false)
-										{
-											exists=true;
-										}
-									if(explist[i].id===model.get("id") && force===true)
-										{
-										
-											explist.splice(i, 0, model);
-										}
-								
-								}
-							if(exists===false)
-								{
-									explist.push(model);
-								}
-							sessionStorage.setItem("experiments",JSON.stringify(explist));
-						}
-					else
-						{
-								experiments.push(model);
-								sessionStorage.setItem("experiments",JSON.stringify(experiments));
-						}
-					
-					/*for(var i in propertysetsArray)
-					{
 						
-						console.log(propertysetsArray[i]);
-					}*/
+							if(explist[i].id===model.get("id") && force === false)
+								{
+									exists=true;
+								}
+							if(explist[i].id===model.get("id") && force===true)
+								{
+								
+									explist.splice(i, 0, model);
+								}
+						
+						}
+					if(exists===false)
+						{
+							explist.push(model);
+						}
+					sessionStorage.setItem("experiments",JSON.stringify(explist));
+				}
+			else
+				{
+						experiments.push(model);
+						sessionStorage.setItem("experiments",JSON.stringify(experiments));
+				}
 					
-					
-				
 }
 
 
@@ -285,7 +271,7 @@ var DashBoardContentView	=Backbone.View.extend({
 	events:{
 		"click #content #projects .edit":'editp',		
 		"click #content #experiments .edit":'edite',
-		"click #content #experiments .experimentResource":'getpropertySet',			
+		"click #content .experimentResource":'getpropertySet',			
 		"click #content #jobs .edit":'editj',
 		"click #content .delete":'deleteResource',
 		"click #content #pic-button .project":function(){event.preventDefault();res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
