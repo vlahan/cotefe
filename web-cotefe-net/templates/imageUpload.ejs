@@ -18,7 +18,7 @@
                                     		items=experiments[i];
                                     		
                                     	%>
-                                    	<option value="<%= experiments[i].id %> " ><%= experiments[i].name %></option>
+                                    	<option value="<%= experiments[i].id %>" <% if(experiments[i].id===experiment){ %><%= "selected" %><% }%> ><%= experiments[i].name %></option>
                                     <% }
                                     } %>
                                     

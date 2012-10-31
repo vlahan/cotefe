@@ -273,6 +273,7 @@ var DashBoardContentView	=Backbone.View.extend({
 		"click #content #experiments .edit":'edite',
 		"click #content .experimentResource":'getpropertySet',			
 		"click #content #jobs .edit":'editj',
+		"click #content #images .edit":'editImage',
 		"click #content .delete":'deleteResource',
 		"click #content #pic-button .project":function(){event.preventDefault();res=new  ProjectEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
 		"click #content #pic-button .experiment":function(){event.preventDefault();res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});},		
@@ -347,6 +348,13 @@ var DashBoardContentView	=Backbone.View.extend({
 		res.url=event.target+"?access_token="+getToken();
 		res.display("",ExperimentEdit);
 		
+	},
+	editImage:function(event){
+		event.preventDefault();
+		$(this.el).html("");
+		res=new  cotefe.Resource();
+		res.url=event.target+"?access_token="+getToken();
+		res.display("",ImageEdit);		
 	},
 	
 	getpropertySet:function(event){
@@ -874,13 +882,14 @@ var JobsList=Backbone.View.extend({
 
 var ImageEdit=Backbone.View.extend({
 	el:"#content",
+	editMode:false,
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
 	$(this.el).undelegate('input[name=generateLink]', 'click');
 		},
 	events:
 		{
 			"click input[name=generateLink]":'generateLink',	
-			"click input[name=submit]":'submit',
+			//"click input[name=submit]":'submit',
 		},
 	
 	generateLink:function(){
@@ -896,7 +905,6 @@ var ImageEdit=Backbone.View.extend({
 		this.model.set("name",$.trim(temprory[2].value));
 		this.model.set("description",$.trim(temprory[4].value));
 		res.url=url+"?access_token="+getToken();
-		//console.log(res);
 		
 		res.save({ id: this.model.get('cid') },{
 					
@@ -907,9 +915,12 @@ var ImageEdit=Backbone.View.extend({
 						al.render("alertSuccess","Please Upload your file now");
 						$('<iframe id="resultFrame"/>').appendTo('#uploadLink')
                         .contents().find('body').append('<form enctype="multipart/form-data" method="post" action="'+model.get("uploadLink")+"/upload?access_token="+getToken()+'" ><input type="file" name="imagefile" /><input type="submit" value="Upload" /></form>');
+						/*
+						 * refresh the Experiment
+						 */
 						var newexp= new cotefe.Resource();
 						newexp.url=cotefe.apiUri+cotefe.experiments.uri+$.trim(temprory[3].value)+"?access_token="+getToken();
-						//console.log(newexp.url);
+						
 						newexp.fetch({
 							success:function(model1){
 							
@@ -927,62 +938,37 @@ var ImageEdit=Backbone.View.extend({
 				});
 		
 	},	
-	submit:function(event){
-		event.preventDefault();	/*
-		url="";
-		temprory=($("#imageform").serializeArray());
-		for(i =0;i<temprory.length;i++)
-			{
-				if(temprory[i].name=="uri")
-					{
-						url=temprory[i].value;
-						
-					}
-				else if(temprory[i].name=="type")
-					{
-						continue;
-					}
-				this.model.attributes[temprory[i].name]=temprory[i].value;
-				
-			}
-		
-		res=this.model;	
-		
-		res.url=url+"?access_token="+getToken();
-		res.save({ id: this.model.get('id') },{
-			
-			success : function(model, response) {
-                var al=new Alert({});
-				
-                if(model.id==undefined)
-                	{
-                		
-                		
-                		al.render("alertSuccess","Image source created successfully!");
-                	}
-                else
-                	{
-                		al.render("alertSuccess","Image spurce updated successfully!");
-                	}
-                
-            },
-            error :function(model, response) {
-            	var al=new Alert({});
-				al.render("alertFail","Image create/update Failed!");
-		    },
-			
-			
-		});*/
-		
-	},	
+	
 	render:function()
 	{	
-		data={
-				uri			:this.model.attributes.uri,
-				type		:"images",
-				name		:this.model.attributes.name,
-				description	:this.model.attributes.description,
-		},
+		
+		var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
+		
+		if(this.model.get("id"))
+			{
+				this.editMode=true;
+				data={
+						uri			:this.model.get("uri"),
+						type		:"images",
+						name		:this.model.get("name"),
+						experiment	:this.model.get("experiment").id,
+						experiments: projectssession,
+						description	:this.model.get("description"),
+				}
+			}
+		else
+			{
+				this.editMode=false;
+				data={
+						uri			:this.model.get("uri"),
+						type		:"images",
+						name		:this.model.get("name"),
+						experiments: projectssession,
+						description	:this.model.get("description"),
+				}
+			}
+		
+		
 		
 		menu = new EJS({url: '../templates/imageUpload.ejs'}).render(data);
 		$(this.el).html(menu).fadeIn();
