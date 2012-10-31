@@ -112,7 +112,7 @@ function getAllExps(experimentList)
 
 function getExperimentSets(model,force)
 {
-	
+		
 			/*
 			 * load all of the resources
 			 * dig deep
@@ -132,8 +132,8 @@ function getExperimentSets(model,force)
 								}
 							if(explist[i].id===model.get("id") && force===true)
 								{
-								
-									explist.splice(i, 0, model);
+									exists=true;
+									explist[i] = model;
 								}
 						
 						}
@@ -1003,7 +1003,6 @@ var ImageEdit=Backbone.View.extend({
 						experiments	:projectssession,
 						description	:this.model.get("description"),
 						downloadLink:this.model.get("download"),
-						uploadLink	:this.model.get("upload"),
 						edit		: true
 				}
 			}
@@ -1014,8 +1013,11 @@ var ImageEdit=Backbone.View.extend({
 						uri			:this.model.get("uri"),
 						type		:"images",
 						name		:this.model.get("name"),
-						experiments: projectssession,
+						experiment	:null,
+						experiments : projectssession,
 						description	:this.model.get("description"),
+						downloadLink:null,
+						edit		: false
 				}
 			}
 		

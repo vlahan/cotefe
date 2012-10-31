@@ -10,8 +10,8 @@
         </p>
         <p>
                             <label for="selectbox">Experiment </label>
-                            <select name="experiment_id" id="selectbox" >
-                                    <option value="" <% if(edit){ %>disabled="disabled"  <%} %> >Select a Experiment</option>
+                            <select name="experiment_id" id="selectbox" <% if(edit){ %>disabled="disabled"  <%} %> >
+                                    <option value=""  >Select a Experiment</option>
                                     <% if(experiments != null){
                                     	
                                     	for(i=0; i<experiments.length; i++) { 
