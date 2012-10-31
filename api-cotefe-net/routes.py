@@ -39,9 +39,9 @@ routes = [
     
     (r'^/users/$', user.UserCollectionHandler),
     (r'^/users/(\d+)$', user.UserResourceHandler),
-    # (r'^/users/(\d+)/images/$', user.UserImageCollectionHandler),
-    # (r'^/users/(\d+)/experiments/$', user.UserExperimentCollectionHandler),
-    # (r'^/users/(\d+)/jobs/$', user.UserJobCollectionHandler),
+    #(r'^/users/(\d+)/images/$', user.UserImageCollectionHandler),
+    #(r'^/users/(\d+)/experiments/$', user.UserExperimentCollectionHandler),
+    #(r'^/users/(\d+)/jobs/$', user.UserJobCollectionHandler),
     
     (r'^/platforms/$', platform.PlatformCollectionHandler),
     (r'^/platforms/(\w+)$', platform.PlatformResourceHandler),
@@ -67,6 +67,9 @@ routes = [
     
     (r'^/experiments/(\d+)/virtual-nodegroups/$', virtualnodegroup.VirtualNodeGroupCollectionHandler),
     (r'^/experiments/(\d+)/virtual-nodegroups/(\d+)$', virtualnodegroup.VirtualNodeGroupResourceHandler),
+    
+    (r'^/experiments/(\d+)/jobs/$', job.JobCollectionHandler),
+    (r'^/experiments/(\d+)/jobs/(\d+)$', job.JobResourceHandler),
     
     (r'^/experiments/(\d+)/images/$', image.ImageCollectionHandler),
     (r'^/experiments/(\d+)/images/(\d+)$', image.ImageResourceHandler),
