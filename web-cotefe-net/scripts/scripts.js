@@ -96,16 +96,20 @@ function getTestBeds()
 function getAllExps(experimentList)
 {
 	
+	
 	for(var i in experimentList)
-		{
+		{			
 			var res=new  cotefe.Resource();
 			res.url=experimentList[i].uri+"?access_token="+getToken();
-			res.fetch({
-				success:function(model){
-					getExperimentSets(model,false);				
-					
-				}
-			});
+			$.ajax({
+				  url: res.url,
+				  type:"GET",
+				  async: false,
+				  dataType: "json",
+				  success: function(data) {
+				    getExperimentSets(new Backbone.Model(data),false);
+				  }
+				});
 			
 		}
 }
@@ -155,6 +159,8 @@ function getExperimentSets(model,force)
 						sessionStorage.setItem("experiments",JSON.stringify(experiments));
 						
 				}
+			
+			return true;
 					
 }
 
@@ -273,11 +279,13 @@ var DashBoardContentView	=Backbone.View.extend({
 			$(this.el).undelegate('#content #pic-button .images', 'click');
 			
 			
+			
 			projects=this.model.get("projects");
 			experiments=this.model.get("experiments");
 			sessionStorage.setItem("user",JSON.stringify(this.model));
 			
 			getAllExps(experiments);
+			
 			
 			
 			this.render();
