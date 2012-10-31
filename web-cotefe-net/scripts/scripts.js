@@ -102,7 +102,7 @@ function getAllExps(experimentList)
 			res.url=experimentList[i].uri+"?access_token="+getToken();
 			res.fetch({
 				success:function(model){
-					getExperimentSets(model,false);
+					getExperimentSets(model,false);				
 					
 				}
 			});
@@ -118,35 +118,42 @@ function getExperimentSets(model,force)
 			 * dig deep
 			 */
 
-			var experiments=new Array();
+			
 			if(sessionStorage.getItem("experiments"))
 				{
 					var explist=JSON.parse(sessionStorage.getItem("experiments"));
+					
 					var exists=false;
 					for(var i in explist)
 						{
-						
-							if(explist[i].id===model.get("id") && force === false)
+							
+							
+							if(explist[i].id==model.get("id") && force == false)
 								{
 									exists=true;
 								}
-							if(explist[i].id===model.get("id") && force===true)
+							if(explist[i].id==model.get("id") && force==true)
 								{
 									exists=true;
 									explist[i] = model;
 								}
 						
 						}
-					if(exists===false)
-						{
+					
+					if(exists==false)
+						{							
 							explist.push(model);
 						}
+					
 					sessionStorage.setItem("experiments",JSON.stringify(explist));
+					
 				}
 			else
 				{
+						var experiments=new Array();
 						experiments.push(model);
 						sessionStorage.setItem("experiments",JSON.stringify(experiments));
+						
 				}
 					
 }
@@ -266,6 +273,13 @@ var DashBoardContentView	=Backbone.View.extend({
 			$(this.el).undelegate('#content #pic-button .images', 'click');
 			
 			
+			projects=this.model.get("projects");
+			experiments=this.model.get("experiments");
+			sessionStorage.setItem("user",JSON.stringify(this.model));
+			
+			getAllExps(experiments);
+			
+			
 			this.render();
 	},
 	events:{
@@ -380,25 +394,38 @@ var DashBoardContentView	=Backbone.View.extend({
 				images:"images"
 		}
 		
-		projects=this.model.attributes.projects;
-		experiments=this.model.attributes.experiments;
+		projects=this.model.get("projects");
+		experiments=this.model.get("experiments");
 		sessionStorage.setItem("user",JSON.stringify(this.model));
 		
-		if(!sessionStorage.getItem("experiments"))
-		{
-			var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
-			row=projectssession.length;			
-			getAllExps(projectssession);
-		}
+		//getAllExps(experiments);
 		
-		var imagesObjectList=JSON.parse(sessionStorage.getItem("experiments"));
+		
+		row=5;//minimum line to display
+		datap={
+				type:"projects",
+				headings:['Project Name','Edit','Delete'],
+				objects:projects,				
+		};
+		datae={
+				type:"experiments",
+				headings:['Experiment Name','Edit','Delete'],
+				objects:experiments,
+		};
+		
+		
+		
+		
+		var imagesObjectList=JSON.parse(sessionStorage.getItem("experiments"));		
 		var imageArray= new Array();
 		for(var i in imagesObjectList)
 			{
 				for(var j in imagesObjectList[i].images){
+					
 					imageArray.push({"experiment_uri":imagesObjectList[i].uri,"experiment_name":imagesObjectList[i].name,"images":imagesObjectList[i].images[j]});
 				}
 			}
+		
 		
 		dataimg={
 				
@@ -407,18 +434,6 @@ var DashBoardContentView	=Backbone.View.extend({
 				objects:imageArray,				
 		};
 		
-		
-		row=5;//minimum line to display
-		datap={
-				type:"projects",
-				headings:['Project Name','Edit','Delete'],
-				objects:projects,				
-		}
-		datae={
-				type:"experiments",
-				headings:['Experiment Name','Edit','Delete'],
-				objects:experiments,				
-		}
 		
 		
 		var data={
