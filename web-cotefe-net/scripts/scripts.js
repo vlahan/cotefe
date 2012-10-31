@@ -883,21 +883,21 @@ var JobsList=Backbone.View.extend({
 var ImageEdit=Backbone.View.extend({
 	el:"#content",
 	editMode:false,
-	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
-	$(this.el).undelegate('input[name=generateLink]', 'click');
+	initialize:function(){_.bindAll(this,"render");this.render();
+			$(this.el).undelegate('input[name=updateImg]', 'click');
+			$(this.el).undelegate('input[name=generateLink]', 'click');
 		},
 	events:
 		{
 			"click input[name=generateLink]":'generateLink',	
-			//"click input[name=submit]":'submit',
+			"click input[name=updateImg]":'submit'
 		},
 	
-	generateLink:function(){
+	generateLink:function(event){
 		event.preventDefault();	
 		url="";
 		temprory=($("#imageform").serializeArray());
 		url=cotefe.apiUri+cotefe.experiments.uri+$.trim(temprory[3].value)+cotefe.images.uri;
-		
 		
 		res=this.model;	
 		this.model.set("type","image");
@@ -938,7 +938,55 @@ var ImageEdit=Backbone.View.extend({
 				});
 		
 	},	
-	
+	submit:function(event){
+		event.preventDefault();	
+		url="";
+		temprory=($("#imageform").serializeArray());
+		for(i =0;i<temprory.length;i++)
+		{
+			if(temprory[i].name=="uri")
+				{
+					url=temprory[i].value;
+					
+				}
+			else if(temprory[i].name=="type")
+				{
+					continue;
+				}
+			this.model.attributes[temprory[i].name]=temprory[i].value;
+			
+		}
+		res=this.model;	
+		
+		res.url=url+"?access_token="+getToken();
+		
+		res.save({
+					
+					success : function(model, response) {
+		                var al=new Alert({});
+						al.render("alertSuccess","Image updated successfully!");
+						
+						var newexp= new cotefe.Resource();
+						newexp.url=cotefe.apiUri+cotefe.experiments.uri+$.trim(temprory[3].value)+"?access_token="+getToken();
+						
+						newexp.fetch({
+							success:function(model1){							
+								getExperimentSets(model1,true);
+							}
+						});
+						
+		                	
+		                
+		            },
+		            error :function(model, response) {
+		            	var al=new Alert({});
+						al.render("alertFail","Image create/update Failed!");
+				    },
+					
+					
+				});
+		
+	},
 	render:function()
 	{	
 		
@@ -952,8 +1000,11 @@ var ImageEdit=Backbone.View.extend({
 						type		:"images",
 						name		:this.model.get("name"),
 						experiment	:this.model.get("experiment").id,
-						experiments: projectssession,
+						experiments	:projectssession,
 						description	:this.model.get("description"),
+						downloadLink:this.model.get("download"),
+						uploadLink	:this.model.get("upload"),
+						edit		: true
 				}
 			}
 		else
@@ -967,8 +1018,6 @@ var ImageEdit=Backbone.View.extend({
 						description	:this.model.get("description"),
 				}
 			}
-		
-		
 		
 		menu = new EJS({url: '../templates/imageUpload.ejs'}).render(data);
 		$(this.el).html(menu).fadeIn();

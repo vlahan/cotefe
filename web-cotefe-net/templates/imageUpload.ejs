@@ -11,7 +11,7 @@
         <p>
                             <label for="selectbox">Experiment </label>
                             <select name="experiment_id" id="selectbox" >
-                                    <option value="">Select a Experiment</option>
+                                    <option value="" <% if(edit){ %>disabled="disabled"  <%} %> >Select a Experiment</option>
                                     <% if(experiments != null){
                                     	
                                     	for(i=0; i<experiments.length; i++) { 
@@ -28,8 +28,16 @@
             <label for="description">Image Description</label>
             <textarea name="description" id="description" cols="60" rows="15" placeholder="Image Description"><%= description %></textarea>
         </p>
-		 <p>
+        <%if (edit) { %>
+        <p>
+            Click here to <a href="<%= downloadLink %>">Download</a> Image.
+        </p>
+        <% } %>
+        
+		 <p><% if(edit) { %><input class="button shadow-dark" style="width:200px;" name="updateImg" type="button" value="Update Image"/>
+		 	<% } else { %> 
             <input class="button shadow-dark" style="width:200px;" name="generateLink" type="button" value="Generate Upload Link"/>
+        	<% } %>
         </p>
 	</form>	
 	<div id="uploadLink">
