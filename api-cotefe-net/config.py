@@ -5,7 +5,7 @@ SERVER_NAME = os.environ['SERVER_NAME']
 if SERVER_NAME == 'api-cotefe-net.appspot.com':
     FEDERATION_SERVER_URL = 'https://api.cotefe.net'
 else:
-    FEDERATION_SERVER_URL = 'http://localhost:8080'
+    FEDERATION_SERVER_URL = 'http://localhost:8081'
 
 FEDERATION_NAME = 'COTEFE'
 FEDERATION_DESCRIPTION = 'The goal of the CONET Testbed Federation (CTF) Task is to address some of these roadblocks by developing a software platform that will enable convenient access to the experimental resources of multiple testbeds organized in a federation of autonomous entities.'

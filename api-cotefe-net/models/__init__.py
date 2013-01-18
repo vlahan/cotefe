@@ -342,6 +342,7 @@ class VirtualNodeGroup(Resource):
         r['media_type'] = config.MEDIA_TYPE
         r['name'] = self.name
         r['id'] = self.id()
+        r['virtual_node_count']=len(r['virtual_nodes'])
         if not head_only:
             r['description'] = self.description
             try:
