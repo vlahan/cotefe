@@ -70,7 +70,7 @@ iframe{border:none;height:50px;width:500px;}
 #content .wrap h1 span{padding-left: 10px;}
 #content .wrap .headings a{display:block;width:35px;height:35px;position:absolute;right:0;top:0;}
 
-#content .wrap form p{margin:0;display:block;padding-bottom:22px;padding-top:20px;} /**forms**/
+#content .wrap form p,#content .wrap form #virtual_node_container{margin:0;display:block;padding-bottom:22px;padding-top:20px;} /**forms**/
 #content .wrap form p label {display: block;padding-bottom: 3px;padding-left:10px;}
 #content .wrap form div .main-label{padding-left:10px;padding-bottom:10px;display:block;}
 #content .wrap form div {padding-top:10px;padding-bottom:20px;}
@@ -132,3 +132,13 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { background: #fff;	bord
 #tablesubnav li a span{margin-left:20px;line-height:30px;}
 
 #detail div table tr td{padding-top:5px;padding-bottom:5px;}
+
+#content .wrap form #virtual_node_container table tr th,#content .wrap form #virtual_node_container table tr td{
+	width:50%;
+	vertical-align:top;
+}
+/*#content .wrap form #virtual_node_container table tr td{padding-left:0px;padding-right:20px;}*/
+#selectable .ui-selecting { background: #FECA40; }
+#selectable .ui-selected { background: #F39814; color: white; }
+#selectable ,#selected{ list-style-type: none; margin: 0; padding: 0;}
+#selectable li,#selected li { margin: 1px;  float: left; width: 40px; height: 20px; font-size: 0.7em; text-align: center;background-color:#aaaaaa; }

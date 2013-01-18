@@ -752,6 +752,7 @@ var ExperimentPropertySet=Backbone.View.extend({
 		getExperimentSets(this.model,false);
 		var e_experiments=null;
 		var e_propertySets=null;
+		var e_virtual_nodes=null;
 		if(sessionStorage.getItem("user"))
 		{
 			e_experiments=JSON.parse(sessionStorage.getItem("user")).experiments;

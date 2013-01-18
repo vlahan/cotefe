@@ -111,7 +111,7 @@
 								        	<tbody>
 								        	<tr><th>PropertySet Name</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
     										<%
-    											console.log(model);
+    											
     										  for(i=0;i<model.property_sets.length;i++)
     										{
     										 %><tr><td><%=model.property_sets[i].name%></td><td><a href="<%=model.property_sets[i].uri %>" class="edit">Edit</a></td><td class="delete"><a href="<%=model.property_sets[i].uri %>" class="delete">Delete</a></td></tr><%
@@ -137,26 +137,66 @@
 						                            <label for="description">VirtualNodeGroupent Description</label>
 						                            <textarea name="description" id="description" cols="60" rows="15" placeholder="VirtualNodegroup Description"></textarea>
 						                        </p>
-						                        <p>
-						                        </p>
-						                        Nodes
-						                        
-						                        
-												 <p>
+						                       <div id="virtual_node_container">
+						                       <table style="width:80%;margin:0;">
+						                       <tr><th>Virtual Nodes </th><th>Virtual Nodes In Group</th></tr>
+						                       <tr><td>
+							                       <ol id="selectable">
+							                       
+							                       	<%
+							                        	for( i =0;i<model.virtual_node_count;i++)
+							                        	{
+							                        	
+							                        	%>
+							                        	<li class="ui-state-default" title="<%=model.virtual_nodes[i].id %>"><%=model.virtual_nodes[i].id %></li>
+							                        	<%
+							                        	}
+							                        %>
+							                       
+													</ol>
+												</td>
+												<td>
+													<ol id="selected">
+													</ol>
+												</td>
+												</tr>
+						                       </table>
+						                       <script>
+						                       	$(function() {
+												    $( "#selectable" ).selectable({
+												    	
+												    	selected: function( event, ui ) {
+												    		//$("#selected").append(ui.selected.outerHTML);
+												    	},
+												    	stop:function(event, ui){
+												    		$( "#selected" ).empty();
+												    		$('#selectable li[class~="ui-selected"]').clone().appendTo("#selected");
+												    		
+												    	}
+												    	
+												    	
+												    	
+												    });
+												  });
+						                       </script>
+						                       </div>
+											<p>
 						                            <input class="button shadow-dark" name="submit" type="submit" value="Submit">
-						                        </p>
+						                       </p>
 											</form>	
 											</details>		
 								    	</div>
 								       
 								       
 								       <table class="shadow-dark">
-								        	<tbody><tr><th>Title</th><th>No. Node</th><th>Date</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
-    										<tr><td>NodeGroup1</td><td>80</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
-    										<tr><td>NodeGroup2</td><td>10</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
-    										<tr><td>NodeGroup3</td><td>40</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
-    										<tr><td>NodeGroup4</td><td>50</td><td>Date</td><td>Edit</td><td>Delete</td></tr>
-    										<tr><td>NodeGroup5</td><td>20</td><td>Date</td><td>Edit</td><td>Delete</td></tr>								    
+								        	<tbody><tr><th>Title</th><th>No. Node</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
+    										<%
+    											
+    										  for(i=0;i<model.virtual_node_groups.length;i++)
+    										{
+    										 %><tr><td><%=model.virtual_node_groups[i].name%></td><td ><%=model.virtual_node_groups[i].virtual_node_count%></td><td><a href="<%=model.virtual_node_groups[i].uri %>" class="edit">Edit</a></td><td class="delete"><a href="<%=model.virtual_node_groups[i].uri %>" class="delete">Delete</a></td></tr><%
+    										 	}
+    										 %>							    
 								        </tbody></table>
 								    </div>
 								    <div id="tab3" class="tab_content" style="display: none; ">

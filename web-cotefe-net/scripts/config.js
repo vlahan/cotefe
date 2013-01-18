@@ -13,7 +13,7 @@
         testbeds            : {uri:"testbeds/",         session:"_cotefeTestbeds"},
         user                : {uri:"me",                session:"_cotefeUser"},
         oauth               : "https://api.cotefe.net/oauth2/auth?client_id=aba144033daa4826baf861686195c421",       
-        redirect            : "http://localhost:8080/htmls/getdata.html&response_type=token",
+        redirect            : "https://web.cotefe.net/htmls/getdata.html&response_type=token",
         dashboard           : "/dashboard",        
         comment             : "JS configuration ",
         link                : function(path){return this.apiUri+"/"+path+"";},
