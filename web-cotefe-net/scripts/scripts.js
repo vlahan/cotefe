@@ -168,6 +168,14 @@ function getExperimentSets(model,force)
 $(document).ready(function(){
 	
 	/*
+	 * ajax loader
+	 */
+	$(document).ajaxStart(function() {
+		var al=new Alert({});
+    	al.render("alertSuccess","Resource Loading.. !");
+	});
+	
+	/*
 	 * user info of dash-board
 	 */
 	res=new  cotefe.Resource();

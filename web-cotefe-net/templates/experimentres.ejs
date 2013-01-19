@@ -158,6 +158,7 @@
 												<td>
 													<ol id="selected">
 													</ol>
+													<div id="selectedForm"></div>
 												</td>
 												</tr>
 						                       </table>
@@ -170,8 +171,13 @@
 												    	},
 												    	stop:function(event, ui){
 												    		$( "#selected" ).empty();
+												    		$("#selectedForm").empty();
 												    		$('#selectable li[class~="ui-selected"]').clone().appendTo("#selected");
-												    		
+												    		$('#selectable li[class~="ui-selected"]').each(function(){
+												    			$('#selectedForm').append('<input type="checkbox" name="virtual_nodes[]" value="'+$(this).attr('title')+'" checked style="visibility:hidden;"/>');
+												    			
+												    		});
+												    														    		
 												    	}
 												    	
 												    	
