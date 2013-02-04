@@ -168,14 +168,6 @@ function getExperimentSets(model,force)
 $(document).ready(function(){
 	
 	/*
-	 * ajax loader
-	 */
-	$(document).ajaxStart(function() {
-		var al=new Alert({});
-    	al.render("alertSuccess","Resource Loading.. !");
-	});
-	
-	/*
 	 * user info of dash-board
 	 */
 	res=new  cotefe.Resource();
@@ -741,9 +733,51 @@ var ExperimentPropertySet=Backbone.View.extend({
 			"click .headings a":function(event){event.preventDefault();
 						res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});
 					},
-			//s"click .edit":"",				
+			"click .edit":"submit",
+			"click .delete":"deleteResource",
 		},
-		
+		deleteResource:function(event)
+		{
+			event.preventDefault();
+			var delres=new  cotefe.Resource();
+			var path=(event.target);
+			delres.id=2000002;
+			delres.url=path+"?access_token="+getToken();
+			
+			var expurl=$('a[href="'+event.target+'"]').parent().parent().children('td').eq(1).children('a').eq(0).attr("href");
+			
+			delres.destroy({
+					success :function(model, response) {
+						var al=new Alert({});
+						al.render("alertSuccess","Resource Deletion Successfull !");
+						var obj_type=$('a[href="'+event.target+'"]').parent().parent().parent().parent().attr("id");
+						if(obj_type==="images")
+							{
+								/*
+								 * update experiment in session
+								 */
+								var newexp= new cotefe.Resource();
+								newexp.url=expurl+"?access_token="+getToken();
+								
+								newexp.fetch({
+									success:function(model){
+										
+										getExperimentSets(model,true);
+									}
+								});
+							
+							}
+						$('a[href="'+event.target+'"]').parent().parent().remove();
+						 
+		            },
+		            error :function(model, response) {
+		            	var al=new Alert({});
+		            	al.render("alertFail","Resource Deletion failed !");
+				    },
+				    
+			});
+			
+		}	,
 	submit:function(event){
 		event.preventDefault();	
 		alert("Sensor not yet defined");		
