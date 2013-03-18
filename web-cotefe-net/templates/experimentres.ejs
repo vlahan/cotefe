@@ -37,15 +37,19 @@
 								    	<div>
 								    		<details class="exp-set">
 								    		<summary><div class="headings"><h1><span>New PropertySet</span></h1></div></summary>		
-											<form action="#">
+											<form action="#" id="propertySetForm">
 													<input type="hidden" value="New" name="formFun">
 												<p>
 						                            <label for="name">PropertySet Name</label>
 						                            <input class="input-small" type="text" value="" name="name" id="name" placeholder="PropertySet Name">
 						                        </p>
 						                        <p>
+						                            <label for="description">Propertyset Description</label>
+						                            <textarea name="description" id="description" cols="60" rows="15" placeholder="Propertyset Description"></textarea>
+						                        </p>
+						                        <p>
 						                            <label for="selectboxplat">Platforms </label>
-						                            <select name="selectboxplat" id="selectboxplat">
+						                            <select name="platform_id" id="selectboxplat">
 						                                    	<% 
 						                                    	
 						                                    	
@@ -95,7 +99,7 @@
 						                            </tbody></table>
 						                        </div>-->
 						                        <p>
-						                            <label for="nodes">No of Nodes: <input type="text" id="rangeValue1" class="input-small" name="nodes" value="0" style="width:100px"/></label>
+						                            <label for="nodes">No of Nodes: <input type="text" id="rangeValue1" class="input-small" name="num_nodes" value="0" style="width:100px"/></label>
 						                            <input id="slider1" name="nodes" type="range" min="0" max="200" value="0" onchange="printValue(this.value,'rangeValue1')">
 						                        </p>
 												 <p>
@@ -109,12 +113,12 @@
 								    	
 								        <table class="shadow-dark">
 								        	<tbody>
-								        	<tr><th>PropertySet Name</th><th class="edit-delete-box">Edit</th><th class="edit-delete-box">Delete</th></tr>
+								        	<tr><th>PropertySet Name</th><th class="edit-delete-box">Delete</th></tr>
     										<%
     											
     										  for(i=0;i<model.property_sets.length;i++)
     										{
-    										 %><tr><td><%=model.property_sets[i].name%></td><td><a href="<%=model.property_sets[i].uri %>" class="edit">Edit</a></td><td class="delete"><a href="<%=model.property_sets[i].uri %>" class="delete">Delete</a></td></tr><%
+    										 %><tr><td><%=model.property_sets[i].name%></td><td class="delete"><a href="<%=model.property_sets[i].uri %>" class="delete">Delete</a></td></tr><%
     										 	}
     										 %>
     																	    
