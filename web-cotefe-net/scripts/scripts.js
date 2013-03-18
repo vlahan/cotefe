@@ -164,8 +164,29 @@ function getExperimentSets(model,force)
 					
 }
 
+function updateTable(expid,setAttr){
+	if(setAttr,'propertySet'){
+		sessi=JSON.parse(sessionStorage.getItem("experiments"));
+		for(i=0;i<sessi.length;i++){
+				if(sessi[i].id==expid){
+					var pslen=sessi[i].property_sets.length;
+					htmls="<tr><td>"+sessi[i].property_sets[pslen-1].name+"</td><td><a href=\""+sessi[i].property_sets[pslen-1].uri+"\" class=\"delete\">Delete</a></td></tr>";
+					$('#tab1 table > tbody > tr').eq(i-1).after(htmls);
+				}
+			}
+		
+	}
+}
 
 $(document).ready(function(){
+	
+	/*
+	 * ajax loader
+	 */
+	$(document).ajaxStart(function() {
+		var al=new Alert({});
+    	al.render("alertSuccess","Resource Loading.. !");
+	});
 	
 	/*
 	 * user info of dash-board
@@ -339,6 +360,7 @@ var DashBoardContentView	=Backbone.View.extend({
 								success:function(model){
 									
 									getExperimentSets(model,true);
+									
 								}
 							});
 						
@@ -733,54 +755,58 @@ var ExperimentPropertySet=Backbone.View.extend({
 			"click .headings a":function(event){event.preventDefault();
 						res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});
 					},
-			"click .edit":"submit",
-			"click .delete":"deleteResource",
+			//s"click .edit":"",				
 		},
-		deleteResource:function(event)
-		{
-			event.preventDefault();
-			var delres=new  cotefe.Resource();
-			var path=(event.target);
-			delres.id=2000002;
-			delres.url=path+"?access_token="+getToken();
+		
+	submit:function(event){
+		event.preventDefault();	
 			
-			var expurl=$('a[href="'+event.target+'"]').parent().parent().children('td').eq(1).children('a').eq(0).attr("href");
-			
-			delres.destroy({
-					success :function(model, response) {
-						var al=new Alert({});
-						al.render("alertSuccess","Resource Deletion Successfull !");
-						var obj_type=$('a[href="'+event.target+'"]').parent().parent().parent().parent().attr("id");
-						if(obj_type==="images")
-							{
-								/*
-								 * update experiment in session
-								 */
-								var newexp= new cotefe.Resource();
-								newexp.url=expurl+"?access_token="+getToken();
-								
-								newexp.fetch({
-									success:function(model){
-										
-										getExperimentSets(model,true);
-									}
-								});
-							
-							}
-						$('a[href="'+event.target+'"]').parent().parent().remove();
-						 
+		url="";
+		temprory=($("#propertySetForm").serializeArray());
+		var id=this.model.get('id');
+		var expUrl=this.model.get('uri');
+		var url=this.model.get('uri')+'/property-sets/?access_token='+getToken();
+		
+		resProperty=new cotefe.Resource();			
+		resProperty.url=url;
+		for(i =0;i<temprory.length;i++){
+				resProperty.attributes[temprory[i].name]=temprory[i].value;				
+			}
+		resProperty.set({'num_nodes':parseInt(resProperty.get('num_nodes'))})
+		
+		resProperty.save({  },{
+					
+					success : function(model, response) {
+		                var al=new Alert({});
+						
+		                if(model.id==undefined)
+		                	{
+		                		al.render("alertSuccess","PropertySet created successfully!");
+		                	}
+		                else
+		                	{
+		                		al.render("alertSuccess","PropertySet updated successfully!");
+		                	}
+			                console.log(response);
+			                
+			                var newexp= new cotefe.Resource();
+							newexp.url=expUrl+"?access_token="+getToken();							
+							newexp.fetch({
+								success:function(model1){								
+									getExperimentSets(model1,true);
+									updateTable(id,'propertySet');
+								}
+							});
+			                
 		            },
 		            error :function(model, response) {
 		            	var al=new Alert({});
-		            	al.render("alertFail","Resource Deletion failed !");
+						al.render("alertFail","PropertySet create/update Failed!");
 				    },
-				    
-			});
-			
-		}	,
-	submit:function(event){
-		event.preventDefault();	
-		alert("Sensor not yet defined");		
+					
+					
+				});
+		
 	},
 	loadPropertySets:function(model)
 	{
@@ -866,6 +892,9 @@ var JobEdit=Backbone.View.extend({
 		                	{
 		                		al.render("alertSuccess","Experiment updated successfully!");
 		                	}
+		                
+		                
+		                
 		                
 		            },
 		            error :function(model, response) {
