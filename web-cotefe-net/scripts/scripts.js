@@ -188,7 +188,7 @@ function updateTable(expid,setAttr){
 					htmls="";
 					$("#tab2 #VGNtable").find("tr:gt(0)").remove();
 					for(j=0;j<pslen;j++){
-						htmls=htmls+"<tr><td>"+sessi[i].virtual_node_groups[j].name+"</td><td>"+sessi[i].virtual_node_groups[j].virtual_node_count+"</td><td><a href=\""+sessi[i].virtual_node_groups[j].uri+"\" class=\"edit\">Edit</a></td> <td><a href=\""+sessi[i].virtual_node_groups[j].uri+"\" class=\"delete\">Delete</a></td></tr>";
+						htmls=htmls+"<tr><td>"+sessi[i].virtual_node_groups[j].name+"</td><td>"+sessi[i].virtual_node_groups[j].virtual_node_count+"</td><td><a href=\""+sessi[i].virtual_node_groups[j].uri+"\" class=\"delete\">Delete</a></td></tr>";
 
 					}
 					//htmls="<tr><td>"+sessi[i].virtual_node_groups[pslen-1].name+"</td><td>"+sessi[i].virtual_node_groups[pslen-1].virtual_node_count+"</td><td><a href=\""+sessi[i].virtual_node_groups[pslen-1].uri+"\" class=\"edit\">Edit</a></td> <td><a href=\""+sessi[i].virtual_node_groups[pslen-1].uri+"\" class=\"delete\">Delete</a></td></tr>";
@@ -196,6 +196,23 @@ function updateTable(expid,setAttr){
 				}
 			}
 	}
+	
+	else if(setAttr=='virtual_tasks'){
+		sessi=JSON.parse(sessionStorage.getItem("experiments"));
+		for(i=0;i<sessi.length;i++){
+				if(sessi[i].id==expid){
+					var pslen=sessi[i].virtual_tasks.length;
+					htmls="";
+					$("#tab4 #virtualTaskTable").find("tr:gt(0)").remove();
+					for(j=0;j<pslen;j++){
+						htmls=htmls+"<tr><td>"+sessi[i].virtual_tasks[j].name+"</td><td><a href=\""+sessi[i].virtual_tasks[j].uri+"\" class=\"delete\">Delete</a></td></tr>";
+
+					}
+					$('#tab4 #virtualTaskTable > tbody > tr').eq(i-1).after(htmls);
+				}
+			}
+	}
+	
 }
 
 $(document).ready(function(){
@@ -764,6 +781,7 @@ var ExperimentEdit=Backbone.View.extend({
 
 var ExperimentPropertySet=Backbone.View.extend({
 	el:"#content",
+	
 	initialize:function(){_.bindAll(this,"render");this.render();$(this.el).undelegate('input[name=submit]', 'click');
 						$(this.el).undelegate('.headings a', 'click');
 						$(this.el).undelegate('#content .edit', 'click');
@@ -773,12 +791,24 @@ var ExperimentPropertySet=Backbone.View.extend({
 		{
 			"click #propertySetForm input[name=submit]":'submitp',
 			"click #virtualnodegroupform input[name=submit]":'submitvgn',
+			"click #virtualtaskform input[name=submit]":'submitvt',
+			"change #selectbox":'experimentChange',
 			"click .headings a":function(event){event.preventDefault();
 						res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});
 					},
 			//s"click .edit":"",				
 		},
-		
+	experimentChange:function(event){
+		var val = "";
+		$("#selectbox option:selected").each(function () {
+		           val= $(this).val();
+		});
+		  
+		res=new  cotefe.Resource();
+		res.url=cotefe.apiUri+"/experiments/"+val+"?access_token="+getToken();
+		res.display("",ExperimentPropertySet);
+		// console.log(res.url);
+	},	
 	submitp:function(event){
 		event.preventDefault();	
 		
@@ -835,6 +865,7 @@ var ExperimentPropertySet=Backbone.View.extend({
 		url="";
 		temprory=($("#virtualnodegroupform").serializeArray());
 		var id=this.model.get('id');
+		
 		var expUrl=this.model.get('uri');
 		var url=this.model.get('uri')+'/virtual-nodegroups/?access_token='+getToken();
 		resProperty=new cotefe.Resource();			
@@ -851,12 +882,12 @@ var ExperimentPropertySet=Backbone.View.extend({
 			}
 		resProperty.set('virtual_nodes',c);
 		
-		resProperty.save({  },{
+		resProperty.save(null,{
 			
-			success : function(model, response) {
+			success : function(model2, response) {
                 var al=new Alert({});
 				
-                if(model.id==undefined)
+                if(model2.id==undefined)
                 	{
                 		al.render("alertSuccess","VirtualNodeGroup created successfully!");
                 	}
@@ -870,7 +901,8 @@ var ExperimentPropertySet=Backbone.View.extend({
 					newexp.url=expUrl+"?access_token="+getToken();							
 					newexp.fetch({
 						success:function(model1){								
-							getExperimentSets(model1,true);
+							getExperimentSets(model1,true);							
+							//model1.display("",ExperimentPropertySet);
 							updateTable(id,'virtual_node_groups');
 						}
 					});
@@ -879,6 +911,57 @@ var ExperimentPropertySet=Backbone.View.extend({
             error :function(model, response) {
             	var al=new Alert({});
 				al.render("alertFail","VirtualNodeGroup create/update Failed!");
+		    },
+			
+			
+		});
+		
+		
+	},
+	
+	
+	submitvt:function(event){
+		event.preventDefault();	
+		url="";
+		temprory=($("#virtualtaskform").serializeArray());
+		var id=this.model.get('id');
+		var expUrl=this.model.get('uri');
+		var url=this.model.get('uri')+'/virtual-tasks/?access_token='+getToken();
+		resProperty=new cotefe.Resource();			
+		resProperty.url=url;
+		
+		for(i =0;i<temprory.length;i++){
+				resProperty.attributes[temprory[i].name]=temprory[i].value;				
+			}
+		
+		resProperty.save({  },{
+			
+			success : function(model, response) {
+                var al=new Alert({});
+				
+                if(model.id==undefined)
+                	{
+                		al.render("alertSuccess","Virtual Task created successfully!");
+                	}
+                else
+                	{
+                		al.render("alertSuccess","Virtual Task updated successfully!");
+                	}
+	               
+	                
+	                var newexp= new cotefe.Resource();
+					newexp.url=expUrl+"?access_token="+getToken();							
+					newexp.fetch({
+						success:function(model1){								
+							getExperimentSets(model1,true);
+							updateTable(id,'virtual_tasks');
+						}
+					});
+	                
+            },
+            error :function(model, response) {
+            	var al=new Alert({});
+				al.render("alertFail","Virtual Task create/update Failed!");
 		    },
 			
 			
