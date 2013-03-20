@@ -807,7 +807,7 @@ var ExperimentPropertySet=Backbone.View.extend({
 		res=new  cotefe.Resource();
 		res.url=cotefe.apiUri+"/experiments/"+val+"?access_token="+getToken();
 		res.display("",ExperimentPropertySet);
-		// console.log(res.url);
+		
 	},	
 	submitp:function(event){
 		event.preventDefault();	
