@@ -15,7 +15,7 @@ class JobCollectionHandler(OAuth2RESTJSONHandler):
         
         for testbed in testbeds:
             
-            testbed_jobs = get_all_jobs(testbed.server_url)
+            testbed_jobs = self.get_all_jobs(testbed.server_url)
         
         collection = list()
         
@@ -27,6 +27,10 @@ class JobCollectionHandler(OAuth2RESTJSONHandler):
         for resource in query:
             collection.append(resource.to_dict(head_only = True))
         self.response.out.write(utils.serialize(collection))
+    
+    def get_all_jobs(self,url):
+        return url
+    
             
     def post(self):
         
