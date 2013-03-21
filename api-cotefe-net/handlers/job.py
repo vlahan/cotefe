@@ -9,13 +9,12 @@ class JobCollectionHandler(OAuth2RESTJSONHandler):
         allowed_methods = ['GET', 'POST']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
-    def get(self):
+    def get(self,experiment_id):
         
         testbeds = Testbed.all()
         
-        for testbed in testbeds:
-            
-            testbed_jobs = self.get_all_jobs(testbed.server_url)
+        for testbed in testbeds:            
+           testbed_jobs = self.get_all_jobs(testbed.server_url)
         
         collection = list()
         
@@ -32,7 +31,7 @@ class JobCollectionHandler(OAuth2RESTJSONHandler):
         return url
     
             
-    def post(self):
+    def post(self,experiment_id):
         
         resource_dict = utils.deserialize(self.request.body)
         
