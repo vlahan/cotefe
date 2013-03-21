@@ -427,7 +427,7 @@ var DashBoardContentView	=Backbone.View.extend({
 		$(this.el).html("");
 		res=new  cotefe.Resource();
 		res.url=event.target+"?access_token="+getToken();
-		res.display("",ExperimentEdit);
+		res.display("",JobEdit);
 		
 	},
 	editImage:function(event){
@@ -464,7 +464,7 @@ var DashBoardContentView	=Backbone.View.extend({
 		projects=this.model.get("projects");
 		experiments=this.model.get("experiments");
 		sessionStorage.setItem("user",JSON.stringify(this.model));
-		
+		jobs=this.model.get("jobs");
 		//getAllExps(experiments);
 		
 		
@@ -478,6 +478,12 @@ var DashBoardContentView	=Backbone.View.extend({
 				type:"experiments",
 				headings:['Experiment Name','Edit','Delete'],
 				objects:experiments,
+		};
+		
+		datajob={
+				type:"jobs",
+				headings:['Job Name','Edit','Delete'],
+				objects:jobs,
 		};
 		
 		
@@ -507,6 +513,7 @@ var DashBoardContentView	=Backbone.View.extend({
 				imagedata			: new EJS({url: '../templates/imageMenu.ejs'}).render(datai),
 				projecttable		: new EJS({url: '../templates/tableModel.ejs'}).render(datap),	
 				exptable			: new EJS({url: '../templates/tableModelex.ejs'}).render(datae),
+				jobtable			: new EJS({url: '../templates/tableModel.ejs'}).render(datajob),
 				imageTable			: new EJS({url: '../templates/imageList.ejs'}).render(dataimg),
 			};
 		
@@ -537,10 +544,9 @@ var LeftMenuView=Backbone.View.extend({
 		"click #listE":function(){res=new  cotefe.Resource();
 		 res.url=cotefe.apiUri+cotefe.experiments.uri+"?access_token="+getToken();
 		 res.display("",ExperimentList);},
-		 "click #addJ":function(){res=new  JobEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/jobs/",type:"jobs",description:"",name:"",experiment:"",testbed:"",datetimefrom:"",datetimeto:""})});},		
-		 "click #listJ":function(){res=new  cotefe.Resource();
-		 res.url=cotefe.apiUri+cotefe.jobs.uri+"?access_token="+getToken();
-		 res.display("",JobsList);},
+		 "click #addJ":function(){res=new  JobEdit({model:new cotefe.Resource({uri:'',type:"jobs",description:"",name:"",experiment:"",testbed:"",datetimefrom:"",datetimeto:""})});},		
+		 "click #listJ":function(){
+		 var joblist = new JobsList();},
 		 "click #uploadIm":function(){res=new  ImageEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/projects/",type:"projects",description:"",name:""})});},
 		 "click #listIm":function(){res=new  ImageList();},
 		 "click #testbeds":function(){var testres=new TestBedList({model:new cotefe.Resource()});testres.render(); },
@@ -1023,14 +1029,10 @@ var JobEdit=Backbone.View.extend({
 		event.preventDefault();	
 		url="";
 		temprory=($("#jobform").serializeArray());
+		
 		for(i =0;i<temprory.length;i++)
 			{
-				if(temprory[i].name=="uri")
-					{
-						url=temprory[i].value;
-						
-					}
-				else if(temprory[i].name=="type")
+				if(temprory[i].name=="type")
 					{
 						continue;
 					}
@@ -1039,8 +1041,12 @@ var JobEdit=Backbone.View.extend({
 			}
 		
 		res=this.model;	
-		
-		res.url=url+"?access_token="+getToken();
+		if(res.get('uri')==''){
+			res.url=cotefe.apiUri+cotefe.experiments.uri+res.get('experiment_id').trim()+"/jobs/?access_token="+getToken();
+		}
+		else{
+			res.url=res.get('uri')+"?access_token="+getToken();
+		}
 		res.save({ id: this.model.get('id') },{
 					
 					success : function(model, response) {
@@ -1048,11 +1054,11 @@ var JobEdit=Backbone.View.extend({
 						
 		                if(model.id==undefined)
 		                	{
-		                		al.render("alertSuccess","Experiment created successfully!");
+		                		al.render("alertSuccess","Job created successfully!");
 		                	}
 		                else
 		                	{
-		                		al.render("alertSuccess","Experiment updated successfully!");
+		                		al.render("alertSuccess","Job updated successfully!");
 		                	}
 		                
 		                
@@ -1061,7 +1067,7 @@ var JobEdit=Backbone.View.extend({
 		            },
 		            error :function(model, response) {
 		            	var al=new Alert({});
-						al.render("alertFail","Experiment create/update Failed!");
+						al.render("alertFail","Job create/update Failed!");
 				    },
 					
 					
@@ -1077,8 +1083,10 @@ var JobEdit=Backbone.View.extend({
 			getTestBeds();
 			testbeds=JSON.parse(sessionStorage.getItem("testbeds"));
 		}
+		
+		
 		data={
-				uri			:this.model.attributes.uri,
+				uri			:this.model.get('uri'),
 				type		:"jobs",
 				name		:this.model.attributes.name,
 				selected	:this.model.attributes.experiments,
@@ -1105,14 +1113,14 @@ var JobsList=Backbone.View.extend({
 	},
 	events:{
 		"click .headings a":function(event){event.preventDefault();
-		res=new  ExperimentEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"experiments",description:"",name:"",selected:"",projects:""})});
+		res=new  JobEdit({model:new cotefe.Resource({uri:cotefe.apiUri+"/experiments/",type:"job",description:"",name:"",selected:"",testbed:""})});
 		},
 	},
 	render:function()
 	{	
 		
 		
-		var projectssession=JSON.parse(sessionStorage.getItem("user")).experiments;
+		var projectssession=JSON.parse(sessionStorage.getItem("user")).jobs;
 		row=projectssession.length;
 		
 		
@@ -1123,7 +1131,7 @@ var JobsList=Backbone.View.extend({
 				objects:projectssession,
 		};
 		
-		menu = new EJS({url: '../templates/tableModelex.ejs'}).render(datap);	
+		menu = new EJS({url: '../templates/tableModel.ejs'}).render(datap);	
 		
 		listing = new EJS({url: '../templates/projectList.ejs'}).render({tablecontent:menu,imlink:"#",tableheader:"Jobs"});
 		$(this.el).html(listing).fadeIn();
