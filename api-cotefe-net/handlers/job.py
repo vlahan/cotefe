@@ -5,7 +5,7 @@ from handlers import OAuth2RESTJSONHandler
 
 class JobCollectionHandler(OAuth2RESTJSONHandler):
     
-    def options(self):
+    def options(self,experiment_id):
         allowed_methods = ['GET', 'POST']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
