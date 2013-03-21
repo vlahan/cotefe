@@ -425,7 +425,7 @@ class Job(Resource):
     datetime_modified = db.DateTimeProperty(auto_now=True)
     
     def uri(self):
-        return '%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'jobs', self.key().id())
+        return '%s/%s/%s/%s/%s' % (config.FEDERATION_SERVER_URL, 'experiments', self.experiment.id(),'jobs', self.key().id())
 
     def to_dict(self, head_only = False):
         r = OrderedDict()
