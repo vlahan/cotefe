@@ -1036,7 +1036,7 @@ var JobEdit=Backbone.View.extend({
 					{
 						continue;
 					}
-				this.model.attributes[temprory[i].name]=temprory[i].value;
+				this.model.attributes[temprory[i].name]=temprory[i].value.trim();
 				
 			}
 		
@@ -1088,16 +1088,16 @@ var JobEdit=Backbone.View.extend({
 		data={
 				uri			:this.model.get('uri'),
 				type		:"jobs",
-				name		:this.model.attributes.name,
-				selected	:this.model.attributes.experiments,
-				selectedbed	:this.model.attributes.testbeds,
+				name		:this.model.get('experiment').name,
+				selected	:this.model.get('experiment'),
+				selectedbed	:this.model.get('testbed'),
 				description	:this.model.attributes.description,
 				experiments	:experiments,
 				testbeds	:testbeds,
 				datetime_from:"",
 				datetime_to:""
 				
-		},
+		};
 		
 		menu = new EJS({url: '../templates/jobNew.ejs'}).render(data);
 		$(this.el).html(menu).fadeIn();

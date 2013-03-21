@@ -45,10 +45,10 @@
                                     		
                                     	%>
                                     	<option value="<%= testbeds[i].id %> " <% 
-                                    	if(selected != undefined || selected !=null)
+                                    	if(selectedbed != undefined || selectedbed !=null)
                                     	{
                                     		
-                                    		if(selected.id==testbeds[i].id)
+                                    		if(selectedbed.id==testbeds[i].id)
                                     		{
                                     			%> selected <%
                                     		}
@@ -62,11 +62,11 @@
         </p>
         <p>
             <label for="datetime_from">DateTime From</label>
-            <input  class="input-small" name="datetime_from" id="datetime_from"  placeholder="YYYY-MM-DDThh:mm:ss" value="<%= datetime_from %>" />
+            <input  class="input-small" name="datetime_from" id="datetime_from"  placeholder="YYYY-MM-DDThh:mm:ss+0000" value="<%= datetime_from %>" />
         </p>
         <p>
             <label for="datetime_to">DateTime To</label>
-            <input  class="input-small" name="datetime_to" id="datetime_to"  placeholder="YYYY-MM-DDThh:mm:ss" value="<%= datetime_to %>" />
+            <input  class="input-small" name="datetime_to" id="datetime_to"  placeholder="YYYY-MM-DDThh:mm:ss+0000" value="<%= datetime_to %>" />
         </p>
         <p>
             <label for="description">Job Description</label>

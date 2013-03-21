@@ -3,7 +3,7 @@
 var cotefe=(function($){
  
 	var config = {
-        mainUri             : "http://localhost:8080",
+        mainUri             : "https://web.cotefe.net",
         apiUri              : "https://api.cotefe.net",
         version             : 1.0,
         projects            : {uri:"/projects/",         session:"_cotefeProject",       message:"Project",      name:"projects"},
@@ -14,7 +14,7 @@ var cotefe=(function($){
         images            	: {uri:"/images/",			 session:"_cotefeImages"},
         user                : {uri:"/me",                session:"_cotefeUser"},
         oauth               : "https://api.cotefe.net/oauth2/auth?client_id=4a9fb27ed6f94b64b40a1cab1c2f6929",       
-        redirect            : "http://localhost:8080/htmls/dashboard.html&response_type=token",
+        redirect            : "https://web.cotefe.net/htmls/dashboard.html&response_type=token",
         dashboard           : "/dashboard",        
         comment             : "JS configuration ",
         link                : function(path){return this.apiUri+"/"+path+"";},
