@@ -1083,6 +1083,8 @@ var JobEdit=Backbone.View.extend({
 			getTestBeds();
 			testbeds=JSON.parse(sessionStorage.getItem("testbeds"));
 		}
+		datetime_from=this.model.get('datetime_from');
+		datetime_to	 = this.model.get('datetime_to');
 		
 		
 		data={
@@ -1091,15 +1093,14 @@ var JobEdit=Backbone.View.extend({
 				name		:this.model.get('experiment').name,
 				selected	:this.model.get('experiment'),
 				selectedbed	:this.model.get('testbed'),
-				datetime_from	:this.model.get('datetime_from'),
-				datetime_to		:this.model.get('datetime_to'),
-				description	:this.model.attributes.description,
+				datetime_from	:datetime_from,
+				datetime_to		:datetime_to,
+				description	:this.model.get('description'),
 				experiments	:experiments,
 				testbeds	:testbeds,
-				datetime_from:"",
-				datetime_to:""
 				
 		};
+		data.datetime_from	=datetime_from;
 		
 		menu = new EJS({url: '../templates/jobNew.ejs'}).render(data);
 		$(this.el).html(menu).fadeIn();
