@@ -52,7 +52,7 @@ class JobCollectionHandler(OAuth2RESTJSONHandler):
             
 class JobResourceHandler(OAuth2RESTJSONHandler):
     
-    def options(self, experiment_id,job_id):
+    def options(self,experiment_id, job_id):
         allowed_methods = ['GET', 'PUT', 'DELETE']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
