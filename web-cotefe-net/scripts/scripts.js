@@ -1091,6 +1091,8 @@ var JobEdit=Backbone.View.extend({
 				name		:this.model.get('experiment').name,
 				selected	:this.model.get('experiment'),
 				selectedbed	:this.model.get('testbed'),
+				datetime_from	:this.model.get('datetime_from'),
+				datetime_to		:this.model.get('datetime_to'),
 				description	:this.model.attributes.description,
 				experiments	:experiments,
 				testbeds	:testbeds,
