@@ -56,7 +56,7 @@ class JobResourceHandler(OAuth2RESTJSONHandler):
         allowed_methods = ['GET', 'PUT', 'DELETE']
         OAuth2RESTJSONHandler.options(self, allowed_methods)
     
-    def get(self, job_id):
+    def get(self,experiment_id, job_id):
         
         try:
             resource = Job.get_by_id(int(job_id))        
@@ -65,7 +65,7 @@ class JobResourceHandler(OAuth2RESTJSONHandler):
             
         self.response.out.write(utils.serialize(resource.to_dict()))
         
-    def put(self, job_id):
+    def put(self,experiment_id, job_id):
         
         resource_dict = utils.deserialize(self.request.body)
         
@@ -85,7 +85,7 @@ class JobResourceHandler(OAuth2RESTJSONHandler):
         self.response.out.write(utils.serialize(resource.to_dict()))
         
         
-    def delete(self, job_id):
+    def delete(self,experiment_id, job_id):
         
         try:
             resource = Job.get_by_id(int(job_id))
